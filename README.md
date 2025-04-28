@@ -27,9 +27,9 @@ In a world where work, life, and connection feel fragmented, Ethos brings people
 | -------- | ------- | -------- | ------- |
 | React + Vite | Node.js + Express | PostgreSQL (Prisma) or MongoDB (Mongoose) | Railway / Ver (Recommended)
 
-	•	TailwindCSS for quick and beautiful styling
-	•	JWT for authentication
-	•	Axios for frontend-backend communication
+ - TailwindCSS for quick and beautiful styling
+ - JWT for authentication
+ - Axios for frontend-backend communication
 
 ---
 
@@ -124,11 +124,11 @@ DATABASE_URL=your_postgresql_uri # if using PostgreSQL
 ---
 
 ## 🧠 Core Flow (MVP)
-	1.	User Signup/Login → Auth Context stores session.
-	2.	User Posts a Problem → Backend stores it.
-	3.	Problems Feed → Frontend fetches and displays.
-	4.	Comments & Reactions → Users engage with problems.
-	5.	Quest/Branch System (Future) → Evolve problems into quests with prototype and test phases.
+ 1.	User Signup/Login → Auth Context stores session.
+ 2.	User Posts a Problem → Backend stores it.
+ 3.	Problems Feed → Frontend fetches and displays.
+ 4.	Comments & Reactions → Users engage with problems.
+ 5.	Quest/Branch System (Future) → Evolve problems into quests with prototype and test phases.
 
 ---
 
@@ -147,14 +147,15 @@ DATABASE_URL=your_postgresql_uri # if using PostgreSQL
 
 ---
 
-## 📜 License
-
-This project is licensed under the MIT License.
-
----
-
 ## ✨ Vision
 
 “Every person has unique experiences that matter — Ethos lets you contribute your wisdom to solve problems, not by fitting in, but by showing up as yourself.”
 
 Together, we’re building a more connected, empathetic, and adventurous world. 🌎⚡
+
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
