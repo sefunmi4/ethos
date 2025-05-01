@@ -21,18 +21,6 @@ In a world where work, life, and connection feel fragmented, Ethos brings people
 
 ---
 
-## 🛠 Tech Stack
-
-| Frontend | Backend | Database | Hosting |
-| -------- | ------- | -------- | ------- |
-| React + Vite | Node.js + Express | PostgreSQL (Prisma) or MongoDB (Mongoose) | Railway / Ver (Recommended)
-
- - TailwindCSS for quick and beautiful styling
- - JWT for authentication
- - Axios for frontend-backend communication
-
----
-
 ## 📦 Folder Structure
 
 ### Frontend (ethos-frontend/)
