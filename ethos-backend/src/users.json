@@ -1,0 +1,12 @@
+[
+    {
+      "email": "fakeuser1@ethos.dev",
+      "password": "$2a$10$QkKc.dH2IzqqE43yDJqW/O9VdIx/g0Hsk0z5XdbPBsYZD6dF1jWxu",
+      "role": "fake"
+    },
+    {
+      "email": "fakeuser2@ethos.dev",
+      "password": "$2a$10$QkKc.dH2IzqqE43yDJqW/O9VdIx/g0Hsk0z5XdbPBsYZD6dF1jWxu",
+      "role": "fake"
+    }
+]

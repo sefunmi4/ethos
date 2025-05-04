@@ -1,0 +1,47 @@
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  problems      Problem[]
+  comments      Comment[]
+  reactions     Reaction[]
+}
+
+model Problem {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  createdAt   DateTime  @default(now())
+  postedBy    User      @relation(fields: [postedById], references: [id])
+  postedById  String
+  comments    Comment[]
+  reactions   Reaction[]
+}
+
+model Comment {
+  id          String    @id @default(uuid())
+  text        String
+  createdAt   DateTime  @default(now())
+  problem     Problem   @relation(fields: [problemId], references: [id])
+  problemId   String
+  postedBy    User      @relation(fields: [postedById], references: [id])
+  postedById  String
+}
+
+model Reaction {
+  id          String    @id @default(uuid())
+  type        ReactionType
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  problem     Problem   @relation(fields: [problemId], references: [id])
+  problemId   String
+}
+
+enum ReactionType {
+  EMPATHY
+  AGREE
+  HEART
+}
