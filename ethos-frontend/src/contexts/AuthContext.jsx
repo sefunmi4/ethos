@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (!token) return setLoading(false);
 
-    fetch('http://localhost:5000/me', {
+    fetch('http://localhost:3001/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.ok ? res.json() : Promise.reject())
