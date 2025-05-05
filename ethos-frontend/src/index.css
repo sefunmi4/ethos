@@ -3,18 +3,48 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* Layout & spacing variables */
+  --container-padding: clamp(1rem, 4vw, 4rem); /* Responsive padding */
+  --max-width: 1440px; /* Max container width for desktop/TV */
+  --font-scale: clamp(0.875rem, 1vw + 0.5rem, 1.5rem); /* Responsive type scaling */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Color palette (optional customization) */
+  --color-text: #111;
+  --color-bg: #ffffff;
+  --color-link: #646cff;
+  --color-link-hover: #535bf2;
 
+  /* Typography & smoothing */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: var(--font-scale);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #111;
+
+  /* Center content vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+
+  /* Responsive sizing */
+  min-width: 100vw;
+  min-height: 100vh;
+
+  /* Allow content to stretch full width */
+  width: 100%;
 }
 
 a {
@@ -24,14 +54,6 @@ a {
 }
 a:hover {
   color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {

@@ -3,61 +3,102 @@ import fs from 'fs';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); 
 
-const SECRET = 'ethos-secret-key'; // change this later
+dotenv.config();
+const SECRET = process.env.ACCESS_SECRET; // change this later
+const USERS_FILE = './src/users.json'; 
 
-// Load/save users
-const loadUsers = () => JSON.parse(fs.readFileSync('users.json', 'utf8') || '[]');
-const saveUsers = (users) => fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
+const loadUsers = () => {
+  try {
+    if (!fs.existsSync(USERS_FILE)) {
+      fs.writeFileSync(USERS_FILE, '[]'); // create file if missing
+    }
+    const data = fs.readFileSync(USERS_FILE, 'utf8');
+    return JSON.parse(data || '[]');
+  } catch (err) {
+    console.error('[USER FILE READ ERROR]', err);
+    return [];
+  }
+};
+
+const saveUsers = (users) =>
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 
 // Signup
-app.post('/signup', (req, res) => {
-  const { email, password, role = 'real' } = req.body;
-  const users = loadUsers();
+app.post('/signup', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log('[SIGNUP ATTEMPT]', email); // 👈 Add this
 
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ error: 'Email already exists' });
+    if (!email || !password)
+      return res.status(400).json({ error: 'Email and password required' });
+
+    const users = loadUsers();
+    const existingUser = users.find(u => u.email === email);
+    if (existingUser)
+      return res.status(409).json({ error: 'Email already registered' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('[PASSWORD HASHED]'); // 👈
+
+    const newUser = {
+      email,
+      password: hashedPassword,
+      role: 'user'
+    };
+
+    users.push(newUser);
+    saveUsers(users); // could crash here
+
+    console.log('[USER SAVED]'); // 👈
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    console.error('[SIGNUP ERROR]', err); // 👈 will show the real issue
+    res.status(500).json({ error: 'Failed to register user' });
   }
-
-  const hashed = bcrypt.hashSync(password, 10);
-  users.push({ email, password: hashed, role });
-  saveUsers(users);
-
-  res.status(201).json({ message: 'User created' });
 });
 
 // Login
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  const users = loadUsers();
-  const user = users.find(u => u.email === email);
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const users = loadUsers();
+    const user = users.find(u => u.email === email);
 
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: 'Invalid password' });
+
+    const token = jwt.sign({ email: user.email }, SECRET, { expiresIn: '1h' });
+
+    res.json({ message: 'Login successful', token });
+  } catch (err) {
+    console.error('[LOGIN ERROR]', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  if (user.role === 'fake') {
-    return res.status(403).json({ error: 'Test accounts cannot log in' });
-  }
-
-  const token = jwt.sign({ email: user.email, role: user.role }, SECRET, { expiresIn: '1d' });
-  res.json({ token });
 });
 
 // Get current user
 app.get('/me', (req, res) => {
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'No token' });
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(403).json({ error: 'No token provided' });
+  }
 
+  const token = authHeader.split(' ')[1];
+  console.log('[Token Received]', token);
   try {
-    const decoded = jwt.verify(auth.split(' ')[1], SECRET);
-    res.json({ email: decoded.email, role: decoded.role });
-  } catch {
+    const decoded = jwt.verify(token, SECRET); // ✅ must match login secret
+    res.json({ email: decoded.email });
+  } catch (err) {
     res.status(403).json({ error: 'Invalid token' });
   }
 });

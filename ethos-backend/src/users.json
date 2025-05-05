@@ -1,12 +1,22 @@
 [
-    {
-      "email": "fakeuser1@ethos.dev",
-      "password": "$2a$10$QkKc.dH2IzqqE43yDJqW/O9VdIx/g0Hsk0z5XdbPBsYZD6dF1jWxu",
-      "role": "fake"
-    },
-    {
-      "email": "fakeuser2@ethos.dev",
-      "password": "$2a$10$QkKc.dH2IzqqE43yDJqW/O9VdIx/g0Hsk0z5XdbPBsYZD6dF1jWxu",
-      "role": "fake"
-    }
+  {
+    "email": "fakeuser1@ethos.dev",
+    "password": "$2b$10$VXj4shc3WsvD5ty0rbBMoumvCCMD0qIkqJ8g6CIUh3OVGFnkxlakG",
+    "role": "fake"
+  },
+  {
+    "email": "fakeuser2@ethos.dev",
+    "password": "$2b$10$VXj4shc3WsvD5ty0rbBMoumvCCMD0qIkqJ8g6CIUh3OVGFnkxlakG",
+    "role": "fake"
+  },
+  {
+    "email": "testerbot1@ethos.com",
+    "password": "$2b$10$hYVekrYjQGiBIVnOJsAB0e3VUu78hDpsqqWam90/Kw/GZoJ2A6YaC",
+    "role": "user"
+  },
+  {
+    "email": "testerbot2@ethos.com",
+    "password": "$2b$10$cf2C9UB1/g6MwEYN2XOTm.NGSKB1oJ2HHCSy4FL9SRVcr0D3yu..G",
+    "role": "user"
+  }
 ]
