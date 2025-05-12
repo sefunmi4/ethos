@@ -37,7 +37,7 @@ const Home = () => {
             Explore. Connect. Take on real-world quests.
           </p>
           <a
-            href="/post"
+            href="/postProbelm"
             className="inline-block mt-8 bg-black text-white font-medium px-6 py-3 rounded-full hover:bg-gray-900 transition-all"
           >
             ➕ Post a New Quest

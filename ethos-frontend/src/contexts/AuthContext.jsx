@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => setUser(data))
+      .then(data => setUser(data)) // Data contains: id, username, bio, etc.
       .catch(() => localStorage.removeItem('token'))
       .finally(() => setLoading(false));
   }, []);

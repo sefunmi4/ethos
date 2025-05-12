@@ -1,22 +1,28 @@
 [
   {
-    "email": "fakeuser1@ethos.dev",
-    "password": "$2b$10$VXj4shc3WsvD5ty0rbBMoumvCCMD0qIkqJ8g6CIUh3OVGFnkxlakG",
-    "role": "fake"
-  },
-  {
-    "email": "fakeuser2@ethos.dev",
-    "password": "$2b$10$VXj4shc3WsvD5ty0rbBMoumvCCMD0qIkqJ8g6CIUh3OVGFnkxlakG",
-    "role": "fake"
-  },
-  {
+    "id": "u_621461d1-6f81-4150-94f0-025837a035fe",
+    "username": "testerbot1",
     "email": "testerbot1@ethos.com",
-    "password": "$2b$10$hYVekrYjQGiBIVnOJsAB0e3VUu78hDpsqqWam90/Kw/GZoJ2A6YaC",
-    "role": "user"
-  },
-  {
-    "email": "testerbot2@ethos.com",
-    "password": "$2b$10$cf2C9UB1/g6MwEYN2XOTm.NGSKB1oJ2HHCSy4FL9SRVcr0D3yu..G",
-    "role": "user"
+    "password": "$2b$10$vpgYZHefSdepc7WHjIFY7.LY.DYEqqZzC0U.cwW3TV1E8GtTtpIf2",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-05-11T15:01:10.498Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
   }
 ]

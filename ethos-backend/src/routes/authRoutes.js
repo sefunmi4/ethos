@@ -1,4 +1,4 @@
-// routes/auth.js
+// routes/authRoutes.js
 res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -13,7 +13,7 @@ app.post('/api/refresh', (req, res) => {
   
     jwt.verify(token, REFRESH_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
-        const accessToken = jwt.sign({ id: user.id, role: user.role }, ACCESS_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign({ id: user.id, role: user.role }, ACCESS_SECRET, { expiresIn: '1h' });
         res.json({ accessToken });
     });
 });
