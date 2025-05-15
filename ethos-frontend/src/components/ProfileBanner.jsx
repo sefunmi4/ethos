@@ -37,9 +37,6 @@ const ProfileBanner = ({ user }) => {
             <span className="text-xs text-gray-400 italic">No roles yet</span>
           )}
         </div>
-        <button className="mt-2 text-sm text-blue-600 hover:underline">
-          Customize Profile →
-        </button>
       </div>
     </div>
   );

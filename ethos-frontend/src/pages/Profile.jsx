@@ -4,7 +4,6 @@ import ProfileBanner from '../components/ProfileBanner';
 import QuickInfoGrid from '../components/QuickInfoGrid';
 import ProjectCard from '../components/ProjectCard';
 import AddProjectModal from '../components/AddProjectModal';
-import Timeline from '../components/Timeline';
 
 const Profile = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -49,6 +48,19 @@ const Profile = () => {
             website: ''
           }
         });
+
+        // ✅ Also sync to user for View Mode to work
+        setUser(prev => ({
+          ...prev,
+          bio: data.bio || '',
+          tags: data.tags || [],
+          links: data.links || {
+            github: '',
+            linkedin: '',
+            tiktok: '',
+            website: ''
+          }
+        }));
       } catch (err) {
         console.error(err);
         setError('Oops. Could not load your profile data.');
@@ -91,7 +103,7 @@ const Profile = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       <ProfileBanner user={user} />
-
+  
       {/* ✏️ Edit Button */}
       <div className="flex flex-col justify-end mt-2 text-sm text-blue-600 hover:underline sm:items-end gap-2">
         {!editMode ? (
@@ -118,36 +130,38 @@ const Profile = () => {
           </div>
         )}
       </div>
-
+  
       {/* 👁️ View Mode */}
       {!editMode && (
         <>
           <QuickInfoGrid user={user} />
           <div className="mt-6">
             <h3 className="text-lg font-semibold">Bio</h3>
-            <p className="text-gray-700">{user.bio || 'No bio set yet.'}</p>
-
+            <p className="text-gray-700">{user.bio || formData?.bio || 'No bio set yet.'}</p>
+  
             <h3 className="mt-4 text-lg font-semibold">Tags</h3>
             <div className="flex flex-wrap gap-2 text-sm text-white">
-              {user.tags?.map((tag, idx) => (
+              {(user.tags || formData?.tags || []).map((tag, idx) => (
                 <span key={idx} className="bg-indigo-600 px-2 py-1 rounded">
                   {tag}
                 </span>
               ))}
             </div>
-
+  
             <h3 className="mt-4 text-lg font-semibold">Links</h3>
             <ul className="text-blue-600 underline space-y-1">
-              {Object.entries(user.links || {}).map(([key, val]) => (
-                <li key={key}>
-                  <a href={val} target="_blank" rel="noreferrer">{key}</a>
-                </li>
+              {Object.entries(user.links || formData?.links || {}).map(([key, val]) => (
+                val && (
+                  <li key={key}>
+                    <a href={val} target="_blank" rel="noreferrer">{key}</a>
+                  </li>
+                )
               ))}
             </ul>
           </div>
         </>
       )}
-
+  
       {/* ✍️ Edit Mode */}
       {editMode && formData && (
         <div className="mt-6 space-y-4">
@@ -159,7 +173,7 @@ const Profile = () => {
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             />
           </div>
-
+  
           <div>
             <label className="block font-medium">Tags (comma-separated)</label>
             <input
@@ -171,7 +185,7 @@ const Profile = () => {
               }
             />
           </div>
-
+  
           <div>
             <label className="block font-medium mb-1">Links</label>
             {Object.entries(formData.links).map(([key, val]) => (
@@ -192,13 +206,7 @@ const Profile = () => {
           </div>
         </div>
       )}
-
-      {/* 🕓 Timeline */}
-      <div className="mt-10">
-        <h3 className="text-xl font-semibold mb-4">🧭 My Journey Timeline</h3>
-        <Timeline entries={timeline} />
-      </div>
-
+  
       {/* 🎒 Project Log */}
       <div className="mt-10 flex items-center justify-between">
         <h3 className="text-xl font-semibold tracking-tight">My Projects & Quests</h3>
@@ -209,10 +217,10 @@ const Profile = () => {
           + New Quest
         </button>
       </div>
-
+  
       {/* ❌ Show error messages */}
       {error && <p className="text-red-500 mt-4">{error}</p>}
-
+  
       {/* 🧩 Project Cards */}
       <div className="grid gap-6 mt-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {projects.length === 0 ? (
@@ -223,14 +231,6 @@ const Profile = () => {
           ))
         )}
       </div>
-
-      {/* ➕ Add Project Modal */}
-      {showModal && (
-        <AddProjectModal
-          onClose={() => setShowModal(false)}
-          onAdd={(newProject) => setProjects([...projects, newProject])}
-        />
-      )}
     </div>
   );
 };
