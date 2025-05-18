@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getMe, signup } from '../api/auth';
+import { login, getMe, register } from '../api/auth';
 import { AuthContext } from '../contexts/AuthContext';
 
 //TODO: forgot password 
@@ -27,7 +27,7 @@ const Login = () => {
           setLoading(false);
           return setError('Passwords do not match');
         }
-        await signup(form.email, form.password);
+        await register(form.email, form.password);
       }
 
       await login(form.email, form.password);

@@ -24,5 +24,83 @@
         ]
       }
     ]
+  },
+  {
+    "id": "u_6fe234fb-7c35-4f59-b22f-daadc2fa2619",
+    "username": "testerbot2",
+    "email": "testerbot2@ethos.com",
+    "password": "$2b$10$m7TwSg.rP.Yz6bWvaeWeDOlhxxR9CkhQ8oKL164YCtr2zY8OtMEy2",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-05-17T22:39:34.025Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "u_7121d27f-46a4-436e-9937-ef2cd5f6dfd2",
+    "username": "a",
+    "email": "a@gm.com",
+    "password": "$2b$10$Kmf.sVoaTICr/7RsKhUvh.YTrYBGm1S5j.DYs/hzN20PG8oMJcspm",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-05-18T03:28:09.814Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "u_1bb202e2-9d37-4e87-a3c5-716ba3c04e21",
+    "username": "opensourcewizard",
+    "email": "opensourcewizard@ethos.com",
+    "password": "$2b$10$mKyahnBzdfpJByfH9N12/OnpAy.Lvc/ahtIh/I5RJl4aS1vXrnewK",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-05-18T04:30:30.929Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
   }
 ]

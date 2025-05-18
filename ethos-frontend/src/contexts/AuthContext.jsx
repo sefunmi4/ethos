@@ -9,9 +9,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+
+console.log('Token being used:', token); // 👈 Add this to verify
     if (!token) return setLoading(false);
 
-    fetch('http://localhost:3001/me', {
+    fetch('http://localhost:3001/api/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.ok ? res.json() : Promise.reject())

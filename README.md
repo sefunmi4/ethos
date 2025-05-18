@@ -112,7 +112,7 @@ DATABASE_URL=your_postgresql_uri # if using PostgreSQL
 ---
 
 ## 🧠 Core Flow (MVP)
- 1.	User Signup/Login → Auth Context stores session.
+ 1.	User Register/Login → Auth Context stores session.
  2.	User Posts a Problem → Backend stores it.
  3.	Problems Feed → Frontend fetches and displays.
  4.	Comments & Reactions → Users engage with problems.

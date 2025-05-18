@@ -1,27 +1,31 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'http://localhost:3001/api/auth',
 });
 
+// ✅ Use shared instance for register
+export const register = (email, password) =>
+  API.post('/register', { email, password });
 
-export const signup = (email, password) =>
-  API.post('/signup', { email, password });
-
+// ✅ Use shared instance for login
 export const login = async (email, password) => {
-  const res = await axios.post('http://localhost:3001/login', { email, password });
-  localStorage.setItem('token', res.data.token); // ✅ token must be saved
+  const res = await API.post('/login', { email, password });
+  localStorage.setItem('token', res.data.accessToken); // ✅ correct field
   return res.data;
 };
 
+// ✅ Use shared instance for getMe
 export const getMe = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('No token found');
+  console.log('Token being used:', token); // 👈 Add this
   
-  const res = await axios.get('http://localhost:3001/me', {
+  if (!token) throw new Error('No token found');
+
+  const res = await API.get('/me', {
     headers: {
-      Authorization: `Bearer ${token}` // ✅ must include Bearer prefix
-    }
+      Authorization: `Bearer ${token}`
+    },
   });
 
   return res.data;

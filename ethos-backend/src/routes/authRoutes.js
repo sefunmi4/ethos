@@ -3,7 +3,7 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-import { authenticate } from '../middleware/authMiddleware.js';
+import authenticate from '../middleware/authMiddleware.js';
 import { generateAccessToken, signRefreshToken } from '../utils/jwtUtils.js';
 import { hashPassword, comparePasswords } from '../utils/passwordUtils.js';
 
@@ -91,7 +91,7 @@ router.post('/login', async (req, res) => {
 });
 
 /* ------------------------ ME ------------------------ */
-router.get('/me', authenticate, (req, res) => {
+router.get('/me', authenticate, (req, res) =>  {
   const users = loadUsers();
   const user = users.find(u => u.id === req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
