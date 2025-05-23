@@ -1,0 +1,35 @@
+[
+    {
+        "id": "b_home_001",
+        "title": "🏠 Home Feed",
+        "description": "Featured posts and quests from across the network.",
+        "type": "post",
+        "structure": "list",
+        "items": [],
+        "filters": {},
+        "featured": true,
+        "defaultFor": "home",
+        "createdAt": "2025-05-22T00:00:00.000Z"
+      },
+      {
+        "title": "User Post History",
+        "description": "Posts by the user",
+        "type": "post",
+        "items": [],
+        "filters": {},
+        "featured": false,
+        "defaultFor": "profile",
+        "createdAt": "2025-05-22T00:00:00.000Z"
+      },
+      {
+        "title": "User Quests",
+        "description": "Quests created by the user",
+        "type": "quest",
+        "items": [],
+        "filters": {},
+        "featured": false,
+        "defaultFor": "quests",
+        "createdAt": "2025-05-22T00:00:00.000Z"
+      }
+
+]

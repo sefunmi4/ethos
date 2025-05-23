@@ -1,12 +1,13 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getMe, register } from '../api/auth';
+import { login, getMe, register, forgotPassword } from '../api/auth';
 import { AuthContext } from '../contexts/AuthContext';
 
-//TODO: forgot password 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '', confirm: '' });
   const [isRegistering, setIsRegistering] = useState(false);
+  const [showReset, setShowReset] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { setUser } = useContext(AuthContext);
@@ -22,6 +23,13 @@ const Login = () => {
     setLoading(true);
 
     try {
+      if (showReset) {
+        await forgotPassword(form.email);
+        setResetSent(true);
+        setLoading(false);
+        return;
+      }
+
       if (isRegistering) {
         if (form.password !== form.confirm) {
           setLoading(false);
@@ -42,16 +50,43 @@ const Login = () => {
     }
   };
 
+  const resetToLogin = () => {
+    setShowReset(false);
+    setIsRegistering(false);
+    setResetSent(false);
+    setError('');
+    setForm({ email: '', password: '', confirm: '' });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded shadow-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          {isRegistering ? 'Create an Account' : 'Welcome Back'}
-        </h2>
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <section className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <header className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-gray-800">
+            {showReset
+              ? 'Reset Password'
+              : isRegistering
+              ? 'Create an Account'
+              : 'Welcome Back'}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {showReset
+              ? 'Enter your email to receive a reset link.'
+              : isRegistering
+              ? 'Join the platform today.'
+              : 'Login to continue your quest.'}
+          </p>
+        </header>
 
         {error && (
-          <div className="text-red-500 text-center mb-4">
+          <div className="text-sm text-red-600 bg-red-50 border border-red-300 rounded p-2 mb-4">
             {error}
+          </div>
+        )}
+
+        {resetSent && showReset && (
+          <div className="text-sm text-green-600 bg-green-50 border border-green-300 rounded p-2 mb-4">
+            Password reset instructions sent to your email.
           </div>
         )}
 
@@ -62,28 +97,30 @@ const Login = () => {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded"
-            required
-          />
+          {!showReset && (
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          )}
 
-          {isRegistering && (
+          {isRegistering && !showReset && (
             <input
               name="confirm"
               type="password"
               placeholder="Confirm Password"
               value={form.confirm}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           )}
@@ -91,30 +128,58 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded text-white transition ${
-              loading
-                ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
+            className={`w-full py-3 rounded font-semibold text-white transition ${
+              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             {loading
-              ? isRegistering
+              ? showReset
+                ? 'Sending...'
+                : isRegistering
                 ? 'Registering...'
                 : 'Logging in...'
+              : showReset
+              ? 'Send Reset Link'
               : isRegistering
               ? 'Register'
               : 'Login'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          {isRegistering ? (
+        {!showReset && !isRegistering && (
+          <div className="text-right mt-2">
+            <button
+              type="button"
+              className="text-blue-500 text-sm hover:underline"
+              onClick={() => {
+                setShowReset(true);
+                setError('');
+              }}
+            >
+              Forgot password?
+            </button>
+          </div>
+        )}
+
+        <footer className="mt-6 text-center text-sm text-gray-600">
+          {showReset ? (
+            <button
+              type="button"
+              className="text-blue-600 hover:underline"
+              onClick={resetToLogin}
+            >
+              Back to login
+            </button>
+          ) : isRegistering ? (
             <p>
               Already have an account?{' '}
               <button
                 type="button"
                 className="text-blue-600 hover:underline"
-                onClick={() => setIsRegistering(false)}
+                onClick={() => {
+                  setIsRegistering(false);
+                  setError('');
+                }}
               >
                 Log in
               </button>
@@ -125,15 +190,18 @@ const Login = () => {
               <button
                 type="button"
                 className="text-blue-600 hover:underline"
-                onClick={() => setIsRegistering(true)}
+                onClick={() => {
+                  setIsRegistering(true);
+                  setError('');
+                }}
               >
                 Register
               </button>
             </p>
           )}
-        </div>
-      </div>
-    </div>
+        </footer>
+      </section>
+    </main>
   );
 };
 

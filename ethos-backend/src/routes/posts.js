@@ -1,28 +1,13 @@
 import express from 'express';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import authMiddleware from '../middleware/authMiddleware.js';
-
+import { postsStore } from '../utils/loaders.js';
 
 const router = express.Router();
-const POSTS_FILE = './src/data/posts.json';
-
-const loadPosts = () => {
-  try {
-    const data = fs.readFileSync(POSTS_FILE, 'utf8');
-    return JSON.parse(data || '[]');
-  } catch (err) {
-    console.error('Error loading posts:', err);
-    return [];
-  }
-};
-
-const savePosts = (posts) => fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2));
 
 router.post('/', authMiddleware, (req, res) => {
-  const { type, content, visibility, questId, tags } = req.body;
-  const authorId = req.user?.id; // <-- pull from decoded token
-  const { collaborators = [] } = req.body;
+  const { type, content, visibility, questId, tags, collaborators = [] } = req.body;
+  const authorId = req.user?.id;
 
   if (!authorId || !type || !content)
     return res.status(400).json({ error: 'Missing fields' });
@@ -42,11 +27,9 @@ router.post('/', authMiddleware, (req, res) => {
   };
 
   try {
-    const posts = loadPosts();
+    const posts = postsStore.read();
     posts.push(newPost);
-    console.log('Creating post for user:', authorId);
-    console.log('Request body:', req.body);
-    savePosts(posts);
+    postsStore.write(posts);
     res.status(201).json(newPost);
   } catch (err) {
     console.error('Error saving post:', err.message);
@@ -54,9 +37,66 @@ router.post('/', authMiddleware, (req, res) => {
   }
 });
 
+router.post('/:id/replies', authMiddleware, (req, res) => {
+  const posts = postsStore.read();
+  const { id } = req.params;
+  const parent = posts.find(p => p.id === id);
+  if (!parent) return res.status(404).json({ error: 'Post not found' });
+
+  const { content } = req.body;
+  const authorId = req.user?.id;
+  if (!content || !authorId)
+    return res.status(400).json({ error: 'Missing content or author' });
+
+  const reply = {
+    id: uuidv4(),
+    type: 'free_speech',
+    content,
+    visibility: 'public',
+    tags: ['reply'],
+    authorId,
+    questId: parent.questId || null,
+    timestamp: new Date().toISOString(),
+    replyTo: parent.id
+  };
+
+  posts.push(reply);
+  postsStore.write(posts);
+  res.status(201).json(reply);
+});
+
+router.post('/:id/repost', authMiddleware, (req, res) => {
+  const posts = postsStore.read();
+  const { id } = req.params;
+  const original = posts.find(p => p.id === id);
+
+  if (!original) return res.status(404).json({ error: 'Original post not found' });
+
+  const { content, questId, parentPostId, linkType } = req.body;
+  const authorId = req.user?.id;
+
+  const repost = {
+    ...original,
+    id: uuidv4(),
+    authorId,
+    type: original.type,
+    content: content || original.content,
+    questId: questId || null,
+    parentPostId: parentPostId || null,
+    linkType: linkType || 'repost',
+    timestamp: new Date().toISOString(),
+    replyTo: null
+  };
+
+  posts.push(repost);
+  postsStore.write(posts);
+
+  res.status(201).json(repost);
+});
+
 router.get('/', (req, res) => {
   try {
-    const posts = loadPosts();
+    const posts = postsStore.read();
     res.json(posts);
   } catch (err) {
     res.status(500).json({ error: 'Failed to load posts' });
@@ -64,34 +104,16 @@ router.get('/', (req, res) => {
 });
 
 router.put('/:id', authMiddleware, (req, res) => {
-  const posts = loadPosts();
+  const posts = postsStore.read();
   const postIndex = posts.findIndex(p => p.id === req.params.id.trim());
-  if (postIndex === -1) {
-    console.error('Post not found for update:', req.params.id);
+  if (postIndex === -1)
     return res.status(404).json({ error: 'Post not found' });
-  }
-
-  console.log('Received PUT request for post ID:', req.params.id);
-  console.log('Available post IDs:', posts.map(p => p.id));
-
-
 
   const post = posts[postIndex];
-
-  // Ownership or collaboration check
   const isOwner = req.user.id === post.authorId;
   const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(req.user.id);
-  console.log('AUTH CHECK:', req.user.id, 'vs', post.authorId);
-
-  if (!isOwner && !isCollaborator) {
-    console.warn('Authorization failed for post update:', {
-      currentUser: req.user.id,
-      postAuthor: post.authorId,
-      collaborators: post.collaborators,
-      postType: post.type
-    });
+  if (!isOwner && !isCollaborator)
     return res.status(403).json({ error: 'Not authorized' });
-  }
 
   const { content, visibility, tags, type, questId } = req.body;
   if (content) post.content = content;
@@ -100,29 +122,23 @@ router.put('/:id', authMiddleware, (req, res) => {
   if (type) post.type = type;
   post.questId = questId ?? null;
 
-  
-
-  console.log('Updated post:', post);
   posts[postIndex] = post;
-  savePosts(posts);
-
+  postsStore.write(posts);
   res.json(post);
 });
 
 router.delete('/:id', authMiddleware, (req, res) => {
-  const posts = loadPosts();
+  const posts = postsStore.read();
   const post = posts.find(p => p.id === req.params.id);
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
   const isOwner = req.user.id === post.authorId;
   const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(req.user.id);
-
-  if (!isOwner && !isCollaborator) {
+  if (!isOwner && !isCollaborator)
     return res.status(403).json({ error: 'Not authorized' });
-  }
 
   const updated = posts.filter(p => p.id !== req.params.id);
-  savePosts(updated);
+  postsStore.write(updated);
   res.json({ message: 'Post deleted' });
 });
 

@@ -1,43 +1,74 @@
 import express from 'express';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import authMiddleware from '../middleware/authMiddleware.js';
+import { questsStore, postsStore } from '../utils/loaders.js';
 
 const router = express.Router();
-const QUESTS_FILE = './src/data/quests.json';
-const POSTS_FILE = './src/data/posts.json';
 
-const loadQuests = () => JSON.parse(fs.readFileSync(QUESTS_FILE, 'utf8') || '[]');
-const saveQuests = (data) => fs.writeFileSync(QUESTS_FILE, JSON.stringify(data, null, 2));
-const loadPosts = () => JSON.parse(fs.readFileSync(POSTS_FILE, 'utf8') || '[]');
+router.get('/', (req, res) => {
+  const quests = questsStore.read();
+  res.json(quests);
+});
 
-router.post('/', (req, res) => {
-  const { authorId, title, description = '', status = 'active' } = req.body;
+router.post('/', authMiddleware, (req, res) => {
+  const { title, description = '', status = 'active', linkedPostId } = req.body;
+  const authorId = req.user?.id;
+
   if (!authorId || !title) return res.status(400).json({ error: 'Missing fields' });
 
-  const quests = loadQuests();
-  const newQuest = { id: uuidv4(), authorId, title, description, status };
+  const quests = questsStore.read();
+  const newQuest = {
+    id: uuidv4(),
+    authorId,
+    title,
+    description,
+    status,
+    logs: [],
+    tasks: [],
+    linkedPostIds: linkedPostId ? [linkedPostId] : []
+  };
+
   quests.push(newQuest);
-  saveQuests(quests);
+  questsStore.write(quests);
   res.status(201).json(newQuest);
+});
+
+router.post('/:id/link', authMiddleware, (req, res) => {
+  const { id } = req.params;
+  const { postId } = req.body;
+
+  if (!postId) return res.status(400).json({ error: 'Missing postId' });
+
+  const quests = questsStore.read();
+  const quest = quests.find(q => q.id === id);
+  if (!quest) return res.status(404).json({ error: 'Quest not found' });
+
+  quest.linkedPostIds = quest.linkedPostIds || [];
+  if (!quest.linkedPostIds.includes(postId)) {
+    quest.linkedPostIds.push(postId);
+  }
+
+  questsStore.write(quests);
+  res.json(quest);
 });
 
 router.patch('/:id', (req, res) => {
   const { id } = req.params;
   const { logId } = req.body;
 
-  const quests = loadQuests();
+  const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
   if (!quest) return res.status(404).json({ error: 'Quest not found' });
 
   quest.logs = quest.logs || [];
   quest.logs.push(logId);
-  saveQuests(quests);
+  questsStore.write(quests);
   res.json(quest);
 });
 
 router.get('/:id', (req, res) => {
-  const quests = loadQuests();
-  const posts = loadPosts();
+  const quests = questsStore.read();
+  const posts = postsStore.read();
   const quest = quests.find(q => q.id === req.params.id);
   if (!quest) return res.status(404).json({ error: 'Quest not found' });
 

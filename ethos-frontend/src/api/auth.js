@@ -15,6 +15,28 @@ export const login = async (email, password) => {
   return res.data;
 };
 
+export const logout = async () => {
+  return fetch('/api/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  });
+};
+
+export const forgotPassword = async (email) => {
+  const res = await fetch('/api/auth/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Failed to send reset link');
+  }
+
+  return res.json();
+};
+
 // ✅ Use shared instance for getMe
 export const getMe = async () => {
   const token = localStorage.getItem('token');

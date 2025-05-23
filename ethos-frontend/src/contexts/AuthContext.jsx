@@ -1,35 +1,65 @@
-// src/contexts/AuthContext.jsx
-import { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import {
+  getMe,
+  login as apiLogin,
+  logout as apiLogout,
+  register as apiRegister,
+} from '../api/auth';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const loadUser = async () => {
+      try {
+        const me = await getMe();
+        setUser(me);
+      } catch (err) {
+        console.warn('No active session');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-console.log('Token being used:', token); // 👈 Add this to verify
-    if (!token) return setLoading(false);
-
-    fetch('http://localhost:3001/api/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => setUser(data)) // Data contains: id, username, bio, etc.
-      .catch(() => localStorage.removeItem('token'))
-      .finally(() => setLoading(false));
+    loadUser();
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const login = async (email, password) => {
+    try {
+      await apiLogin(email, password);
+      const me = await getMe();
+      setUser(me);
+    } catch (err) {
+      throw new Error('Login failed');
+    }
+  };
+
+  const register = async (email, password) => {
+    try {
+      await apiRegister(email, password);
+      const me = await getMe();
+      setUser(me);
+    } catch (err) {
+      throw new Error('Registration failed');
+    }
+  };
+
+  const logout = async () => {
+    await apiLogout();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
+    <AuthContext.Provider
+      value={{ user, setUser, login, logout, register, loading, error }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

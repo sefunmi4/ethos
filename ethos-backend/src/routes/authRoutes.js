@@ -6,12 +6,77 @@ import { v4 as uuidv4 } from 'uuid';
 import authenticate from '../middleware/authMiddleware.js';
 import { generateAccessToken, signRefreshToken } from '../utils/jwtUtils.js';
 import { hashPassword, comparePasswords } from '../utils/passwordUtils.js';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 const router = express.Router();
 
 const USERS_FILE = './src/data/users.json';
+const RESET_TOKENS_FILE = './src/data/resetTokens.json';
 
+const loadResetTokens = () => JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8') || '{}');
+const saveResetTokens = (data) => fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(data, null, 2));
+
+// 1. Request password reset
+router.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  const users = loadUsers();
+  const user = users.find(u => u.email === email);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const tokens = loadResetTokens();
+  tokens[token] = { id: user.id, expires: Date.now() + 1000 * 60 * 15 }; // 15 min expiry
+  saveResetTokens(tokens);
+
+  // Email transport (mock or real setup)
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+  });
+
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
+  const mailOptions = {
+    from: 'no-reply@ethos.app',
+    to: email,
+    subject: 'Reset Your Password',
+    text: `Reset your password using this link: ${resetUrl}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('[EMAIL ERROR]', error);
+      return res.status(500).json({ error: 'Failed to send reset email' });
+    }
+    res.status(200).json({ message: 'Password reset link sent' });
+  });
+});
+
+// 2. Reset password
+router.post('/reset-password/:token', async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  const tokens = loadResetTokens();
+
+  if (!tokens[token] || tokens[token].expires < Date.now()) {
+    return res.status(400).json({ error: 'Invalid or expired token' });
+  }
+
+  const users = loadUsers();
+  const user = users.find(u => u.id === tokens[token].id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  user.password = await hashPassword(password);
+  saveUsers(users);
+
+  delete tokens[token];
+  saveResetTokens(tokens);
+
+  res.json({ message: 'Password updated successfully' });
+});
 const loadUsers = () => JSON.parse(fs.readFileSync(USERS_FILE, 'utf8') || '[]');
 const saveUsers = (users) => fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 
@@ -96,8 +161,8 @@ router.get('/me', authenticate, (req, res) =>  {
   const user = users.find(u => u.id === req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
 
-  const { id, username, role, tags, bio, links } = user;
-  res.json({ id, username, role, tags, bio, links });
+  const { id, username, role, tags, bio, links, experienceTimeline } = user;
+  res.json({ id, username, role, tags, bio, links, experienceTimeline });
 });
 
 /* ------------------------ REFRESH ------------------------ */

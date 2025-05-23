@@ -1,29 +1,32 @@
 import express from 'express';
-import fs from 'fs';
 import dotenv from 'dotenv';
 import authOptional from '../middleware/authOptional.js';
+import { usersStore, postsStore, questsStore } from '../utils/loaders.js';
 
 dotenv.config();
 const router = express.Router();
-const USERS_FILE = './src/data/users.json';
-const POSTS_FILE = './src/data/posts.json';
-const QUESTS_FILE = './src/data/quests.json';
-
-const loadUsers = () => JSON.parse(fs.readFileSync(USERS_FILE, 'utf8') || '[]');
-const loadPosts = () => JSON.parse(fs.readFileSync(POSTS_FILE, 'utf8') || '[]');
-const loadQuests = () => JSON.parse(fs.readFileSync(QUESTS_FILE, 'utf8') || '[]');
-
 
 router.get('/:id/profile', authOptional, (req, res) => {
   const { id } = req.params;
-  const users = loadUsers();
+  const users = usersStore.read();
   const user = users.find(u => u.id === id);
   if (!user) return res.status(404).json({ error: 'User not found' });
 
-  const posts = loadPosts();
-  const quests = loadQuests();
-
+  const posts = postsStore.read();
+  const quests = questsStore.read();
   const isOwner = req.user?.id === id;
+
+  const visiblePosts = posts.filter(p => p.authorId === id && (isOwner || p.visibility === 'public'));
+  const visibleQuests = quests.filter(q => q.authorId === id && (isOwner || q.visibility === 'public'));
+
+  const activeQuests = visibleQuests.map(q => ({
+    id: q.id,
+    title: q.title,
+    summary: q.description || '',
+    status: q.status,
+    tags: q.tags || [],
+    collaborators: q.collaborators || []
+  }));
 
   res.json({
     id: user.id,
@@ -31,17 +34,10 @@ router.get('/:id/profile', authOptional, (req, res) => {
     bio: user.bio || '',
     tags: user.tags || [],
     links: user.links || {},
-    posts: posts.filter(p =>
-      p.authorId === id && (isOwner || p.visibility === 'public')
-    ),
-    quests: quests.filter(q =>
-      q.authorId === id && (isOwner || q.visibility === 'public')
-    ),
-    requests: posts.filter(p =>
-      p.type === 'request' && p.authorId === id && (isOwner || p.visibility === 'public')
-    )
+    posts: visiblePosts,
+    quests: activeQuests,
+    requests: visiblePosts.filter(p => p.type === 'request')
   });
 });
-
 
 export default router;
