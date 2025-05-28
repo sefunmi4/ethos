@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ContributionCard from '../contribution/ContrubitionCard'; // Optional fallback
 
-const QuestNode = ({ node, level = 0 }) => {
+const QuestNode = ({ node, level = 0, user  }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const hasChildren = node.children && node.children.length > 0;
@@ -19,13 +19,13 @@ const QuestNode = ({ node, level = 0 }) => {
           </button>
         )}
         <div className="flex-1">
-          <ContributionCard item={node} style={{ marginLeft: indent }} />
+          <ContributionCard item={node} style={{ marginLeft: indent }} user={user} />
         </div>
       </div>
       {!collapsed && hasChildren && (
         <div className="mt-2 space-y-2">
           {node.children.map((child) => (
-            <QuestNode key={child.id} node={child} level={level + 1} />
+            <QuestNode key={child.id} node={child} level={level + 1} user={user} />
           ))}
         </div>
       )}
@@ -33,12 +33,12 @@ const QuestNode = ({ node, level = 0 }) => {
   );
 };
 
-const QuestMapRenderer = ({ rootQuest }) => {
+const QuestMapRenderer = ({ rootQuest, user  }) => {
   if (!rootQuest) return <p className="text-gray-500">No quest data available.</p>;
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <QuestNode node={rootQuest} />
+      <QuestNode node={rootQuest} user={user} />
     </div>
   );
 };

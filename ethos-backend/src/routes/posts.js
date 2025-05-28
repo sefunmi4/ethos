@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { postsStore, boardsStore, usersStore } from '../utils/loaders.js';
+import { postsStore, boardsStore, usersStore, reactionsStore } from '../utils/loaders.js';
 import { enrichPost, enrichPosts } from '../utils/enrich.js';
 
 
@@ -176,6 +176,44 @@ router.delete('/:id', authMiddleware, (req, res) => {
   const updated = posts.filter(p => p.id !== req.params.id);
   postsStore.write(updated);
   res.json({ message: 'Post deleted' });
+});
+
+// Get all reactions for a post
+router.get('/:id/reactions', authMiddleware, (req, res) => {
+  const { id: postId } = req.params;
+  const allReactions = reactionsStore.read();
+  const postReactions = allReactions.filter(r => r.postId === postId);
+  res.json(postReactions);
+});
+
+// Post a reaction
+router.post('/:id/reactions', authMiddleware, (req, res) => {
+  const { id: postId } = req.params;
+  const userId = req.user?.id;
+  const { type, active } = req.body;
+
+  if (!userId || !type) return res.status(400).json({ error: 'Missing userId or type' });
+
+  const allReactions = reactionsStore.read();
+  const index = allReactions.findIndex(r => r.postId === postId && r.userId === userId && r.type === type);
+
+  if (index !== -1) {
+    if (!active) {
+      allReactions.splice(index, 1);
+    } else {
+      allReactions[index].timestamp = new Date().toISOString();
+    }
+  } else if (active) {
+    allReactions.push({
+      postId,
+      userId,
+      type,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  reactionsStore.write(allReactions);
+  res.status(200).json({ success: true });
 });
 
 export default router;

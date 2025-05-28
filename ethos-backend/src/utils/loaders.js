@@ -46,3 +46,4 @@ export const postsStore = new JsonStore('./src/data/posts.json');
 export const questsStore = new JsonStore('./src/data/quests.json');
 export const boardsStore = new JsonStore('./src/data/boards.json');
 export const collabStore = new JsonStore('./src/data/collab.json');
+export const reactionsStore = new JsonStore('./src/data/reactions.json'); 

@@ -4,7 +4,7 @@ import QuestCard from '../quests/QuestCard';
 import ProjectCard from '../projects/ProjectCard';
 import Card from '../contribution/ContrubitionCard';
 
-const BoardItemCard = ({ item, onClick, expanded = false }) => {
+const BoardItemCard = ({ item, user, onClick, expanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(expanded);
 
   const toggleExpand = () => {
@@ -15,13 +15,14 @@ const BoardItemCard = ({ item, onClick, expanded = false }) => {
   if (!item || !item.type) return null;
 
   const renderContent = () => {
+
     switch (item.type) {
       case 'post':
-        return <PostCard post={item} compact={!isExpanded} />;
+        return <PostCard post={item} user={user} compact={!isExpanded} />;
       case 'quest':
-        return <QuestCard quest={item} expanded={isExpanded} />;
+        return <QuestCard quest={item} user={user} expanded={isExpanded} />;
       case 'project':
-        return <ProjectCard project={item} expanded={isExpanded} />;
+        return <ProjectCard project={item} user={user} expanded={isExpanded} />;
       default:
         return (
           <div className="text-sm text-gray-500">

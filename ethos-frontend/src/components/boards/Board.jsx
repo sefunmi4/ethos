@@ -9,7 +9,7 @@ import ProjectPathRenderer from '../renderers/ProjectPathRenderer';
 import { Button, Input, Select } from '../ui';
 import CreateContribution from '../contribution/CreateContribution';
 
-const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title: forcedTitle }) => {
+const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title: forcedTitle, user }) => {
   const [board, setBoard] = useState(initialBoard || null);
   const [items, setItems] = useState(initialBoard?.enrichedItems || []);
   const [filterText, setFilterText] = useState('');
@@ -62,17 +62,17 @@ const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title
   const renderItems = () => {
     const props = {
       items: filteredItems,
-      renderItem: (item) => <BoardItemCard key={item.id} item={item} />
+      renderItem: (item) => <BoardItemCard key={item.id} item={item}  user={user} />
     };
 
     const structure = forcedStructure || board?.structure || 'grid';
 
     switch (structure) {
-      case 'list': return <ListRenderer {...props} />;
-      case 'grid': return <GridRenderer {...props} />;
-      case 'quest': return <QuestMapRenderer quests={filteredItems} />;
-      case 'project': return <ProjectPathRenderer projects={filteredItems} />;
-      default: return <GridRenderer {...props} />;
+      case 'list': return <ListRenderer {...props}  user={user} />;
+      case 'grid': return <GridRenderer {...props}  user={user} />;
+      case 'quest': return <QuestMapRenderer quests={filteredItems}  user={user} />;
+      case 'project': return <ProjectPathRenderer projects={filteredItems}  user={user} />;
+      default: return <GridRenderer {...props}  user={user} />;
     }
   };
 

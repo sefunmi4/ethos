@@ -6,50 +6,66 @@ const LinkControls = ({
   value,
   onChange,
   allowCreateNew = true,
-  label = 'Quest'
+  allowNodeSelection = false,
+  label = 'Item'
 }) => {
-  const [quests, setQuests] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState('');
   const [creatingNew, setCreatingNew] = useState(false);
 
+  const itemId = value?.itemId || '';
+  const nodeId = value?.nodeId || '';
+
   useEffect(() => {
-    const fetchQuests = async () => {
+    const fetchItems = async () => {
       try {
-        const res = await axiosWithAuth.get('/quests');
-        setQuests(res.data || []);
+        const res = await axiosWithAuth.get('/quests'); // Replace with generic endpoint if needed
+        setItems(res.data || []);
       } catch (err) {
-        console.error('[LinkControls] Failed to fetch quests:', err);
+        console.error('[LinkControls] Failed to fetch items:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchQuests();
+    fetchItems();
   }, []);
 
-  const handleSelect = (e) => {
+  const handleSelectItem = (e) => {
     const val = e.target.value;
+
     if (val === '__create') {
       setCreatingNew(true);
+    } else if (!val) {
+      setCreatingNew(false);
+      onChange(null);
     } else {
       setCreatingNew(false);
-      onChange(val); // Pass quest ID string (or object, depending on usage)
+      onChange({ itemId: val, nodeId: '' });
     }
   };
 
-  const handleCreateQuest = async () => {
+  const handleCreateItem = async () => {
     if (!newTitle.trim()) return;
     try {
-      const res = await axiosWithAuth.post('/quests', { title: newTitle });
-      const newQuest = res.data;
-      setQuests((prev) => [...prev, newQuest]);
-      onChange(newQuest.id); // or onChange({ questId: newQuest.id }) for object shape
+      const res = await axiosWithAuth.post('/quests', { title: newTitle }); // Replace with generic endpoint if needed
+      const newItem = res.data;
+      setItems((prev) => [...prev, newItem]);
+      onChange({ itemId: newItem.id, nodeId: '' });
       setNewTitle('');
       setCreatingNew(false);
     } catch (err) {
-      console.error('[LinkControls] Failed to create new quest:', err);
+      console.error('[LinkControls] Failed to create new item:', err);
     }
   };
+
+  const handleSelectNode = (e) => {
+    const val = e.target.value;
+    onChange({ itemId, nodeId: val });
+  };
+
+  const selectedItem = items.find((q) => q.id === itemId);
+  const subNodes = selectedItem ? [...(selectedItem.logs || []), ...(selectedItem.tasks || [])] : [];
 
   return (
     <div className="space-y-2">
@@ -58,12 +74,12 @@ const LinkControls = ({
       ) : (
         <>
           <Select
-            value={creatingNew ? '__create' : value || ''}
-            onChange={handleSelect}
+            value={creatingNew ? '__create' : itemId}
+            onChange={handleSelectItem}
             options={[
-                { value: '', label: `— Select a ${label} —` },
-                ...quests.map((q) => ({ value: q.id, label: q.title })),
-                ...(allowCreateNew ? [{ value: '__create', label: `➕ Create new ${label.toLowerCase()}` }] : [])
+              { value: '', label: `— Select a ${label} —` },
+              ...items.map((q) => ({ value: q.id, label: q.title })),
+              ...(allowCreateNew ? [{ value: '__create', label: `➕ Create new ${label.toLowerCase()}` }] : [])
             ]}
           />
 
@@ -78,12 +94,26 @@ const LinkControls = ({
               />
               <button
                 type="button"
-                onClick={handleCreateQuest}
+                onClick={handleCreateItem}
                 className="text-xs bg-indigo-600 text-white px-3 py-1 rounded"
               >
                 Create
               </button>
             </div>
+          )}
+
+          {allowNodeSelection && selectedItem && subNodes.length > 0 && (
+            <Select
+              value={nodeId}
+              onChange={handleSelectNode}
+              options={[
+                { value: '', label: '— No parent —' },
+                ...subNodes.map((node) => ({
+                  value: node.id,
+                  label: `${node.type === 'quest_log' ? '📘 Log' : '📌 Task'}: ${node.content.slice(0, 30)}...`
+                }))
+              ]}
+            />
           )}
         </>
       )}

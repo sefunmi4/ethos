@@ -1,80 +1,153 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { FaEllipsisH, FaLink, FaArchive, FaTrash, FaEdit } from 'react-icons/fa';
 import EditPost from './EditPost';
-import { Button, PostTypeBadge, ReactionButton } from '../ui';
+import { PostTypeBadge, ReactionButton } from '../ui';
+import LinkToItemModal from '../ui/LinkToItemModal';
 
 const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
 
-  const canEdit = user?.id === post.authorId || post.collaborators?.includes?.(user?.id);
-  const timestampLabel = post.timestamp
+  const canEdit = user?.id === post.authorId || (post.collaborators || []).includes(user?.id);
+  const hasLink = post.links && post.links.length > 0;
+  const canLink = post.type === 'request' && user;
+
+  const timestamp = post.timestamp
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
 
-  const handleSave = async (updatedPost) => {
-    await onUpdate?.(updatedPost);
-    setEditMode(false);
-  };
-
   const handleDelete = () => {
-    const confirmed = window.confirm('Are you sure you want to delete this post?');
-    if (confirmed) {
+    if (window.confirm('Are you sure you want to delete this post?')) {
       onDelete?.(post.id);
     }
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/posts/${post.id}`);
+    alert('Link copied!');
+  };
+
+  const handleLinkNavigation = (link) => {
+    if (link.type === 'quest') navigate(`/quests/${link.id}`);
+    else if (link.type === 'project') navigate(`/projects/${link.id}`);
+    else if (link.url) window.open(link.url, '_blank');
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    if (showMenu) document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showMenu]);
+
   if (editMode) {
-    return (
-      <EditPost
-        post={post}
-        onCancel={() => setEditMode(false)}
-        onUpdated={handleSave}
-      />
-    );
+    return <EditPost post={post} onCancel={() => setEditMode(false)} onUpdated={onUpdate} />;
   }
 
   return (
-    <div className="border rounded bg-white shadow-sm p-4 space-y-2">
-      <div className="flex items-center justify-between text-sm text-gray-600">
+    <div className="relative border rounded bg-white shadow-sm p-4 space-y-2">
+      <div className="flex justify-between text-sm text-gray-600">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
-          <span>{timestampLabel}</span>
+          <span>{timestamp}</span>
         </div>
-        {canEdit && (
-          <div className="flex gap-2">
-            <Button size="xs" variant="ghost" onClick={() => setEditMode(true)}>
-              Edit
-            </Button>
-            <Button size="xs" variant="ghost" onClick={handleDelete}>
-              Delete
-            </Button>
-          </div>
-        )}
+
+        <div ref={menuRef} className="relative">
+          <button onClick={() => setShowMenu(!showMenu)} className="hover:text-gray-800">
+            <FaEllipsisH />
+          </button>
+          {showMenu && (
+            <div className="absolute right-0 mt-1 w-48 bg-white border rounded shadow text-sm z-10">
+              {canEdit && (
+                <>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-100" onClick={() => setEditMode(true)}>
+                    <FaEdit className="inline mr-2" /> Edit
+                  </button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-red-100 text-red-600" onClick={handleDelete}>
+                    <FaTrash className="inline mr-2" /> Delete
+                  </button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-100">
+                    <FaArchive className="inline mr-2" /> Archive
+                  </button>
+                </>
+              )}
+              <button className="w-full text-left px-3 py-2 hover:bg-gray-100" onClick={handleCopyLink}>
+                <FaLink className="inline mr-2" /> Copy Link
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="text-gray-800 text-sm whitespace-pre-wrap">
-        {compact && !isExpanded ? (
+      <div className="text-sm text-gray-800 whitespace-pre-wrap">
+        {compact && post.content.length > 280 ? (
           <>
-            {post.content.slice(0, 280)}
-            {post.content.length > 280 && '... '}
-            {post.content.length > 280 && (
-              <button
-                className="text-xs text-blue-600 underline"
-                onClick={() => setIsExpanded(true)}
-              >
-                Expand
-              </button>
-            )}
+            {post.content.slice(0, 280)}...{' '}
+            <button onClick={() => alert('Open full post')} className="text-blue-600 underline text-xs">
+              Expand
+            </button>
           </>
         ) : (
-          <>{post.content}</>
+          post.content
         )}
       </div>
 
-      <div className="flex justify-between items-center">
-        <ReactionButton postId={post.id} />
+      {hasLink ? (
+        <div className="text-xs text-blue-600 mt-1">
+          {post.links.length === 1 ? (
+            <span className="cursor-pointer" onClick={() => handleLinkNavigation(post.links[0])}>
+              🔗 Linked to {post.links[0].type}: {post.links[0].title || post.links[0].id}
+            </span>
+          ) : (
+            <details>
+              <summary className="cursor-pointer">🔗 Linked to {post.links.length} items</summary>
+              <ul className="ml-4 list-disc text-blue-700">
+                {post.links.map((link, idx) => (
+                  <li key={idx} className="cursor-pointer hover:underline" onClick={() => handleLinkNavigation(link)}>
+                    {link.type}: {link.title || link.id}
+                  </li>
+                ))}
+                {user && (
+                  <li className="text-green-600 hover:underline cursor-pointer" onClick={() => setShowLinkModal(true)}>
+                    ➕ Add or change link
+                  </li>
+                )}
+              </ul>
+            </details>
+          )}
+        </div>
+      ) : canLink ? (
+        <div className="text-xs text-gray-500 mt-1">
+          <span className="cursor-pointer text-blue-600" onClick={() => setShowLinkModal(true)}>
+            ➕ Add a link to a quest or project
+          </span>
+        </div>
+      ) : null}
+
+      <div className="pt-2">
+        <ReactionButton postId={post.id} userId={user?.id} />
       </div>
+
+      {showLinkModal && (
+        <LinkToItemModal
+          isOpen={showLinkModal}
+          onClose={() => setShowLinkModal(false)}
+          post={post}
+          onLink={(link) => {
+            const updatedPost = { ...post, links: [...(post.links || []), link] };
+            onUpdate(updatedPost); // Save locally — or send PATCH to backend if ready
+          }}
+        />
+      )}
+
     </div>
   );
 };

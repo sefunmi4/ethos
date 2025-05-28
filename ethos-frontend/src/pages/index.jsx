@@ -50,9 +50,9 @@ const HomePage = () => {
       {/* 🔄 Latest Posts Board */}
       <section className="mb-12">
         {defaultFeedBoardId ? (
-          <Board boardId={defaultFeedBoardId} structure="list" title="🧭 Latest Posts" />
+          <Board boardId={defaultFeedBoardId} structure="list" title="🧭 Latest Posts" user={user} />
         ) : selectedBoard ? (
-          <Board boardId={selectedBoard.id} structure="list" title="🧭 Latest Posts" />
+          <Board boardId={selectedBoard.id} structure="list" title="🧭 Latest Posts" user={user} />
         ) : (
           <div className="text-gray-500 text-center py-8">No posts to display yet.</div>
         )}
@@ -69,6 +69,7 @@ const HomePage = () => {
                 boardId={board.id}
                 title={`📌 ${board.title || 'Untitled Board'}`}
                 structure="list"
+                user={user}
               />
             ))
           ) : (
