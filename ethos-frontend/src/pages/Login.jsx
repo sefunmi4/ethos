@@ -21,35 +21,33 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
       if (showReset) {
         await forgotPassword(form.email);
         setResetSent(true);
-        setLoading(false);
         return;
       }
-
+  
       if (isRegistering) {
         if (form.password !== form.confirm) {
-          setLoading(false);
           return setError('Passwords do not match');
         }
         await register(form.email, form.password);
       }
-
+  
       await login(form.email, form.password);
       const user = await getMe();
       setUser(user);
       navigate('/');
     } catch (err) {
       console.error('Auth failed:', err);
-      setError(err.response?.data?.error || 'Something went wrong');
+      setError(err.response?.data?.error || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
+  
   const resetToLogin = () => {
     setShowReset(false);
     setIsRegistering(false);

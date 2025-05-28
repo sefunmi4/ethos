@@ -1,76 +1,81 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { axiosWithAuth } from '../../utils/authUtils';
 import { useAuth } from '../../contexts/AuthContext';
-import { BoardProvider } from '../../contexts/BoardContext';
-import QuestSummaryHeader from '../../components/quests/QuestSummaryHeader';
-import QuestBoardMap from '../../components/quests/QuestBoardMap';
-import Board from '../../components/boards/Board';
-import BoardToolbar from '../../components/boards/BoardToolbar';
-import axios from 'axios';
+import QuestMapRenderer from '../../components/renderers/QuestMapRenderer';
+import ThreadRenderer from '../../components/renderers/ThreadRenderer';
+import PostCard from '../../components/posts/PostCard';
+import QuestCard from '../../components/quests/QuestCard';
 
 const QuestPage = () => {
   const { id } = useParams();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [quest, setQuest] = useState(null);
-  const [questLogs, setQuestLogs] = useState([]);
-  const [error, setError] = useState(null);
-
-  const fetchQuestData = useCallback(async () => {
-    try {
-      const questRes = await axios.get(`/api/quests/${id}`);
-      const logsRes = await axios.get(`/api/quests/${id}/logs`);
-
-      const fetchedQuest = questRes.data;
-      const logs = logsRes?.data?.logs || fetchedQuest.logs || [];
-
-      setQuest(fetchedQuest);
-      setQuestLogs(logs);
-    } catch (err) {
-      setError('Failed to load quest.');
-      console.error('[QuestPage Error]', err);
-    }
-  }, [id]);
+  const [questTree, setQuestTree] = useState([]);
+  const [logPosts, setLogPosts] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchQuestData();
-  }, [fetchQuestData]);
+    const fetchQuestData = async () => {
+      try {
+        const [questRes, treeRes, logsRes] = await Promise.all([
+          axiosWithAuth.get(`/api/quests/${id}`),
+          axiosWithAuth.get(`/api/quests/${id}/tree`),     // tree or graph data
+          axiosWithAuth.get(`/api/posts/quest/${id}/logs`) // quest_log posts
+        ]);
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen text-gray-500">Checking session...</div>;
-  }
+        setQuest(questRes.data);
+        setQuestTree(treeRes.data || []);
+        setLogPosts(logsRes.data || []);
+      } catch (err) {
+        console.error('Failed to load quest:', err);
+        setError('This quest could not be loaded or is private.');
+      }
+    };
+
+    fetchQuestData();
+  }, [id]);
 
   if (error) {
-    return <div className="text-center py-12 text-red-500">{error}</div>;
+    return <div className="p-6 text-center text-red-500">{error}</div>;
   }
 
   if (!quest) {
-    return <div className="text-center py-12 text-gray-500">Loading quest...</div>;
+    return <div className="p-6 text-center text-gray-500">Loading quest...</div>;
   }
 
   return (
-    <BoardProvider initialStructure="list">
-      <main className="container mx-auto px-4 py-10 max-w-6xl">
-        <QuestSummaryHeader quest={quest} onRefresh={fetchQuestData} />
+    <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
+      {/* Quest Summary Header */}
+      <QuestCard quest={quest} user={user} readOnly />
 
-        <section className="mt-10 mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">📓 Quest Log</h2>
-          <BoardToolbar title="Timeline & Chat" filters={{ type: 'quest_log' }} />
-          <Board
-            board={{
-              id: `quest-log-${quest.id}`,
-              title: 'Quest Log',
-              items: questLogs
-            }}
-            structure="list"
+      {/* Quest Map (Tree Layout) */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800">🗺 Quest Map</h2>
+        {questTree.length > 0 ? (
+          <QuestMapRenderer items={questTree} rootId={id} />
+        ) : (
+          <p className="text-sm text-gray-500">This quest has no subtasks or branches yet.</p>
+        )}
+      </section>
+
+      {/* Quest Log Timeline */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800">📜 Quest Log</h2>
+        {logPosts.length > 0 ? (
+          <ThreadRenderer
+            items={logPosts}
+            rootId={logPosts[0].id}
+            type="timeline"
+            renderItem={(post) => (
+              <PostCard key={post.id} post={post} user={user} compact />
+            )}
           />
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">🗺️ Quest Map</h2>
-          <QuestBoardMap quest={quest} logs={questLogs} />
-        </section>
-      </main>
-    </BoardProvider>
+        ) : (
+          <p className="text-sm text-gray-500">No quest logs yet. Start journaling progress.</p>
+        )}
+      </section>
+    </main>
   );
 };
 

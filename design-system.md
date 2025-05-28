@@ -97,9 +97,9 @@ Create a professional, modular, and extensible system that:
 
 1. `Board.jsx`
 2. `itemstructure/index.js`
-3. `itemstructure/BoardItemList.jsx`
-4. `itemstructure/BoardItemGrid.jsx`
-5. `itemstructure/BoardItemScroll.jsx`
+3. `itemstructure/BoardItemCardList.jsx`
+4. `itemstructure/BoardItemCardGrid.jsx`
+5. `itemstructure/BoardItemCardScroll.jsx`
 6. `BoardToolbar.jsx`
 7. `BoardAddItem.jsx`
 8. `BoardItemCard/index.jsx`

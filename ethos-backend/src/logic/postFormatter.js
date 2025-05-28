@@ -1,12 +1,16 @@
-// postFormatter.js
+// utils/postFormatter.js
 
 import { canEditPost, canCommentOnPost, canViewPost } from './permissionUtils.js';
 
 /**
- * Enrich a post object with user-specific permissions and display hints
+ * Adds display hints and user actions to a post for frontend logic.
+ * 
+ * @param {object} post - The raw post object.
+ * @param {string|null} currentUserId - The current user’s ID (optional).
+ * @returns {object|null} - The formatted post or null if invalid.
  */
-export const formatPost = (post, currentUserId) => {
-  if (!post) return null;
+export const formatPost = (post, currentUserId = null) => {
+  if (!post || typeof post !== 'object') return null;
 
   return {
     ...post,
@@ -19,13 +23,17 @@ export const formatPost = (post, currentUserId) => {
       canEdit: canEditPost(post, currentUserId),
       canComment: canCommentOnPost(post, currentUserId),
       canView: canViewPost(post, currentUserId),
-    }
+    },
   };
 };
 
 /**
- * Format an array of posts
+ * Applies `formatPost` to a list of posts.
+ * 
+ * @param {object[]} posts - Array of post objects.
+ * @param {string|null} currentUserId - The current user’s ID.
+ * @returns {object[]} - List of formatted post objects.
  */
-export const formatPosts = (posts = [], currentUserId) => {
-  return posts.map(p => formatPost(p, currentUserId));
+export const formatPosts = (posts = [], currentUserId = null) => {
+  return posts.map(p => formatPost(p, currentUserId)).filter(Boolean);
 };

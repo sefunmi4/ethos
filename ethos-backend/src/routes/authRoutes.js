@@ -3,22 +3,48 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-import authenticate from '../middleware/authMiddleware.js';
-import { generateAccessToken, signRefreshToken } from '../utils/jwtUtils.js';
-import { hashPassword, comparePasswords } from '../utils/passwordUtils.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import cookieParser from 'cookie-parser'; // ✅ Ensure cookie support
+
+import cookieAuth from '../middleware/cookieAuth.js';
+import { generateAccessToken, signRefreshToken } from '../utils/jwtUtils.js';
+import { hashPassword, comparePasswords } from '../utils/passwordUtils.js';
 
 dotenv.config();
 const router = express.Router();
+router.use(cookieParser()); // ✅ Use cookie parser middleware
 
 const USERS_FILE = './src/data/users.json';
 const RESET_TOKENS_FILE = './src/data/resetTokens.json';
 
+// ---------------------- Helper Utilities ----------------------
+
+const loadUsers = () => JSON.parse(fs.readFileSync(USERS_FILE, 'utf8') || '[]');
+const saveUsers = (users) => fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+
 const loadResetTokens = () => JSON.parse(fs.readFileSync(RESET_TOKENS_FILE, 'utf8') || '{}');
 const saveResetTokens = (data) => fs.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(data, null, 2));
 
-// 1. Request password reset
+const sendResetEmail = async (email, resetUrl) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  });
+
+  const mailOptions = {
+    from: 'no-reply@ethos.app',
+    to: email,
+    subject: 'Reset Your Password',
+    text: `Reset your password using this link: ${resetUrl}`,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
+// ---------------------- Auth Routes ----------------------
+
+/** 🔐 Forgot Password */
 router.post('/forgot-password', (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -29,44 +55,32 @@ router.post('/forgot-password', (req, res) => {
 
   const token = crypto.randomBytes(32).toString('hex');
   const tokens = loadResetTokens();
-  tokens[token] = { id: user.id, expires: Date.now() + 1000 * 60 * 15 }; // 15 min expiry
+  tokens[token] = { id: user.id, expires: Date.now() + 15 * 60 * 1000 };
   saveResetTokens(tokens);
 
-  // Email transport (mock or real setup)
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-  });
-
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
-  const mailOptions = {
-    from: 'no-reply@ethos.app',
-    to: email,
-    subject: 'Reset Your Password',
-    text: `Reset your password using this link: ${resetUrl}`
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
+  sendResetEmail(email, resetUrl)
+    .then(() => res.status(200).json({ message: 'Password reset link sent' }))
+    .catch((error) => {
       console.error('[EMAIL ERROR]', error);
-      return res.status(500).json({ error: 'Failed to send reset email' });
-    }
-    res.status(200).json({ message: 'Password reset link sent' });
-  });
+      res.status(500).json({ error: 'Failed to send reset email' });
+    });
 });
 
-// 2. Reset password
+/** 🔁 Reset Password */
 router.post('/reset-password/:token', async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
-  const tokens = loadResetTokens();
 
-  if (!tokens[token] || tokens[token].expires < Date.now()) {
+  const tokens = loadResetTokens();
+  const tokenData = tokens[token];
+
+  if (!tokenData || tokenData.expires < Date.now()) {
     return res.status(400).json({ error: 'Invalid or expired token' });
   }
 
   const users = loadUsers();
-  const user = users.find(u => u.id === tokens[token].id);
+  const user = users.find(u => u.id === tokenData.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
 
   user.password = await hashPassword(password);
@@ -77,44 +91,32 @@ router.post('/reset-password/:token', async (req, res) => {
 
   res.json({ message: 'Password updated successfully' });
 });
-const loadUsers = () => JSON.parse(fs.readFileSync(USERS_FILE, 'utf8') || '[]');
-const saveUsers = (users) => fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 
-/* ------------------------ REGISTER ------------------------ */
+/** 🧾 Register */
 router.post('/register', async (req, res) => {
   try {
     const { email, password, username } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ error: 'Email and password required' });
+    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
     const users = loadUsers();
-    const existingUser = users.find(u => u.email === email);
-    if (existingUser)
+    if (users.find(u => u.email === email)) {
       return res.status(409).json({ error: 'Email already registered' });
-
-    const hashedPassword = await hashPassword(password);
+    }
 
     const newUser = {
       id: `u_${uuidv4()}`,
       username: username || email.split('@')[0],
       email,
-      password: hashedPassword,
+      password: await hashPassword(password),
       role: 'user',
       tags: ['explorer'],
       bio: '',
-      links: {
-        github: '',
-        linkedin: '',
-        tiktok: '',
-        website: ''
-      },
-      experienceTimeline: [
-        {
-          datetime: new Date().toISOString(),
-          title: 'Journey begins',
-          tags: ['registered']
-        }
-      ]
+      links: { github: '', linkedin: '', tiktok: '', website: '' },
+      experienceTimeline: [{
+        datetime: new Date().toISOString(),
+        title: 'Journey begins',
+        tags: ['registered']
+      }]
     };
 
     users.push(newUser);
@@ -127,7 +129,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-/* ------------------------ LOGIN ------------------------ */
+/** 🔑 Login */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -135,17 +137,18 @@ router.post('/login', async (req, res) => {
     const user = users.find(u => u.email === email);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const match = await comparePasswords(password, user.password);
-    if (!match) return res.status(401).json({ error: 'Invalid password' });
+    const valid = await comparePasswords(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Invalid password' });
 
     const refreshToken = signRefreshToken({ id: user.id, role: user.role });
     const accessToken = generateAccessToken({ id: user.id, role: user.role });
 
+    // ✅ Set secure cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      sameSite: 'Lax', // You may change to 'Lax' or 'None' depending on deployment
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.json({ message: 'Login successful', accessToken });
@@ -155,8 +158,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-/* ------------------------ ME ------------------------ */
-router.get('/me', authenticate, (req, res) =>  {
+/** 👤 Me */
+router.get('/me', cookieAuth, (req, res) => {
   const users = loadUsers();
   const user = users.find(u => u.id === req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
@@ -165,7 +168,7 @@ router.get('/me', authenticate, (req, res) =>  {
   res.json({ id, username, role, tags, bio, links, experienceTimeline });
 });
 
-/* ------------------------ REFRESH ------------------------ */
+/** 🔄 Refresh Token */
 router.post('/refresh', (req, res) => {
   const token = req.cookies?.refreshToken;
   if (!token) return res.sendStatus(401);
@@ -177,12 +180,12 @@ router.post('/refresh', (req, res) => {
   });
 });
 
-/* ------------------------ LOGOUT ------------------------ */
+/** 🚪 Logout */
 router.post('/logout', (req, res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     sameSite: 'Strict',
-    secure: true
+    secure: process.env.NODE_ENV === 'production',
   });
   res.sendStatus(204);
 });

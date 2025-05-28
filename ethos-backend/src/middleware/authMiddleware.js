@@ -1,21 +1,18 @@
+// middleware/authenticate.js
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(403).send('Forbidden');
+export default function authenticate(req, res, next) {
+  const token = req.cookies?.refreshToken;
+
+  if (!token) {
+    return res.status(403).json({ error: 'Missing or invalid token (cookie)' });
   }
 
-  const token = authHeader.split(' ')[1];
-
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
+    const decoded = jwt.verify(token, process.env.REFRESH_SECRET); // ✅ match to cookie token
     req.user = decoded;
     next();
   } catch (err) {
-    console.error('JWT verify error:', err.message);
-    res.status(403).send('Forbidden');
+    return res.status(403).json({ error: 'Invalid or expired token' });
   }
-};
-
-export default authMiddleware;
+}

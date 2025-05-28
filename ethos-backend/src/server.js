@@ -1,3 +1,5 @@
+// server.js
+
 import express from 'express';
 import fs from 'fs';
 import cors from 'cors';
@@ -15,18 +17,25 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+app.use(cors({
+  origin: CLIENT_URL,
+  credentials: true,
+  sameSite: 'Lax',
+}));
 app.use(express.json());
 app.use(cookieParser());
 
-// Route Groups
-app.use('/api/auth', authRoutes);    // login, register, refresh, logout, me
-app.use('/api/users', usersRouter);  // profile & quest/post aggregation
-app.use('/api/posts', postsRouter);  // post creation
-app.use('/api/quests', questsRouter); // quest management
+// ✅ Routes
+app.use('/api/auth', authRoutes);    
+app.use('/api/users', usersRouter);  
+app.use('/api/posts', postsRouter);  
+app.use('/api/quests', questsRouter); 
 app.use('/api/boards', boardsRoutes); 
 app.use('/api/collabs', collabsRoutes); 
 
-// Start Server
-app.listen(3001, () => console.log('Backend running on http://localhost:3001'));
+// ✅ Start server
+app.listen(3001, () => {
+  console.log(`Backend running on http://localhost:3001 and accepting CORS from ${process.env.CLIENT_URL}`);
+});

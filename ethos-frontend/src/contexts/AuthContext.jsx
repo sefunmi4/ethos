@@ -1,10 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import {
-  getMe,
   login as apiLogin,
   logout as apiLogout,
   register as apiRegister,
+  forgotPassword,
 } from '../api/auth';
+import { getUserFromToken, axiosWithAuth } from '../utils/authUtils';
 
 export const AuthContext = createContext();
 
@@ -13,25 +14,42 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const me = await getMe();
+  const fetchUser = async () => {
+    try {
+      const me = await getUserFromToken();
+      setUser(me);
+    } catch (err) {
+      console.warn('[AuthContext] Fetch failed, trying refresh...');
+      const refreshed = await tryRefreshAccessToken();
+      if (refreshed) {
+        const me = await getUserFromToken();
         setUser(me);
-      } catch (err) {
-        console.warn('No active session');
-      } finally {
-        setLoading(false);
+      } else {
+        setUser(null);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadUser();
+  const tryRefreshAccessToken = async () => {
+    try {
+      const res = await axiosWithAuth.post('/auth/refresh');
+      return !!res?.data?.accessToken;
+    } catch (err) {
+      console.error('[AuthContext] Refresh failed:', err);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
   }, []);
 
   const login = async (email, password) => {
     try {
       await apiLogin(email, password);
-      const me = await getMe();
+      const me = await getUserFromToken();
       setUser(me);
     } catch (err) {
       throw new Error('Login failed');
@@ -41,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (email, password) => {
     try {
       await apiRegister(email, password);
-      const me = await getMe();
+      const me = await getUserFromToken();
       setUser(me);
     } catch (err) {
       throw new Error('Registration failed');
@@ -55,7 +73,15 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, login, logout, register, loading, error }}
+      value={{
+        user,
+        loading,
+        error,
+        login,
+        logout,
+        register,
+        setUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

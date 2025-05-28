@@ -1,14 +1,31 @@
-// src/utils/authUtils.js
+import axios from 'axios';
+
+const API_BASE = 'http://localhost:3001/api';
+
+/** 🧠 Authenticated Axios instance with cookie support */
+export const axiosWithAuth = axios.create({
+  baseURL: API_BASE,
+  withCredentials: true, // ✅ always send cookies
+});
+
+/** 🚪 Logout user and redirect */
+export const logoutUser = async () => {
+  try {
+    await axiosWithAuth.post('/auth/logout');
+  } catch (err) {
+    console.error('Logout failed:', err);
+  } finally {
+    window.location.href = '/login'; // Always redirect
+  }
+};
+
+/** 👤 Get current user (relies on HTTP-only cookie) */
 export const getUserFromToken = async () => {
-  const token = localStorage.getItem('token');
-  console.log('Token being used:', token); // 👈 Add this to verify
-  if (!token) throw new Error('No token');
-
-  const res = await fetch('http://localhost:3001/api/auth/me', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) throw new Error('Invalid token');
-
-  return res.json(); // e.g. { email, role }
+  try {
+    const res = await axiosWithAuth.get(`/auth/me`);
+    return res.data;
+  } catch (err) {
+    console.error('Auth check failed:', err);
+    return null;
+  }
 };

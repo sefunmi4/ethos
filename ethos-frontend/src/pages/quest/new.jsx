@@ -1,48 +1,29 @@
-
-
-// src/pages/quest/new.jsx
+// 🔄 Example usage for CreateQuest.jsx
+// src/pages/CreateQuest.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import CreateModal from '../components/create/CreateModal';
 
-const NewQuest = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('/api/quests', { title, description });
-      navigate('/profile');
-    } catch (err) {
-      console.error('Failed to create quest', err);
-    }
-  };
+const CreateQuest = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <main className="max-w-xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-4">Create New Quest</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Quest Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-3 border rounded"
-        />
-        <textarea
-          rows={5}
-          placeholder="Quest Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-3 border rounded"
-        />
-        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">Create</button>
-      </form>
-    </main>
+    <div className="p-6">
+      <button
+        onClick={() => setIsOpen(true)}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        ➕ New Quest
+      </button>
+      <CreateModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onSuccess={(quest) => console.log('Quest created:', quest)}
+        title="Start a New Quest"
+        type="quest_log"
+        context={{}}
+      />
+    </div>
   );
 };
 
-export default NewQuest;
-
+export default CreateQuest;

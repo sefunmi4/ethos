@@ -1,7 +1,7 @@
 // src/pages/post/new.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { axiosWithAuth } from '../../utils/authUtils';
 
 const NewPost = () => {
   const [content, setContent] = useState('');
@@ -11,7 +11,7 @@ const NewPost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/posts', { content, type });
+      await axiosWithAuth.post('/api/posts', { content, type });
       navigate('/profile');
     } catch (err) {
       console.error('Failed to create post', err);

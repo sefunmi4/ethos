@@ -1,75 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { BoardProvider } from '../../contexts/BoardContext';
 import Board from '../../components/boards/Board';
-import BoardToolbar from '../../components/boards/BoardToolbar';
-import BoardItemCard from '../../components/boards/BoardItemCard';
+import { axiosWithAuth } from '../../utils/authUtils';
+import { useBoardContext } from '../../contexts/BoardContext';
 
 const BoardPage = () => {
   const { id } = useParams();
-  const [board, setBoard] = useState(null);
-  const [viewMode, setViewMode] = useState('list');
-  const [filters, setFilters] = useState({});
-  const [error, setError] = useState(null);
+  const [boardData, setBoardData] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { setBoardMeta } = useBoardContext();
 
   useEffect(() => {
     const fetchBoard = async () => {
       try {
-        const res = await axios.get(`/s${id}`);
-        setBoard(res.data);
-        setFilters(res.data.filters || {});
-        setViewMode(res.data.structure || 'list');
+        const res = await axiosWithAuth.get(`/api/boards/${id}?enrich=true`);
+        setBoardData(res.data);
+        setBoardMeta({ id: res.data.id, title: res.data.title, layout: res.data.structure });
       } catch (err) {
         console.error('Error loading board:', err);
-        setError('Failed to load board.');
+        setError('Board not found or inaccessible.');
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchBoard();
-  }, [id]);
+  }, [id, setBoardMeta]);
 
-  if (error) {
-    return <div className="text-center py-12 text-red-500">{error}</div>;
-  }
-
-  if (!board) {
-    return <div className="text-center py-12 text-gray-500">Loading board...</div>;
-  }
+  if (loading) return <div className="p-6 text-center text-gray-500">Loading board...</div>;
+  if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
+  if (!boardData) return null;
 
   return (
-    <BoardProvider initialStructure={viewMode} initialFilters={filters}>
-      <main className="container mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">📂 {board.title}</h1>
-          <p className="text-gray-600">
-            {board.description || 'This board displays a collection of items.'}
-          </p>
-        </header>
+    <main className="max-w-7xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">{boardData.title}</h1>
 
-        <section className="mb-8">
-          <BoardToolbar
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            filters={filters}
-            setFilters={setFilters}
-            title="Board Items"
-          />
-        </section>
-
-        <Board
-          board={board}
-          structure={viewMode}
-          renderItem={(item) => (
-            <BoardItemCard
-              key={item.id}
-              title={item.title || 'Untitled'}
-              subtitle={item.type === 'quest' ? 'Quest' : item.type}
-              data={item}
-            />
-          )}
-        />
-      </main>
-    </BoardProvider>
+      <Board
+        board={boardData}
+        structure={boardData.structure || 'grid'}
+        editable={true}
+        title={boardData.title}
+      />
+    </main>
   );
 };
 

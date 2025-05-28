@@ -16,7 +16,13 @@ router.get('/:id/profile', authOptional, (req, res) => {
   const quests = questsStore.read();
   const isOwner = req.user?.id === id;
 
-  const visiblePosts = posts.filter(p => p.authorId === id && (isOwner || p.visibility === 'public'));
+  const visiblePosts = posts
+    .filter(p => p.authorId === id && (isOwner || p.visibility === 'public'))
+    .map(p => ({
+      ...p,
+      replies: posts.filter(r => r.replyTo === p.id),
+      reposts: posts.filter(r => r.parentPostId === p.id)
+    }))
   const visibleQuests = quests.filter(q => q.authorId === id && (isOwner || q.visibility === 'public'));
 
   const activeQuests = visibleQuests.map(q => ({

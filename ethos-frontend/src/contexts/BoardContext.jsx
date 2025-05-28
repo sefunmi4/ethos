@@ -1,40 +1,46 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export const BoardContext = createContext();
+// Create the BoardContext
+const BoardContext = createContext();
 
-export const BoardProvider = ({
-  children,
-  initialStructure = 'list',
-  initialFilters = {},
-}) => {
-  const [items, setItems] = useState([]); // Can be posts, quests, or threads
-  const [structure, setStructure] = useState(initialStructure); // 'list', 'grid', 'tree', 'scroll'
-  const [filters, setFilters] = useState(initialFilters);
-  const [viewMode, setViewMode] = useState('default'); // 'default', 'compact', 'expanded'
+// Default structure settings
+const defaultStructure = {
+  layout: 'grid', // other options: 'list', 'tree'
+  filters: [],
+  sortBy: 'updatedAt',
+  featured: false
+};
 
-  // Used to preserve item context between board and detail views
-  const [activeItemId, setActiveItemId] = useState(null);
-  const [selectedThreadId, setSelectedThreadId] = useState(null);
+export const BoardProvider = ({ children }) => {
+  const [selectedBoard, setSelectedBoard] = useState(null);  // active board object
+  const [structure, setStructure] = useState(defaultStructure);
+  const [meta, setMeta] = useState({ title: '', description: '' });
 
-  useEffect(() => {
-    // Optional: fetch board layout config
-  }, []);
+  const updateBoard = (board) => {
+    setSelectedBoard(board);
+    setStructure(board.structure || defaultStructure);
+    setMeta({ title: board.title, description: board.description || '' });
+  };
+
+  const updateStructure = (updates) => {
+    setStructure((prev) => ({ ...prev, ...updates }));
+  };
+
+  const resetBoard = () => {
+    setSelectedBoard(null);
+    setStructure(defaultStructure);
+    setMeta({ title: '', description: '' });
+  };
 
   return (
     <BoardContext.Provider
       value={{
-        items,
-        setItems,
+        selectedBoard,
         structure,
-        setStructure,
-        filters,
-        setFilters,
-        viewMode,
-        setViewMode,
-        activeItemId,
-        setActiveItemId,
-        selectedThreadId,
-        setSelectedThreadId,
+        meta,
+        setSelectedBoard: updateBoard,
+        updateStructure,
+        resetBoard
       }}
     >
       {children}
@@ -42,4 +48,5 @@ export const BoardProvider = ({
   );
 };
 
-export const useBoard = () => useContext(BoardContext);
+// Custom hook for accessing board context
+export const useBoardContext = () => useContext(BoardContext);

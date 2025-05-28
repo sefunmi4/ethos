@@ -1,9 +1,9 @@
 [
   {
-    "id": "u_621461d1-6f81-4150-94f0-025837a035fe",
+    "id": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
     "username": "testerbot1",
     "email": "testerbot1@ethos.com",
-    "password": "$2b$10$vpgYZHefSdepc7WHjIFY7.LY.DYEqqZzC0U.cwW3TV1E8GtTtpIf2",
+    "password": "$2b$10$2GOCFe0RHHL.kdl7wNeYUOsuCsdB4eQJWZ1Ls/.WF23GsQ2pnRZOi",
     "role": "user",
     "tags": [
       "explorer"
@@ -17,85 +17,7 @@
     },
     "experienceTimeline": [
       {
-        "datetime": "2025-05-11T15:01:10.498Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "u_6fe234fb-7c35-4f59-b22f-daadc2fa2619",
-    "username": "testerbot2",
-    "email": "testerbot2@ethos.com",
-    "password": "$2b$10$m7TwSg.rP.Yz6bWvaeWeDOlhxxR9CkhQ8oKL164YCtr2zY8OtMEy2",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "experienceTimeline": [
-      {
-        "datetime": "2025-05-17T22:39:34.025Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "u_7121d27f-46a4-436e-9937-ef2cd5f6dfd2",
-    "username": "a",
-    "email": "a@gm.com",
-    "password": "$2b$10$Kmf.sVoaTICr/7RsKhUvh.YTrYBGm1S5j.DYs/hzN20PG8oMJcspm",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "experienceTimeline": [
-      {
-        "datetime": "2025-05-18T03:28:09.814Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  },
-  {
-    "id": "u_1bb202e2-9d37-4e87-a3c5-716ba3c04e21",
-    "username": "opensourcewizard",
-    "email": "opensourcewizard@ethos.com",
-    "password": "$2b$10$mKyahnBzdfpJByfH9N12/OnpAy.Lvc/ahtIh/I5RJl4aS1vXrnewK",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "experienceTimeline": [
-      {
-        "datetime": "2025-05-18T04:30:30.929Z",
+        "datetime": "2025-05-24T15:40:11.178Z",
         "title": "Journey begins",
         "tags": [
           "registered"

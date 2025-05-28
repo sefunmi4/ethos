@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { BoardProvider } from '../contexts/BoardContext';
 import Board from '../components/boards/Board';
-import BoardToolbar from '../components/boards/BoardToolbar';
 import QuestCard from '../components/quests/QuestCard';
 import ProfileBanner from '../components/ProfileBanner';
-import axios from 'axios';
+import { axiosWithAuth } from '../utils/authUtils';
 
 const ProfilePage = () => {
   const { user, loading } = useAuth();
@@ -15,20 +13,20 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!user) return;
 
-    const fetchProfileData = async () => {
+    const fetchBoards = async () => {
       try {
-        const [postBoardRes, questBoardRes] = await Promise.all([
-          axios.get('/api/boards/default/profile'),
-          axios.get('/api/boards/default/quests')
+        const [postsRes, questsRes] = await Promise.all([
+          axiosWithAuth.get('/api/boards/default/profile?enrich=true'),
+          axiosWithAuth.get('/api/boards/default/quests?enrich=true'),
         ]);
-        setUserPostBoard(postBoardRes.data);
-        setUserQuestBoard(questBoardRes.data);
-      } catch (error) {
-        console.error('Error loading profile:', error);
+        setUserPostBoard(postsRes.data);
+        setUserQuestBoard(questsRes.data);
+      } catch (err) {
+        console.error('Error loading profile boards:', err);
       }
     };
 
-    fetchProfileData();
+    fetchBoards();
   }, [user]);
 
   if (loading) {
@@ -48,41 +46,46 @@ const ProfilePage = () => {
   }
 
   return (
-    <BoardProvider initialStructure="list">
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <ProfileBanner user={user} />
+    <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <ProfileBanner user={user} />
 
-        <section className="mt-10 mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
-          {userQuestBoard ? (
-            <>
-              <BoardToolbar title={""} filters={userQuestBoard.filters} />
-              <Board
-                board={userQuestBoard}
-                structure="scroll"
-                renderItem={(quest) => (
-                  <QuestCard quest={quest} user={user} readOnly={false} />
-                )}
-              />
-            </>
+      <section className="mt-10 mb-12">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
+        {userQuestBoard ? (
+          userQuestBoard.enrichedItems?.length > 0 ? (
+            <Board
+              board={userQuestBoard}
+              structure="scroll"
+              title="Your Quests"
+              renderItem={(quest) => (
+                <QuestCard quest={quest} user={user} readOnly={false} />
+              )}
+            />
           ) : (
-            <div className="text-gray-500 text-center py-8">Loading quests...</div>
-          )}
-        </section>
+            <div className="text-gray-500 text-center py-8">You haven't created any quests yet.</div>
+          )
+        ) : (
+          <div className="text-gray-500 text-center py-8">Loading quests...</div>
+        )}
+      </section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
-          {userPostBoard ? (
-            <>
-              <BoardToolbar title={""} filters={userPostBoard.filters} />
-              <Board board={userPostBoard} />
-            </>
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
+        {userPostBoard ? (
+          userPostBoard.enrichedItems?.length > 0 ? (
+            <Board
+              board={userPostBoard}
+              structure="list"
+              title="Your Post History"
+            />
           ) : (
-            <div className="text-gray-500 text-center py-8">Loading posts...</div>
-          )}
-        </section>
-      </main>
-    </BoardProvider>
+            <div className="text-gray-500 text-center py-8">You haven't posted anything yet.</div>
+          )
+        ) : (
+          <div className="text-gray-500 text-center py-8">Loading posts...</div>
+        )}
+      </section>
+    </main>
   );
 };
 

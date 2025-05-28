@@ -1,74 +1,138 @@
-import React, { useContext, useState } from 'react';
-import { BoardContext } from '../../contexts/BoardContext';
-import structureComponents from './structures';
-import { sortByPriority, filterBySearch } from './utils';
-import BoardAddItem from './BoardAddItem';
+// src/components/boards/Board.jsx
+import React, { useEffect, useMemo, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // If needed for placeholder ID
+import { axiosWithAuth } from '../../utils/authUtils';
+import BoardItemCard from './BoardItemCard';
+import ListRenderer from '../renderers/ListRenderer';
+import GridRenderer from '../renderers/GridRenderer';
+import QuestMapRenderer from '../renderers/QuestMapRenderer';
+import ProjectPathRenderer from '../renderers/ProjectPathRenderer';
+import { Button, Input, Select } from '../ui';
 
-/**
- * Board.jsx
- *
- * Dynamic board renderer supporting:
- * - Structure override via prop/context
- * - Sorting, filtering, searching
- * - Adding new posts to the board contextually
- */
-const Board = ({
-  board = {},
-  structure,               // Optional override
-  renderItem,              // Optional custom item renderer
-  allowSorting = true,
-  allowFiltering = true,
-  filters: externalFilters = {},
-  search = ''
-}) => {
-  const context = useContext(BoardContext);
-  const boardId = board.id || context?.board?.id || null;
-  const boardStructure = board.structure || context?.structure || 'list';
-  const StructureComponent = structureComponents[structure || boardStructure] || structureComponents.list;
+const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title: forcedTitle }) => {
+  const [board, setBoard] = useState(initialBoard || null);
+  const [items, setItems] = useState(initialBoard?.enrichedItems || []);
+  const [filterText, setFilterText] = useState('');
+  const [sortKey, setSortKey] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [loading, setLoading] = useState(!initialBoard && !!boardId);
 
-  const [items, setItems] = useState(board.items || context.items || []);
+  // 🧠 1. Fetch board if ID is passed (not already provided)
+  useEffect(() => {
+    if (boardId && !initialBoard) {
+      setLoading(true);
+      axiosWithAuth
+        .get(`/boards/${boardId}?enrich=true`)
+        .then((res) => {
+          setBoard(res.data);
+          setItems(res.data.enrichedItems || []);
+        })
+        .catch((err) => console.error('[Board] Load failed:', err))
+        .finally(() => setLoading(false));
+    }
+  }, [boardId, initialBoard]);
 
-  const filters = {
-    ...(context.filters || {}),
-    ...externalFilters,
+  // 🧱 2. Filter + Sort
+  const filteredItems = useMemo(() => {
+    return items
+      .filter(item => item.title?.toLowerCase().includes(filterText.toLowerCase()))
+      .sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+        return sortOrder === 'asc' ? aVal > bVal ? 1 : -1 : aVal < bVal ? 1 : -1;
+      });
+  }, [items, filterText, sortKey, sortOrder]);
+
+  // ➕ 3. Add Item (mocked as adding a new post/quest/etc.)
+  const handleAddItem = async () => {
+    try {
+      // Create a new "contribution placeholder" item
+      const placeholderId = uuidv4(); // You can later turn this into a real post, quest, etc.
+  
+      const updatedItems = [...(board.items || []), placeholderId];
+  
+      const updatedBoard = {
+        ...board,
+        items: updatedItems
+      };
+  
+      // PATCH the board to add the new item ID
+      const res = await axiosWithAuth.patch(`/boards/${board.id}`, {
+        items: updatedItems
+      });
+  
+      if (res.status === 200) {
+        setBoard(res.data);
+        setItems((prev) => [...prev, {
+          id: placeholderId,
+          title: 'Untitled',
+          type: board.type || 'post',
+          content: '',
+          createdAt: new Date().toISOString()
+        }]);
+      }
+    } catch (err) {
+      console.error('[Board] Add item failed:', err);
+    }
   };
 
-  // Apply search + type filtering
-  let filteredItems = filterBySearch(items, search);
-  if (filters.type) {
-    filteredItems = filteredItems.filter(item => item.type === filters.type);
-  }
+  // 🎨 4. Render
+  const renderItems = () => {
+    const props = {
+      items: filteredItems,
+      renderItem: (item) => <BoardItemCard key={item.id} item={item} />
+    };
 
-  // Sort if enabled
-  const sortedItems = allowSorting ? sortByPriority(filteredItems) : filteredItems;
+    const structure = forcedStructure || board?.structure || 'grid';
 
-  // Handle adding new items
-  const handleCreate = (newItem) => {
-    setItems(prev => [...prev, newItem]);
+    switch (structure) {
+      case 'list': return <ListRenderer {...props} />;
+      case 'grid': return <GridRenderer {...props} />;
+      case 'quest': return <QuestMapRenderer quests={filteredItems} />;
+      case 'project': return <ProjectPathRenderer projects={filteredItems} />;
+      default: return <GridRenderer {...props} />;
+    }
   };
 
-  // Handle nested structure (e.g., thread inside thread)
-  const isNested = sortedItems.length === 1 && sortedItems[0]?.structure;
-  if (isNested) {
-    const Nested = structureComponents[sortedItems[0].structure] || StructureComponent;
-    return (
-      <div className="relative">
-        <Nested
-          items={sortedItems[0].items || []}
-          renderItem={renderItem}
-        />
-        <BoardAddItem boardId={boardId} onCreate={handleCreate} />
-      </div>
-    );
-  }
+  if (loading) return <div className="text-gray-500 p-4">Loading board...</div>;
+  if (!board) return <div className="text-red-500 p-4">Board not found.</div>;
 
   return (
-    <div className="relative">
-      <StructureComponent
-        items={sortedItems}
-        renderItem={renderItem}
-      />
-      <BoardAddItem boardId={boardId} onCreate={handleCreate} />
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-xl font-semibold text-gray-800">
+          {forcedTitle || board.title || 'Board'}
+        </h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <Input
+            type="text"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            placeholder="Filter..."
+            className="w-40 text-sm"
+          />
+          <Select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value)}
+            options={[
+              { value: 'createdAt', label: 'Date' },
+              { value: 'title', label: 'Title' }
+            ]}
+          />
+          <Select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            options={[
+              { value: 'asc', label: 'Asc' },
+              { value: 'desc', label: 'Desc' }
+            ]}
+          />
+          <Button variant="primary" onClick={handleAddItem}>
+            + Add Item
+          </Button>
+        </div>
+      </div>
+      {renderItems()}
     </div>
   );
 };

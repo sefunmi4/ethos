@@ -1,18 +1,20 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { postsStore } from '../utils/loaders.js';
+import { postsStore, boardsStore, usersStore } from '../utils/loaders.js';
+import { enrichPost, enrichPosts } from '../utils/enrich.js';
+
 
 const router = express.Router();
 
+// Create a new post
 router.post('/', authMiddleware, (req, res) => {
-  const { type, content, visibility, questId, tags, collaborators = [] } = req.body;
+  const { type, content, visibility, questId, tags, collaborators = [], boardId } = req.body;
   const authorId = req.user?.id;
 
-  if (!authorId || !type || !content)
+  if (!authorId || !type || !content) {
     return res.status(400).json({ error: 'Missing fields' });
-  if (type === 'quest_log' && !questId)
-    return res.status(400).json({ error: 'Missing questId' });
+  }
 
   const newPost = {
     id: uuidv4(),
@@ -23,20 +25,45 @@ router.post('/', authMiddleware, (req, res) => {
     questId: questId || null,
     tags: tags || [],
     collaborators: type === 'quest_log' ? collaborators : [],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
     const posts = postsStore.read();
+    const isDuplicate = posts.find(
+      p =>
+        p.authorId === authorId &&
+        p.content === content &&
+        Math.abs(new Date(p.timestamp) - new Date()) < 2000
+    );
+    if (isDuplicate) {
+      console.warn('[SERVER] Duplicate post blocked:', content);
+      return res.status(409).json({ error: 'Duplicate post detected' });
+    }
     posts.push(newPost);
     postsStore.write(posts);
-    res.status(201).json(newPost);
+
+    // Attach post to board if specified
+    if (boardId) {
+      const boards = boardsStore.read();
+      const board = boards.find(b => b.id === boardId || b.defaultFor === boardId);
+      if (board) {
+        board.items = [newPost.id, ...(board.items || [])];
+        boardsStore.write(boards);
+      } else {
+        console.warn('[POST] Board not found for ID:', boardId);
+      }
+    }
+
+    const users = usersStore.read();
+    res.status(201).json(enrichPost(newPost, { users, currentUserId: authorId }));
   } catch (err) {
     console.error('Error saving post:', err.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Reply to a post
 router.post('/:id/replies', authMiddleware, (req, res) => {
   const posts = postsStore.read();
   const { id } = req.params;
@@ -57,19 +84,20 @@ router.post('/:id/replies', authMiddleware, (req, res) => {
     authorId,
     questId: parent.questId || null,
     timestamp: new Date().toISOString(),
-    replyTo: parent.id
+    replyTo: parent.id,
   };
 
   posts.push(reply);
   postsStore.write(posts);
-  res.status(201).json(reply);
+  const users = usersStore.read();
+  res.status(201).json(enrichPost(reply, { users, currentUserId: authorId }));
 });
 
+// Repost an existing post
 router.post('/:id/repost', authMiddleware, (req, res) => {
   const posts = postsStore.read();
   const { id } = req.params;
   const original = posts.find(p => p.id === id);
-
   if (!original) return res.status(404).json({ error: 'Original post not found' });
 
   const { content, questId, parentPostId, linkType } = req.body;
@@ -79,30 +107,34 @@ router.post('/:id/repost', authMiddleware, (req, res) => {
     ...original,
     id: uuidv4(),
     authorId,
-    type: original.type,
     content: content || original.content,
     questId: questId || null,
     parentPostId: parentPostId || null,
     linkType: linkType || 'repost',
     timestamp: new Date().toISOString(),
-    replyTo: null
+    replyTo: null,
   };
 
   posts.push(repost);
   postsStore.write(posts);
-
-  res.status(201).json(repost);
+  const users = usersStore.read();
+  res.status(201).json(enrichPost(repost, { users, currentUserId: authorId }));
 });
 
+// Get all posts
 router.get('/', (req, res) => {
   try {
     const posts = postsStore.read();
-    res.json(posts);
+    const users = usersStore.read();
+    const currentUserId = req.user?.id || null;
+    const enriched = enrichPosts(posts, users, currentUserId);
+    res.json(enriched);
   } catch (err) {
     res.status(500).json({ error: 'Failed to load posts' });
   }
 });
 
+// Edit a post
 router.put('/:id', authMiddleware, (req, res) => {
   const posts = postsStore.read();
   const postIndex = posts.findIndex(p => p.id === req.params.id.trim());
@@ -110,8 +142,9 @@ router.put('/:id', authMiddleware, (req, res) => {
     return res.status(404).json({ error: 'Post not found' });
 
   const post = posts[postIndex];
-  const isOwner = req.user.id === post.authorId;
-  const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(req.user.id);
+  const userId = req.user.id;
+  const isOwner = userId === post.authorId;
+  const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(userId);
   if (!isOwner && !isCollaborator)
     return res.status(403).json({ error: 'Not authorized' });
 
@@ -124,16 +157,19 @@ router.put('/:id', authMiddleware, (req, res) => {
 
   posts[postIndex] = post;
   postsStore.write(posts);
-  res.json(post);
+  const users = usersStore.read();
+  res.json(enrichPost(post, { users, currentUserId: userId }));
 });
 
+// Delete a post
 router.delete('/:id', authMiddleware, (req, res) => {
   const posts = postsStore.read();
   const post = posts.find(p => p.id === req.params.id);
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
-  const isOwner = req.user.id === post.authorId;
-  const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(req.user.id);
+  const userId = req.user.id;
+  const isOwner = userId === post.authorId;
+  const isCollaborator = post.type === 'quest_log' && post.collaborators?.includes(userId);
   if (!isOwner && !isCollaborator)
     return res.status(403).json({ error: 'Not authorized' });
 

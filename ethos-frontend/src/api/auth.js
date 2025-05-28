@@ -1,54 +1,29 @@
-import axios from 'axios';
+import { axiosWithAuth } from '../utils/authUtils';
 
-const API = axios.create({
-  baseURL: 'http://localhost:3001/api/auth',
-});
+/** 🔐 Register new user */
+export const register = (email, password) => {
+  return axiosWithAuth.post('/auth/register', { email, password });
+};
 
-// ✅ Use shared instance for register
-export const register = (email, password) =>
-  API.post('/register', { email, password });
-
-// ✅ Use shared instance for login
+/** 🔑 Login — sets HTTP-only cookie on server */
 export const login = async (email, password) => {
-  const res = await API.post('/login', { email, password });
-  localStorage.setItem('token', res.data.accessToken); // ✅ correct field
+  const res = await axiosWithAuth.post('/auth/login', { email, password });
   return res.data;
 };
 
+/** 🚪 Logout — clears cookie */
 export const logout = async () => {
-  return fetch('/api/auth/logout', {
-    method: 'POST',
-    credentials: 'include',
-  });
+  return axiosWithAuth.post('/auth/logout');
 };
 
+/** 🛠 Forgot password */
 export const forgotPassword = async (email) => {
-  const res = await fetch('/api/auth/forgot-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || 'Failed to send reset link');
-  }
-
-  return res.json();
+  const res = await axiosWithAuth.post('/auth/forgot-password', { email });
+  return res.data;
 };
 
-// ✅ Use shared instance for getMe
+/** 🧠 Get current user using cookie */
 export const getMe = async () => {
-  const token = localStorage.getItem('token');
-  console.log('Token being used:', token); // 👈 Add this
-  
-  if (!token) throw new Error('No token found');
-
-  const res = await API.get('/me', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
-  });
-
+  const res = await axiosWithAuth.get('/auth/me'); // ✅ uses cookie
   return res.data;
 };
