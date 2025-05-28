@@ -1,11 +1,14 @@
 // src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/boards/Board';
 import { axiosWithAuth } from '../utils/authUtils';
 
 const HomePage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { boards, selectedBoard, loading: boardLoading } = useBoardContext();
+
   const [featuredBoards, setFeaturedBoards] = useState([]);
   const [defaultFeedBoardId, setDefaultFeedBoardId] = useState(null);
 
@@ -27,7 +30,7 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  if (loading) {
+  if (authLoading || boardLoading) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
         Loading session...
@@ -48,6 +51,8 @@ const HomePage = () => {
       <section className="mb-12">
         {defaultFeedBoardId ? (
           <Board boardId={defaultFeedBoardId} structure="list" title="🧭 Latest Posts" />
+        ) : selectedBoard ? (
+          <Board boardId={selectedBoard.id} structure="list" title="🧭 Latest Posts" />
         ) : (
           <div className="text-gray-500 text-center py-8">No posts to display yet.</div>
         )}

@@ -7,19 +7,21 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  const canEdit = user?.id === post.authorId;
-  let timestampLabel = 'Unknown time';
-  try {
-    if (post.timestamp) {
-      timestampLabel = formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
-    }
-  } catch (e) {
-    console.warn('[PostCard] Invalid timestamp:', post.timestamp, e);
-  }
+  const canEdit = user?.id === post.authorId || post.collaborators?.includes?.(user?.id);
+  const timestampLabel = post.timestamp
+    ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
+    : 'Unknown time';
 
-  const handleSave = async (updated) => {
-    await onUpdate(updated);
+  const handleSave = async (updatedPost) => {
+    await onUpdate?.(updatedPost);
     setEditMode(false);
+  };
+
+  const handleDelete = () => {
+    const confirmed = window.confirm('Are you sure you want to delete this post?');
+    if (confirmed) {
+      onDelete?.(post.id);
+    }
   };
 
   if (editMode) {
@@ -27,7 +29,7 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
       <EditPost
         post={post}
         onCancel={() => setEditMode(false)}
-        onSave={handleSave}
+        onUpdated={handleSave}
       />
     );
   }
@@ -44,7 +46,7 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
             <Button size="xs" variant="ghost" onClick={() => setEditMode(true)}>
               Edit
             </Button>
-            <Button size="xs" variant="ghost" onClick={() => onDelete?.(post.id)}>
+            <Button size="xs" variant="ghost" onClick={handleDelete}>
               Delete
             </Button>
           </div>
@@ -54,7 +56,8 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
       <div className="text-gray-800 text-sm whitespace-pre-wrap">
         {compact && !isExpanded ? (
           <>
-            {post.content.slice(0, 280)}{post.content.length > 280 && '...'}{' '}
+            {post.content.slice(0, 280)}
+            {post.content.length > 280 && '... '}
             {post.content.length > 280 && (
               <button
                 className="text-xs text-blue-600 underline"

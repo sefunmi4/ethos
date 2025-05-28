@@ -150,6 +150,6 @@ router.delete('/:id', authMiddleware, (req, res) => {
   const [removed] = boards.splice(index, 1);
   boardsStore.write(boards);
   res.json(removed);
-});rreddffrederdfredfeeerdre
+});
 
 export default router;

@@ -4,8 +4,7 @@ import TextArea from '../ui/TextArea';
 import Select from '../ui/Select';
 import Button from '../ui/Button';
 import FormSection from '../ui/FormSection';
-import LinkControls from '../../posts/LinkControls';
-import RoleAssignment from '../../posts/RoleAssignment';
+import RoleAssignment from '../contribution/controls/RoleAssignment';
 
 const CreateProject = ({ onSave, onCancel, availableQuests = [] }) => {
   const [title, setTitle] = useState('');

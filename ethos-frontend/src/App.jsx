@@ -10,35 +10,38 @@ import PublicProfile from './pages/PublicProfile';
 import ResetPassword from './pages/ResetPassword';
 
 import { AuthProvider } from './contexts/AuthContext';
+import { BoardProvider } from './contexts/BoardContext';
 import PrivateRoute from './routes/PrivateRoute';
 import NavBar from './components/NavBar';
 
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen flex flex-col bg-white text-gray-900">
-        <NavBar />
-        <main className="flex-1 w-full">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/user/:userId" element={<PublicProfile />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <BoardProvider>
+        <div className="min-h-screen flex flex-col bg-white text-gray-900">
+          <NavBar />
+          <main className="flex-1 w-full">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/user/:userId" element={<PublicProfile />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-            {/* Private Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/quest/:id" element={<Quest />} />
-              <Route path="/post/:id" element={<Post />} />
-              <Route path="/boards/:id" element={<Board />} />
-            </Route>
+              {/* Private Routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/quest/:id" element={<Quest />} />
+                <Route path="/post/:id" element={<Post />} />
+                <Route path="/boards/:id" element={<Board />} />
+              </Route>
 
-            {/* Fallback Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-      </div>
+              {/* Fallback Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+        </div>
+      </BoardProvider>
     </AuthProvider>
   );
 }

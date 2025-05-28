@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import CreatePost from '../posts/CreatePost';
 import CreateQuest from '../quests/CreateQuest';
 import CreateProject from '../projects/CreateProject';
-import CreateBoard from '../board/CreateBoard';
-import Select from '../../ui/Select';
-import FormSection from '../../ui/FormSection';
+import Select from '../ui/Select';
+import FormSection from '../ui/FormSection';
 
 const CONTRIBUTION_TYPES = [
   { value: 'post', label: 'Post' },
   { value: 'quest', label: 'Quest' },
-  { value: 'project', label: 'Project' },
-  { value: 'board', label: 'Board' }
+  { value: 'project', label: 'Project' }
 ];
 
 const CreateContribution = ({ onSave, onCancel, quests = [], boards = [] }) => {
@@ -25,8 +23,6 @@ const CreateContribution = ({ onSave, onCancel, quests = [], boards = [] }) => {
         return <CreateQuest {...sharedProps} />;
       case 'project':
         return <CreateProject {...sharedProps} />;
-      case 'board':
-        return <CreateBoard onSave={onSave} onCancel={onCancel} existingBoards={boards} />;
       default:
         return null;
     }

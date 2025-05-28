@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
 import { POST_TYPES } from '../../constants/POST_TYPES';
-import { Button, Input, TextArea, Select, Label, FormSection } from '../ui';
-import RoleAssignment from '../contribution/RoleAssignment';
-import CreateQuestInput from '../contribution/CreateQuestInput';
-import useCreateItem from '../../hooks/useCreateItem';
+import { Button, TextArea, Select, Label, FormSection } from '../ui';
+import RoleAssignment from '../contribution/controls/RoleAssignment';
+import LinkControls from '../contribution/controls/LinkControls';
+import { axiosWithAuth } from '../../utils/authUtils';
+import { useBoardContext } from '../../contexts/BoardContext';
 
-const CreatePost = ({ quests = [], onSave, onCancel }) => {
+const CreatePost = ({ onSave, onCancel }) => {
   const [type, setType] = useState('free_speech');
   const [content, setContent] = useState('');
-  const [linkedQuest, setLinkedQuest] = useState('');
+  const [linkedQuestNode, setLinkedQuestNode] = useState(null); // { questId, nodeId }
   const [assignedRoles, setAssignedRoles] = useState([]);
-  const [newQuestTitle, setNewQuestTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { createPost } = useCreateItem();
-
-  const showCreateQuest = linkedQuest === '__create';
+  const { selectedBoard } = useBoardContext() || {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    if ((type === 'quest_log' || type === 'quest_task') && !linkedQuest) {
+    // Validate required questId for quest-based posts
+    if ((type === 'quest_log' || type === 'quest_task') && !linkedQuestNode?.questId) {
       alert('Please link a quest.');
       setIsSubmitting(false);
       return;
@@ -30,25 +29,27 @@ const CreatePost = ({ quests = [], onSave, onCancel }) => {
     const payload = {
       type,
       content,
-      questId: linkedQuest || null,
-      assignedRoles: type === 'quest_task' ? assignedRoles : [],
       visibility: 'public',
+      boardId: selectedBoard?.id || null,
+      ...(linkedQuestNode?.questId && { questId: linkedQuestNode.questId }),
+      ...(linkedQuestNode?.nodeId && { nodeId: linkedQuestNode.nodeId }),
+      ...(type === 'quest_task' && { assignedRoles }),
     };
 
     try {
-      const result = await createPost(payload);
-      onSave?.(result);
+      const res = await axiosWithAuth.post('/posts', payload);
+      if (res.status === 201) {
+        onSave?.(res.data);
+      } else {
+        console.error('[CreatePost] Unexpected status:', res.status);
+        alert('Unexpected error occurred. Please try again.');
+      }
     } catch (err) {
       console.error('[CreatePost] Failed to create post:', err);
+      alert('Failed to create post. Check your input or try again later.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleCreateQuest = (newQuest) => {
-    quests.push(newQuest); // May be replaced later with useBoardContext or mutation hook
-    setLinkedQuest(newQuest.id);
-    setNewQuestTitle('');
   };
 
   return (
@@ -59,10 +60,7 @@ const CreatePost = ({ quests = [], onSave, onCancel }) => {
           id="post-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          options={POST_TYPES.map(({ value, label }) => ({
-            value,
-            label
-          }))}
+          options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
         />
 
         <Label htmlFor="content">Content</Label>
@@ -75,24 +73,17 @@ const CreatePost = ({ quests = [], onSave, onCancel }) => {
         />
       </FormSection>
 
-      <FormSection title="Linked Quest (Optional)">
-        <Select
-          value={linkedQuest}
-          onChange={(e) => setLinkedQuest(e.target.value)}
-          options={[
-            { value: '', label: 'None' },
-            ...quests.map((q) => ({ value: q.id, label: q.title })),
-            { value: '__create', label: '➕ Create new quest' },
-          ]}
-        />
-        {showCreateQuest && (
-          <CreateQuestInput
-            value={newQuestTitle}
-            onChange={setNewQuestTitle}
-            onCreate={handleCreateQuest}
+      {(type === 'quest_log' || type === 'quest_task') && (
+        <FormSection title="Linked Quest">
+          <LinkControls
+            label="Quest"
+            value={linkedQuestNode}
+            onChange={setLinkedQuestNode}
+            allowCreateNew
+            allowNodeSelection
           />
-        )}
-      </FormSection>
+        </FormSection>
+      )}
 
       {type === 'quest_task' && (
         <FormSection title="Assigned Roles">

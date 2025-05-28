@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Select, Button, FormSection, Label } from '../../ui';
+import { Input, Select, Button, FormSection, Label, TextArea } from '../../ui';
+import { axiosWithAuth } from '../../../utils/authUtils';
 
 const STRUCTURE_OPTIONS = [
   { value: 'list', label: 'List' },
@@ -15,7 +16,8 @@ const VISIBILITY_OPTIONS = [
 
 const CreateBoard = ({ onSave, onCancel }) => {
   const [title, setTitle] = useState('');
-  const [structure, setStructure] = useState('list');
+  const [description, setDescription] = useState('');
+  const [structure, setStructure] = useState('grid');
   const [visibility, setVisibility] = useState('public');
   const [category, setCategory] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,17 +38,20 @@ const CreateBoard = ({ onSave, onCancel }) => {
     if (!title.trim()) return;
     setIsSubmitting(true);
 
-    const newBoard = {
-      id: crypto.randomUUID(),
+    const boardData = {
       title: title.trim(),
+      description: description.trim(),
+      type: 'post', // default content type
       structure,
-      visibility,
-      category: category.trim() || null,
-      items: items.map((item) => ({ ...item }))
+      items: items.map(item => ({ ...item })),
+      filters: { visibility },
+      featured: false,
+      defaultFor: null,
     };
 
     try {
-      await onSave?.(newBoard);
+      const res = await axiosWithAuth.post('/boards', boardData);
+      onSave?.(res.data);
     } catch (err) {
       console.error('[CreateBoard] Failed to create board:', err);
     } finally {
@@ -57,39 +62,44 @@ const CreateBoard = ({ onSave, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection title="Board Details">
-        <Label htmlFor="board-title">Title</Label>
+        <Label>Title</Label>
         <Input
-          id="board-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
 
-        <Label htmlFor="board-structure">Structure</Label>
+        <Label>Description</Label>
+        <TextArea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Describe this board’s purpose or theme"
+          rows={3}
+        />
+
+        <Label>Structure</Label>
         <Select
-          id="board-structure"
           value={structure}
           onChange={(e) => setStructure(e.target.value)}
           options={STRUCTURE_OPTIONS}
         />
 
-        <Label htmlFor="board-visibility">Visibility</Label>
+        <Label>Visibility</Label>
         <Select
-          id="board-visibility"
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
           options={VISIBILITY_OPTIONS}
         />
 
-        <Label htmlFor="board-category">Category (Optional)</Label>
+        <Label>Category (Optional)</Label>
         <Input
-          id="board-category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          placeholder="e.g. Community, Planning, UX"
         />
       </FormSection>
 
-      <FormSection title="Add Items">
+      <FormSection title="Board Items">
         {items.map((item, index) => (
           <Input
             key={item.id}

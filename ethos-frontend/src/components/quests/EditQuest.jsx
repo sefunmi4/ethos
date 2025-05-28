@@ -4,34 +4,35 @@ import RoleAssignment from '../contribution/RoleAssignment';
 import { axiosWithAuth } from '../../utils/authUtils';
 
 const EditQuest = ({ quest, onSave, onCancel }) => {
-  const [content, setContent] = useState(quest.content || '');
-  const [assignedRoles, setAssignedRoles] = useState(quest.assignedRoles || []);
   const [title, setTitle] = useState(quest.title || '');
+  const [description, setDescription] = useState(quest.description || '');
   const [tags, setTags] = useState(quest.tags || []);
+  const [assignedRoles, setAssignedRoles] = useState(quest.assignedRoles || []);
   const [tagInput, setTagInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setContent(quest.content || '');
-    setAssignedRoles(quest.assignedRoles || []);
     setTitle(quest.title || '');
+    setDescription(quest.description || '');
     setTags(quest.tags || []);
+    setAssignedRoles(quest.assignedRoles || []);
   }, [quest]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const updated = {
-        ...quest,
+      const updatedQuest = {
         title,
-        content,
-        assignedRoles,
+        description,
         tags,
+        assignedRoles,
+        status: quest.status || 'active',
       };
-      const res = await axiosWithAuth.patch(`/quests/${quest.id}`, updated);
+
+      const res = await axiosWithAuth.patch(`/quests/${quest.id}`, updatedQuest);
       onSave?.(res.data);
     } catch (err) {
-      console.error('Failed to save quest:', err);
+      console.error('[EditQuest] Failed to update quest:', err);
     } finally {
       setIsSaving(false);
     }
@@ -45,13 +46,13 @@ const EditQuest = ({ quest, onSave, onCancel }) => {
     setTagInput('');
   };
 
-  const removeTag = (tag) => {
-    setTags(tags.filter((t) => t !== tag));
+  const removeTag = (tagToRemove) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
   return (
     <div className="space-y-6">
-      <FormSection title="Edit Quest Log">
+      <FormSection title="Edit Quest">
         <Label>Title</Label>
         <Input
           value={title}
@@ -59,11 +60,12 @@ const EditQuest = ({ quest, onSave, onCancel }) => {
           placeholder="Quest Title"
           required
         />
-        <Label>Content</Label>
+
+        <Label>Description</Label>
         <TextArea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Edit the quest log..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="What is this quest about?"
           rows={6}
         />
       </FormSection>
@@ -74,11 +76,11 @@ const EditQuest = ({ quest, onSave, onCancel }) => {
 
       <FormSection title="Tags">
         <div className="flex flex-wrap gap-2 mb-2">
-          {tags.map((tag) => (
+          {tags.map(tag => (
             <span
               key={tag}
-              className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded cursor-pointer"
               onClick={() => removeTag(tag)}
+              className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded cursor-pointer"
             >
               #{tag} ✕
             </span>

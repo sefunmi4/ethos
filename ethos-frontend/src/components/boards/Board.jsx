@@ -1,6 +1,5 @@
 // src/components/boards/Board.jsx
 import React, { useEffect, useMemo, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // If needed for placeholder ID
 import { axiosWithAuth } from '../../utils/authUtils';
 import BoardItemCard from './BoardItemCard';
 import ListRenderer from '../renderers/ListRenderer';
@@ -8,6 +7,7 @@ import GridRenderer from '../renderers/GridRenderer';
 import QuestMapRenderer from '../renderers/QuestMapRenderer';
 import ProjectPathRenderer from '../renderers/ProjectPathRenderer';
 import { Button, Input, Select } from '../ui';
+import CreateContribution from '../contribution/CreateContribution';
 
 const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title: forcedTitle }) => {
   const [board, setBoard] = useState(initialBoard || null);
@@ -16,8 +16,8 @@ const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title
   const [sortKey, setSortKey] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [loading, setLoading] = useState(!initialBoard && !!boardId);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
-  // 🧠 1. Fetch board if ID is passed (not already provided)
   useEffect(() => {
     if (boardId && !initialBoard) {
       setLoading(true);
@@ -32,10 +32,13 @@ const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title
     }
   }, [boardId, initialBoard]);
 
-  // 🧱 2. Filter + Sort
   const filteredItems = useMemo(() => {
     return items
-      .filter(item => item.title?.toLowerCase().includes(filterText.toLowerCase()))
+      .filter(item =>
+        (item.title || item.content || '')
+          .toLowerCase()
+          .includes(filterText.toLowerCase())
+      )
       .sort((a, b) => {
         const aVal = a[sortKey];
         const bVal = b[sortKey];
@@ -43,40 +46,19 @@ const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title
       });
   }, [items, filterText, sortKey, sortOrder]);
 
-  // ➕ 3. Add Item (mocked as adding a new post/quest/etc.)
-  const handleAddItem = async () => {
-    try {
-      // Create a new "contribution placeholder" item
-      const placeholderId = uuidv4(); // You can later turn this into a real post, quest, etc.
+  const handleAddItemToList = async (newPost) => {
+    const updatedItems = [newPost.id, ...(board.items || [])];
   
-      const updatedItems = [...(board.items || []), placeholderId];
+    await axiosWithAuth.patch(`/boards/${board.id}`, { items: updatedItems });
   
-      const updatedBoard = {
-        ...board,
-        items: updatedItems
-      };
+    const res = await axiosWithAuth.get(`/boards/${board.id}?enrich=true`);
+    setBoard(res.data);
+    setItems(res.data.enrichedItems || []);
   
-      // PATCH the board to add the new item ID
-      const res = await axiosWithAuth.patch(`/boards/${board.id}`, {
-        items: updatedItems
-      });
-  
-      if (res.status === 200) {
-        setBoard(res.data);
-        setItems((prev) => [...prev, {
-          id: placeholderId,
-          title: 'Untitled',
-          type: board.type || 'post',
-          content: '',
-          createdAt: new Date().toISOString()
-        }]);
-      }
-    } catch (err) {
-      console.error('[Board] Add item failed:', err);
-    }
+    // ✅ Hide the form once done
+    setShowCreateForm(false);
   };
 
-  // 🎨 4. Render
   const renderItems = () => {
     const props = {
       items: filteredItems,
@@ -127,11 +109,23 @@ const Board = ({ boardId, board: initialBoard, structure: forcedStructure, title
               { value: 'desc', label: 'Desc' }
             ]}
           />
-          <Button variant="primary" onClick={handleAddItem}>
+          <Button variant="primary" onClick={() => setShowCreateForm(true)}>
             + Add Item
           </Button>
         </div>
       </div>
+
+      {showCreateForm && (
+        <div className="border rounded-lg p-4 bg-white shadow">
+          <CreateContribution
+            onSave={handleAddItemToList}
+            onCancel={() => setShowCreateForm(false)}
+            boards={[board]}
+            quests={[]} // Pass actual quest list if available
+          />
+        </div>
+      )}
+
       {renderItems()}
     </div>
   );

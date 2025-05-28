@@ -1,52 +1,53 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { axiosWithAuth } from '../utils/authUtils';
+import { useAuth } from './AuthContext';
 
-// Create the BoardContext
 const BoardContext = createContext();
 
-// Default structure settings
-const defaultStructure = {
-  layout: 'grid', // other options: 'list', 'tree'
-  filters: [],
-  sortBy: 'updatedAt',
-  featured: false
-};
-
 export const BoardProvider = ({ children }) => {
-  const [selectedBoard, setSelectedBoard] = useState(null);  // active board object
-  const [structure, setStructure] = useState(defaultStructure);
-  const [meta, setMeta] = useState({ title: '', description: '' });
+  const { user } = useAuth();
+  const [boards, setBoards] = useState([]);
+  const [selectedBoard, setSelectedBoard] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const updateBoard = (board) => {
-    setSelectedBoard(board);
-    setStructure(board.structure || defaultStructure);
-    setMeta({ title: board.title, description: board.description || '' });
+  useEffect(() => {
+    const loadBoards = async () => {
+      setLoading(true);
+      try {
+        const res = user
+          ? await axiosWithAuth.get('/boards?userBoards=true')
+          : await axiosWithAuth.get('/boards?guestBoards=true');
+        setBoards(res.data);
+        setSelectedBoard(res.data[0] || null);
+      } catch (err) {
+        console.error('[BoardContext] Failed to load boards:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBoards();
+  }, [user]);
+
+  const value = {
+    boards,
+    selectedBoard,
+    setSelectedBoard,
+    loading,
+    refreshBoards: () => {
+      if (user) {
+        axiosWithAuth.get('/boards?userBoards=true').then((res) => {
+          setBoards(res.data);
+        });
+      }
+    },
   };
 
-  const updateStructure = (updates) => {
-    setStructure((prev) => ({ ...prev, ...updates }));
-  };
-
-  const resetBoard = () => {
-    setSelectedBoard(null);
-    setStructure(defaultStructure);
-    setMeta({ title: '', description: '' });
-  };
-
-  return (
-    <BoardContext.Provider
-      value={{
-        selectedBoard,
-        structure,
-        meta,
-        setSelectedBoard: updateBoard,
-        updateStructure,
-        resetBoard
-      }}
-    >
-      {children}
-    </BoardContext.Provider>
-  );
+  return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
 };
 
-// Custom hook for accessing board context
-export const useBoardContext = () => useContext(BoardContext);
+export const useBoardContext = () => {
+  const ctx = useContext(BoardContext);
+  if (!ctx) throw new Error('useBoardContext must be used within a BoardProvider');
+  return ctx;
+};

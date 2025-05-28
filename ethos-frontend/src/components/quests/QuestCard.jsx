@@ -13,8 +13,8 @@ const QuestCard = ({
   onEdit = () => {},
   onCancel = () => {},
 }) => {
-  const isJoined = quest?.collaborators?.includes(user?.id);
   const isOwner = user?.id === quest?.authorId;
+  const isJoined = quest?.collaborators?.includes(user?.id);
 
   const handleJoinToggle = (e) => {
     e.stopPropagation();
@@ -52,12 +52,12 @@ const QuestCard = ({
         <div>
           <h2 className="text-xl font-bold text-indigo-700">{quest.title}</h2>
           <p className="text-sm text-gray-500">
-            Created {formatDistanceToNow(new Date(quest.createdAt))} ago
+            Created {formatDistanceToNow(new Date(quest.createdAt || quest.id.slice(0, 8)))} ago
           </p>
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          <PostTypeBadge type={quest.status || 'quest_log'} />
+          <PostTypeBadge type={quest.status || 'active'} />
           {!isOwner && (
             <Button
               size="xs"
@@ -70,8 +70,20 @@ const QuestCard = ({
         </div>
       </header>
 
-      {quest.summary && (
-        <p className="text-gray-700 text-sm whitespace-pre-wrap">{quest.summary}</p>
+      {quest.description && (
+        <section>
+          <p className="text-gray-700 text-sm whitespace-pre-wrap">{quest.description}</p>
+        </section>
+      )}
+
+      {quest.tags?.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {quest.tags.map((tag) => (
+            <span key={tag} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+              #{tag}
+            </span>
+          ))}
+        </div>
       )}
 
       <section>

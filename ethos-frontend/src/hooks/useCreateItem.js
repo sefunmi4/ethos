@@ -6,7 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
  * Works with post, quest, project, etc., based on a shared Contribution schema.
  */
 const useCreateItem = () => {
-  const { selectedBoard, updateStructure, setSelectedBoard } = useBoardContext();
+  let selectedBoard = null;
+  try {
+    selectedBoard = useBoardContext()?.selectedBoard || null;
+  } catch (e) {
+    console.warn('useCreateItem: BoardContext not available yet');
+  }
 
   const createItem = ({ type, content, title, metadata = {}, tags = [] }) => {
     if (!selectedBoard) {

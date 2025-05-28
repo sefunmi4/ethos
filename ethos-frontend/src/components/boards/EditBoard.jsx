@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Input, Select, Button, FormSection, Label } from '../ui';
+import React, { useState } from 'react';
+import { Input, Select, Button, TextArea, FormSection, Label } from '../ui';
 import { axiosWithAuth } from '../../utils/authUtils';
 
-const LAYOUT_OPTIONS = [
+const STRUCTURE_OPTIONS = [
   { value: 'grid', label: 'Grid' },
   { value: 'list', label: 'List' },
+  { value: 'timeline', label: 'Timeline' },
   { value: 'single', label: 'Single Item' }
 ];
 
 const VISIBILITY_OPTIONS = [
   { value: 'public', label: 'Public' },
-  { value: 'private', label: 'Private' },
-  { value: 'unlisted', label: 'Unlisted' }
+  { value: 'private', label: 'Private' }
 ];
 
 const EditBoard = ({ board, onSave, onCancel, onDelete }) => {
   const [title, setTitle] = useState(board.title || '');
-  const [layout, setLayout] = useState(board.structure || 'grid');
-  const [visibility, setVisibility] = useState(board.visibility || 'public');
+  const [description, setDescription] = useState(board.description || '');
+  const [structure, setStructure] = useState(board.structure || 'grid');
+  const [visibility, setVisibility] = useState(board.filters?.visibility || 'public');
   const [category, setCategory] = useState(board.category || '');
   const [items, setItems] = useState(board.items || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,15 +35,15 @@ const EditBoard = ({ board, onSave, onCancel, onDelete }) => {
     setIsSubmitting(true);
     try {
       const payload = {
-        ...board,
-        title,
-        structure: layout,
-        visibility,
-        category,
-        items
+        title: title.trim(),
+        description: description.trim(),
+        structure,
+        items,
+        filters: { visibility },
+        category: category.trim() || undefined
       };
       await axiosWithAuth.patch(`/boards/${board.id}`, payload);
-      onSave?.(payload);
+      onSave?.({ ...board, ...payload });
     } catch (err) {
       console.error('[EditBoard] Failed to update board:', err);
     } finally {
@@ -66,15 +67,21 @@ const EditBoard = ({ board, onSave, onCancel, onDelete }) => {
         <Label htmlFor="title">Title</Label>
         <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
 
-        <Label htmlFor="category">Category</Label>
-        <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <Label htmlFor="description">Description</Label>
+        <TextArea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="What is this board about?"
+          rows={3}
+        />
 
-        <Label htmlFor="layout">Layout</Label>
+        <Label htmlFor="structure">Structure</Label>
         <Select
-          id="layout"
-          value={layout}
-          onChange={(e) => setLayout(e.target.value)}
-          options={LAYOUT_OPTIONS}
+          id="structure"
+          value={structure}
+          onChange={(e) => setStructure(e.target.value)}
+          options={STRUCTURE_OPTIONS}
         />
 
         <Label htmlFor="visibility">Visibility</Label>
@@ -84,9 +91,12 @@ const EditBoard = ({ board, onSave, onCancel, onDelete }) => {
           onChange={(e) => setVisibility(e.target.value)}
           options={VISIBILITY_OPTIONS}
         />
+
+        <Label htmlFor="category">Category</Label>
+        <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
       </FormSection>
 
-      <FormSection title="Item Order">
+      <FormSection title="Reorder Items">
         <ul className="space-y-2">
           {items.map((item, index) => (
             <li key={item.id} className="flex justify-between items-center">
