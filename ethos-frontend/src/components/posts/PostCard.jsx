@@ -5,13 +5,18 @@ import { FaEllipsisH, FaLink, FaArchive, FaTrash, FaEdit } from 'react-icons/fa'
 import EditPost from './EditPost';
 import { PostTypeBadge, ReactionButton } from '../ui';
 import LinkToItemModal from '../ui/LinkToItemModal';
+import { axiosWithAuth } from '../../utils/authUtils';
+import { useBoardContext } from '../../contexts/BoardContext';
 
 const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
   const [editMode, setEditMode] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+
+  const { selectedBoard, removeFromBoard, updateBoardItem } = useBoardContext() || {};
 
   const canEdit = user?.id === post.authorId || (post.collaborators || []).includes(user?.id);
   const hasLink = post.links && post.links.length > 0;
@@ -21,9 +26,35 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
 
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to permanently delete this post?')) return;
+
+    try {
+      await axiosWithAuth.delete(`/posts/${post.id}`);
+      if (selectedBoard?.id) removeFromBoard(selectedBoard.id, post.id);
       onDelete?.(post.id);
+    } catch (err) {
+      console.error('[PostCard] Failed to delete post:', err);
+      alert('Error deleting post.');
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!window.confirm('Archive this post? It will be hidden from boards but not deleted.')) return;
+
+    try {
+      setIsArchiving(true);
+      const res = await axiosWithAuth.patch(`/posts/${post.id}`, { visibility: 'private' });
+      const updatedPost = res.data;
+
+      if (selectedBoard?.id) removeFromBoard(selectedBoard.id, post.id); // hide from UI
+      updateBoardItem?.(selectedBoard?.id, updatedPost); // optional: move to archive view
+      onUpdate?.(updatedPost);
+    } catch (err) {
+      console.error('[PostCard] Failed to archive post:', err);
+      alert('Error archiving post.');
+    } finally {
+      setIsArchiving(false);
     }
   };
 
@@ -71,11 +102,18 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
                   <button className="w-full text-left px-3 py-2 hover:bg-gray-100" onClick={() => setEditMode(true)}>
                     <FaEdit className="inline mr-2" /> Edit
                   </button>
-                  <button className="w-full text-left px-3 py-2 hover:bg-red-100 text-red-600" onClick={handleDelete}>
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-red-100 text-red-600"
+                    onClick={handleDelete}
+                  >
                     <FaTrash className="inline mr-2" /> Delete
                   </button>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-100">
-                    <FaArchive className="inline mr-2" /> Archive
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100"
+                    onClick={handleArchive}
+                    disabled={isArchiving}
+                  >
+                    <FaArchive className="inline mr-2" /> {isArchiving ? 'Archiving...' : 'Archive'}
                   </button>
                 </>
               )}
@@ -143,11 +181,10 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
           post={post}
           onLink={(link) => {
             const updatedPost = { ...post, links: [...(post.links || []), link] };
-            onUpdate(updatedPost); // Save locally — or send PATCH to backend if ready
+            onUpdate(updatedPost);
           }}
         />
       )}
-
     </div>
   );
 };

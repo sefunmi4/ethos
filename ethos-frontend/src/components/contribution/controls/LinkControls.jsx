@@ -41,17 +41,25 @@ const LinkControls = ({
       onChange(null);
     } else {
       setCreatingNew(false);
-      onChange({ itemId: val, nodeId: '' });
+      onChange({
+        itemId: val,
+        nodeId: '',
+        itemType: 'quest' // ✅ include item type
+      });
     }
   };
 
   const handleCreateItem = async () => {
     if (!newTitle.trim()) return;
     try {
-      const res = await axiosWithAuth.post('/quests', { title: newTitle }); // Replace with generic endpoint if needed
+      const res = await axiosWithAuth.post('/quests', { title: newTitle }); // Replace if needed
       const newItem = res.data;
       setItems((prev) => [...prev, newItem]);
-      onChange({ itemId: newItem.id, nodeId: '' });
+      onChange({
+        itemId: newItem.id,
+        nodeId: '',
+        itemType: 'quest' // ✅ include item type
+      });
       setNewTitle('');
       setCreatingNew(false);
     } catch (err) {
@@ -61,7 +69,11 @@ const LinkControls = ({
 
   const handleSelectNode = (e) => {
     const val = e.target.value;
-    onChange({ itemId, nodeId: val });
+    onChange({
+      itemId,
+      nodeId: val,
+      itemType: 'quest' // ✅ always emit full structure
+    });
   };
 
   const selectedItem = items.find((q) => q.id === itemId);

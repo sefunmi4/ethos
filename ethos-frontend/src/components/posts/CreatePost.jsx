@@ -12,14 +12,14 @@ const CreatePost = ({ onSave, onCancel }) => {
   const [linkedQuestNode, setLinkedQuestNode] = useState(null); // { questId, nodeId }
   const [assignedRoles, setAssignedRoles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { selectedBoard } = useBoardContext() || {};
+
+  const { selectedBoard, appendToBoard } = useBoardContext() || {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Validate required questId for quest-based posts
     if ((type === 'quest_log' || type === 'quest_task') && !linkedQuestNode?.questId) {
       alert('Please link a quest.');
       setIsSubmitting(false);
@@ -39,7 +39,11 @@ const CreatePost = ({ onSave, onCancel }) => {
     try {
       const res = await axiosWithAuth.post('/posts', payload);
       if (res.status === 201) {
-        onSave?.(res.data);
+        const newPost = res.data;
+        if (selectedBoard?.id) {
+          appendToBoard(selectedBoard.id, newPost);
+        }
+        onSave?.(newPost);
       } else {
         console.error('[CreatePost] Unexpected status:', res.status);
         alert('Unexpected error occurred. Please try again.');
@@ -78,7 +82,13 @@ const CreatePost = ({ onSave, onCancel }) => {
           <LinkControls
             label="Quest"
             value={linkedQuestNode}
-            onChange={setLinkedQuestNode}
+            onChange={(val) => {
+              if (val?.itemType === 'quest' && val?.itemId) {
+                setLinkedQuestNode({ questId: val.itemId, nodeId: val.nodeId || null });
+              } else {
+                setLinkedQuestNode(null);
+              }
+            }}
             allowCreateNew
             allowNodeSelection
           />

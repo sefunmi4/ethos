@@ -20,5 +20,27 @@
     "tags": [],
     "collaborators": [],
     "timestamp": "2025-05-28T22:38:26.937Z"
+  },
+  {
+    "id": "d6bf0fcb-9824-4942-a643-60680f43576e",
+    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "type": "quest_log",
+    "content": "I've covered post creation and plan to fix post to have an edit button to enter edit post mode. \nnow I want to start looking at quest.\n\nhopfully i can get it all functional as an MVP then work on visuals before beta relase and server hosting\n\nalso want quest log to display apop up that says can ave quest log wiht out a quest.\n",
+    "visibility": "public",
+    "questId": "cb30b19a-b293-4ffa-b9c9-c696ad647305",
+    "tags": [],
+    "collaborators": [],
+    "timestamp": "2025-05-29T01:39:35.242Z"
+  },
+  {
+    "id": "0d3d0610-fbe8-406e-9f1d-919b1c1c7a4f",
+    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "type": "quest_task",
+    "content": "I need to make sure post are operate correctly \npost should be able to -\ncreate a post\nclick on post to edit it \nclick on post to react to it \nclick on a post to repost it \nclick on a post to link it \n\nlink a post to a single quest or poehects \nlink a quest to mutliple quest or projects",
+    "visibility": "public",
+    "questId": "cb30b19a-b293-4ffa-b9c9-c696ad647305",
+    "tags": [],
+    "collaborators": [],
+    "timestamp": "2025-05-29T01:54:17.688Z"
   }
 ]

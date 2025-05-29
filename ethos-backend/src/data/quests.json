@@ -1,2 +1,13 @@
 [
+  {
+    "id": "cb30b19a-b293-4ffa-b9c9-c696ad647305",
+    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "title": "Test Quest",
+    "description": "",
+    "status": "active",
+    "logs": [],
+    "tasks": [],
+    "linkedPostIds": [],
+    "collaborators": []
+  }
 ]

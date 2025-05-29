@@ -1,13 +1,15 @@
-// src/constribution/controls/LinkToItemModal.jsx
 import React, { useState } from 'react';
 import LinkControls from '../contribution/controls/LinkControls';
 import Modal from './Modal';
 import { axiosWithAuth } from '../../utils/authUtils';
+import { useBoardContext } from '../../contexts/BoardContext';
 
 const LinkToItemModal = ({ isOpen, onClose, post, onLinked }) => {
   const [selectedLink, setSelectedLink] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
 
   const handleConfirm = async () => {
     if (!selectedLink?.itemId) {
@@ -19,16 +21,28 @@ const LinkToItemModal = ({ isOpen, onClose, post, onLinked }) => {
     try {
       const updatedPost = {
         ...post,
-        links: [...(post.links || []), {
-          type: 'quest',
-          id: selectedLink.itemId,
-          nodeId: selectedLink.nodeId || null,
-        }],
+        links: [
+          ...(post.links || []),
+          {
+            type: 'quest',
+            id: selectedLink.itemId,
+            nodeId: selectedLink.nodeId || null,
+          },
+        ],
       };
 
-      await axiosWithAuth.patch(`/posts/${post.id}`, { links: updatedPost.links });
+      const res = await axiosWithAuth.patch(`/posts/${post.id}`, {
+        links: updatedPost.links,
+      });
 
-      onLinked(updatedPost);
+      const savedPost = res.data;
+
+      // Update board state
+      if (selectedBoard?.id) {
+        updateBoardItem(selectedBoard.id, savedPost);
+      }
+
+      onLinked?.(savedPost);
       onClose();
     } catch (err) {
       console.error('[LinkToItemModal] Failed to update post links:', err);

@@ -4,6 +4,7 @@ import { POST_TYPES } from '../../constants/POST_TYPES';
 import { TextArea, Select, Button, Label, FormSection } from '../ui';
 import RoleAssignment from '../contribution/controls/RoleAssignment';
 import LinkControls from '../contribution/controls/LinkControls';
+import { useBoardContext } from '../../contexts/BoardContext';
 
 const EditPost = ({ post, onCancel, onUpdated }) => {
   const [type, setType] = useState(post.type);
@@ -15,12 +16,13 @@ const EditPost = ({ post, onCancel, onUpdated }) => {
   const [assignedRoles, setAssignedRoles] = useState(post.assignedRoles || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Optional: validate questId for quest_log or quest_task
     if ((type === 'quest_log' || type === 'quest_task') && !linkedQuestNode?.questId) {
       alert('Please link a quest.');
       setIsSubmitting(false);
@@ -38,7 +40,14 @@ const EditPost = ({ post, onCancel, onUpdated }) => {
     try {
       const res = await axiosWithAuth.put(`/posts/${post.id}`, payload);
       if (res.status === 200) {
-        onUpdated?.(res.data);
+        const updatedPost = res.data;
+
+        // Update board context in real time
+        if (selectedBoard?.id) {
+          updateBoardItem(selectedBoard.id, updatedPost);
+        }
+
+        onUpdated?.(updatedPost);
       } else {
         console.error('[EditPost] Unexpected status:', res.status);
         alert('Failed to update post.');
