@@ -11,14 +11,29 @@ const CONTRIBUTION_TYPES = [
   { value: 'project', label: 'Project' }
 ];
 
-const CreateContribution = ({ onSave, onCancel, quests = [], boards = [] }) => {
-  const [type, setType] = useState('post');
+const CreateContribution = ({
+  onSave,
+  onCancel,
+  quests = [],
+  boards = [],
+  typeOverride = null,         // 👉 allow forcing one type
+  replyTo = null,              // 👉 support reply posts
+  repostSource = null          // 👉 support reposting
+}) => {
+  const [type, setType] = useState(typeOverride || 'post');
+
+  const sharedProps = { onSave, onCancel, quests, boards };
 
   const renderForm = () => {
-    const sharedProps = { onSave, onCancel, quests };
     switch (type) {
       case 'post':
-        return <CreatePost {...sharedProps} />;
+        return (
+          <CreatePost
+            {...sharedProps}
+            replyTo={replyTo}
+            repostSource={repostSource}
+          />
+        );
       case 'quest':
         return <CreateQuest {...sharedProps} />;
       case 'project':
@@ -30,14 +45,16 @@ const CreateContribution = ({ onSave, onCancel, quests = [], boards = [] }) => {
 
   return (
     <div className="space-y-6">
-      <FormSection title="Create New Contribution">
-        <Select
-          label="Contribution Type"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          options={CONTRIBUTION_TYPES}
-        />
-      </FormSection>
+      {!typeOverride && (
+        <FormSection title="Create New Contribution">
+          <Select
+            label="Contribution Type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            options={CONTRIBUTION_TYPES}
+          />
+        </FormSection>
+      )}
 
       {renderForm()}
     </div>

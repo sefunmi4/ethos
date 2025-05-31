@@ -18,69 +18,74 @@ const CreateQuest = ({ onSave, onCancel }) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
-
+  
     try {
       // Step 1: Create the quest itself
       const title = content.slice(0, 60).trim() || 'Untitled Quest';
       const resQuest = await axiosWithAuth.post('/quests', {
         title,
         description: content.slice(0, 240),
-        linkedPostId: null
+        linkedPostId: null, // For future: allow linking a quest to a root post
       });
-
+  
       const newQuest = resQuest.data;
       const questId = newQuest.id;
-
+  
       // Step 2: Create the main quest_log post
       const resLog = await axiosWithAuth.post('/posts', {
         type: 'quest_log',
         content,
         questId,
-        nodeId: null,
+        nodeId: linkedQuestNode?.nodeId || null, // ⬅️ Allows nesting under node
         assignedRoles,
         visibility: 'public',
         boardId: selectedBoard?.id || null,
+        replyTo: null, // ⬅️ Explicitly passed
+        linkedItems: linkedQuestNode ? [linkedQuestNode] : [],
       });
-
+  
       const logPost = resLog.data;
-
+  
       if (selectedBoard?.id) {
-        appendToBoard(selectedBoard.id, logPost); // ✅ Add log post to board
+        appendToBoard(selectedBoard.id, logPost);
       }
-
+  
       // Step 3: Link the quest log post
       await axiosWithAuth.post(`/quests/${questId}/link`, {
-        postId: logPost.id
+        postId: logPost.id,
       });
-
+  
       // Step 4: Create nested task posts
       const createdTasks = [];
-      for (let task of tasks) {
+      for (const task of tasks) {
+        if (!task.content?.trim()) continue;
+  
         const resTask = await axiosWithAuth.post('/posts', {
           type: 'quest_task',
           content: task.content,
           questId,
           nodeId: null,
-          assignedRoles: task.assignedRoles,
+          assignedRoles: task.assignedRoles || [],
           visibility: 'public',
           boardId: selectedBoard?.id || null,
+          replyTo: null,
         });
-
+  
         const taskPost = resTask.data;
-
+  
         if (selectedBoard?.id) {
-          appendToBoard(selectedBoard.id, taskPost); // ✅ Add each task to board
+          appendToBoard(selectedBoard.id, taskPost);
         }
-
-        // Optional: Link task
+  
         await axiosWithAuth.post(`/quests/${questId}/link`, {
-          postId: taskPost.id
+          postId: taskPost.id,
         });
-
+  
         createdTasks.push(taskPost);
       }
-
+  
       onSave?.({ quest: newQuest, logPost, tasks: createdTasks });
+  
     } catch (err) {
       console.error('[CreateQuest] Failed to create quest:', err);
       alert('Failed to create quest. Please try again.');

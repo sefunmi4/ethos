@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "postId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+    "userId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "type": "like",
+    "timestamp": "2025-05-31T00:59:31.398Z"
+  },
+  {
+    "postId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+    "userId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "type": "heart",
+    "timestamp": "2025-05-31T01:23:54.478Z"
+  },
+  {
+    "postId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+    "userId": "u_a0eee905-3700-46c1-aff2-70325be4f137",
+    "type": "like",
+    "timestamp": "2025-05-31T01:34:13.121Z"
+  }
+]

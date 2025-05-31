@@ -1,3 +1,4 @@
+// src/pages/QuestPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosWithAuth } from '../../utils/authUtils';
@@ -6,6 +7,7 @@ import QuestMapRenderer from '../../components/renderers/QuestMapRenderer';
 import ThreadRenderer from '../../components/renderers/ThreadRenderer';
 import PostCard from '../../components/posts/PostCard';
 import QuestCard from '../../components/quests/QuestCard';
+import CreateContribution from '../../components/contribution/CreateContribution';
 
 const QuestPage = () => {
   const { id } = useParams();
@@ -14,14 +16,15 @@ const QuestPage = () => {
   const [questTree, setQuestTree] = useState([]);
   const [logPosts, setLogPosts] = useState([]);
   const [error, setError] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     const fetchQuestData = async () => {
       try {
         const [questRes, treeRes, logsRes] = await Promise.all([
           axiosWithAuth.get(`/api/quests/${id}`),
-          axiosWithAuth.get(`/api/quests/${id}/tree`),     // tree or graph data
-          axiosWithAuth.get(`/api/posts/quest/${id}/logs`) // quest_log posts
+          axiosWithAuth.get(`/api/quests/${id}/tree`),
+          axiosWithAuth.get(`/api/posts/quest/${id}/logs`)
         ]);
 
         setQuest(questRes.data);
@@ -35,6 +38,11 @@ const QuestPage = () => {
 
     fetchQuestData();
   }, [id]);
+
+  const handleNewLog = (newPost) => {
+    setLogPosts([newPost, ...logPosts]);
+    setShowCreate(false);
+  };
 
   if (error) {
     return <div className="p-6 text-center text-red-500">{error}</div>;
@@ -61,7 +69,29 @@ const QuestPage = () => {
 
       {/* Quest Log Timeline */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">📜 Quest Log</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-800">📜 Quest Log</h2>
+          {user && (
+            <button
+              onClick={() => setShowCreate(!showCreate)}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              {showCreate ? 'Cancel' : '+ Add Log Entry'}
+            </button>
+          )}
+        </div>
+
+        {showCreate && (
+          <div className="border rounded p-4 bg-white shadow">
+            <CreateContribution
+              typeOverride="post"
+              quests={[quest]}
+              onSave={handleNewLog}
+              onCancel={() => setShowCreate(false)}
+            />
+          </div>
+        )}
+
         {logPosts.length > 0 ? (
           <ThreadRenderer
             items={logPosts}

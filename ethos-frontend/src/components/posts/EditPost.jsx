@@ -1,3 +1,4 @@
+// src/components/posts/EditPost.jsx
 import React, { useState } from 'react';
 import { axiosWithAuth } from '../../utils/authUtils';
 import { POST_TYPES } from '../../constants/POST_TYPES';
@@ -14,6 +15,8 @@ const EditPost = ({ post, onCancel, onUpdated }) => {
     nodeId: post.nodeId || null,
   });
   const [assignedRoles, setAssignedRoles] = useState(post.assignedRoles || []);
+  const [links, setLinks] = useState(post.links || []);
+  const [repostedFrom, setRepostedFrom] = useState(post.repostedFrom || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { selectedBoard, updateBoardItem } = useBoardContext() || {};
@@ -35,18 +38,17 @@ const EditPost = ({ post, onCancel, onUpdated }) => {
       ...(linkedQuestNode?.questId && { questId: linkedQuestNode.questId }),
       ...(linkedQuestNode?.nodeId && { nodeId: linkedQuestNode.nodeId }),
       ...(type === 'quest_task' && { assignedRoles }),
+      links: links.map((l) => ({ id: l.id, type: l.type })),
+      repostedFrom: repostedFrom?.id || null
     };
 
     try {
       const res = await axiosWithAuth.put(`/posts/${post.id}`, payload);
       if (res.status === 200) {
         const updatedPost = res.data;
-
-        // Update board context in real time
         if (selectedBoard?.id) {
           updateBoardItem(selectedBoard.id, updatedPost);
         }
-
         onUpdated?.(updatedPost);
       } else {
         console.error('[EditPost] Unexpected status:', res.status);
@@ -97,6 +99,39 @@ const EditPost = ({ post, onCancel, onUpdated }) => {
       {type === 'quest_task' && (
         <FormSection title="Assigned Roles">
           <RoleAssignment value={assignedRoles} onChange={setAssignedRoles} />
+        </FormSection>
+      )}
+
+      <FormSection title="Linked Items">
+        <LinkControls
+          label="Link to quests/projects"
+          value={null}
+          onChange={(newLink) => setLinks([...links, newLink])}
+          allowCreateNew={false}
+        />
+
+        {links.length > 0 && (
+          <ul className="text-sm text-blue-700 list-disc pl-6 mt-2">
+            {links.map((l, idx) => (
+              <li key={idx}>
+                {l.type}: {l.title || l.id}{' '}
+                <button
+                  className="text-red-500 ml-2 text-xs hover:underline"
+                  onClick={() => setLinks(links.filter((_, i) => i !== idx))}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </FormSection>
+
+      {repostedFrom && (
+        <FormSection title="Reposted From">
+          <div className="text-sm text-gray-600 italic">
+            This post was originally created by <strong>@{repostedFrom.username}</strong>.
+          </div>
         </FormSection>
       )}
 

@@ -1,46 +1,208 @@
 [
   {
-    "id": "57eed12d-4be8-4176-bd8b-f39acbb77e53",
-    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
     "type": "free_speech",
-    "content": "thinking about testing quest out",
+    "content": "thinkning about testing out request post",
     "visibility": "public",
     "questId": null,
     "tags": [],
     "collaborators": [],
-    "timestamp": "2025-05-28T22:19:36.410Z"
+    "replyTo": null,
+    "timestamp": "2025-05-30T22:32:23.153Z",
+    "repostedFrom": null,
+    "linkedItems": []
   },
   {
-    "id": "c18c34f4-40d8-4ff6-b1f2-967fb3e0a24e",
-    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "id": "fcda78c8-4621-4e12-9a89-95796b1990ad",
+    "type": "free_speech",
+    "content": "yeah you could link it to a quest later",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": null,
+    "timestamp": "2025-05-30T22:32:37.507Z",
+    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+  },
+  {
+    "id": "50195f37-af31-4e43-8cb5-8150a99c846f",
+    "type": "free_speech",
+    "content": "its worth trying out ",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": {
+      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "timestamp": "2025-05-30T22:32:50.068Z",
+    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+  },
+  {
+    "id": "99567197-70b7-4cf4-a7db-80fff33adec3",
+    "type": "free_speech",
+    "content": "i'm trying to find the see replies button and added cosle messages. do you see me ?",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": {
+      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "timestamp": "2025-05-30T22:37:27.083Z",
+    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+  },
+  {
+    "id": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
+    "type": "free_speech",
+    "content": "sounds worth it",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": null,
+    "timestamp": "2025-05-30T23:38:05.747Z",
+    "replyTo": "fcda78c8-4621-4e12-9a89-95796b1990ad"
+  },
+  {
+    "id": "361f95c2-2f23-403c-aa5c-b0d74f7b33c0",
+    "type": "free_speech",
+    "content": "for real!",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": {
+      "id": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
+      "username": "testerbot1",
+      "originalPostId": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
+      "originalContent": "sounds worth it"
+    },
+    "timestamp": "2025-05-30T23:38:21.405Z",
+    "replyTo": "7d483b3f-2261-41b9-a3fb-7d9c1d431456"
+  },
+  {
+    "id": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
     "type": "request",
-    "content": "want to test quest out",
+    "content": "Planning on making a quest ",
+    "visibility": "public",
+    "tags": [
+      "reply"
+    ],
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "questId": null,
+    "nodeId": null,
+    "linkedItems": [],
+    "repostedFrom": {
+      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "timestamp": "2025-05-30T23:39:59.254Z",
+    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+  },
+  {
+    "id": "5b601334-cf1e-4018-adbd-e9dd0544ad1d",
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "type": "quest_log",
+    "content": "This shuold make for a good start quest",
     "visibility": "public",
     "questId": null,
     "tags": [],
     "collaborators": [],
-    "timestamp": "2025-05-28T22:38:26.937Z"
+    "replyTo": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
+    "timestamp": "2025-05-31T00:06:09.687Z",
+    "repostedFrom": {
+      "id": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+      "username": "testerbot1",
+      "originalPostId": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
+      "originalContent": "Planning on making a quest "
+    },
+    "linkedItems": []
   },
   {
-    "id": "d6bf0fcb-9824-4942-a643-60680f43576e",
-    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
-    "type": "quest_log",
-    "content": "I've covered post creation and plan to fix post to have an edit button to enter edit post mode. \nnow I want to start looking at quest.\n\nhopfully i can get it all functional as an MVP then work on visuals before beta relase and server hosting\n\nalso want quest log to display apop up that says can ave quest log wiht out a quest.\n",
+    "id": "f0c97b3b-9ead-450e-a700-b8151e9feaea",
+    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "type": "repost",
+    "content": "thinkning about testing out request post",
     "visibility": "public",
-    "questId": "cb30b19a-b293-4ffa-b9c9-c696ad647305",
+    "questId": null,
     "tags": [],
     "collaborators": [],
-    "timestamp": "2025-05-29T01:39:35.242Z"
+    "replyTo": null,
+    "timestamp": "2025-05-31T00:59:32.363Z",
+    "repostedFrom": {
+      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "linkedItems": []
   },
   {
-    "id": "0d3d0610-fbe8-406e-9f1d-919b1c1c7a4f",
-    "authorId": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
-    "type": "quest_task",
-    "content": "I need to make sure post are operate correctly \npost should be able to -\ncreate a post\nclick on post to edit it \nclick on post to react to it \nclick on a post to repost it \nclick on a post to link it \n\nlink a post to a single quest or poehects \nlink a quest to mutliple quest or projects",
+    "id": "defb687c-a979-4577-b7f1-3d749d74a9b8",
+    "authorId": "u_a0eee905-3700-46c1-aff2-70325be4f137",
+    "type": "repost",
+    "content": "thinkning about testing out request post",
     "visibility": "public",
-    "questId": "cb30b19a-b293-4ffa-b9c9-c696ad647305",
+    "questId": null,
     "tags": [],
     "collaborators": [],
-    "timestamp": "2025-05-29T01:54:17.688Z"
+    "replyTo": null,
+    "timestamp": "2025-05-31T01:34:10.312Z",
+    "repostedFrom": {
+      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "linkedItems": []
+  },
+  {
+    "id": "69df2e61-b50e-4058-86d5-dfd32925f311",
+    "authorId": "u_a0eee905-3700-46c1-aff2-70325be4f137",
+    "type": "free_speech",
+    "content": "me too bro",
+    "visibility": "public",
+    "questId": null,
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+    "timestamp": "2025-05-31T01:34:30.804Z",
+    "repostedFrom": {
+      "id": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+      "username": "testerbot1",
+      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
+      "originalContent": "thinkning about testing out request post"
+    },
+    "linkedItems": []
   }
 ]

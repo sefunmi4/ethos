@@ -7,4 +7,3 @@ export { default as FormSection } from './FormSection.jsx';
 export { default as Modal } from './Modal.jsx';
 export { default as Tag } from './Tag.jsx';
 export { default as PostTypeBadge } from './PostTypeBadge.jsx';
-export { default as ReactionButton } from './ReactionButton.jsx';

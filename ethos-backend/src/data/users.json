@@ -1,9 +1,9 @@
 [
   {
-    "id": "u_ee18c9b4-56df-4d07-8819-1589896e22c6",
+    "id": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
     "username": "testerbot1",
     "email": "testerbot1@ethos.com",
-    "password": "$2b$10$2GOCFe0RHHL.kdl7wNeYUOsuCsdB4eQJWZ1Ls/.WF23GsQ2pnRZOi",
+    "password": "$2b$10$dNTyAFaJdEw/EIiOrGZy4unDZKU3cEPpJueJY/FJ2pGdJswFOhXc2",
     "role": "user",
     "tags": [
       "explorer"
@@ -17,7 +17,33 @@
     },
     "experienceTimeline": [
       {
-        "datetime": "2025-05-24T15:40:11.178Z",
+        "datetime": "2025-05-30T18:48:29.854Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "u_a0eee905-3700-46c1-aff2-70325be4f137",
+    "username": "testerbot2",
+    "email": "testerbot2@ethos.com",
+    "password": "$2b$10$Dcu/18GcqiBbzHPhL.kB0eCTMb5WkvbUjCNFo8QrS/9JWot5MUEBa",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-05-31T01:33:53.645Z",
         "title": "Journey begins",
         "tags": [
           "registered"

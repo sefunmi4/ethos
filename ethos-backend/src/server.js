@@ -1,7 +1,6 @@
 // server.js
 
 import express from 'express';
-import fs from 'fs';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -10,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import usersRouter from './routes/users.js';
 import postsRouter from './routes/posts.js';
 import questsRouter from './routes/quests.js';
+import projectsRoutes from './routes/projects.js'; 
 import boardsRoutes from './routes/boards.js'; 
 import collabsRoutes from './routes/collabs.js'; 
 
@@ -32,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRouter);  
 app.use('/api/posts', postsRouter);  
 app.use('/api/quests', questsRouter); 
+app.use('/api/projects', projectsRoutes); 
 app.use('/api/boards', boardsRoutes); 
 app.use('/api/collabs', collabsRoutes); 
 
