@@ -42,12 +42,11 @@ const LinkControls = ({
     ...projects.map((p) => ({ ...p, itemType: 'project' })),
   ];
 
-  const selectedValue =
-    creatingNew
-      ? '__create'
-      : Array.isArray(value) && value.length === 1
-      ? `${value[0].itemType}:${value[0].itemId}`
-      : '';
+  const selectedValue = creatingNew
+    ? '__create'
+    : Array.isArray(value) && value.length > 0
+    ? `${value[value.length - 1].itemType}:${value[value.length - 1].itemId}`
+    : '';
 
   const handleSelectItem = (e) => {
     const val = e.target.value;
@@ -68,7 +67,7 @@ const LinkControls = ({
 
     const exists = safeValue.some((v) => v.itemId === id && v.itemType === type);
     if (!exists) {
-      onChange([...safeValue, newLink]);
+      onChange([newLink, ...safeValue.filter((v) => !(v.itemId === id && v.itemType === type))]);
     }
 
     setCreatingNew(false);

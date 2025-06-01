@@ -1,208 +1,145 @@
 [
   {
-    "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "id": "21f902a8-d439-40de-a8b6-5ecc8c802984",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
     "type": "free_speech",
-    "content": "thinkning about testing out request post",
+    "content": "just a random post... pie",
     "visibility": "public",
     "questId": null,
     "tags": [],
     "collaborators": [],
     "replyTo": null,
-    "timestamp": "2025-05-30T22:32:23.153Z",
+    "timestamp": "2025-05-31T23:22:41.695Z",
     "repostedFrom": null,
     "linkedItems": []
   },
   {
-    "id": "fcda78c8-4621-4e12-9a89-95796b1990ad",
+    "id": "bab6d8d3-9c6a-4e9b-93b7-39e85fdc7351",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
     "type": "free_speech",
-    "content": "yeah you could link it to a quest later",
+    "content": "what else can i do on here",
     "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
     "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "timestamp": "2025-05-31T23:23:13.547Z",
     "repostedFrom": null,
-    "timestamp": "2025-05-30T22:32:37.507Z",
-    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+    "linkedItems": []
   },
   {
-    "id": "50195f37-af31-4e43-8cb5-8150a99c846f",
-    "type": "free_speech",
-    "content": "its worth trying out ",
-    "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-    "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
-    "repostedFrom": {
-      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
-    "timestamp": "2025-05-30T22:32:50.068Z",
-    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
-  },
-  {
-    "id": "99567197-70b7-4cf4-a7db-80fff33adec3",
-    "type": "free_speech",
-    "content": "i'm trying to find the see replies button and added cosle messages. do you see me ?",
-    "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-    "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
-    "repostedFrom": {
-      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
-    "timestamp": "2025-05-30T22:37:27.083Z",
-    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
-  },
-  {
-    "id": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
-    "type": "free_speech",
-    "content": "sounds worth it",
-    "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-    "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
-    "repostedFrom": null,
-    "timestamp": "2025-05-30T23:38:05.747Z",
-    "replyTo": "fcda78c8-4621-4e12-9a89-95796b1990ad"
-  },
-  {
-    "id": "361f95c2-2f23-403c-aa5c-b0d74f7b33c0",
-    "type": "free_speech",
-    "content": "for real!",
-    "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-    "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
-    "repostedFrom": {
-      "id": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
-      "username": "testerbot1",
-      "originalPostId": "7d483b3f-2261-41b9-a3fb-7d9c1d431456",
-      "originalContent": "sounds worth it"
-    },
-    "timestamp": "2025-05-30T23:38:21.405Z",
-    "replyTo": "7d483b3f-2261-41b9-a3fb-7d9c1d431456"
-  },
-  {
-    "id": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
+    "id": "16121006-4a8d-4847-89c7-43f9ed2ac180",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
     "type": "request",
-    "content": "Planning on making a quest ",
+    "content": "what could i do with request ... idk",
     "visibility": "public",
-    "tags": [
-      "reply"
-    ],
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
     "questId": null,
-    "nodeId": null,
-    "linkedItems": [],
-    "repostedFrom": {
-      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
-    "timestamp": "2025-05-30T23:39:59.254Z",
-    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468"
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "timestamp": "2025-05-31T23:23:47.070Z",
+    "repostedFrom": null,
+    "linkedItems": []
   },
   {
-    "id": "5b601334-cf1e-4018-adbd-e9dd0544ad1d",
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
+    "id": "b33a2ca6-203d-47be-a453-e3843330d1b0",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
     "type": "quest_log",
-    "content": "This shuold make for a good start quest",
+    "content": "i'm going on a quest to figure out how requrest work",
     "visibility": "public",
-    "questId": null,
-    "tags": [],
-    "collaborators": [],
-    "replyTo": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
-    "timestamp": "2025-05-31T00:06:09.687Z",
-    "repostedFrom": {
-      "id": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-      "username": "testerbot1",
-      "originalPostId": "1d58e10f-ae38-4d02-8cab-82a5d0c037d8",
-      "originalContent": "Planning on making a quest "
-    },
-    "linkedItems": []
-  },
-  {
-    "id": "f0c97b3b-9ead-450e-a700-b8151e9feaea",
-    "authorId": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-    "type": "repost",
-    "content": "thinkning about testing out request post",
-    "visibility": "public",
-    "questId": null,
+    "questId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
     "tags": [],
     "collaborators": [],
     "replyTo": null,
-    "timestamp": "2025-05-31T00:59:32.363Z",
-    "repostedFrom": {
-      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
-    "linkedItems": []
+    "timestamp": "2025-05-31T23:24:26.531Z",
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
+        "itemType": "quest",
+        "nodeId": ""
+      }
+    ]
   },
   {
-    "id": "defb687c-a979-4577-b7f1-3d749d74a9b8",
-    "authorId": "u_a0eee905-3700-46c1-aff2-70325be4f137",
-    "type": "repost",
-    "content": "thinkning about testing out request post",
+    "id": "7d56ab8e-3d5a-40a1-855e-b6eb18f7fc17",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
+    "type": "quest_log",
+    "content": "i'm working on this right now",
     "visibility": "public",
-    "questId": null,
+    "questId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "16121006-4a8d-4847-89c7-43f9ed2ac180",
+    "timestamp": "2025-05-31T23:25:09.055Z",
+    "repostedFrom": {
+      "id": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
+      "username": "testerbot1",
+      "originalPostId": "16121006-4a8d-4847-89c7-43f9ed2ac180",
+      "originalContent": "what could i do with request ... idk"
+    },
+    "linkedItems": [
+      {
+        "itemId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
+        "itemType": "quest",
+        "nodeId": ""
+      }
+    ]
+  },
+  {
+    "id": "c9bf0a26-bd3d-43bd-b1f7-43b6fb5b50ca",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
+    "type": "quest_task",
+    "content": "pretty sure the website might crash if i keep going so gonna fix the website bugs now\n\n\\so i can finfd out was request can do for that guy that made a request lol",
+    "visibility": "public",
+    "questId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
     "tags": [],
     "collaborators": [],
     "replyTo": null,
-    "timestamp": "2025-05-31T01:34:10.312Z",
-    "repostedFrom": {
-      "id": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
-    "linkedItems": []
+    "timestamp": "2025-05-31T23:26:48.076Z",
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "30ea3f26-5c28-4ef1-81ec-c9c40b93d7ae",
+        "itemType": "quest",
+        "nodeId": ""
+      }
+    ]
   },
   {
-    "id": "69df2e61-b50e-4058-86d5-dfd32925f311",
-    "authorId": "u_a0eee905-3700-46c1-aff2-70325be4f137",
-    "type": "free_speech",
-    "content": "me too bro",
+    "id": "bea9a2ea-3fc7-43b4-9a0a-4efd4756c0cc",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
+    "type": "quest_log",
+    "content": "making a quest from scratch just cause",
     "visibility": "public",
-    "questId": null,
+    "questId": "dd18bfdf-6f4e-4dd0-a767-b99cf6f65565",
     "tags": [],
     "collaborators": [],
-    "replyTo": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-    "timestamp": "2025-05-31T01:34:30.804Z",
-    "repostedFrom": {
-      "id": "u_4864f426-2b31-44e4-bed6-97ee45a54f1c",
-      "username": "testerbot1",
-      "originalPostId": "81ba98f0-c6f4-4d4e-af4d-07c75f25f468",
-      "originalContent": "thinkning about testing out request post"
-    },
+    "replyTo": null,
+    "timestamp": "2025-05-31T23:28:09.566Z",
+    "repostedFrom": null,
+    "linkedItems": [
+      [
+        {
+          "itemId": "b43843fa-f82f-46c3-b0f0-c2659e223145",
+          "itemType": "quest",
+          "nodeId": ""
+        }
+      ]
+    ]
+  },
+  {
+    "id": "2a5af8ab-7643-47d2-91a7-4cec4daec8ac",
+    "authorId": "u_3eda9fe9-7c8e-4790-bd4d-f92140ec968a",
+    "type": "quest_task",
+    "content": "LOOK FOR BUGS",
+    "visibility": "public",
+    "questId": "dd18bfdf-6f4e-4dd0-a767-b99cf6f65565",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "timestamp": "2025-05-31T23:28:09.573Z",
+    "repostedFrom": null,
     "linkedItems": []
   }
 ]
