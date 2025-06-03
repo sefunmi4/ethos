@@ -1,12 +1,10 @@
-// types/postTypes.ts
 import type { Visibility } from './common';
 
 export type PostType =
   | 'free_speech'
   | 'request'
-  | 'quest_log'
-  | 'quest_task'
-  | 'quest'
+  | 'quest_log'         // 📘 Logs documenting quest progress (child of node)
+  | 'quest_task'        // ✅ Tasks or objectives inside a quest node
   | 'meta_system'       // 🧠 Internal system post
   | 'meta_announcement'; // 📣 Public system broadcast (e.g. platform changelog)
 
@@ -21,8 +19,7 @@ export type PostTag =
   | 'release'
   | 'repost'
   | string; // fallback for custom tags
-  
-  
+
 export interface Post {
   id: string;
 
@@ -38,8 +35,20 @@ export interface Post {
   /** Visibility level, used for access and filtering */
   visibility: Visibility;
 
+  /** Timestamp in ISO format */
+  timestamp: string;
+
+  /** Optional: ISO timestamp alias for sorting if needed */
+  createdAt?: string;
+
   /** Optional: The quest this post is linked to (as log or task) */
   questId?: string | null;
+
+  /** Optional: Logical node within the quest (used for graph layout + sorting) */
+  nodeId?: string;
+
+  /** Optional: The quest name (for display in title formatting) */
+  questName?: string;
 
   /** Hashtags or topic tags */
   tags: PostTag[];
@@ -49,9 +58,6 @@ export interface Post {
 
   /** If this post is a reply to another post */
   replyTo?: string | null;
-
-  /** Timestamp in ISO format */
-  timestamp: string;
 
   /** If this post is a repost of another post */
   repostedFrom?: RepostMeta | null;
@@ -72,25 +78,18 @@ export interface Post {
 export interface LinkedItem {
   itemId: string;
   itemType: 'quest' | 'post' | 'board';
-  nodeId?: string; // Quest-specific node context (e.g., for maps)
+  nodeId?: string; // Quest-specific node context (e.g., for maps or structure)
 }
 
 export interface RepostMeta {
-  /** Post ID where this content originated */
   originalPostId: string;
-
-  /** Username of the original author */
   username: string;
-
-  /** Original content snapshot (immutable copy) */
   originalContent: string;
-
-  /** Original timestamp for sorting and traceability */
   originalTimestamp: string;
 }
 
 export interface ReactionSet {
-  like?: Record<string, string>;  // userId: timestamp
+  like?: Record<string, string>;   // userId: timestamp
   love?: Record<string, string>;
   repost?: Record<string, string>;
 }

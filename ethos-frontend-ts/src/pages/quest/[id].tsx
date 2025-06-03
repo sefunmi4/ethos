@@ -7,22 +7,16 @@ import { useBoard } from '../../hooks/useBoard';
 import { useSocket } from '../../hooks/useSocket';
 
 import QuestBanner from '../../components/quest/QuestBanner';
-import QuestCard from '../../components/quest/QuestCard';
-import CreateContribution from '../../components/contribution/CreateContribution';
-import PostCard from '../../components/post/PostCard';
-import Board from '../../components/board/Board';
+import Board from '../../components/boards/Board';
 
-import type { Post } from '../../types/postTypes';
-import type { AuthUser } from '../../types/authTypes';
 import type { BoardData } from '../../types/boardTypes';
 
 const QuestPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
 
-  const [showCreate, setShowCreate] = useState(false);
-  const [logBoard, setLogBoard] = useState<BoardData | null>(null);
   const [mapBoard, setMapBoard] = useState<BoardData | null>(null);
+  const [logBoard, setLogBoard] = useState<BoardData | null>(null);
 
   const {
     quest,
@@ -51,13 +45,6 @@ const QuestPage: React.FC = () => {
     if (updatedBoard.type === 'log') refreshLog();
   });
 
-  const handleNewLog = (newPost: Post) => {
-    setLogBoard(prev =>
-      prev ? { ...prev, enrichedItems: [newPost, ...prev.enrichedItems] } : null
-    );
-    setShowCreate(false);
-  };
-
   if (questError) {
     return <div className="p-6 text-center text-red-500">This quest could not be loaded or is private.</div>;
   }
@@ -68,10 +55,21 @@ const QuestPage: React.FC = () => {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
+      {/* 🧭 Quest Overview */}
       <QuestBanner quest={quest} />
-      <QuestCard quest={quest} user={user as AuthUser} readOnly />
+      <Board
+        board={{
+          id: `quest-${quest.id}`,
+          title: 'Quest Overview',
+          structure: 'list',
+          items: [quest],
+          enrichedItems: [quest],
+        }}
+        editable={false}
+        compact={false}
+      />
 
-      {/* 🗺 Quest Map Board */}
+      {/* 🗺 Quest Map */}
       <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">🗺 Quest Map</h2>
         {mapBoard ? (
@@ -79,47 +77,24 @@ const QuestPage: React.FC = () => {
             board={mapBoard}
             structure="graph"
             editable={user?.id === quest.ownerId}
-            renderItem={(post: Post) => (
-              <PostCard key={post.id} post={post} user={user as AuthUser} />
-            )}
+            quest={quest}
           />
         ) : (
           <p className="text-sm text-gray-500">No quest map defined yet.</p>
         )}
       </section>
 
-      {/* 📜 Quest Log Board */}
+      {/* 📜 Quest Log */}
       <section>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">📜 Quest Log</h2>
-          {user && (
-            <button
-              onClick={() => setShowCreate(!showCreate)}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              {showCreate ? 'Cancel' : '+ Add Log Entry'}
-            </button>
-          )}
-        </div>
-
-        {showCreate && (
-          <div className="border rounded p-4 bg-white shadow mb-4">
-            <CreateContribution
-              typeOverride="post"
-              quests={[quest]}
-              onSave={handleNewLog}
-              onCancel={() => setShowCreate(false)}
-            />
-          </div>
-        )}
-
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">📜 Quest Log</h2>
         {logBoard ? (
           <Board
             board={logBoard}
-            structure="timeline"
-            renderItem={(post: Post) => (
-              <PostCard key={post.id} post={post} user={user as AuthUser} compact />
-            )}
+            structure="list"
+            editable={true}
+            quest={quest}
+            user={user}
+            showCreate
           />
         ) : (
           <p className="text-sm text-gray-500">No quest logs yet. Start journaling progress.</p>

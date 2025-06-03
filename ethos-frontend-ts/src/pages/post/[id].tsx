@@ -1,19 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import PostCard from '../../components/posts/PostCard';
 import Board from '../../components/boards/Board';
 import { useSocket } from '../../hooks/useSocket';
 import { usePost } from '../../hooks/usePost';
-//import { usePermissions } from '../../hooks/usePermissions';
 
 import type { Post } from '../../types/postTypes';
-import type { User } from '../../types/userTypes';
-import type { BoardData, BoardItem } from '../../types/boardTypes';
+import type { BoardData } from '../../types/boardTypes';
 
 const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
-  //const { canViewThread } = usePermissions(); // Optional: customize layout based on permissions
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
@@ -83,11 +79,23 @@ const PostPage: React.FC = () => {
         </section>
       )}
 
+      {/* 🎯 Primary Post Card via Board */}
       <section>
-        <PostCard post={post} user={post.author as User} />
+        <Board
+          board={{
+            id: `post-${post.id}`,
+            title: 'Post',
+            structure: 'list',
+            items: [post],
+            enrichedItems: [post],
+          }}
+          editable={false}
+          compact={false}
+        />
       </section>
 
-      {replyBoard?.items.length > 0 && (
+      {/* 💬 Replies View Toggle */}
+      {replyBoard?.items?.length > 0 && (
         <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
           <button
             className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -104,22 +112,17 @@ const PostPage: React.FC = () => {
         </div>
       )}
 
+      {/* 🧵 Replies */}
       <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">💬 Replies</h2>
         {replyBoard ? (
           <Board
             board={replyBoard}
             structure={viewMode}
-            renderItem={(item: BoardItem) => (
-              <PostCard
-                key={item.id}
-                post={item as Post}
-                user={(item as Post).author as User}
-                compact
-              />
-            )}
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
+            editable={false}
+            compact={true}
           />
         ) : (
           <p className="text-sm text-gray-500">No replies yet.</p>

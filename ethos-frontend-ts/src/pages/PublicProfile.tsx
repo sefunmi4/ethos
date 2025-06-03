@@ -8,12 +8,9 @@ import { usePost } from '../hooks/usePost';
 
 import ProfileBanner from '../components/ProfileBanner';
 import Board from '../components/boards/Board';
-import ContributionCard from '../components/contribution/ContributionCard';
 
 import type { BoardData } from '../types/boardTypes';
 import type { User } from '../types/userTypes';
-import type { Quest } from '../types/questTypes';
-import type { Post } from '../types/postTypes';
 
 const PublicProfilePage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -27,7 +24,7 @@ const PublicProfilePage: React.FC = () => {
   const { enrichQuests } = useQuest();
   const { enrichPosts } = usePost();
 
-  // 🧠 Load profile data and related boards
+  // 🧠 Load profile and related boards
   useEffect(() => {
     if (!userId) return;
 
@@ -85,10 +82,9 @@ const PublicProfilePage: React.FC = () => {
           questBoard.enrichedItems?.length ? (
             <Board
               board={questBoard}
-              structure="map"
-              renderItem={(quest: Quest) => (
-                <ContributionCard item={quest} user={profile} type="quest" readOnly />
-              )}
+              structure="map" // for quest overview in graph/tree format
+              user={profile}
+              readOnly
             />
           ) : (
             <div className="text-gray-500 text-center py-8">No public quests available.</div>
@@ -105,10 +101,9 @@ const PublicProfilePage: React.FC = () => {
           postBoard.enrichedItems?.length ? (
             <Board
               board={postBoard}
-              structure="list"
-              renderItem={(post: Post) => (
-                <ContributionCard item={post} user={profile} type="post" readOnly />
-              )}
+              structure="list" // for post history
+              user={profile}
+              readOnly
             />
           ) : (
             <div className="text-gray-500 text-center py-8">No public posts found.</div>

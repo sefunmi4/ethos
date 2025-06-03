@@ -5,21 +5,16 @@ import { Link } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
-import { usePermissions } from '../hooks/usePermissions';
+//import { usePermissions } from '../hooks/usePermissions';
 import { useTimeline } from '../hooks/useTimeline';
 import { useSocket } from '../hooks/useSocket';
 
-import ListLayout from '../components/layout/ListLayout';
-import ContributionCard from '../components/contribution/ContributionCard';
+import Board from '../components/boards/Board';
 import Button from '../components/ui/Button';
-
-import type { Quest } from '../types/questTypes';
-import type { Post } from '../types/postTypes';
 
 const NotFound: React.FC = () => {
   const { user } = useAuth();
   const { userQuestBoard, userPostBoard } = useBoardContext();
-  const { can } = usePermissions();
   const { addTimelineEvent } = useTimeline();
   const { socket } = useSocket();
 
@@ -32,8 +27,8 @@ const NotFound: React.FC = () => {
     });
   }, [user, socket, addTimelineEvent]);
 
-  const showQuests = user && userQuestBoard?.enrichedItems?.length;
-  const showPosts = user && userPostBoard?.enrichedItems?.length;
+  const hasQuests = user && userQuestBoard?.enrichedItems?.length;
+  const hasPosts = user && userPostBoard?.enrichedItems?.length;
 
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-12">
@@ -50,30 +45,36 @@ const NotFound: React.FC = () => {
         </Link>
       </section>
 
-      {/* 🧭 Suggest Quests */}
-      {showQuests && (
-        <div className="mb-12">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Recent Quests</h3>
-          <ListLayout
-            items={userQuestBoard.enrichedItems.slice(0, 3)}
-            renderItem={(quest: Quest) => (
-              <ContributionCard item={quest} type="quest" user={user} readOnly />
-            )}
+      {/* 🧭 Suggested Quest Board */}
+      {hasQuests && (
+        <section className="mb-16">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+            Recent Quests
+          </h3>
+          <Board
+            board={userQuestBoard}
+            structure={userQuestBoard.structure || 'list'}
+            editable={false}
+            compact={true}
+            title="Suggested Quests"
           />
-        </div>
+        </section>
       )}
 
-      {/* ✍️ Suggest Posts */}
-      {showPosts && (
-        <div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Recent Posts</h3>
-          <ListLayout
-            items={userPostBoard.enrichedItems.slice(0, 3)}
-            renderItem={(post: Post) => (
-              <ContributionCard item={post} type="post" user={user} readOnly />
-            )}
+      {/* ✍️ Suggested Post Board */}
+      {hasPosts && (
+        <section>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+            Recent Posts
+          </h3>
+          <Board
+            board={userPostBoard}
+            structure={userPostBoard.structure || 'list'}
+            editable={false}
+            compact={true}
+            title="Suggested Posts"
           />
-        </div>
+        </section>
       )}
     </main>
   );
