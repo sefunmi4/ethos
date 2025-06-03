@@ -7,7 +7,7 @@ import { useQuest } from '../hooks/useQuest';
 import { usePost } from '../hooks/usePost';
 
 import ProfileBanner from '../components/ProfileBanner';
-import Board from '../components/boards/Board';
+import Board from '../components/board/Board';
 
 import type { BoardData } from '../types/boardTypes';
 import type { User } from '../types/userTypes';

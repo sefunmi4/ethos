@@ -9,7 +9,7 @@ import { useBoardContext } from '../contexts/BoardContext';
 import { useTimeline } from '../hooks/useTimeline';
 import { useSocket } from '../hooks/useSocket';
 
-import Board from '../components/boards/Board';
+import Board from '../components/board/Board';
 import Button from '../components/ui/Button';
 
 const NotFound: React.FC = () => {

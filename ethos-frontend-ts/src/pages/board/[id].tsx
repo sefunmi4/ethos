@@ -4,7 +4,7 @@ import { useBoard } from '../../hooks/useBoard';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useSocket } from '../../hooks/useSocket';
 import { usePermissions } from '../../hooks/usePermissions';
-import Board from '../../components/boards/Board';
+import Board from '../../components/board/Board';
 
 import type { BoardData } from '../../types/boardTypes';
 

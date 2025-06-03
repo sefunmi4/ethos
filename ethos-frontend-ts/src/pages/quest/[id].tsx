@@ -7,7 +7,7 @@ import { useBoard } from '../../hooks/useBoard';
 import { useSocket } from '../../hooks/useSocket';
 
 import QuestBanner from '../../components/quest/QuestBanner';
-import Board from '../../components/boards/Board';
+import Board from '../../components/board/Board';
 
 import type { BoardData } from '../../types/boardTypes';
 

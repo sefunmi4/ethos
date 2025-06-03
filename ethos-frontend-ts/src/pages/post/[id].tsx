@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import Board from '../../components/boards/Board';
+import Board from '../../components/board/Board';
 import { useSocket } from '../../hooks/useSocket';
 import { usePost } from '../../hooks/usePost';
 
