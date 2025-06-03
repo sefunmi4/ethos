@@ -8,7 +8,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 
 import NavBar from './components/NavBar';
-import PrivateRoute from './routes/PrivateRoute';
+import PrivateRoute from './routes/ProtectedRoute';
 
 /**
  * Lazy-loaded pages to improve initial load time by code-splitting.

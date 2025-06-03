@@ -1,0 +1,135 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import type { ChangeEvent, FormEvent } from 'react';
+
+import { useAuth } from '../contexts/AuthContext';
+import { useSocket } from '../hooks/useSocket';
+//import { usePermissions } from '../hooks/usePermissions';
+import { useTimeline } from '../hooks/useTimeline';
+
+import { forgotPasswordConfirm } from '../api/auth';
+import { ROUTES } from '../constants/routes';
+import type { AuthUser } from '../types/authTypes';
+
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import AlertBox from '../components/ui/AlertBox';
+
+interface PasswordForm {
+  password: string;
+  confirm: string;
+}
+
+const ResetPassword: React.FC = () => {
+  const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
+
+  const { socket } = useSocket();
+  const { setUser } = useAuth();
+  //const { can } = usePermissions(); // 🔐 in case we restrict certain reset paths
+  const { addTimelineEvent } = useTimeline();
+
+  const [form, setForm] = useState<PasswordForm>({ password: '', confirm: '' });
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (token) {
+      socket?.emit('auth:reset-page-visited', { token });
+    }
+  }, [socket, token]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    if (form.password !== form.confirm) {
+      setLoading(false);
+      setError('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await forgotPasswordConfirm(token, form.password);
+
+      if (response?.user && response.user.id) {
+        const user: AuthUser = response.user;
+        setUser(user);
+        socket?.emit('auth:password-reset-success', { userId: user.id });
+        addTimelineEvent({
+          userId: user.id,
+          type: 'account',
+          content: '🔐 Password reset successful',
+        });
+        setSuccess(true);
+        setTimeout(() => navigate(ROUTES.LOGIN), 2000);
+      } else {
+        throw new Error('Unexpected response format');
+      }
+    } catch (err: any) {
+      console.error('[ResetPassword] Reset failed:', err);
+      setError(err.response?.data?.error || 'Failed to reset password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <section className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <header className="mb-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-800">Reset Your Password</h1>
+          <p className="text-sm text-gray-500 mt-1">Enter and confirm your new password.</p>
+        </header>
+
+        {error && (
+          <AlertBox type="error" message={error} className="mb-4" />
+        )}
+
+        {success && (
+          <AlertBox
+            type="success"
+            message="Password reset successful. Redirecting to login..."
+            className="mb-4"
+          />
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            name="password"
+            type="password"
+            placeholder="New Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            name="confirm"
+            type="password"
+            placeholder="Confirm New Password"
+            value={form.confirm}
+            onChange={handleChange}
+            required
+          />
+          <Button
+            type="submit"
+            disabled={loading}
+            full
+            variant={loading ? 'disabled' : 'primary'}
+          >
+            {loading ? 'Resetting...' : 'Reset Password'}
+          </Button>
+        </form>
+      </section>
+    </main>
+  );
+};
+
+export default ResetPassword;

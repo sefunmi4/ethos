@@ -1,0 +1,27 @@
+import { useContext } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
+import type { AuthContextType } from '../types/authTypes';
+
+
+/**
+ * PrivateRoute is a wrapper for protected routes.
+ * It checks the authentication state and:
+ * - Shows a loading state if auth is still being verified
+ * - Renders the protected route (Outlet) if authenticated
+ * - Redirects to the login page if not authenticated
+ */
+const PrivateRoute: React.FC = () => {
+  const { user, loading } = useContext<AuthContextType>(AuthContext);
+
+  if (loading) {
+    // Optional: replace with a spinner or skeleton loader
+    return <div className="p-6 text-center text-gray-600">Loading...</div>;
+  }
+
+  // If user is authenticated, render the nested route
+  // Otherwise, redirect to the login page
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
+export default PrivateRoute;

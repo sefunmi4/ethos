@@ -27,3 +27,4 @@ export const getMe = async () => {
   const res = await axiosWithAuth.get('/auth/me'); // ✅ uses cookie
   return res.data;
 };
+

@@ -1,38 +1,39 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-  
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from 'react';
+
 import {
   login as apiLogin,
   logout as apiLogout,
   register as apiRegister,
 } from '../api/auth';
 
-import { getUserFromToken, axiosWithAuth } from '../utils/authUtils';
+import {
+  getUserFromToken,
+  axiosWithAuth,
+} from '../utils/authUtils';
+
+import type { AuthUser, AuthContextType } from '../types/authTypes';
 
 /**
- * Interface representing the authenticated user.
+ * Runtime validator to ensure data conforms to the AuthUser interface.
  */
-export interface AuthUser {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string;
-  [key: string]: any;
-}
+const isValidAuthUser = (data: any): data is AuthUser => {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    typeof data.id === 'string' &&
+    typeof data.email === 'string'
+  );
+};
 
 /**
- * Interface for AuthContext value
+ * Default authentication context placeholder before initialization.
  */
-export interface AuthContextType {
-  user: AuthUser | null;
-  loading: boolean;
-  error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
-  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
-}
-
 const defaultContext: AuthContextType = {
   user: null,
   loading: true,
@@ -44,63 +45,93 @@ const defaultContext: AuthContextType = {
 };
 
 /**
- * React context for managing user authentication state and actions.
+ * React context object for authentication state and actions.
  */
 export const AuthContext = createContext<AuthContextType>(defaultContext);
 
 /**
- * AuthProvider wraps your app and provides authentication state via context.
- * It attempts to hydrate the user from cookies on mount.
+ * AuthProvider component wraps the app and supplies authentication state.
  */
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Attempts to fetch the current user from a stored token.
+   * Falls back to refreshing the access token if expired.
+   */
   const fetchUser = async () => {
     try {
       const me = await getUserFromToken();
-      setUser(me);
-      console.info('[AuthContext] User loaded:', me);
+      if (isValidAuthUser(me)) {
+        setUser(me);
+        console.info('[AuthContext] User loaded:', me);
+      } else {
+        throw new Error('Invalid user data received');
+      }
     } catch (err) {
-      console.warn('[AuthContext] Failed to load user, attempting refresh...');
+      console.warn('[AuthContext] Token invalid. Attempting refresh...');
       const refreshed = await tryRefreshAccessToken();
       if (refreshed) {
-        const me = await getUserFromToken();
-        setUser(me);
-        console.info('[AuthContext] User reloaded after refresh:', me);
+        try {
+          const me = await getUserFromToken();
+          if (isValidAuthUser(me)) {
+            setUser(me);
+            console.info('[AuthContext] User reloaded after refresh:', me);
+          } else {
+            console.warn('[AuthContext] User invalid after refresh');
+            setUser(null);
+          }
+        } catch {
+          setUser(null);
+        }
       } else {
+        console.warn('[AuthContext] Refresh failed. Clearing auth state.');
         setUser(null);
-        console.warn('[AuthContext] Could not refresh token. User set to null.');
       }
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Requests a new access token using the refresh token.
+   */
   const tryRefreshAccessToken = async (): Promise<boolean> => {
     try {
       const res = await axiosWithAuth.post('/auth/refresh');
       return !!res?.data?.accessToken;
     } catch (err) {
-      console.error('[AuthContext] Refresh failed:', err);
+      console.error('[AuthContext] Token refresh error:', err);
       return false;
     }
   };
 
+  /**
+   * Initializes authentication by checking the existing token.
+   */
   useEffect(() => {
     fetchUser();
   }, []);
 
+  /**
+   * Logs the user in and updates auth state.
+   */
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
-      await apiLogin(email, password); // should set cookie via backend
+      await apiLogin(email, password);
       const me = await getUserFromToken();
-      setUser(me);
-      console.info('[AuthContext] Login successful:', me);
+      if (isValidAuthUser(me)) {
+        setUser(me);
+        setError(null);
+        console.info('[AuthContext] Login successful:', me);
+      } else {
+        throw new Error('Invalid login response');
+      }
     } catch (err) {
-      console.error('[AuthContext] Login failed:', err);
+      console.error('[AuthContext] Login error:', err);
       setError('Login failed. Please check your credentials.');
       throw err;
     } finally {
@@ -108,15 +139,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  /**
+   * Registers a new user and sets auth state upon success.
+   */
   const register = async (email: string, password: string) => {
     try {
       setLoading(true);
       await apiRegister(email, password);
       const me = await getUserFromToken();
-      setUser(me);
-      console.info('[AuthContext] Registration successful:', me);
+      if (isValidAuthUser(me)) {
+        setUser(me);
+        setError(null);
+        console.info('[AuthContext] Registration successful:', me);
+      } else {
+        throw new Error('Invalid registration response');
+      }
     } catch (err) {
-      console.error('[AuthContext] Registration failed:', err);
+      console.error('[AuthContext] Registration error:', err);
       setError('Registration failed. Please try again.');
       throw err;
     } finally {
@@ -124,9 +163,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  /**
+   * Logs the user out and resets the auth state.
+   */
   const logout = async () => {
     try {
-      await apiLogout(); // should clear cookies
+      await apiLogout();
       setUser(null);
       console.info('[AuthContext] Logged out successfully');
     } catch (err) {
@@ -152,6 +194,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 };
 
 /**
- * useAuth is a helper hook to access AuthContext
+ * Hook for accessing the AuthContext in components.
  */
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => useContext(AuthContext);

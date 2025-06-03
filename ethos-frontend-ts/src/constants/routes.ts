@@ -27,7 +27,7 @@ export const ROUTES = {
      * @returns A route string like `/reset-password/token123`
      */
     RESET_PASSWORD: (token = ':token') => `/reset-password/${token}`,
-  
+
     /**
      * Quest page by ID (private)
      * @param id - Quest ID

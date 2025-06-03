@@ -1,45 +1,63 @@
-// src/pages/QuestPage.jsx
+// src/pages/quest/[id].tsx
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosWithAuth } from '../../utils/authUtils';
 import { useAuth } from '../../contexts/AuthContext';
+
 import QuestMapRenderer from '../../components/renderers/QuestMapRenderer';
 import ThreadRenderer from '../../components/renderers/ThreadRenderer';
 import PostCard from '../../components/posts/PostCard';
 import QuestCard from '../../components/quests/QuestCard';
 import CreateContribution from '../../components/contribution/CreateContribution';
 
-const QuestPage = () => {
-  const { id } = useParams();
-  const { user } = useAuth();
-  const [quest, setQuest] = useState(null);
-  const [questTree, setQuestTree] = useState([]);
-  const [logPosts, setLogPosts] = useState([]);
-  const [error, setError] = useState('');
-  const [showCreate, setShowCreate] = useState(false);
+import type { Quest } from '../../types/quests';
+import type { Post } from '../../types/posts';
+import type { TreeNode } from '../../types/tree';
 
+/**
+ * QuestPage component displays a full-page view of a specific quest.
+ * It includes the quest summary, a tree-structured quest map, and a timeline-style log of progress.
+ */
+const QuestPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+
+  const [quest, setQuest] = useState<Quest | null>(null);
+  const [questTree, setQuestTree] = useState<TreeNode[]>([]);
+  const [logPosts, setLogPosts] = useState<Post[]>([]);
+  const [error, setError] = useState<string>('');
+  const [showCreate, setShowCreate] = useState<boolean>(false);
+
+  /**
+   * Fetches quest details, quest tree structure, and associated log posts.
+   */
   useEffect(() => {
     const fetchQuestData = async () => {
       try {
         const [questRes, treeRes, logsRes] = await Promise.all([
-          axiosWithAuth.get(`/api/quests/${id}`),
-          axiosWithAuth.get(`/api/quests/${id}/tree`),
-          axiosWithAuth.get(`/api/posts/quest/${id}/logs`)
+          axiosWithAuth.get<Quest>(`/api/quests/${id}`),
+          axiosWithAuth.get<TreeNode[]>(`/api/quests/${id}/tree`),
+          axiosWithAuth.get<Post[]>(`/api/posts/quest/${id}/logs`)
         ]);
 
         setQuest(questRes.data);
         setQuestTree(treeRes.data || []);
         setLogPosts(logsRes.data || []);
       } catch (err) {
-        console.error('Failed to load quest:', err);
+        console.error('[QuestPage] Failed to load quest data:', err);
         setError('This quest could not be loaded or is private.');
       }
     };
 
-    fetchQuestData();
+    if (id) fetchQuestData();
   }, [id]);
 
-  const handleNewLog = (newPost) => {
+  /**
+   * Handles the addition of a new log post.
+   * @param newPost - The newly created post to prepend to the log.
+   */
+  const handleNewLog = (newPost: Post) => {
     setLogPosts([newPost, ...logPosts]);
     setShowCreate(false);
   };
@@ -97,7 +115,7 @@ const QuestPage = () => {
             items={logPosts}
             rootId={logPosts[0].id}
             type="timeline"
-            renderItem={(post) => (
+            renderItem={(post: Post) => (
               <PostCard key={post.id} post={post} user={user} compact />
             )}
           />
