@@ -7,7 +7,7 @@ import { BoardProvider } from './contexts/BoardContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 
-import NavBar from './components/NavBar';
+import NavBar from './components/ui/NavBar';
 import PrivateRoute from './routes/ProtectedRoute';
 
 /**

@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoard } from '../hooks/useBoard';
 import { useSocket } from '../hooks/useSocket';
 
-import ProfileBanner from '../components/ProfileBanner';
+import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 
+import type { User } from '../types/userTypes';
 import type { BoardData } from '../types/boardTypes';
 
 const ProfilePage: React.FC = () => {
@@ -33,13 +34,16 @@ const ProfilePage: React.FC = () => {
     return <div className="flex justify-center items-center h-screen text-gray-500">Loading session...</div>;
   }
 
-  if (!user) {
+  if (!user || !user.username) {
     return <div className="text-center py-12 text-red-500">You must be logged in to view your profile.</div>;
   }
 
+  const castUser = user as unknown as User;
+
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
-      <ProfileBanner user={user} />
+      
+      <Banner user={castUser} />
 
       {/* 📘 Your Quests */}
       <section className="mt-10 mb-12">
@@ -49,8 +53,8 @@ const ProfilePage: React.FC = () => {
         ) : userQuestBoard?.enrichedItems?.length ? (
           <Board
             board={userQuestBoard}
-            structure="scroll" // 🧭 Horizontal scroll for quest overviews
-            user={user}
+            structure="scroll" 
+            user={castUser}
           />
         ) : (
           <div className="text-gray-500 text-center py-8">You haven't created any quests yet.</div>
@@ -66,7 +70,7 @@ const ProfilePage: React.FC = () => {
           <Board
             board={userPostBoard}
             structure="list" // 🧾 Timeline or message-board view
-            user={user}
+            user={castUser}
             showCreate
           />
         ) : (

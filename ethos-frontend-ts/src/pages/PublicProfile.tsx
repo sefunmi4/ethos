@@ -6,7 +6,7 @@ import { useBoard } from '../hooks/useBoard';
 import { useQuest } from '../hooks/useQuest';
 import { usePost } from '../hooks/usePost';
 
-import ProfileBanner from '../components/ProfileBanner';
+import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 
 import type { BoardData } from '../types/boardTypes';
@@ -73,7 +73,7 @@ const PublicProfilePage: React.FC = () => {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">
-      <ProfileBanner user={profile} readOnly />
+      <Banner user={profile} readOnly />
 
       {/* 📘 Public Quests */}
       <section className="mt-12">
@@ -82,7 +82,7 @@ const PublicProfilePage: React.FC = () => {
           questBoard.enrichedItems?.length ? (
             <Board
               board={questBoard}
-              structure="map" // for quest overview in graph/tree format
+              structure="graph" // for quest overview in graph/tree format
               user={profile}
               readOnly
             />

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { createMockBoard } from '../../utils/boardUtils';
+
 import { useAuth } from '../../contexts/AuthContext';
 import { useQuest } from '../../hooks/useQuest';
 import { useBoard } from '../../hooks/useBoard';
 import { useSocket } from '../../hooks/useSocket';
 
-import QuestBanner from '../../components/quest/QuestBanner';
+import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
 
+import type { User } from '../../types/userTypes';
 import type { BoardData } from '../../types/boardTypes';
 
 const QuestPage: React.FC = () => {
@@ -41,8 +44,8 @@ const QuestPage: React.FC = () => {
 
   useSocket('boardUpdated', (updatedBoard: BoardData) => {
     if (updatedBoard.questId !== id) return;
-    if (updatedBoard.type === 'map') refreshMap();
-    if (updatedBoard.type === 'log') refreshLog();
+    if (updatedBoard.structure === 'graph') refreshMap();
+    if (updatedBoard.structure === 'list') refreshLog();
   });
 
   if (questError) {
@@ -56,15 +59,13 @@ const QuestPage: React.FC = () => {
   return (
     <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
       {/* 🧭 Quest Overview */}
-      <QuestBanner quest={quest} />
+      <Banner quest={quest} />
       <Board
-        board={{
-          id: `quest-${quest.id}`,
-          title: 'Quest Overview',
-          structure: 'list',
-          items: [quest],
-          enrichedItems: [quest],
-        }}
+        board={createMockBoard(
+          `quest-${quest.id}`,
+          'Quest Overview',
+          [quest]
+        )}
         editable={false}
         compact={false}
       />
@@ -93,7 +94,7 @@ const QuestPage: React.FC = () => {
             structure="list"
             editable={true}
             quest={quest}
-            user={user}
+            user={user as User}
             showCreate
           />
         ) : (

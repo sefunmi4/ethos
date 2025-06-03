@@ -3,11 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import { useSocket } from '../hooks/useSocket';
 import { usePermissions } from '../hooks/usePermissions';
-import { useTimeline } from '../hooks/useTimeline';
 
 import Board from '../components/board/Board';
 import { fetchFeaturedBoards, fetchDefaultHomeBoard } from '../services/boardService';
 
+import type { User } from '../types/userTypes';
 import type { BoardData } from '../types/boardTypes';
 import type { PostType } from '../types/postTypes';
 import type { Visibility } from '../types/common';
@@ -17,7 +17,6 @@ const HomePage: React.FC = () => {
   const { selectedBoard, loading: boardLoading, setBoardMeta } = useBoardContext();
   const { socket } = useSocket();
   const { hasAccessToBoard } = usePermissions();
-  const { timeline, loading: timelineLoading } = useTimeline();
 
   const [featuredBoards, setFeaturedBoards] = useState<BoardData[]>([]);
   const [defaultFeedBoardId, setDefaultFeedBoardId] = useState<string | null>(null);
@@ -66,7 +65,7 @@ const HomePage: React.FC = () => {
     loadBoards();
   }, []);
 
-  if (authLoading || boardLoading || timelineLoading) {
+  if (authLoading || boardLoading) {
     return (
       <div className="flex justify-center items-center h-screen text-gray-500">
         Loading session...
@@ -90,7 +89,7 @@ const HomePage: React.FC = () => {
             boardId={defaultFeedBoardId}
             structure="list"
             title="🧭 Latest Posts"
-            user={user}
+            user={user as User}
             filter={{
               visibility: 'public' satisfies Visibility,
               type: 'free_speech' satisfies PostType,
@@ -98,30 +97,15 @@ const HomePage: React.FC = () => {
           />
         ) : selectedBoard ? (
           <Board
-            boardId={selectedBoard.id}
+            boardId={selectedBoard}
             structure="list"
             title="🧭 Latest Posts"
-            user={user}
+            user={user as User}
           />
         ) : (
           <div className="text-gray-500 text-center py-8">No posts to display yet.</div>
         )}
       </section>
-
-      {/* Optional recent timeline activity */}
-      {timeline?.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">📜 Recent Activity</h2>
-          <ul className="space-y-2">
-            {timeline.map((entry) => (
-              <li key={entry.id} className="text-gray-700">
-                <span className="font-medium">{entry.actorName}</span> {entry.action} on{' '}
-                <span className="font-medium">{entry.targetTitle}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       {/* Featured boards (with permissions filter) */}
       <section className="mb-12">
@@ -136,7 +120,7 @@ const HomePage: React.FC = () => {
                   boardId={board.id}
                   title={`📌 ${board.title || 'Untitled Board'}`}
                   structure="list"
-                  user={user}
+                  user={user as User}
                 />
               ))
           ) : (

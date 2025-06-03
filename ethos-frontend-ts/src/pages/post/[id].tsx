@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
+import { createMockBoard } from '../../utils/boardUtils';
+
 import { useSocket } from '../../hooks/useSocket';
 import { usePost } from '../../hooks/usePost';
 
@@ -13,7 +15,7 @@ const PostPage: React.FC = () => {
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
-  const [viewMode, setViewMode] = useState<'thread' | 'timeline'>('thread');
+  const [viewMode, setViewMode] = useState<'thread' | 'list'>('thread');
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -81,21 +83,15 @@ const PostPage: React.FC = () => {
 
       {/* 🎯 Primary Post Card via Board */}
       <section>
-        <Board
-          board={{
-            id: `post-${post.id}`,
-            title: 'Post',
-            structure: 'list',
-            items: [post],
-            enrichedItems: [post],
-          }}
-          editable={false}
-          compact={false}
-        />
+      <Board
+        board={createMockBoard(`post-${post.id}`, 'Post', [post])}
+        editable={false}
+        compact={false}
+      />
       </section>
 
       {/* 💬 Replies View Toggle */}
-      {replyBoard?.items?.length > 0 && (
+      {(replyBoard?.items?.length ?? 0) > 0 && (
         <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
           <button
             className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -104,8 +100,8 @@ const PostPage: React.FC = () => {
             Thread View
           </button>
           <button
-            className={`px-3 py-1 rounded ${viewMode === 'timeline' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('timeline')}
+            className={`px-3 py-1 rounded ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+            onClick={() => setViewMode('list')}
           >
             Timeline View
           </button>
