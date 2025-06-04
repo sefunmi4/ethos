@@ -13,6 +13,12 @@ export const VISIBILITY_OPTIONS = [
   { value: 'private', label: 'Private' },
 ] as const;
 
+export const POST_TYPES: { value: PostType; label: string }[] = [
+  { value: 'free_speech', label: 'Free Speech' },
+  { value: 'request', label: 'Request' },
+  { value: 'quest', label: 'Quest' },
+];
+
 /**
  * Defines the shape of each select option.
  */

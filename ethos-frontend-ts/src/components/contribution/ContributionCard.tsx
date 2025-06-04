@@ -62,7 +62,15 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   // 🧭 Render Quest
   if (kind === 'quest') {
-    return <QuestCard quest={contribution as Quest} {...sharedProps} />;
+    return (
+        <QuestCard
+          quest={contribution as Quest}
+          user={user}
+          compact={compact}
+          onEdit={onEdit ? () => onEdit((contribution as Quest).id) : undefined}
+          onDelete={onDelete ? (quest) => onDelete(quest.id) : undefined}
+        />
+      );
   }
 
   // 🛑 Fallback for unknown types

@@ -94,6 +94,7 @@ const QuestNode: React.FC<QuestNodeProps> = ({
 
 // Full graph props (used for pages like /quest/[id])
 interface GraphLayoutProps {
+  questId: string;
   items: QuestNodeData[]; // Root-level quest(s)
   user?: User;
   compact?: boolean;
@@ -109,6 +110,7 @@ interface GraphLayoutProps {
  * Main graph layout to render a tree of posts representing a quest structure.
  */
 const GraphLayout: React.FC<GraphLayoutProps> = ({
+  questId, //TODO: questId
   items,
   user,
   loadingMore = false,

@@ -5,6 +5,7 @@ import type { User } from '../../types/userTypes';
 
 type GridLayoutProps = {
   items: Post[];
+  questId: string;
   user?: User;
   layout?: 'vertical' | 'horizontal' | 'kanban';
   compact?: boolean;
@@ -25,6 +26,7 @@ type GridLayoutProps = {
  * - 'kanban': column-based board with default stages and drag potential
  */
 const GridLayout: React.FC<GridLayoutProps> = ({
+  questId,   //TODO: questId
   items,
   user,
   layout = 'vertical',

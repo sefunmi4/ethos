@@ -1,5 +1,3 @@
-// CreateBoard.tsx
-
 import React, { useState } from 'react';
 import {
   Input,
@@ -9,15 +7,10 @@ import {
   Label,
   TextArea,
 } from '../ui';
-import { axiosWithAuth } from '../../utils/authUtils';
 import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
 import type { BoardStructure, BoardType } from '../../types/boardTypes';
+import { createBoard } from '../../api/board'; 
 
-
-/**
- * Component for creating a new board. Integrates with boardService and board types.
- * Used across quest, post, and user profile workflows.
- */
 const CreateBoard: React.FC<{
   onSave?: (board: any) => void;
   onCancel?: () => void;
@@ -30,19 +23,16 @@ const CreateBoard: React.FC<{
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<{ id: string; title: string }[]>([]);
 
-  // Add an empty item to board template
   const handleAddItem = () => {
     setItems([...items, { id: crypto.randomUUID(), title: '' }]);
   };
 
-  // Update a specific item title
   const updateItem = (index: number, value: string) => {
     const updated = [...items];
     updated[index].title = value;
     setItems(updated);
   };
 
-  // Submit new board creation
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -51,19 +41,21 @@ const CreateBoard: React.FC<{
     const boardData = {
       title: title.trim(),
       description: description.trim(),
-      type: 'post' as BoardType, // Can expand this later to support quest types
+      type: 'post' as BoardType,
       structure,
       items: items.map(item => item.id),
       filters: { visibility },
       featured: false,
       defaultFor: null,
+      category: category.trim() || undefined,
     };
 
     try {
-      const res = await axiosWithAuth.post('/boards', boardData);
-      onSave?.(res.data);
+      const newBoard = await createBoard(boardData); // ✅ Uses api/boards.ts
+      onSave?.(newBoard);
     } catch (err) {
       console.error('[CreateBoard] Failed to create board:', err);
+      alert('Failed to create board. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

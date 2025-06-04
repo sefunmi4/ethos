@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Select, TextArea, Button, Label, FormSection } from '../ui';
 import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
-import { updateBoard, deleteBoardById } from '../../api/boards';
+import { updateBoard, deleteBoard } from '../../api/board';
 import type { BoardData, EditBoardProps } from '../../types/boardTypes';
 import type { BoardStructure } from '../../types/boardTypes';
 import { getDisplayTitle } from '../../utils/displayUtils'; 
@@ -52,7 +52,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
     if (!window.confirm(`Are you sure you want to delete "${board.title}"?`)) return;
     try {
       if (board.id) {
-        await deleteBoardById(board.id);
+        await deleteBoard(board.id);
         onDelete?.(board.id);
       }
     } catch (error) {

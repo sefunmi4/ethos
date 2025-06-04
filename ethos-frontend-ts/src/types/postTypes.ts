@@ -7,6 +7,8 @@ import type { Visibility } from './common';
 export type PostType =
   | 'free_speech'
   | 'request'
+  | 'log'
+  | 'task'
   | 'quest'
   | 'meta_system'       // 🧠 Internal system post
   | 'meta_announcement'; // 📣 Public system broadcast
@@ -41,7 +43,11 @@ export interface Post {
   id: string;
 
   /** Author of the post */
-  authorId: string;
+  authorId: string;  
+  author?: {
+    id: string;
+    username?: string;
+  };
 
   /** Type of post, used for routing/layout */
   type: PostType;
@@ -94,8 +100,9 @@ export interface Post {
  */
 export interface LinkedItem {
   itemId: string;
-  itemType: 'quest' | 'post' | 'board';
+  itemType: 'quest';
   nodeId?: string;
+  name?: string;
 }
 
 /**
@@ -103,8 +110,8 @@ export interface LinkedItem {
  */
 export interface RepostMeta {
   originalPostId: string;
-  username: string;
-  originalContent: string;
+  username: string | undefined;
+  originalContent: string; 
   originalTimestamp: string;
 }
 

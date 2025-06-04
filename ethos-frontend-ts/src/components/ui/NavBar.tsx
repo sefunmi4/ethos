@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext} from '../contexts/AuthContext';
-import type { AuthContextType } from '../types/authTypes';
-import { logoutUser } from '../utils/authUtils';
+import { AuthContext} from '../../contexts/AuthContext';
+import type { AuthContextType } from '../../types/authTypes';
+import { logoutUser } from '../../utils/authUtils';
 
 /**
  * NavBar component for displaying top-level navigation.
