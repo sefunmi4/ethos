@@ -1,37 +1,32 @@
 import { useState, useCallback } from 'react';
-import { getMapData } from '../api/quest'; 
 import type { Post } from '../types/postTypes';
 import type { TaskEdge } from '../types/questTypes';
+import { fetchQuestMapData } from '../api/quest';
 
 /**
- * useGraph - A custom React hook for managing and loading graph data.
- *
- * This hook is typically used in a board or quest context, where items are visualized
- * as nodes in a graph structure (e.g., tree layouts for post/quest relationships).
+ * useGraph - A custom hook to manage quest graph data (nodes and edges).
  */
 export const useGraph = () => {
-  const [nodes, setNodes] = useState<Post[]>([]); // 🧠 Nodes are Posts
-  const [edges, setEdges] = useState<TaskEdge[]>([]); // 🔗 Edges are TaskEdges representing sub-problems/branches
+  const [nodes, setNodes] = useState<Post[]>([]);
+  const [edges, setEdges] = useState<TaskEdge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * loadGraph - Loads graph data for a given board or quest.
-   * @param boardId - The unique ID of the board to fetch the graph for.
+   * loadGraph - Load post nodes and task edges for a specific quest.
+   * @param questId - The quest ID whose graph should be loaded.
    */
-  const loadGraph = useCallback(async (boardId: string) => {
+  const loadGraph = useCallback(async (questId: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const mapData = await getMapData(boardId);
-
-      // Expecting API response format: { nodes: Post[], edges: TaskEdge[] }
-      setNodes(mapData.nodes || []);
-      setEdges(mapData.edges || []);
+      const { nodes, edges } = await fetchQuestMapData(questId);
+      setNodes(nodes || []);
+      setEdges(edges || []);
     } catch (err: any) {
-      console.error('[Graph] Failed to load graph data:', err);
-      setError(err?.response?.data?.error || 'Failed to load graph.');
+      console.error('[useGraph] Failed to load quest map:', err);
+      setError(err?.response?.data?.error || 'Failed to load graph data.');
     } finally {
       setLoading(false);
     }
@@ -45,4 +40,3 @@ export const useGraph = () => {
     loadGraph,
   };
 };
-

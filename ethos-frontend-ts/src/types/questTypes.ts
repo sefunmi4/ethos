@@ -1,4 +1,4 @@
-import type { LinkedItem } from './postTypes';
+import type { LinkedItem } from './itemTypes';
 import type { CollaberatorRoles } from './postTypes';
 import type { Post } from './postTypes';
 

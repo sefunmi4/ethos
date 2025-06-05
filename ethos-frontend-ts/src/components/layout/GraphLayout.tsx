@@ -7,7 +7,6 @@ interface GraphLayoutProps {
   items: Post[];
   user?: User;
   compact?: boolean;
-  questId?: string;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
 }
@@ -20,13 +19,11 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   items,
   user,
   compact = false,
-  questId,
   onScrollEnd,
   loadingMore = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Build a tree from flat posts
   const [rootNodes, setRootNodes] = useState<(Post & { children?: Post[] })[]>([]);
 
   useEffect(() => {
@@ -49,7 +46,6 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     setRootNodes(roots);
   }, [items]);
 
-  // Infinite scroll detection
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current || !onScrollEnd) return;
@@ -65,9 +61,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   }, [onScrollEnd]);
 
   const renderNode = (node: Post & { children?: Post[] }, depth: number = 0) => {
+    const isFolder = node.type === 'quest' || node.tags.includes('quest');
+    const icon = isFolder ? '📁' : '📄';
+
     return (
       <div key={node.id} className="relative">
-        <div className={`ml-${depth * 4} mb-6`}>
+        <div className={`ml-${depth * 4} mb-6 flex items-start space-x-2`}>
+          <span className="text-xl select-none">{icon}</span>
           <ContributionCard contribution={node} user={user} compact={compact} />
         </div>
         {node.children && node.children.length > 0 && (

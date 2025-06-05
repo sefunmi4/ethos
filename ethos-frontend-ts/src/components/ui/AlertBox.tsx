@@ -4,11 +4,9 @@ import clsx from 'clsx';
 type AlertType = 'success' | 'error' | 'warning' | 'info';
 
 interface AlertBoxProps {
-  /** The visual style of the alert */
   type: AlertType;
-  /** The message text to display */
-  message: string;
-  /** Optional className for additional styling */
+  message?: string;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -19,7 +17,12 @@ interface AlertBoxProps {
  * @param {AlertBoxProps} props - Component props
  * @returns {JSX.Element} The rendered alert box
  */
-const AlertBox: React.FC<AlertBoxProps> = ({ type, message, className = '' }) => {
+const AlertBox: React.FC<AlertBoxProps> = ({
+  type,
+  message,
+  children,
+  className = '',
+}) => {
   const baseStyles =
     'rounded px-4 py-3 text-sm font-medium shadow-sm border-l-4';
   const typeStyles: Record<AlertType, string> = {
@@ -31,7 +34,7 @@ const AlertBox: React.FC<AlertBoxProps> = ({ type, message, className = '' }) =>
 
   return (
     <div className={clsx(baseStyles, typeStyles[type], className)}>
-      {message}
+      {children || message}
     </div>
   );
 };

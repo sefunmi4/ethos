@@ -111,11 +111,3 @@ export const fetchDefaultHomeBoard = async (): Promise<BoardData | null> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/default/home`);
   return res.data || null;
 };
-
-/**
- * ✅ RENAMING INDEX — update import names
- * - fetchBoard → fetchBoard
- * - addBoard → addBoard
- * - removeBoard → removeBoard
- * - removeItemFromBoard → removeItemFromBoard
- */

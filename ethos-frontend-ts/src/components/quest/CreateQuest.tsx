@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createQuest } from '../../api/quest'; //TODO: createQuest quest
+import { addQuest } from '../../api/quest';
 import { Button, Input, TextArea, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
+import { useSyncGitRepo } from '../../hooks/useGit';
 
 import type { Quest } from '../../types/questTypes';
-import type { Post, CollaberatorRoles} from '../../types/postTypes';
+import type { Post, CollaberatorRoles } from '../../types/postTypes';
 
-/**
- * Payload shape for creating a new quest
- */
 type CreateQuestPayload = {
   title: string;
   description: string;
@@ -19,9 +17,6 @@ type CreateQuestPayload = {
   fromPostId?: string;
 };
 
-/**
- * Props for CreateQuest component
- */
 type CreateQuestProps = {
   onSave?: (quest: Quest) => void;
   onCancel: () => void;
@@ -29,33 +24,26 @@ type CreateQuestProps = {
   fromPost?: Post | null;
 };
 
-/**
- * CreateQuest Component
- * - Form to create a new quest.
- * - Can be used inline or in a modal.
- */
 const CreateQuest: React.FC<CreateQuestProps> = ({
   onSave,
   onCancel,
   mode = 'inline',
-  fromPost = null
+  fromPost = null,
 }) => {
   const navigate = useNavigate();
-
   const [title, setTitle] = useState(fromPost?.content?.slice(0, 80) || '');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [repoUrl, setRepoUrl] = useState('');
   const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [syncRepo, setSyncRepo] = useState(true); // default checked
 
-  /**
-   * Handles quest creation and optional redirect or inline save.
-   */
+  const syncGit = useSyncGitRepo();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
-
     setIsSubmitting(true);
 
     const payload: CreateQuestPayload = {
@@ -68,12 +56,14 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
     };
 
     try {
-      const newQuest = await createQuest(payload);
-      onSave?.(newQuest);
+      const newQuest = await addQuest(payload);
 
-      if (mode === 'modal') {
-        navigate(`/quest/${newQuest.id}`);
+      if (repoUrl && syncRepo) {
+        await syncGit.mutateAsync(newQuest.id);
       }
+
+      onSave?.(newQuest);
+      if (mode === 'modal') navigate(`/quest/${newQuest.id}`);
     } catch (error) {
       console.error('[CreateQuest] Failed to create quest:', error);
       alert('Failed to create quest. Please try again.');
@@ -118,6 +108,18 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
           onChange={(e) => setRepoUrl(e.target.value)}
           placeholder="https://github.com/your/project"
         />
+
+        {repoUrl && (
+          <label className="inline-flex items-center mt-2 space-x-2">
+            <input
+              type="checkbox"
+              checked={syncRepo}
+              onChange={(e) => setSyncRepo(e.target.checked)}
+              className="form-checkbox"
+            />
+            <span>Initialize Git sync on create</span>
+          </label>
+        )}
       </FormSection>
 
       <FormSection title="Assign Roles (optional)">

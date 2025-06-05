@@ -20,13 +20,6 @@ interface ContributionCardProps {
   questId?: string;
 }
 
-/**
- * ContributionCard
- * 
- * Dynamically renders PostCard, QuestCard, or ProjectCard based on the type of contribution.
- * - Posts must be of type 'free_speech', 'request', or 'quest'.
- * - Quests and Boards are routed by their `kind` field.
- */
 const ContributionCard: React.FC<ContributionCardProps> = ({
   contribution,
   user,
@@ -46,12 +39,16 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   const sharedProps = { user, compact, onEdit, onDelete };
 
-  // 🚀 Render Post types
+  // ✅ Render Post types
   if ('type' in contribution) {
     const postType = contribution.type as PostType;
 
-    if (['free_speech', 'request', 'quest'].includes(postType)) {
-        return <PostCard post={contribution as Post} questId={questId} {...sharedProps} />;
+    // Accept all supported post types including commit-style ones
+    if ([
+      'free_speech', 'request', 'quest', 'task',
+      'log', 'quest_log', 'commit', 'issue'
+    ].includes(postType)) {
+      return <PostCard post={contribution as Post} questId={questId} {...sharedProps} />;
     }
 
     console.warn('[ContributionCard] Unsupported post type:', postType);
@@ -65,14 +62,14 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   // 🧭 Render Quest
   if (kind === 'quest') {
     return (
-        <QuestCard
-          quest={contribution as Quest}
-          user={user}
-          compact={compact}
-          onEdit={onEdit ? () => onEdit((contribution as Quest).id) : undefined}
-          onDelete={onDelete ? (quest) => onDelete(quest.id) : undefined}
-        />
-      );
+      <QuestCard
+        quest={contribution as Quest}
+        user={user}
+        compact={compact}
+        onEdit={onEdit ? () => onEdit((contribution as Quest).id) : undefined}
+        onDelete={onDelete ? (quest) => onDelete(quest.id) : undefined}
+      />
+    );
   }
 
   // 🛑 Fallback for unknown types

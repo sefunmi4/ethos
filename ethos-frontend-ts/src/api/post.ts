@@ -161,3 +161,32 @@ export const enrichPostWithData = async (post: Post): Promise<Post> => {
     enriched: true,
   };
 };
+
+/**
+ * ✅ Solve a post (e.g. mark it and propagate solution)
+ * @param postId - Post ID
+ */
+export const solvePost = async (postId: string): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${postId}/solve`);
+  return res.data;
+};
+
+/**
+ * 🔗 Get all posts linked to a post (e.g. solutions, duplicates, references)
+ * @param postId - Post ID
+ */
+export const getLinkedPosts = async (postId: string): Promise<Post[]> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/linked`);
+  return res.data.posts || [];
+};
+
+/**
+ * 🌐 Check propagation status (e.g. of a solution or link cascade)
+ * @param postId - Post ID
+ */
+export const getPropagationStatus = async (
+  postId: string
+): Promise<{ cascadeCompleted: boolean; affectedIds: string[] }> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/propagation-status`);
+  return res.data;
+};

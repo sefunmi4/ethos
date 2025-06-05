@@ -29,6 +29,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [repliesLoaded, setRepliesLoaded] = useState(false);
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [replyError, setReplyError] = useState('');
+  const [showFullDiff, setShowFullDiff] = useState(false);
 
   const navigate = useNavigate();
 
@@ -70,16 +71,82 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const renderLinkSummary = () => {
     if (!post.linkedItems || post.linkedItems.length === 0) return null;
+    const sorted = [...post.linkedItems].sort((a, b) =>
+      (b.title?.toLowerCase().includes('solution') ? 1 : 0) -
+      (a.title?.toLowerCase().includes('solution') ? 1 : 0)
+    );
     return (
       <div className="text-xs text-blue-600 space-y-1">
-        {post.linkedItems.map((item) => {
+        {sorted.map((item) => {
           const label = `${item.itemType === 'quest' ? '🧭' : '📁'} ${item.title}${item.nodeId ? ` > ${item.nodeId}` : ''}`;
           return (
-            <div key={item.itemId}>
-              🔗 {label}
+            <div key={item.itemId} className="flex gap-1 items-center">
+              <span className="text-xs">🔗</span>
+              <span className={`${item.title?.toLowerCase().includes('solution') ? 'font-semibold text-green-700' : ''}`}>
+                {label}
+              </span>
             </div>
           );
         })}
+      </div>
+    );
+  };
+
+  const renderCommitDiff = () => {
+    if (!post.gitDiff) return null;
+
+    const lines = post.gitDiff.split('\n');
+    let visibleLines = lines;
+    if (!showFullDiff) {
+      visibleLines = [];
+      let buffer: string[] = [];
+      let inChangeBlock = false;
+
+      lines.forEach((line) => {
+        if (line.startsWith('+') || line.startsWith('-')) {
+          if (!inChangeBlock) {
+            if (buffer.length) visibleLines.push('...');
+            inChangeBlock = true;
+          }
+          visibleLines.push(line);
+        } else {
+          if (inChangeBlock) buffer = [];
+          else buffer.push(line);
+        }
+      });
+    }
+
+    return (
+      <div className="text-sm bg-gray-50 rounded p-2 font-mono border">
+        {post.commitSummary && (
+          <div className="mb-1 text-gray-700 italic">{post.commitSummary}</div>
+        )}
+        {!showFullDiff && (
+          <div className="mb-2">
+            <button onClick={() => setShowFullDiff(true)} className="text-blue-600 text-xs underline">
+              View full diff
+            </button>
+          </div>
+        )}
+        <pre className="overflow-x-auto whitespace-pre-wrap">
+          {visibleLines.map((line, idx) => (
+            <div key={idx} className={
+              line.startsWith('+') ? 'text-green-600' :
+              line.startsWith('-') ? 'text-red-600' : 'text-gray-800'}>
+              {line}
+            </div>
+          ))}
+        </pre>
+        {!showFullDiff && (
+          <div className="mt-1">
+            <button
+              onClick={() => navigate(`/posts/${post.id}`)}
+              className="text-blue-600 text-xs underline"
+            >
+              View full file with replies
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -111,6 +178,12 @@ const PostCard: React.FC<PostCardProps> = ({
         />
       </div>
 
+      {post.linkedNodeId && post.author?.username && (
+        <div className="text-xs text-gray-500 italic">
+          @{post.author.username} committed changes to <strong>{post.linkedNodeId}</strong> {timestamp}
+        </div>
+      )}
+
       {renderRepostInfo()}
 
       <div className="text-sm text-gray-800 whitespace-pre-wrap">
@@ -129,6 +202,7 @@ const PostCard: React.FC<PostCardProps> = ({
         )}
       </div>
 
+      {renderCommitDiff()}
       {renderLinkSummary()}
 
       <ReactionControls post={post} user={user} onUpdate={onUpdate} />

@@ -17,7 +17,11 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
   { value: 'request', label: 'Request' },
   { value: 'quest', label: 'Quest' },
+  { value: 'commit', label: 'Commit' },
+  { value: 'issue', label: 'Issue' },
 ];
+
+export const LINK_TYPES = ['solution', 'duplicate', 'citation'];
 
 /**
  * Defines the shape of each select option.

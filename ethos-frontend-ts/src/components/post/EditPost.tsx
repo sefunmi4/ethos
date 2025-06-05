@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
+import ReactMarkdown from 'react-markdown';
+
 import { updatePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
@@ -23,6 +25,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>(post.linkedItems || []);
   const [repostedFrom] = useState(post.repostedFrom || null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   const { selectedBoard, updateBoardItem } = useBoardContext() || {};
 
@@ -72,6 +75,8 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
             { value: 'review', label: 'Review' },
             { value: 'quest_log', label: 'Quest Log' },
             { value: 'quest_task', label: 'Quest Task' },
+            { value: 'commit', label: 'Git Commit' },
+            { value: 'log', label: 'Code Log' },
             { value: 'quest', label: 'Quest Root' },
           ]}
         />
@@ -85,14 +90,28 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           placeholder="Write your post..."
           required
         />
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setShowPreview((prev) => !prev)}
+            className="text-blue-600 text-sm underline"
+          >
+            {showPreview ? 'Hide Markdown Preview' : 'Show Markdown Preview'}
+          </button>
+
+          {showPreview && (
+            <div className="mt-2 border rounded p-3 bg-gray-50 text-sm prose max-w-none">
+              <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+          )}
+        </div>
       </FormSection>
 
       {type === 'quest' && (
-        <>
-          <FormSection title="Assigned Roles">
-            <CollaberatorControls value={collaborators} onChange={setCollaborators} />
-          </FormSection>
-        </>
+        <FormSection title="Assigned Roles">
+          <CollaberatorControls value={collaborators} onChange={setCollaborators} />
+        </FormSection>
       )}
 
       <FormSection title="Linked Items">

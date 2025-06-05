@@ -1,43 +1,43 @@
 import React from 'react';
 import clsx from 'clsx';
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  /** Unique identifier for accessibility and form labeling */
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix'> {
   id?: string;
-  /** Label visually hidden but accessible for screen readers */
   srOnlyLabel?: string;
-  /** Optional external className to customize input styling */
   className?: string;
+  helperText?: string;
+  error?: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
-/**
- * ✅ Input Component
- * Reusable, styled input element designed for use across forms.
- *
- * - Supports all native input props
- * - Styled consistently with utility-first classes
- * - Allows external overrides through `className`
- */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ id, srOnlyLabel, className = '', ...props }, ref) => {
+  ({ id, srOnlyLabel, className = '', helperText, error, prefix, suffix, ...props }, ref) => {
     return (
-      <div className="w-full">
-        {srOnlyLabel && (
-          <label htmlFor={id} className="sr-only">
-            {srOnlyLabel}
-          </label>
+      <div className="w-full space-y-1">
+        {srOnlyLabel && <label htmlFor={id} className="sr-only">{srOnlyLabel}</label>}
+
+        <div className="flex items-center border rounded-md shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden">
+          {prefix && <span className="px-2 text-gray-500 bg-gray-100">{prefix}</span>}
+          <input
+            id={id}
+            ref={ref}
+            className={clsx(
+              'w-full px-3 py-2 text-sm',
+              error ? 'border-red-500' : 'border-gray-300',
+              'focus:outline-none',
+              className
+            )}
+            {...props} // only standard input attributes passed here
+          />
+          {suffix && <span className="px-2 text-gray-500 bg-gray-100">{suffix}</span>}
+        </div>
+
+        {helperText && (
+          <p className={clsx('text-xs', error ? 'text-red-600' : 'text-gray-500')}>
+            {helperText}
+          </p>
         )}
-        <input
-          id={id}
-          ref={ref}
-          className={clsx(
-            'w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm',
-            'focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500',
-            'disabled:cursor-not-allowed disabled:opacity-50',
-            className
-          )}
-          {...props}
-        />
       </div>
     );
   }

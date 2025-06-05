@@ -8,10 +8,12 @@ import React, {
 } from 'react';
 import { useAuth } from './AuthContext';
 import { fetchBoards as fetchBoardsAPI } from '../api/board';
-import type { BoardData } from '../types/boardTypes';
+import type { BoardData, GitFileNode, GitStatus } from '../types/boardTypes';
 
 export interface BoardItem {
   id: string;
+  gitStatus?: GitStatus;
+  fileTree?: GitFileNode[];
   [key: string]: any;
 }
 
@@ -27,6 +29,8 @@ export interface BoardContextType {
   updateBoardItem: (boardId: string, updatedItem: BoardItem) => void;
   removeItemFromBoard: (boardId: string, itemId: string) => void;
   setBoardMeta: (meta: { id: string; title: string; layout: string }) => void;
+  updateBoardGitStatus: (boardId: string, status: GitStatus) => void;
+  setBoardFileTree: (boardId: string, tree: GitFileNode[]) => void;
 }
 
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
@@ -99,6 +103,26 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }));
   };
 
+  const updateBoardGitStatus = (boardId: string, status: GitStatus) => {
+    setBoards((prev) => ({
+      ...prev,
+      [boardId]: {
+        ...prev[boardId],
+        repoStatus: status,
+      },
+    }));
+  };
+
+  const setBoardFileTree = (boardId: string, tree: GitFileNode[]) => {
+    setBoards((prev) => ({
+      ...prev,
+      [boardId]: {
+        ...prev[boardId],
+        repoTree: tree,
+      },
+    }));
+  };
+
   const refreshBoards = async () => {
     if (!user) return;
     try {
@@ -123,6 +147,8 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     updateBoardItem,
     removeItemFromBoard,
     setBoardMeta,
+    updateBoardGitStatus,
+    setBoardFileTree,
   };
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;

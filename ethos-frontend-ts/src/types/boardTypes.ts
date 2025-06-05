@@ -7,6 +7,20 @@ export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
 /** Supported board structures for organizing items */
 export type BoardStructure = 'grid' | 'graph' | 'thread';
 
+/** Git metadata attached to boards or items */
+export interface GitStatus {
+  branch?: string;
+  ahead?: number;
+  behind?: number;
+  isDirty?: boolean;
+}
+
+export interface GitFileNode {
+  path: string;
+  type: 'file' | 'dir';
+  children?: GitFileNode[];
+}
+
 /** Generic board interface shared across profile, quests, etc. */
 export interface Board {
   id: string;
@@ -20,6 +34,11 @@ export interface Board {
   defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
   category?: string; // Optional board grouping
+
+  // Git metadata
+  gitRepoUrl?: string;
+  repoStatus?: GitStatus;
+  repoTree?: GitFileNode[];
 }
 
 /**
@@ -55,4 +74,3 @@ export interface EditBoardProps {
   onCancel?: () => void;
   onDelete?: (boardId: string) => void;
 }
-

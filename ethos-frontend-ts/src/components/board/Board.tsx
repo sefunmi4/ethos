@@ -17,10 +17,6 @@ import type { BoardData, BoardProps, BoardStructure } from '../../types/boardTyp
 import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
-/**
- * Board component displays a collection of posts or quests according to a layout.
- * It supports filtering, sorting, editing, and real-time updates.
- */
 const Board: React.FC<BoardProps> = ({
   boardId,
   title: forcedTitle,
@@ -37,7 +33,8 @@ const Board: React.FC<BoardProps> = ({
 }) => {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState<Post[]>([]); // Can support Post[] or (Post | Quest)[]
+  const [items, setItems] = useState<Post[]>([]);
+  const [viewMode, setViewMode] = useState<BoardStructure | null>(null);
 
   const { canEditBoard } = usePermissions();
   const [filterText, setFilterText] = useState('');
@@ -46,53 +43,43 @@ const Board: React.FC<BoardProps> = ({
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  /**
-   * Loads the board metadata and its associated items.
-   */
   useEffect(() => {
     const loadBoard = async () => {
-        if (!boardId) {
-            console.warn('No boardId provided. Skipping board load.');
-            setLoading(false);
-            return;
-        }
+      if (!boardId) {
+        console.warn('No boardId provided. Skipping board load.');
+        setLoading(false);
+        return;
+      }
 
-        setLoading(true);
-        try {
-            const boardData = await fetchBoard(boardId);
-            const boardItems = await fetchBoardItems(boardId);
+      setLoading(true);
+      try {
+        const boardData = await fetchBoard(boardId);
+        const boardItems = await fetchBoardItems(boardId);
 
-            setBoard(boardData);
-            setItems(boardItems as Post[]);
-        } catch (error) {
-            console.error('Error loading board:', error);
-        } finally {
-            setLoading(false);
-        }
+        setBoard(boardData);
+        setItems(boardItems as Post[]);
+      } catch (error) {
+        console.error('Error loading board:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadBoard();
   }, [boardId]);
 
-  /**
-   * Subscribes to real-time board updates via socket.
-   */
   useSocketListener('board:update', (payload: { boardId: string }) => {
     if (!board?.id || payload.boardId !== board.id) return;
-  
+
     fetchBoard(board.id).then(setBoard);
     fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
   });
 
-  /**
-   * Filter and sort items based on user input and selected criteria.
-   */
   const filteredItems = useMemo(() => {
     let result = [...items];
-  
     if (filter?.type) {
       result = result.filter((item) => item.type === filter.type);
     }
-  
+
     return result
       .filter((item: Post) => {
         const title = getDisplayTitle(item) ?? '';
@@ -105,28 +92,26 @@ const Board: React.FC<BoardProps> = ({
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
 
-  /**
-   * Handle creation of a new contribution (post or quest).
-   */
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
   };
 
-  // Resolve layout and permissions
-  const structure: BoardStructure = forcedStructure || board?.structure || 'grid';
+  const resolvedStructure: BoardStructure =
+    viewMode || forcedStructure || board?.structure || 'grid';
+
   const editable = useMemo(() => {
     if (readOnly) return false;
     if (typeof forcedEditable === 'boolean') return forcedEditable;
     return board?.id ? canEditBoard(board.id) : false;
   }, [readOnly, forcedEditable, board?.id, canEditBoard]);
+
   const Layout = {
     grid: GridLayout,
     graph: GraphLayout,
     thread: ThreadLayout,
-  }[structure] ?? GridLayout;
+  }[resolvedStructure] ?? GridLayout;
 
-  // Handle loading and missing board cases
   if (loading) {
     return <div className="text-gray-500 p-4">Loading board...</div>;
   }
@@ -166,6 +151,20 @@ const Board: React.FC<BoardProps> = ({
               { value: 'desc', label: 'Desc' },
             ]}
           />
+          <Select
+            value={resolvedStructure}
+            onChange={(e) => setViewMode(e.target.value as BoardStructure)}
+            options={[
+              { value: 'grid', label: 'Grid' },
+              { value: 'graph', label: 'Graph' },
+              { value: 'thread', label: 'Timeline' },
+            ]}
+          />
+          {editable && viewMode && (
+            <Button variant="ghost" size="sm" onClick={() => setViewMode(null)}>
+              Reset View
+            </Button>
+          )}
           {editable && showCreate && (
             <Button variant="primary" onClick={() => setShowCreateForm(true)}>
               + Add Item
@@ -198,26 +197,24 @@ const Board: React.FC<BoardProps> = ({
             board={board}
             onCancel={() => setEditMode(false)}
             onSave={() => {
-                if (!board?.id) return;
-                fetchBoard(board.id).then((updatedBoard) => {
-                  setBoard(updatedBoard);
-                  setEditMode(false);
-              
-                  if (!board?.id) return;
-                  fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
-                });
-              }}
+              if (!board?.id) return;
+              fetchBoard(board.id).then((updatedBoard) => {
+                setBoard(updatedBoard);
+                setEditMode(false);
+                fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
+              });
+            }}
           />
         </div>
       ) : (
         <Layout
-        items={filteredItems}
-        compact={compact}
-        user={user}
-        onScrollEnd={onScrollEnd}
-        loadingMore={loadingMore}
-        contributions={items}
-        questId={quest?.id || ''} 
+          items={filteredItems}
+          compact={compact}
+          user={user}
+          onScrollEnd={onScrollEnd}
+          loadingMore={loadingMore}
+          contributions={items}
+          questId={quest?.id || ''}
         />
       )}
     </div>
