@@ -166,3 +166,271 @@ This approach lets the app scale from social interaction → collaborative work 
 ---
 
 Let me know when ready to begin each file. I’ll guide the child components from the root upward. ✨
+**Prompt: Designing Git Integration and Post Linkage in a Quest-Based Collaboration Platform**
+
+---
+
+**Objective:**
+Integrate Git functionality, file structure syncing, post linkage propagation, and markdown-based commit visualization into a quest-based platform (e.g., Ethos/GuildQuest). The platform must support both developers and non-developers (creators, freelancers) while maintaining modularity and open-source compatibility.
+
+---
+
+**System Overview:**
+
+1. **Quest = Project / Repository**
+
+   * Each quest maps to a virtual project folder that may sync with a GitHub or GitLab repository.
+   * If a GitHub repo is connected later, the backend listens for commits and updates.
+
+2. **Task Nodes = Folders/Files**
+
+   * Task nodes create real files/folders.
+   * Nested nodes = folder structure.
+   * Leaf nodes = files.
+   * TODO comments in posts become inline TODOs in files.
+
+3. **Posts = Logs / Commits / Instructions**
+
+   * Freeform posts use markdown.
+   * Posts linked to task nodes track changes, comments, instructions, or commits.
+   * Quest logs and task-specific posts may auto-convert into file edits.
+
+4. **Commits**
+
+   * Each file edit generates a commit.
+   * Commits are stored and rendered using markdown:
+
+     ```
+     changes: line 42 replaced with ...
+     ...
+     full file view toggle
+     ```
+   * Can push/pull from GitHub, fallback to local-only version.
+
+5. **File Syncing and Versioning**
+
+   * Frontend reflects file/folder structure based on the quest map.
+   * Backend updates files on structure edits.
+   * Git updates are listened to and propagated into post history.
+
+6. **Post Linking and Propagation**
+
+   * Solving a linked post (marked complete) updates others linked to it.
+   * Updates cascade through linked requests/tasks.
+   * Supports citation, solution similarity, and GitHub issue linking.
+
+7. **Github Integration**
+
+   * Upon login, user can link GitHub account.
+   * GitHub repos converted to quests.
+
+     * Issues = posts/quest logs
+     * Commits = line/file edits
+     * Project board = board layout
+   * Forking = crosslinking to other quests
+   * Merge PRs = tracking solved states
+
+---
+
+**Frontend Files to Update:**
+
+* **LinkControls.tsx** – Allow linking of posts and nodes, track propagation
+* **CreatePost.tsx / EditPost.tsx** – Add markdown preview, support TODO tracking
+* **ContributionCard.tsx / PostCard.tsx** – Show commit diffs, line changes
+* **GraphLayout.tsx / Board.tsx** – Visualize quest map as file tree or graph
+* **CreateQuest.tsx / EditQuest.tsx** – Enable git repo init, sync controls
+* **api/quest.ts / api/post.ts / api/git.ts** – Git actions, file change tracking
+* **useQuest.ts / usePost.ts / useGit.ts (new)** – Hooks for syncing quest-file structure
+
+---
+
+**User Flow Integration:**
+
+1. **User Registers**
+
+   * Optional: Connect GitHub account
+
+2. **User Creates Quest**
+
+   * Initializes a repo/folder structure (option to download locally)
+   * Design graph/tree of task nodes (creates folders/files)
+
+3. **User Adds Posts**
+
+   * Can tag lines, suggest TODOs, write logs
+   * Markdown rendering
+   * TODOs appear in code files
+
+4. **User Commits or Edits**
+
+   * Commits from GitHub or site update quest log
+   * Shows line diffs, markdown descriptions
+
+5. **Post Linking**
+
+   * Link duplicate problems/requests
+   * When marked solved, related posts update
+   * Show influence or citation map (graph)
+
+6. **Git Sync**
+
+   * User pushes from local (or site pushes for them)
+   * Pulls updates from GitHub when available
+   * Dual remote repo support (GitHub + platform)
+
+---
+
+**Potential Implications:**
+
+* Enables cross-project learning (solution graph)
+* Promotes open collaboration (Git-powered wiki/log)
+* Educates users through transparent changes
+* Frees creators to focus on structure and content, not just code
+* Supports advanced devs via Git CLI, beginners via GUI
+
+---
+
+**Future Add-ons:**
+
+* Auto mark task complete when commit changes relevant file
+* ChatGPT code assistant per file/task node
+* Auto-detect cycles and patterns in graphs
+* Visualization of influence & citation chain
+* Git diff → markdown → post converter
+* Peer-review workflows via post comments + review labels
+
+Here’s a complete list of frontend files/folders that will need to be created or updated to support Git integration, quest-based file syncing, and post linkage propagation based on your detailed prompt.
+
+⸻
+
+✅ New Files to Create
+
+src/api/git.ts
+	•	Functions: pushToRepo, pullFromRepo, getGitDiff, syncWithGitRepo, linkGitRepoToQuest, getRepoFileTree
+
+src/hooks/useGit.ts
+	•	Wraps Git-related API calls with caching, polling, and error handling.
+	•	Useful hooks: useGitRepo, useGitDiff, useGitFileTree, useRepoSync
+
+⸻
+
+📁 Files to Update by Feature Category
+
+⸻
+
+🔗 Post Linking & Propagation
+
+To support linked post resolution and cascading updates:
+
+Update:
+	•	src/components/controls/LinkControls.tsx
+→ Add linked post solving, relationship tagging (solution, citation, duplicate)
+	•	src/components/post/PostCard.tsx
+→ Show “linked to post X (solved)” badge
+→ Option to view update history/citations
+	•	src/hooks/usePost.ts
+→ Add logic to useMarkPostAsSolved → triggers propagation
+	•	src/api/post.ts
+→ Add API calls like markPostSolved, getLinkedPosts, propagateSolution
+
+⸻
+
+📁 Quest = File Tree / Git Project
+
+To reflect quests as Git-backed file structures:
+
+Update:
+	•	src/components/layout/GraphLayout.tsx
+→ Render quest as file/folder tree
+→ Add Git status indicators (modified, staged, committed)
+	•	src/components/quest/CreateQuest.tsx / EditQuest.tsx
+→ GitHub repo connect field
+→ “Initialize Git structure” or “Sync Repo” button
+	•	src/hooks/useQuest.ts
+→ Add hook: useQuestFileTree, useQuestGitStatus
+	•	src/api/quest.ts
+→ Add: syncQuestStructureWithGit, getQuestRepoMeta, linkToGitRepo
+
+⸻
+
+📝 Commits & Markdown-Based Changes
+
+To view diffs and track code changes from posts:
+
+Update:
+	•	src/components/post/CreatePost.tsx / EditPost.tsx
+→ Git preview toggle
+→ Markdown commit message formatter
+	•	src/components/contribution/ContributionCard.tsx
+→ Show diffs, file changed, commit summary
+	•	src/components/post/PostCard.tsx
+→ Show “changes: line 14 replaced…” style previews
+	•	src/utils/displayUtils.ts
+→ Add: formatGitDiffMarkdown(diffObj)
+
+⸻
+
+🌲 File Explorer / Task Tree
+
+To map tasks and nodes to actual file structure:
+
+Update:
+	•	src/components/layout/GraphLayout.tsx
+→ Visualize files/folders as nodes
+→ Leaf = file, Parent = folder/task group
+	•	src/hooks/useGraph.ts
+→ Support Git structure-based node rendering
+	•	src/types/questTypes.ts
+→ Update Quest to include repo metadata:
+
+repoUrl?: string;
+fileTree?: QuestNode[]; // recursively represents folder structure
+
+
+
+⸻
+
+🧠 Types & Constants
+
+Update:
+	•	src/types/postTypes.ts
+→ Add linkedPostIds: string[], solved: boolean, linkedType?: 'duplicate' | 'solution' | 'citation'
+	•	src/types/questTypes.ts
+→ Add Git fields: repoUrl, fileTree, commitHistory
+	•	src/constants/options.ts
+→ Add Git-related options and labels (e.g., post types: code_commit, issue, log)
+
+⸻
+
+📋 Boards and Views
+
+To show task/quest maps as file trees and history logs:
+
+Update:
+	•	src/components/board/Board.tsx
+→ Show toggle between “Graph View” and “File View”
+	•	src/components/board/CreateBoard.tsx / EditBoard.tsx
+→ Support filtering by file, tag, or node path
+
+⸻
+
+✅ Optional UX/UI Enhancements
+
+Update:
+	•	src/components/ui/Banner.tsx, AlertBox.tsx
+→ Display “X linked posts have been updated based on this solution”
+	•	src/components/ui/PostTypeBadge.tsx
+→ New types: commit, solution, linked
+
+⸻
+
+🎯 Summary
+
+Feature	Create	Update
+Git Sync	api/git.ts, hooks/useGit.ts	useQuest.ts, CreateQuest.tsx, GraphLayout.tsx
+Post Linking	–	LinkControls.tsx, PostCard.tsx, usePost.ts, post.ts
+Markdown Commits	–	PostCard.tsx, ContributionCard.tsx, displayUtils.ts
+File Tree	–	GraphLayout.tsx, questTypes.ts, useGraph.ts
+Types	–	postTypes.ts, questTypes.ts, options.ts
+
+Let me know if you want this scaffolded into a full git.ts API file or a frontend plan with checkbox items to track implementation.
