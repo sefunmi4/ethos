@@ -1,10 +1,10 @@
 // src/pages/Login.tsx
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getMe, register, forgotPassword } from '../api/auth';
-import { AuthContext } from '../contexts/AuthContext';
-import type { AuthUser } from '../types/authTypes';
+import { login, fetchCurrentUser, addUserAccount, addResetPasswordRequest } from '../api/auth';
+import { useAuth } from '../contexts/AuthContext';
+import type { AuthUser } from '../types/userTypes';
 import { useSocket } from '../hooks/useSocket';
 import { useBoard } from '../hooks/useBoard';
 import { usePermissions } from '../hooks/usePermissions';
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { setUser } = useContext(AuthContext);
+  const { setUser } = useAuth();
   const { socket, connect } = useSocket();
   const { setSelectedBoard, fetchBoards } = useBoard();
   const { loadPermissions } = usePermissions();
@@ -58,7 +58,7 @@ const Login: React.FC = () => {
   
     try {
       if (showReset) {
-        await forgotPassword(form.email);
+        await addResetPasswordRequest(form.email);
         setResetSent(true);
         return;
       }
@@ -67,11 +67,11 @@ const Login: React.FC = () => {
         if (form.password !== form.confirm) {
           return setError('Passwords do not match');
         }
-        await register(form.email, form.password);
+        await addUserAccount(form.email, form.password);
       }
   
       await login(form.email, form.password);
-      const user = await getMe();
+      const user = await fetchCurrentUser();
   
       // ✅ Validate response before setting user
       if (isValidAuthUser(user)) {
@@ -98,7 +98,7 @@ const Login: React.FC = () => {
       
         navigate('/');
       } else {
-        throw new Error('Invalid user response from getMe');
+        throw new Error('Invalid user response from fetchCurrentUser');
       }
     } catch (err: any) {
       console.error('Auth failed:', err);

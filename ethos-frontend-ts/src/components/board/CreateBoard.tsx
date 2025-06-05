@@ -9,7 +9,7 @@ import {
 } from '../ui';
 import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
 import type { BoardStructure, BoardType } from '../../types/boardTypes';
-import { createBoard } from '../../api/board'; 
+import { addBoard } from '../../api/board'; 
 
 const CreateBoard: React.FC<{
   onSave?: (board: any) => void;
@@ -51,7 +51,7 @@ const CreateBoard: React.FC<{
     };
 
     try {
-      const newBoard = await createBoard(boardData); // ✅ Uses api/boards.ts
+      const newBoard = await addBoard(boardData); // ✅ Uses api/boards.ts
       onSave?.(newBoard);
     } catch (err) {
       console.error('[CreateBoard] Failed to create board:', err);

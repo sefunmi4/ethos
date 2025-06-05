@@ -1,5 +1,4 @@
 // src/utils/boardUtils.ts
-
 import type { BoardData } from '../types/boardTypes';
 
 /**
@@ -25,4 +24,12 @@ export const createMockBoard = (
     type: 'custom',
     createdAt: new Date().toISOString(),
   };
+};
+
+export const getBoardIdFromParams = (
+  input: string | { questId: string; type: string; enrich?: boolean }
+): string => {
+  if (typeof input === 'string') return input;
+  const { questId, type } = input;
+  return `${type}-${questId}`;
 };

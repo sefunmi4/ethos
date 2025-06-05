@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { fetchBoardById, fetchBoardItems } from '../../api/board';
+import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions'; 
 import { useSocketListener } from '../../hooks/useSocket'; 
 import { getDisplayTitle } from '../../utils/displayUtils';
@@ -59,7 +59,7 @@ const Board: React.FC<BoardProps> = ({
 
         setLoading(true);
         try {
-            const boardData = await fetchBoardById(boardId);
+            const boardData = await fetchBoard(boardId);
             const boardItems = await fetchBoardItems(boardId);
 
             setBoard(boardData);
@@ -79,7 +79,7 @@ const Board: React.FC<BoardProps> = ({
   useSocketListener('board:update', (payload: { boardId: string }) => {
     if (!board?.id || payload.boardId !== board.id) return;
   
-    fetchBoardById(board.id).then(setBoard);
+    fetchBoard(board.id).then(setBoard);
     fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
   });
 
@@ -199,7 +199,7 @@ const Board: React.FC<BoardProps> = ({
             onCancel={() => setEditMode(false)}
             onSave={() => {
                 if (!board?.id) return;
-                fetchBoardById(board.id).then((updatedBoard) => {
+                fetchBoard(board.id).then((updatedBoard) => {
                   setBoard(updatedBoard);
                   setEditMode(false);
               

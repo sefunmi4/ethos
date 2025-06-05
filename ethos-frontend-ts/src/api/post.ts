@@ -7,7 +7,8 @@ import type { BoardData } from '../types/boardTypes';
 const BASE_URL = '/api/posts';
 
 /**
- * Fetch a single post by ID
+ * 🔍 Fetch a single post by ID
+ * @param id - Post ID
  */
 export const fetchPostById = async (id: string): Promise<Post> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${id}`);
@@ -15,23 +16,29 @@ export const fetchPostById = async (id: string): Promise<Post> => {
 };
 
 /**
- * Create a new post
+ * ➕ Add a new post
+ * @param data - Partial post data
  */
-export const createPost = async (data: Partial<Post>): Promise<Post> => {
+export const addPost = async (data: Partial<Post>): Promise<Post> => {
   const res = await axiosWithAuth.post(BASE_URL, data);
   return res.data;
 };
 
+// renamed from patchPost → updatePost
 /**
- * Update an existing post
+ * 🛠 Update an existing post
+ * @param id - Post ID
+ * @param updates - Partial update object
  */
-export const patchPost = async (id: string, updates: Partial<Post>): Promise<Post> => {
+export const updatePost = async (id: string, updates: Partial<Post>): Promise<Post> => {
   const res = await axiosWithAuth.patch(`${BASE_URL}/${id}`, updates);
   return res.data;
 };
 
 /**
- * Fetch replies to a post as a board (paginated + enriched if needed)
+ * 🔃 Fetch replies to a post as a board
+ * @param postId - Post ID
+ * @param options - Enrichment or pagination settings
  */
 export const fetchReplyBoard = async (
   postId: string,
@@ -47,7 +54,8 @@ export const fetchReplyBoard = async (
 };
 
 /**
- * Fetch raw replies (not board format)
+ * 📄 Fetch raw replies by post ID
+ * @param postId - Parent post ID
  */
 export const fetchRepliesByPostId = async (postId: string): Promise<Post[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/replies`);
@@ -55,33 +63,48 @@ export const fetchRepliesByPostId = async (postId: string): Promise<Post[]> => {
 };
 
 /**
- * Fetch all posts linked to a quest
+ * 📌 Fetch posts linked to a specific quest
+ * @param questId - Quest ID
  */
-export const fetchQuestPosts = async (questId: string): Promise<Post[]> => {
-  const res = await axiosWithAuth.get(`${BASE_URL}/quest/${questId}`);
+export const fetchPostsByQuestId = async (questId: string): Promise<Post[]> => {
+  const res = await axiosWithAuth.get(`/api/quests/${questId}/posts`);
   return res.data;
 };
 
 /**
- * Archive a post
+ * 📌 Fetch posts by board ID
+ * @param boardId - Board ID
  */
-export const archivePostById = async (id: string): Promise<{ success: boolean }> => {
+export const fetchPostsByBoardId = async (boardId: string): Promise<Post[]> => {
+  const res = await axiosWithAuth.get(`/api/boards/${boardId}/posts`);
+  return res.data || [];
+};
+
+/**
+ * 🗃 Archive a post by ID
+ * @param id - Post ID
+ */
+export const archivePost = async (id: string): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.post(`${BASE_URL}/${id}/archive`);
   return res.data;
 };
 
 /**
- * Delete a post
+ * ❌ Remove a post by ID
+ * @param id - Post ID
  */
-export const deletePostById = async (id: string): Promise<{ success: boolean }> => {
+export const removePost = async (id: string): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.delete(`${BASE_URL}/${id}`);
   return res.data;
 };
 
 /**
- * Toggle a reaction on a post
+ * ❤️ Toggle a reaction (like/heart)
+ * @param postId - Post ID
+ * @param type - Reaction type
+ * @param add - Whether to add or remove
  */
-export const toggleReaction = async (
+export const updateReaction = async (
   postId: string,
   type: 'like' | 'heart',
   add: boolean
@@ -93,33 +116,48 @@ export const toggleReaction = async (
 };
 
 /**
- * Get all reactions for a post
+ * 🔁 Fetch all reactions on a post
+ * @param postId - Post ID
  */
-export const getReactions = async (postId: string): Promise<any[]> => {
+export const fetchReactions = async (postId: string): Promise<any[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/reactions`);
   return res.data;
 };
 
 /**
- * Get repost count for a post
+ * 🔁 Fetch repost count for a post
+ * @param postId - Post ID
  */
-export const getRepostCount = async (postId: string): Promise<{ count: number }> => {
+export const fetchRepostCount = async (postId: string): Promise<{ count: number }> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/reposts/count`);
   return res.data;
 };
 
 /**
- * Get current user's repost
+ * 🔁 Fetch current user's repost of a post
+ * @param postId - Post ID
  */
-export const getUserRepost = async (postId: string): Promise<Post | null> => {
+export const fetchUserRepost = async (postId: string): Promise<Post | null> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/reposts/user`);
   return res.data || null;
 };
 
 /**
- * Create a repost
+ * 🔁 Add a repost for a post
+ * @param post - Original post object
  */
-export const createRepost = async (post: Post): Promise<Post> => {
+export const addRepost = async (post: Post): Promise<Post> => {
   const res = await axiosWithAuth.post(`${BASE_URL}/${post.id}/repost`, {});
   return res.data;
+};
+
+/**
+ * 🧪 (Utility) Enrich a post client-side
+ * @param post - Raw post object
+ */
+export const enrichPostWithData = async (post: Post): Promise<Post> => {
+  return {
+    ...post,
+    enriched: true,
+  };
 };

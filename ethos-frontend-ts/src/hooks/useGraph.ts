@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
-import { getGraphData } from '../api/graph'; // 📡 API call to fetch graph layout
-import type { GraphNode, GraphEdge } from '../types/graphTypes';
+import { getMapData } from '../api/quest'; 
+import type { Post } from '../types/postTypes';
+import type { TaskEdge } from '../types/questTypes';
 
 /**
  * useGraph - A custom React hook for managing and loading graph data.
@@ -9,8 +10,8 @@ import type { GraphNode, GraphEdge } from '../types/graphTypes';
  * as nodes in a graph structure (e.g., tree layouts for post/quest relationships).
  */
 export const useGraph = () => {
-  const [nodes, setNodes] = useState<GraphNode[]>([]);
-  const [edges, setEdges] = useState<GraphEdge[]>([]);
+  const [nodes, setNodes] = useState<Post[]>([]); // 🧠 Nodes are Posts
+  const [edges, setEdges] = useState<TaskEdge[]>([]); // 🔗 Edges are TaskEdges representing sub-problems/branches
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,11 +24,11 @@ export const useGraph = () => {
     setError(null);
 
     try {
-      const graphData = await getGraphData(boardId);
+      const mapData = await getMapData(boardId);
 
-      // Expecting API response format: { nodes: GraphNode[], edges: GraphEdge[] }
-      setNodes(graphData.nodes || []);
-      setEdges(graphData.edges || []);
+      // Expecting API response format: { nodes: Post[], edges: TaskEdge[] }
+      setNodes(mapData.nodes || []);
+      setEdges(mapData.edges || []);
     } catch (err: any) {
       console.error('[Graph] Failed to load graph data:', err);
       setError(err?.response?.data?.error || 'Failed to load graph.');
@@ -44,3 +45,4 @@ export const useGraph = () => {
     loadGraph,
   };
 };
+

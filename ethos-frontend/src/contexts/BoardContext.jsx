@@ -58,7 +58,7 @@ export const BoardProvider = ({ children }) => {
     }));
   };
 
-  const removeFromBoard = (boardId, itemId) => {
+  const removeItemFromBoard = (boardId, itemId) => {
     setBoards((prev) => ({
       ...prev,
       [boardId]: {
@@ -90,7 +90,7 @@ export const BoardProvider = ({ children }) => {
     refreshBoards,
     appendToBoard,
     updateBoardItem,
-    removeFromBoard,
+    removeItemFromBoard,
   };
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;

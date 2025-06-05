@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import { patchPost } from '../../api/post';
+import { updatePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
@@ -47,7 +47,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
     };
 
     try {
-      const updatedPost = await patchPost(post.id, payload);
+      const updatedPost = await updatePost(post.id, payload);
       if (selectedBoard) updateBoardItem(selectedBoard, updatedPost);
       if (onUpdated) onUpdated(updatedPost);
     } catch (error) {

@@ -2,32 +2,38 @@ import { useEffect, useState, useCallback } from 'react';
 import type { Quest, EnrichedQuest } from '../types/questTypes';
 import type { Post } from '../types/postTypes';
 import {
-  fetchQuestsByBoardId,
-  fetchQuestById,
+  getQuestById,
+  getAllQuests,
   enrichQuestWithData,
+  fetchQuestsByBoardId,
 } from '../api/quest';
+
+function isQuest(obj: any): obj is Quest {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'id' in obj &&
+    'headPostId' in obj &&
+    !('type' in obj || 'content' in obj) // Avoid Posts
+  );
+}
 
 /**
  * Custom hook for quest-related data operations.
- *
- * Provides:
- * - Quest list operations (fetch + enrich)
- * - Single quest loader (with error/loading state)
  */
 export const useQuest = (questId?: string) => {
-  // Single quest loading state
   const [quest, setQuest] = useState<Quest | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(!!questId);
 
-  // Load a single quest by ID if questId is passed in
+  // Load a single quest by ID
   useEffect(() => {
     if (!questId) return;
 
     const load = async () => {
       setIsLoading(true);
       try {
-        const result = await fetchQuestById(questId);
+        const result = await getQuestById(questId);
         setQuest(result);
       } catch (err) {
         setError('Failed to load quest');
@@ -40,9 +46,6 @@ export const useQuest = (questId?: string) => {
     load();
   }, [questId]);
 
-  /**
-   * Fetches all quests for a specific board by ID.
-   */
   const fetchQuestsForBoard = useCallback(async (boardId: string): Promise<Quest[]> => {
     try {
       return await fetchQuestsByBoardId(boardId);
@@ -52,15 +55,21 @@ export const useQuest = (questId?: string) => {
     }
   }, []);
 
-  /**
-   * Enriches an array of raw quests with computed metadata (progress, relationships, etc.)
-   */
+  const fetchAllQuests = useCallback(async (): Promise<Quest[]> => {
+    try {
+      return await getAllQuests();
+    } catch (err) {
+      console.error('[useQuest] Failed to fetch all quests:', err);
+      return [];
+    }
+  }, []);
+
   const enrichQuests = useCallback(
-    async (quests: (Quest | Post)[]): Promise<EnrichedQuest[]> => {
+    async (items: (Quest | Post)[]): Promise<EnrichedQuest[]> => {
       try {
         const enriched = await Promise.all(
-          quests
-            .filter((q): q is Quest => q && q.type === 'quest')
+          items
+            .filter(isQuest)
             .map((q) => enrichQuestWithData(q))
         );
         return enriched;
@@ -72,11 +81,18 @@ export const useQuest = (questId?: string) => {
     []
   );
 
+  const getAllEnrichedQuests = useCallback(async (): Promise<EnrichedQuest[]> => {
+    const all = await fetchAllQuests();
+    return enrichQuests(all);
+  }, [fetchAllQuests, enrichQuests]);
+
   return {
     quest,
     error,
     isLoading,
     fetchQuestsForBoard,
+    fetchAllQuests,
     enrichQuests,
+    getAllEnrichedQuests,
   };
 };

@@ -25,7 +25,7 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
   const [fetchedReplies, setFetchedReplies] = useState([]);
   const [replies, setReplies] = useState([]);
 
-  const { selectedBoard, removeFromBoard, updateBoardItem } = useBoardContext() || {};
+  const { selectedBoard, removeItemFromBoard, updateBoardItem } = useBoardContext() || {};
 
   const canEdit = user?.id === post.authorId || (post.collaborators || []).includes(user?.id);
 
@@ -49,7 +49,7 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
     if (!window.confirm('Are you sure you want to permanently delete this post?')) return;
     try {
       await axiosWithAuth.delete(`/posts/${post.id}`);
-      if (selectedBoard?.id) removeFromBoard(selectedBoard.id, post.id);
+      if (selectedBoard?.id) removeItemFromBoard(selectedBoard.id, post.id);
       onDelete?.(post.id);
     } catch (err) {
       console.error('[PostCard] Failed to delete post:', err);
@@ -63,7 +63,7 @@ const PostCard = ({ post, user, onUpdate, onDelete, compact = false }) => {
       setIsArchiving(true);
       const res = await axiosWithAuth.patch(`/posts/${post.id}`, { visibility: 'private' });
       const updatedPost = res.data;
-      if (selectedBoard?.id) removeFromBoard(selectedBoard.id, post.id);
+      if (selectedBoard?.id) removeItemFromBoard(selectedBoard.id, post.id);
       updateBoardItem?.(selectedBoard?.id, updatedPost);
       onUpdate?.(updatedPost);
     } catch (err) {

@@ -1,3 +1,70 @@
+
+/**
+ * Represents a registered user in the system.
+ */
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  role: UserRole;
+
+  // Personal & social metadata
+  name?: string;
+  bio: string;
+  avatarUrl?: string;
+  tags: string[];
+  location?: string;
+
+  // Public-facing links and portfolio sites
+  links: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    tiktok?: string;
+    youtube?: string;
+    website?: string;
+    blog?: string;
+    other?: string;
+  };
+
+  // Public posts or linked external highlights
+  featuredPosts?: {
+    title: string;
+    url: string;
+    type?: 'github' | 'tweet' | 'blog' | 'quest' | 'video';
+    tags?: string[];
+  }[];
+
+  // Timeline for experience/quests
+  experienceTimeline: UserExperienceEvent[];
+
+  // Optional system metadata (for moderation, status, etc.)
+  status?: 'active' | 'archived' | 'banned';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+
+/**
+ * Represents a simplified or partial version of a user for auth sessions.
+ * Includes extensions like `name` or session-specific metadata.
+ */
+export interface AuthUser extends Partial<Omit<User, 'role'>> {
+  id: string;
+  email: string;
+  role?: UserRole;
+  name?: string;
+  [key: string]: any;
+}
+
+/**
+ * Valid user roles within the system.
+ */
+export type UserRole = 'user' | 'admin' | 'moderator';
+
+
+
 /**
  * Represents a single experience or milestone entry in a user's timeline.
  */
@@ -19,59 +86,4 @@ export interface UserExperienceEvent {
    * Example: ['education', 'achievement']
    */
   tags?: string[];
-}
-
-/**
- * Valid user roles within the system.
- */
-export type UserRole = 'user' | 'admin' | 'moderator';
-
-/**
- * Represents a registered user in the system.
- */
-export interface User {
-  /**
-   * Unique user ID (UUID or database identifier).
-   */
-  id: string;
-
-  /**
-   * Public-facing username.
-   */
-  username: string;
-
-  /**
-   * Registered email address.
-   */
-  email: string;
-
-  /**
-   * User role used for authorization and access control.
-   */
-  role: UserRole;
-
-  /**
-   * User-defined tags indicating interests, skills, or identity.
-   */
-  tags: string[];
-
-  /**
-   * Self-written biography or description (can be markdown).
-   */
-  bio: string;
-
-  /**
-   * Social or portfolio links.
-   */
-  links: {
-    github?: string;
-    linkedin?: string;
-    tiktok?: string;
-    website?: string;
-  };
-
-  /**
-   * Chronological record of user experience (for resumes, progress, etc).
-   */
-  experienceTimeline: UserExperienceEvent[];
 }

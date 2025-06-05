@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { POST_TYPES } from '../../constants/options';
-import { createPost } from '../../api/post';
+import { addPost } from '../../api/post';
 import { Button, TextArea, Select, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
@@ -61,7 +61,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
     };
 
     try {
-      const newPost = await createPost(payload);
+      const newPost = await addPost(payload);
       if (selectedBoard) appendToBoard(selectedBoard, newPost);
       onSave?.(newPost);
     } catch (err) {

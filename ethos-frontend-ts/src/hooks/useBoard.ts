@@ -1,102 +1,79 @@
-import { useCallback, useContext, useState } from 'react';
-import { BoardContext } from '../contexts/BoardContext';
-import { BoardData } from '../types/boardTypes';
-import {
-  fetchBoards as apiFetchBoards,
-  fetchBoardById,
-  fetchPublicBoards,
-} from '../api/board';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useBoardContext } from '../contexts/BoardContext';
+import { fetchBoards, fetchBoard } from '../api/board';
+import type { BoardData } from '../types/boardTypes';
+
+type BoardArg = string | { questId: string; type: string; enrich?: boolean };
+
+const getBoardIdFromArg = (arg: BoardArg): string => {
+  if (typeof arg === 'string') return arg;
+  return `${arg.type}-${arg.questId}`;
+};
 
 /**
- * Hook for managing and accessing board state.
- * 
- * Supports:
- * - Fetching and setting user boards
- * - Managing individual boards by ID
- * - Loading public boards for other users
+ * Hook to interact with the board system (load, refresh, manage).
  */
-export const useBoard = (initialBoardId?: string) => {
-  const context = useContext(BoardContext);
-
-  if (!context) {
-    throw new Error('useBoard must be used within a BoardProvider');
-  }
-
+export const useBoard = (arg?: BoardArg) => {
   const {
-    boards,
+    boards = {},
     setSelectedBoard,
     appendToBoard,
-    updateBoardItem,
-    removeFromBoard,
-    refreshBoards,
-  } = context;
+    removeItemFromBoard,
+  } = useBoardContext(); // ✅ useBoardContext instead of BoardContext
+
+  const boardId = useMemo(() => (arg ? getBoardIdFromArg(arg) : undefined), [arg]);
 
   const [board, setBoard] = useState<BoardData | undefined>(
-    initialBoardId ? boards[initialBoardId] : undefined
+    boardId ? boards[boardId] : undefined
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Fetch all boards for the authenticated user
-   */
-  const fetchBoards = useCallback(async (userId: string) => {
-    try {
-      const boardList = await apiFetchBoards(userId);
-      await refreshBoards(); // Update context
-      return boardList;
-    } catch (err) {
-      console.error('[useBoard] Failed to fetch user boards:', err);
-      return [];
-    }
-  }, [refreshBoards]);
-
-  /**
-   * Loads a board by ID and updates local state.
-   */
-  const loadBoard = useCallback(async (boardId: string) => {
+  const loadBoard = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
-      const result = await fetchBoardById(boardId);
+      const enrich = typeof arg === 'object' && arg.enrich;
+      const result = await fetchBoard(id, enrich ? { enrich: true } : {});
       setBoard(result);
       return result;
     } catch (err) {
-      console.error(`[useBoard] Failed to load board: ${boardId}`, err);
+      console.error(`[useBoard] Failed to load board ${id}:`, err);
       return undefined;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [arg]);
 
-  /**
-   * Loads a user's public profile boards (quests and posts).
-   */
-  const loadPublicBoards = useCallback(async (userId: string) => {
+  const refresh = useCallback(async () => {
+    if (!boardId) return;
+    return await loadBoard(boardId);
+  }, [boardId, loadBoard]);
+
+  const fetchAllBoards = useCallback(async (userId?: string) => {
     try {
-      const result = await fetchPublicBoards(userId);
-      return result;
+      const list = await fetchBoards(userId); // ⬅ pass to actual API call
+      return list;
     } catch (err) {
-      console.error('[useBoard] Failed to load public boards:', err);
-      throw err;
+      console.error('[useBoard] Failed to fetch all boards:', err);
+      return [];
     }
   }, []);
 
-  const refresh = useCallback(async () => {
-    if (!board?.id) return;
-    const refreshed = await loadBoard(board.id);
-    return refreshed;
-  }, [board?.id, loadBoard]);
+  // Auto-load if missing
+  useEffect(() => {
+    if (boardId && !board) {
+      loadBoard(boardId);
+    }
+  }, [boardId]);
 
   return {
     board,
     setBoard,
     isLoading,
-    fetchBoards,
     loadBoard,
     refresh,
+    fetchBoards: fetchAllBoards,
     setSelectedBoard,
     appendToBoard,
-    updateBoardItem,
-    removeFromBoard,
-    loadPublicBoards,
+    removeItemFromBoard,
   };
 };

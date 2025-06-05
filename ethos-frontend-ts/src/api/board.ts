@@ -9,31 +9,35 @@ import type { BoardStructure, BoardType } from '../types/boardTypes';
 const BASE_URL = '/api/boards';
 
 /**
- * Fetch all available boards for the current user
+ * 🧠 fetchBoards → Get all boards (optionally filtered by user)
+ * @param userId Optional user ID to fetch personal boards
  */
-export const fetchBoards = async (): Promise<BoardData[]> => {
-  const res = await axiosWithAuth.get(BASE_URL);
+export const fetchBoards = async (userId?: string): Promise<BoardData[]> => {
+  const url = userId ? `${BASE_URL}?userId=${userId}` : BASE_URL;
+  const res = await axiosWithAuth.get(url);
   return res.data;
 };
 
 /**
- * Fetch a single board by ID with optional query params
+ * 🧠 fetchBoard → Get a single board with optional enrichment
+ * @param id Board ID
+ * @param options Optional { enrich?: boolean; page?: number }
  */
-export const fetchBoardById = async (
+export const fetchBoard = async (
   id: string,
   options: { enrich?: boolean; page?: number } = {}
 ): Promise<BoardData> => {
   const params = new URLSearchParams();
   if (options.enrich) params.set('enrich', 'true');
   if (options.page) params.set('page', options.page.toString());
-
   const url = `${BASE_URL}/${id}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
 
 /**
- * Fetch all items (posts or quests) associated with a board
+ * 🧠 fetchBoardItems → Get items (posts/quests) in a board
+ * @param id Board ID
  */
 export const fetchBoardItems = async (id: string): Promise<(Post | Quest)[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${id}/items`);
@@ -41,9 +45,10 @@ export const fetchBoardItems = async (id: string): Promise<(Post | Quest)[]> => 
 };
 
 /**
- * Create a new board
+ * ➕ addBoard → Create a new board
+ * @param data Object containing board fields (title, type, structure, etc)
  */
-export const createBoard = async (data: {
+export const addBoard = async (data: {
   title: string;
   description: string;
   type: BoardType;
@@ -53,13 +58,15 @@ export const createBoard = async (data: {
   featured: boolean;
   defaultFor: string | null;
   category?: string;
-}) => {
-  const response = await axiosWithAuth.post(BASE_URL, data);
-  return response.data;
+}): Promise<BoardData> => {
+  const res = await axiosWithAuth.post(BASE_URL, data);
+  return res.data;
 };
 
 /**
- * Update an existing board by ID
+ * 🔁 updateBoard → Modify existing board fields
+ * @param id Board ID
+ * @param updates Partial update object
  */
 export const updateBoard = async (
   id: string,
@@ -70,17 +77,18 @@ export const updateBoard = async (
 };
 
 /**
- * Delete a board by ID
+ * @param id Board ID
  */
-export const deleteBoard = async (id: string): Promise<{ success: boolean }> => {
+export const removeBoard = async (id: string): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.delete(`${BASE_URL}/${id}`);
   return res.data;
 };
 
 /**
- * Remove a specific post or quest from a board
+ * @param boardId ID of the board
+ * @param itemId ID of the item to remove
  */
-export const removeFromBoard = async (
+export const removeItemFromBoard = async (
   boardId: string,
   itemId: string
 ): Promise<{ success: boolean }> => {
@@ -89,7 +97,7 @@ export const removeFromBoard = async (
 };
 
 /**
- * Fetch all boards that are marked as "featured"
+ * 🧠 fetchFeaturedBoards → Get all boards marked as featured
  */
 export const fetchFeaturedBoards = async (): Promise<BoardData[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}?featured=true`);
@@ -97,9 +105,17 @@ export const fetchFeaturedBoards = async (): Promise<BoardData[]> => {
 };
 
 /**
- * Fetch the default home feed board
+ * 🧠 fetchDefaultHomeBoard → Get the default home board config (if set)
  */
 export const fetchDefaultHomeBoard = async (): Promise<BoardData | null> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/default/home`);
   return res.data || null;
 };
+
+/**
+ * ✅ RENAMING INDEX — update import names
+ * - fetchBoard → fetchBoard
+ * - addBoard → addBoard
+ * - removeBoard → removeBoard
+ * - removeItemFromBoard → removeItemFromBoard
+ */

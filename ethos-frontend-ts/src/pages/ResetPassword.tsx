@@ -7,10 +7,9 @@ import { useSocket } from '../hooks/useSocket';
 //import { usePermissions } from '../hooks/usePermissions';
 import { useTimeline } from '../hooks/useTimeline';
 
-import { forgotPasswordConfirm } from '../api/auth';
+import { updatePasswordViaToken } from '../api/auth';
 import { ROUTES } from '../constants/routes';
-import type { AuthUser } from '../types/authTypes';
-import type { UserRole } from '../types/userTypes';
+import type { UserRole, AuthUser } from '../types/userTypes';
 
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -66,7 +65,7 @@ const ResetPassword: React.FC = () => {
     try {
       const allowedRoles: UserRole[] = ['user', 'admin', 'moderator'];
 
-      const response = await forgotPasswordConfirm(token, form.password);
+      const response = await updatePasswordViaToken(token, form.password);
       
       if (response?.user && response.user.id) {
         const rawUser = response.user;

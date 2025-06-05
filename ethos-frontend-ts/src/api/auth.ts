@@ -1,20 +1,24 @@
+// src/api/auth.ts
+
 import { axiosWithAuth } from '../utils/authUtils';
+import type { User } from '../types/userTypes';
 
 /**
+ * @function addUserAccount
  * 🔐 Register a new user
- * @param email - Email address
+ * @param email - User email
  * @param password - User password
- * @returns Axios response Promise
  */
-export const register = (email: string, password: string): Promise<void> => {
-  return axiosWithAuth.post('/auth/register', { email, password });
+export const addUserAccount = async (email: string, password: string): Promise<void> => {
+  await axiosWithAuth.post('/auth/register', { email, password });
 };
 
 /**
- * 🔑 Login the user and receive a server-issued token (via HTTP-only cookie)
+ * @function login
+ * 🔑 Login and receive access token via secure cookie
  * @param email - User email
  * @param password - User password
- * @returns Access token data (if returned)
+ * @returns Access token
  */
 export const login = async (
   email: string,
@@ -25,19 +29,30 @@ export const login = async (
 };
 
 /**
- * 🚪 Logout the user and clear authentication cookies
- * @returns A Promise indicating the logout result
+ * @function logout
+ * 🚪 Logout and clear the user's session cookie
  */
 export const logout = async (): Promise<void> => {
   await axiosWithAuth.post('/auth/logout');
 };
 
 /**
- * 🛠 Send password reset email
- * @param email - Email to send reset link to
- * @returns Message response
+ * @function fetchCurrentUser
+ * 🧠 Retrieve authenticated user details
+ * @returns Authenticated user data
  */
-export const forgotPassword = async (
+export const fetchCurrentUser = async (): Promise<User> => {
+  const res = await axiosWithAuth.get('/auth/me');
+  return res.data;
+};
+
+/**
+ * @function addResetPasswordRequest
+ * 🔁 Send password reset link to email
+ * @param email - User email
+ * @returns Message confirming email was sent
+ */
+export const addResetPasswordRequest = async (
   email: string
 ): Promise<{ message: string }> => {
   const res = await axiosWithAuth.post('/auth/forgot-password', { email });
@@ -45,15 +60,16 @@ export const forgotPassword = async (
 };
 
 /**
- * ✅ Confirm password reset with token and new password
- * @param token - Reset token received via email
- * @param newPassword - New password to set
- * @returns Authenticated user data on success
+ * @function updatePasswordViaToken
+ * ✅ Submit token + new password for account recovery
+ * @param token - Reset token sent via email
+ * @param newPassword - New password
+ * @returns User session info
  */
-export const forgotPasswordConfirm = async (
+export const updatePasswordViaToken = async (
   token: string,
   newPassword: string
-): Promise<{ user: MeResponse }> => {
+): Promise<{ user: User }> => {
   const res = await axiosWithAuth.post('/auth/forgot-password/confirm', {
     token,
     newPassword,
@@ -62,30 +78,34 @@ export const forgotPasswordConfirm = async (
 };
 
 /**
- * 🧠 Get the currently authenticated user using cookie token
- * @returns User profile object
+ * @function updateUserInfo
+ * ✏️ Edit the user's account information
+ * @param updates - Partial user fields (bio, tags, links, etc.)
+ * @returns Updated user profile
  */
-export interface MeResponse {
-  id: string;
-  email: string; 
-  username: string;
-  role: string;
-  tags: string[];
-  bio: string;
-  links: {
-    github: string;
-    linkedin: string;
-    tiktok: string;
-    website: string;
-  };
-  experienceTimeline: {
-    datetime: string;
-    title: string;
-    tags: string[];
-  }[];
-}
+export const updateUserInfo = async (
+  updates: Partial<Omit<User, 'id' | 'email' | 'role'>>
+): Promise<User> => {
+  const res = await axiosWithAuth.patch('/auth/me', updates);
+  return res.data;
+};
 
-export const getMe = async (): Promise<MeResponse> => {
-  const res = await axiosWithAuth.get('/auth/me');
+/**
+ * @function archiveUserAccount
+ * 🗃 Soft-delete the user (downgraded to guest on login)
+ * @returns Success status
+ */
+export const archiveUserAccount = async (): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.post('/auth/archive');
+  return res.data;
+};
+
+/**
+ * @function deleteUserAccount
+ * ☠️ Permanently delete the user from the system
+ * @returns Success status
+ */
+export const deleteUserAccount = async (): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.delete('/auth/me');
   return res.data;
 };

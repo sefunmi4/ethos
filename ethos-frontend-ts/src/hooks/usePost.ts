@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Post, EnrichedPost } from '../types/postTypes';
+import type { Post, EnrichedPost } from '../types/postTypes';
 import { fetchPostsByBoardId, enrichPostWithData } from '../api/post';
 
 /**

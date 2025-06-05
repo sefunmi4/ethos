@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext} from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthContextType } from '../../types/authTypes';
 import { logoutUser } from '../../utils/authUtils';
 
@@ -10,7 +10,7 @@ import { logoutUser } from '../../utils/authUtils';
  */
 const NavBar: React.FC = () => {
   // Access authenticated user context
-  const { user } = useContext<AuthContextType>(AuthContext);
+  const { user } = useContext(AuthContext as React.Context<AuthContextType>);
 
   return (
     <nav className="w-full px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200 bg-white backdrop-blur">

@@ -10,10 +10,10 @@ import {
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
 import {
-  toggleReaction,
-  createRepost,
-  getReactions,
-  getRepostCount,
+  updateReaction,
+  addRepost,
+  fetchReactions,
+  fetchRepostCount,
   getUserRepost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap  } from '../../types/postTypes';
@@ -39,8 +39,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdat
       if (!post?.id) return;
       try {
         const [allReactions, repostCountRes, userRepostRes] = await Promise.all([
-          getReactions(post.id),
-          getRepostCount(post.id),
+          fetchReactions(post.id),
+          fetchRepostCount(post.id),
           user?.id ? getUserRepost(post.id) : Promise.resolve(null),
         ]);
 
@@ -77,7 +77,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdat
     setCounts(prev => ({ ...prev, [type]: prev[type] + (isActive ? 1 : -1) }));
 
     try {
-      await toggleReaction(post.id, type, isActive);
+      await updateReaction(post.id, type, isActive);
     } catch (err) {
       console.error(`[ReactionControls] Failed to toggle ${type}:`, err);
       setReactions(prev => ({ ...prev, [type]: !isActive }));
@@ -89,7 +89,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdat
     if (!user?.id || repostLoading) return;
     setRepostLoading(true);
     try {
-      const res = await createRepost(post);
+      const res = await addRepost(post);
       if (res?.id) {
         setCounts(prev => ({ ...prev, repost: prev.repost + 1 }));
         setUserRepostId(res.id);

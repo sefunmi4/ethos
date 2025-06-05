@@ -1,178 +1,101 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  type ReactNode,
-} from 'react';
-
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import type { AuthContextType } from '../types/authTypes';
+import type { AuthUser } from '../types/userTypes';
 import {
   login as apiLogin,
   logout as apiLogout,
-  register as apiRegister,
+  addUserAccount as apiRegister,
+  fetchCurrentUser,
+  updateUserInfo as apiUpdateUserInfo,
+  archiveUserAccount as apiArchiveUser,
+  deleteUserAccount as apiDeleteUser,
 } from '../api/auth';
 
-import {
-  getUserFromToken,
-  axiosWithAuth,
-} from '../utils/authUtils';
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-import type { AuthUser, AuthContextType } from '../types/authTypes';
-
-/**
- * Runtime validator to ensure data conforms to the AuthUser interface.
- */
-const isValidAuthUser = (data: any): data is AuthUser => {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    typeof data.id === 'string' &&
-    typeof data.email === 'string'
-  );
-};
-
-/**
- * Default authentication context placeholder before initialization.
- */
-const defaultContext: AuthContextType = {
-  user: null,
-  loading: true,
-  error: null,
-  login: async () => {},
-  logout: async () => {},
-  register: async () => {},
-  setUser: () => {},
-};
-
-/**
- * React context object for authentication state and actions.
- */
-export const AuthContext = createContext<AuthContextType>(defaultContext);
-
-/**
- * AuthProvider component wraps the app and supplies authentication state.
- */
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Attempts to fetch the current user from a stored token.
-   * Falls back to refreshing the access token if expired.
-   */
-  const fetchUser = async () => {
-    try {
-      const me = await getUserFromToken();
-      if (isValidAuthUser(me)) {
-        setUser(me);
-        console.info('[AuthContext] User loaded:', me);
-      } else {
-        throw new Error('Invalid user data received');
-      }
-    } catch (err) {
-      console.warn('[AuthContext] Token invalid. Attempting refresh...');
-      const refreshed = await tryRefreshAccessToken();
-      if (refreshed) {
-        try {
-          const me = await getUserFromToken();
-          if (isValidAuthUser(me)) {
-            setUser(me);
-            console.info('[AuthContext] User reloaded after refresh:', me);
-          } else {
-            console.warn('[AuthContext] User invalid after refresh');
-            setUser(null);
-          }
-        } catch {
-          setUser(null);
-        }
-      } else {
-        console.warn('[AuthContext] Refresh failed. Clearing auth state.');
-        setUser(null);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * Requests a new access token using the refresh token.
-   */
-  const tryRefreshAccessToken = async (): Promise<boolean> => {
-    try {
-      const res = await axiosWithAuth.post('/auth/refresh');
-      return !!res?.data?.accessToken;
-    } catch (err) {
-      console.error('[AuthContext] Token refresh error:', err);
-      return false;
-    }
-  };
-
-  /**
-   * Initializes authentication by checking the existing token.
-   */
+  // Fetch current user on initial load
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await fetchCurrentUser();
+        setUser(userData);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchUser();
   }, []);
 
-  /**
-   * Logs the user in and updates auth state.
-   */
   const login = async (email: string, password: string) => {
     try {
-      setLoading(true);
+      setError(null);
       await apiLogin(email, password);
-      const me = await getUserFromToken();
-      if (isValidAuthUser(me)) {
-        setUser(me);
-        setError(null);
-        console.info('[AuthContext] Login successful:', me);
-      } else {
-        throw new Error('Invalid login response');
-      }
-    } catch (err) {
-      console.error('[AuthContext] Login error:', err);
-      setError('Login failed. Please check your credentials.');
-      throw err;
-    } finally {
-      setLoading(false);
+      const userData = await fetchCurrentUser();
+      setUser(userData);
+    } catch (err: any) {
+      console.error('Login failed:', err);
+      setError('Login failed');
     }
   };
 
-  /**
-   * Registers a new user and sets auth state upon success.
-   */
-  const register = async (email: string, password: string) => {
+  const addUserAccount = async (email: string, password: string) => {
     try {
-      setLoading(true);
+      setError(null);
       await apiRegister(email, password);
-      const me = await getUserFromToken();
-      if (isValidAuthUser(me)) {
-        setUser(me);
-        setError(null);
-        console.info('[AuthContext] Registration successful:', me);
-      } else {
-        throw new Error('Invalid registration response');
-      }
-    } catch (err) {
-      console.error('[AuthContext] Registration error:', err);
-      setError('Registration failed. Please try again.');
-      throw err;
-    } finally {
-      setLoading(false);
+      const userData = await fetchCurrentUser();
+      setUser(userData);
+    } catch (err: any) {
+      console.error('Registration failed:', err);
+      setError('Registration failed');
     }
   };
 
-  /**
-   * Logs the user out and resets the auth state.
-   */
   const logout = async () => {
     try {
       await apiLogout();
       setUser(null);
-      console.info('[AuthContext] Logged out successfully');
     } catch (err) {
-      console.error('[AuthContext] Logout error:', err);
+      console.error('Logout failed:', err);
+      setError('Logout failed');
+    }
+  };
+
+  const updateUserInfo = async (
+    updates: Partial<Omit<AuthUser, 'id' | 'email' | 'role'>>
+  ) => {
+    try {
+      const updated = await apiUpdateUserInfo(updates);
+      setUser(updated);
+    } catch (err) {
+      console.error('Failed to update user info:', err);
+      setError('Failed to update profile');
+    }
+  };
+  
+  const archiveUserAccount = async () => {
+    try {
+      const res = await apiArchiveUser();
+      if (res.success) setUser(null);
+    } catch (err) {
+      console.error('Failed to archive user:', err);
+      setError('Account archive failed');
+    }
+  };
+  
+  const deleteUserAccount = async () => {
+    try {
+      const res = await apiDeleteUser();
+      if (res.success) setUser(null);
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+      setError('Account deletion failed');
     }
   };
 
@@ -180,12 +103,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         loading,
         error,
         login,
         logout,
-        register,
-        setUser,
+        addUserAccount,
+        updateUserInfo,
+        archiveUserAccount,
+        deleteUserAccount,
       }}
     >
       {children}
@@ -193,7 +119,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-/**
- * Hook for accessing the AuthContext in components.
- */
-export const useAuth = (): AuthContextType => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  return context;
+};

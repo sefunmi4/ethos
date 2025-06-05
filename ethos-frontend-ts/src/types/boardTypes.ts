@@ -55,3 +55,4 @@ export interface EditBoardProps {
   onCancel?: () => void;
   onDelete?: (boardId: string) => void;
 }
+

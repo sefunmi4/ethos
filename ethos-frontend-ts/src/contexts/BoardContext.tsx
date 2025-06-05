@@ -6,16 +6,10 @@ import React, {
   type ReactNode,
   useMemo,
 } from 'react';
-import { axiosWithAuth } from '../utils/authUtils';
 import { useAuth } from './AuthContext';
-import type { Post } from '../types/postTypes'; // replace with your actual types
-import type { Quest } from '../types/questTypes';
-import type { BoardData } from '../types/boardTypes'; // update import if needed
+import { fetchBoards as fetchBoardsAPI } from '../api/board';
+import type { BoardData } from '../types/boardTypes';
 
-
-/**
- * Represents an item within a board.
- */
 export interface BoardItem {
   id: string;
   [key: string]: any;
@@ -31,16 +25,12 @@ export interface BoardContextType {
   refreshBoards: () => Promise<void>;
   appendToBoard: (boardId: string, newItem: BoardItem) => void;
   updateBoardItem: (boardId: string, updatedItem: BoardItem) => void;
-  removeFromBoard: (boardId: string, itemId: string) => void;
+  removeItemFromBoard: (boardId: string, itemId: string) => void;
   setBoardMeta: (meta: { id: string; title: string; layout: string }) => void;
 }
 
-// Create context
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
-/**
- * Provider that loads boards and exposes board manipulation functions.
- */
 export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
@@ -53,22 +43,18 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setBoardMetaState(meta);
   };
 
-  // Load user or guest boards on mount
   useEffect(() => {
     const loadBoards = async () => {
       setLoading(true);
       try {
-        const res = user
-          ? await axiosWithAuth.get('/boards?userBoards=true')
-          : await axiosWithAuth.get('/boards?guestBoards=true');
-
+        const boardList = await fetchBoardsAPI(user?.id);
         const boardMap: BoardMap = {};
-        res.data.forEach((b: BoardData) => {
+        boardList.forEach((b: BoardData) => {
           boardMap[b.id] = b;
         });
 
         setBoards(boardMap);
-        setSelectedBoard(res.data[0]?.id || null);
+        setSelectedBoard(boardList[0]?.id || null);
       } catch (err) {
         console.error('[BoardContext] Failed to load boards:', err);
       } finally {
@@ -101,7 +87,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }));
   };
 
-  const removeFromBoard = (boardId: string, itemId: string) => {
+  const removeItemFromBoard = (boardId: string, itemId: string) => {
     setBoards((prev) => ({
       ...prev,
       [boardId]: {
@@ -116,9 +102,9 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const refreshBoards = async () => {
     if (!user) return;
     try {
-      const res = await axiosWithAuth.get('/boards?userBoards=true');
+      const boardList = await fetchBoardsAPI(user.id);
       const boardMap: BoardMap = {};
-      res.data.forEach((b: BoardData) => {
+      boardList.forEach((b: BoardData) => {
         boardMap[b.id] = b;
       });
       setBoards(boardMap);
@@ -135,16 +121,13 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     refreshBoards,
     appendToBoard,
     updateBoardItem,
-    removeFromBoard,
+    removeItemFromBoard,
     setBoardMeta,
   };
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
 };
 
-/**
- * Safely consumes the BoardContext.
- */
 export const useBoardContext = (): BoardContextType => {
   const context = useContext(BoardContext);
   if (!context) {
@@ -153,9 +136,6 @@ export const useBoardContext = (): BoardContextType => {
   return context;
 };
 
-/**
- * Enhanced hook that returns board objects directly for userQuestBoard and userPostBoard
- */
 export const useBoardContextEnhanced = () => {
   const context = useBoardContext();
 
@@ -165,7 +145,7 @@ export const useBoardContextEnhanced = () => {
     type,
     createdAt: raw.createdAt || new Date().toISOString(),
     structure: raw.structure as BoardData['structure'],
-    items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null), // ✅ fixed
+    items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null),
   });
 
   const userQuestBoard = useMemo<BoardData | undefined>(() => {

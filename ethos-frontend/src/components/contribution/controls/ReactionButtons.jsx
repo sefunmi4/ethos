@@ -60,7 +60,7 @@ const ReactionButtons = ({ post, user, onUpdate }) => {
     fetchCountsAndReactions();
   }, [post.id, user?.id]);
 
-  const toggleReaction = async (type) => {
+  const updateReaction = async (type) => {
     if (!user?.id) return;
     const isActive = !reactions[type];
 
@@ -134,7 +134,7 @@ const ReactionButtons = ({ post, user, onUpdate }) => {
         {/* 👍 Like */}
         <button
           className={clsx('flex items-center gap-1', reactions.like && 'text-blue-600')}
-          onClick={() => toggleReaction('like')}
+          onClick={() => updateReaction('like')}
           disabled={loading || !user}
         >
           {reactions.like ? <FaThumbsUp /> : <FaRegThumbsUp />}
@@ -144,7 +144,7 @@ const ReactionButtons = ({ post, user, onUpdate }) => {
         {/* ❤️ Heart */}
         <button
           className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
-          onClick={() => toggleReaction('heart')}
+          onClick={() => updateReaction('heart')}
           disabled={loading || !user}
         >
           {reactions.heart ? <FaHeart /> : <FaRegHeart />}

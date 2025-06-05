@@ -1,13 +1,18 @@
 import { axiosWithAuth } from '../utils/authUtils';
-import type { Quest } from '../types/questTypes';
+import type { Quest, TaskEdge, EnrichedQuest } from '../types/questTypes';
+import type { Post } from '../types/postTypes';
+import { fetchPostById, fetchPostsByQuestId } from './post';
 
-/**
- * Base endpoint for quest-related API calls
- */
 const BASE_URL = '/api/quests';
 
 /**
- * Payload type for creating a new quest
+ * @typedef CreateQuestPayload
+ * @property {string} title - Quest title
+ * @property {string=} description - Optional description
+ * @property {string[]=} tags - Optional tags
+ * @property {string=} repoUrl - Optional GitHub repo link
+ * @property {string[]=} assignedRoles - Optional roles assigned at creation
+ * @property {string=} fromPostId - Optional ID of post spawning the quest
  */
 export interface CreateQuestPayload {
   title: string;
@@ -15,53 +20,54 @@ export interface CreateQuestPayload {
   tags?: string[];
   repoUrl?: string;
   assignedRoles?: string[];
-  fromPostId?: string; // ✅ This matches `initialPostId` logic in LinkControls
+  fromPostId?: string;
 }
 
 /**
- * Create a new quest
- * @param data Quest creation payload
- * @returns Newly created Quest object
+ * Add a new quest  
+ * @function addQuest  
+ * @was createQuest  
  */
-export const createQuest = async (data: CreateQuestPayload): Promise<Quest> => {
+export const addQuest = async (data: CreateQuestPayload): Promise<Quest> => {
   const res = await axiosWithAuth.post(BASE_URL, data);
   return res.data;
 };
 
 /**
- * Fetch all quests
- * @returns Array of Quest objects
+ * Fetch all quests  
+ * @function fetchAllQuests  
+ * @was getAllQuests  
  */
-export const getAllQuests = async (): Promise<Quest[]> => {
+export const fetchAllQuests = async (): Promise<Quest[]> => {
   const res = await axiosWithAuth.get(BASE_URL);
   return res.data;
 };
 
 /**
- * Update an existing quest
- * @param id Quest ID to update
- * @param updates Partial updates to the quest
- * @returns Updated Quest object
+ * Update a quest by ID  
+ * @function updateQuestById  
+ * @was patchQuest  
+ * @param id Quest ID
+ * @param updates Partial fields to update
  */
-export const patchQuest = async (id: string, updates: Partial<Quest>): Promise<Quest> => {
+export const updateQuestById = async (id: string, updates: Partial<Quest>): Promise<Quest> => {
   const res = await axiosWithAuth.patch(`${BASE_URL}/${id}`, updates);
   return res.data;
 };
 
 /**
- * Get a quest by its ID
- * @param id Quest ID
- * @returns Full Quest object
+ * Fetch a quest by ID  
+ * @function fetchQuestById  
+ * @was getQuestById  
  */
-export const getQuestById = async (id: string): Promise<Quest> => {
+export const fetchQuestById = async (id: string): Promise<Quest> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${id}`);
   return res.data;
 };
 
 /**
- * Archive a quest (soft delete)
- * @param id Quest ID
- * @returns Success confirmation
+ * Archive a quest (soft delete)  
+ * @function archiveQuestById  
  */
 export const archiveQuestById = async (id: string): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.post(`${BASE_URL}/${id}/archive`);
@@ -69,11 +75,79 @@ export const archiveQuestById = async (id: string): Promise<{ success: boolean }
 };
 
 /**
- * Permanently delete a quest
- * @param id Quest ID
- * @returns Success confirmation
+ * Remove a quest permanently  
+ * @function removeQuestById  
+ * @was deleteQuestById  
  */
-export const deleteQuestById = async (id: string): Promise<{ success: boolean }> => {
+export const removeQuestById = async (id: string): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.delete(`${BASE_URL}/${id}`);
   return res.data;
+};
+
+/**
+ * Fetch graph data (nodes and edges) for a quest  
+ * @function fetchQuestMapData  
+ * @param questId Quest ID
+ */
+export const fetchQuestMapData = async (
+  questId: string
+): Promise<{ nodes: Post[]; edges: TaskEdge[] }> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${questId}/map`);
+  return res.data;
+};
+
+/**
+ * Fetch quests linked to a board  
+ * @function fetchQuestsByBoardId  
+ * @param boardId Board ID
+ */
+export const fetchQuestsByBoardId = async (boardId: string): Promise<Quest[]> => {
+  const res = await axiosWithAuth.get(`/api/boards/${boardId}/quests`);
+  return res.data;
+};
+
+/**
+ * Enrich a quest with its posts, graph, and stats  
+ * @function enrichQuestWithData  
+ * @param quest The quest to enrich
+ */
+export const enrichQuestWithData = async (quest: Quest): Promise<EnrichedQuest> => {
+  const [allPosts, mapData] = await Promise.all([
+    fetchPostsByQuestId(quest.id),
+    fetchQuestMapData(quest.id),
+  ]);
+
+  const logs = allPosts.filter(p => p.type === 'log');
+  const tasks = allPosts.filter(p => p.type === 'task');
+  const discussion = allPosts.filter(
+    p => p.type === 'free_speech' || p.type === 'meta_system'
+  );
+
+  const completedTasks = tasks.filter(t => t.status === 'Done').length;
+  const taskCount = tasks.length;
+
+  const headPost = await fetchPostById(quest.headPostId);
+
+  const linkedPostsResolved = (
+    await Promise.all(
+      quest.linkedPosts.map(async link =>
+        link.itemType === 'post' ? await fetchPostById(link.itemId) : null
+      )
+    )
+  ).filter(Boolean) as Post[];
+
+  return {
+    ...quest,
+    headPost,
+    linkedPostsResolved,
+    logs,
+    tasks,
+    discussion,
+    taskGraph: mapData.edges,
+    completedTasks,
+    taskCount,
+    percentComplete: taskCount > 0 ? Math.floor((completedTasks / taskCount) * 100) : 0,
+    isFeatured: false,
+    isNew: false,
+  };
 };

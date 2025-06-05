@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   FaEllipsisH, FaEdit, FaTrash, FaArchive, FaLink
 } from 'react-icons/fa';
-import { deletePostById, archivePostById } from '../../api/post';
-import { deleteQuestById, archiveQuestById } from '../../api/quest';
-import { removeFromBoard } from '../../api/board';
+import { removePost, archivePost } from '../../api/post';
+import { removeQuestById, archiveQuestById } from '../../api/quest';
+import { removeItemFromBoard } from '../../api/board';
 
 interface ActionMenuProps {
   type: 'post' | 'quest';
@@ -54,11 +54,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     try {
       setIsArchiving(true);
       if (type === 'post') {
-        await archivePostById(id);
+        await archivePost(id);
       } else {
         await archiveQuestById(id);
       }
-      if (boardId) await removeFromBoard(boardId, id);
+      if (boardId) await removeItemFromBoard(boardId, id);
       onArchived?.();
     } catch (err) {
       console.error(`[ActionMenu] Archive ${type} failed:`, err);
@@ -73,11 +73,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     if (!window.confirm(`Delete this ${type} permanently?`)) return;
     try {
       if (type === 'post') {
-        await deletePostById(id);
+        await removePost(id);
       } else {
-        await deleteQuestById(id);
+        await removeQuestById(id);
       }
-      if (boardId) await removeFromBoard(boardId, id);
+      if (boardId) await removeItemFromBoard(boardId, id);
       onDelete?.();
     } catch (err) {
       console.error(`[ActionMenu] Delete ${type} failed:`, err);

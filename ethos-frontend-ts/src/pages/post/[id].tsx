@@ -5,7 +5,7 @@ import { createMockBoard } from '../../utils/boardUtils';
 import { useSocket } from '../../hooks/useSocket';
 
 import { fetchPostById } from '../../api/post';
-import { fetchBoardById } from '../../api/board';
+import { fetchBoard } from '../../api/board';
 
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -28,7 +28,7 @@ const PostPage: React.FC = () => {
       const post = await fetchPostById(id);
       setPost(post);
 
-      const board = await fetchBoardById(`thread-${id}`, {
+      const board = await fetchBoard(`thread-${id}`, {
         enrich: true,
         page: 1,
       });
@@ -47,7 +47,7 @@ const PostPage: React.FC = () => {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const board = await fetchBoardById(`thread-${id}`, {
+      const board = await fetchBoard(`thread-${id}`, {
         enrich: true,
         page: nextPage,
       });
