@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-// Types for supported socket events
+// ---------------------------
+// 🔌 Define supported socket events
+// ---------------------------
 type SocketEvents = {
   'board:update': (data: any) => void;
   'user_connected': (payload: { userId: string }) => void;
@@ -11,11 +13,13 @@ type SocketEvents = {
   [event: string]: (...args: any[]) => void;
 };
 
-// Singleton socket instance
+// ---------------------------
+// 🌐 Singleton socket instance
+// ---------------------------
 let socket: Socket | null = null;
 
 /**
- * Initializes and returns a singleton Socket.io client.
+ * Initializes and returns a singleton Socket.IO client instance.
  */
 export const getSocket = (): Socket => {
   if (!socket) {
@@ -24,15 +28,16 @@ export const getSocket = (): Socket => {
       transports: ['websocket'],
     });
 
+    // 🌱 Base lifecycle logging
     socket.on('connect', () => {
       console.log('[Socket] Connected:', socket?.id);
     });
 
-    socket.on('disconnect', (reason: Socket.DisconnectReason) => {
+    socket.on('disconnect', (reason) => {
       console.warn('[Socket] Disconnected:', reason);
     });
 
-    socket.on('connect_error', (err: Error) => {
+    socket.on('connect_error', (err) => {
       console.error('[Socket] Connection error:', err.message);
     });
   }
@@ -41,24 +46,43 @@ export const getSocket = (): Socket => {
 };
 
 /**
- * Hook to access the singleton socket instance.
+ * Custom hook to access the socket instance.
+ * Includes connect/disconnect helpers if needed.
  */
 export const useSocket = () => {
   const socketRef = useRef<Socket>(getSocket());
 
+  /**
+   * Manually connect the socket (if autoConnect: false).
+   */
+  const connect = () => {
+    if (!socketRef.current.connected) {
+      socketRef.current.connect();
+    }
+  };
+
+  /**
+   * Gracefully disconnect the socket.
+   */
+  const disconnect = () => {
+    if (socketRef.current.connected) {
+      socketRef.current.disconnect();
+    }
+  };
+
   return {
     socket: socketRef.current,
+    connect,
+    disconnect,
   };
 };
 
-
 /**
- * A generic React hook for registering and cleaning up Socket.IO event listeners.
- * Only supports string-based custom event names.
+ * React hook to register and clean up a Socket.IO event listener.
  *
- * @template K - A string key from the SocketEvents interface
- * @param event - The name of the custom socket event
- * @param handler - The function to call when the event is triggered
+ * @template K - Event name key from the SocketEvents map
+ * @param event - The event name to listen to
+ * @param handler - The function to run when the event is received
  */
 export const useSocketListener = <K extends keyof SocketEvents>(
   event: K,
@@ -69,7 +93,6 @@ export const useSocketListener = <K extends keyof SocketEvents>(
   useEffect(() => {
     if (!socket) return;
 
-    // Cast event to string to avoid TypeScript conflict with reserved Socket.IO events
     const eventName = event as string;
 
     socket.on(eventName, handler as (...args: any[]) => void);

@@ -10,6 +10,7 @@ import { useTimeline } from '../hooks/useTimeline';
 import { forgotPasswordConfirm } from '../api/auth';
 import { ROUTES } from '../constants/routes';
 import type { AuthUser } from '../types/authTypes';
+import type { UserRole } from '../types/userTypes';
 
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -49,18 +50,36 @@ const ResetPassword: React.FC = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     if (form.password !== form.confirm) {
       setLoading(false);
       setError('Passwords do not match.');
       return;
     }
-
+  
+    if (!token) {
+      setLoading(false);
+      setError('Invalid or missing reset token.');
+      return;
+    }
+  
     try {
-      const response = await forgotPasswordConfirm(token, form.password);
+      const allowedRoles: UserRole[] = ['user', 'admin', 'moderator'];
 
+      const response = await forgotPasswordConfirm(token, form.password);
+      
       if (response?.user && response.user.id) {
-        const user: AuthUser = response.user;
+        const rawUser = response.user;
+      
+        const role = allowedRoles.includes(rawUser.role as UserRole)
+          ? (rawUser.role as UserRole)
+          : undefined;
+      
+        const user: AuthUser = {
+          ...rawUser,
+          role,
+        };
+      
         setUser(user);
         socket?.emit('auth:password-reset-success', { userId: user.id });
         addTimelineEvent({

@@ -53,7 +53,7 @@ const ProfilePage: React.FC = () => {
         ) : userQuestBoard?.enrichedItems?.length ? (
           <Board
             board={userQuestBoard}
-            structure="list" 
+            structure="grid" 
             user={castUser}
           />
         ) : (
@@ -69,7 +69,7 @@ const ProfilePage: React.FC = () => {
         ) : userPostBoard?.enrichedItems?.length ? (
           <Board
             board={userPostBoard}
-            structure="list" // 🧾 Timeline or message-board view
+            structure="grid" // 🧾 Timeline or message-board view
             user={castUser}
             showCreate
           />

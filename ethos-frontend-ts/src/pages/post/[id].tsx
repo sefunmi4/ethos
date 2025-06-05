@@ -2,9 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import { createMockBoard } from '../../utils/boardUtils';
-
 import { useSocket } from '../../hooks/useSocket';
-import { usePost } from '../../hooks/usePost';
+
+import { fetchPostById } from '../../api/post';
+import { fetchBoardById } from '../../api/board';
 
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -21,31 +22,47 @@ const PostPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
-  const fetchPostData = usePost(id, {
-    onPost: setPost,
-    onBoard: setReplyBoard,
-    onError: setError,
-    setPage,
-    setHasMore,
-  });
+  const fetchPostData = useCallback(async () => {
+    if (!id) return;
+    try {
+      const post = await fetchPostById(id);
+      setPost(post);
+
+      const board = await fetchBoardById(`thread-${id}`, {
+        enrich: true,
+        page: 1,
+      });
+      setReplyBoard(board);
+
+      setPage(1);
+      setHasMore(true);
+    } catch (err) {
+      console.error('[PostPage] Failed to fetch post or replies:', err);
+      setError('Failed to load post');
+    }
+  }, [id]);
 
   const loadMoreReplies = useCallback(async () => {
     if (!id || loadingMore || !hasMore) return;
     setLoadingMore(true);
     try {
-      const res = await fetch(`/api/boards/thread/${id}?enrich=true&page=${page + 1}`);
-      const data: BoardData = await res.json();
-      if (data.items?.length) {
+      const nextPage = page + 1;
+      const board = await fetchBoardById(`thread-${id}`, {
+        enrich: true,
+        page: nextPage,
+      });
+
+      if (board.items?.length) {
         setReplyBoard(prev =>
           prev
             ? {
                 ...prev,
-                items: [...prev.items, ...data.items],
-                enrichedItems: [...(prev.enrichedItems ?? []), ...(data.enrichedItems ?? [])],
+                items: [...prev.items, ...board.items],
+                enrichedItems: [...(prev.enrichedItems ?? []), ...(board.enrichedItems ?? [])],
               }
-            : data
+            : board
         );
-        setPage(prev => prev + 1);
+        setPage(nextPage);
       } else {
         setHasMore(false);
       }
@@ -81,16 +98,14 @@ const PostPage: React.FC = () => {
         </section>
       )}
 
-      {/* 🎯 Primary Post Card via Board */}
       <section>
-      <Board
-        board={createMockBoard(`post-${post.id}`, 'Post', [post])}
-        editable={false}
-        compact={false}
-      />
+        <Board
+          board={createMockBoard(`post-${post.id}`, 'Post', [post.id])}
+          editable={false}
+          compact={false}
+        />
       </section>
 
-      {/* 💬 Replies View Toggle */}
       {(replyBoard?.items?.length ?? 0) > 0 && (
         <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
           <button
@@ -108,7 +123,6 @@ const PostPage: React.FC = () => {
         </div>
       )}
 
-      {/* 🧵 Replies */}
       <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">💬 Replies</h2>
         {replyBoard ? (

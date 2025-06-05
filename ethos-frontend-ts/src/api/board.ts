@@ -1,4 +1,4 @@
-// src/api/boards.ts
+// src/api/board.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
 import type { BoardData } from '../types/boardTypes';
@@ -17,10 +17,18 @@ export const fetchBoards = async (): Promise<BoardData[]> => {
 };
 
 /**
- * Fetch a single board by its ID
+ * Fetch a single board by ID with optional query params
  */
-export const fetchBoardById = async (id: string): Promise<BoardData> => {
-  const res = await axiosWithAuth.get(`${BASE_URL}/${id}`);
+export const fetchBoardById = async (
+  id: string,
+  options: { enrich?: boolean; page?: number } = {}
+): Promise<BoardData> => {
+  const params = new URLSearchParams();
+  if (options.enrich) params.set('enrich', 'true');
+  if (options.page) params.set('page', options.page.toString());
+
+  const url = `${BASE_URL}/${id}${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await axiosWithAuth.get(url);
   return res.data;
 };
 
@@ -71,10 +79,6 @@ export const deleteBoard = async (id: string): Promise<{ success: boolean }> => 
 
 /**
  * Remove a specific post or quest from a board
- * 
- * @param boardId - ID of the board
- * @param itemId - ID of the item to remove
- * @returns Success confirmation
  */
 export const removeFromBoard = async (
   boardId: string,
@@ -86,8 +90,6 @@ export const removeFromBoard = async (
 
 /**
  * Fetch all boards that are marked as "featured"
- * 
- * @returns An array of featured boards
  */
 export const fetchFeaturedBoards = async (): Promise<BoardData[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}?featured=true`);
@@ -95,9 +97,7 @@ export const fetchFeaturedBoards = async (): Promise<BoardData[]> => {
 };
 
 /**
- * Fetch the default home feed board (e.g., user's main feed)
- * 
- * @returns A single board marked as defaultFor: 'home', or null
+ * Fetch the default home feed board
  */
 export const fetchDefaultHomeBoard = async (): Promise<BoardData | null> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/default/home`);

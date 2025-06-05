@@ -21,8 +21,8 @@ const PublicProfilePage: React.FC = () => {
   const [error, setError] = useState('');
 
   const { loadPublicBoards } = useBoard();
-  const { enrichQuests } = useQuest();
-  const { enrichPosts } = usePost();
+  const { fetchPostsForBoard, enrichPosts } = usePost();
+  const { fetchQuestsForBoard, enrichQuests } = useQuest();
 
   // 🧠 Load profile and related boards
   useEffect(() => {
@@ -46,20 +46,26 @@ const PublicProfilePage: React.FC = () => {
     fetchProfileData();
   }, [userId]);
 
-  // 🔁 Real-time board updates
-  useSocketListener('board:update', (updatedBoard: BoardData) => {
+  // 🔁 Real-time board updates (via WebSocket)
+  useSocketListener('board:update', async (updatedBoard: BoardData) => {
     if (!userId || updatedBoard.userId !== userId) return;
 
-    if (updatedBoard.id === questBoard?.id) {
-      enrichQuests(updatedBoard.items).then((items) =>
-        setQuestBoard({ ...updatedBoard, enrichedItems: items })
-      );
-    }
+    try {
+      // 🧭 If it's a quest board
+      if (updatedBoard.id === questBoard?.id) {
+        const quests = await fetchQuestsForBoard(updatedBoard.id);
+        const enriched = await enrichQuests(quests);
+        setQuestBoard({ ...updatedBoard, enrichedItems: enriched });
+      }
 
-    if (updatedBoard.id === postBoard?.id) {
-      enrichPosts(updatedBoard.items).then((items) =>
-        setPostBoard({ ...updatedBoard, enrichedItems: items })
-      );
+      // 📬 If it's a post board
+      if (updatedBoard.id === postBoard?.id) {
+        const posts = await fetchPostsForBoard(updatedBoard.id);
+        const enriched = await enrichPosts(posts);
+        setPostBoard({ ...updatedBoard, enrichedItems: enriched });
+      }
+    } catch (err) {
+      console.error('[Socket board:update] Failed to fetch or enrich items:', err);
     }
   });
 
@@ -101,7 +107,7 @@ const PublicProfilePage: React.FC = () => {
           postBoard.enrichedItems?.length ? (
             <Board
               board={postBoard}
-              structure="list" // for post history
+              structure="grid" // for post history
               user={profile}
               readOnly
             />

@@ -35,7 +35,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { setUser } = useContext(AuthContext);
-  const socket = useSocket();
+  const { socket, connect } = useSocket();
   const { setSelectedBoard, fetchBoards } = useBoard();
   const { loadPermissions } = usePermissions();
   const { fetchPostsForBoard } = usePost();
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
         setUser(user);
       
         // 👣 Post-login ecosystem setup
-        socket.connect(); // Establish socket connection
+        connect(); // 👈 Instead of socket.connect()
         socket.emit('user_connected', { userId: user.id });
       
         // 🔁 Sync boards

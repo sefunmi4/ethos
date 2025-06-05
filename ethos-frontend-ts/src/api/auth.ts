@@ -45,11 +45,29 @@ export const forgotPassword = async (
 };
 
 /**
+ * ✅ Confirm password reset with token and new password
+ * @param token - Reset token received via email
+ * @param newPassword - New password to set
+ * @returns Authenticated user data on success
+ */
+export const forgotPasswordConfirm = async (
+  token: string,
+  newPassword: string
+): Promise<{ user: MeResponse }> => {
+  const res = await axiosWithAuth.post('/auth/forgot-password/confirm', {
+    token,
+    newPassword,
+  });
+  return res.data;
+};
+
+/**
  * 🧠 Get the currently authenticated user using cookie token
  * @returns User profile object
  */
 export interface MeResponse {
   id: string;
+  email: string; 
   username: string;
   role: string;
   tags: string[];
