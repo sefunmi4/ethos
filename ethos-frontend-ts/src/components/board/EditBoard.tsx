@@ -9,7 +9,7 @@ import { getDisplayTitle } from '../../utils/displayUtils';
 const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete }) => {
   const [title, setTitle] = useState(board.title || '');
   const [description, setDescription] = useState(board.description || '');
-  const [structure, setStructure] = useState(board.structure || 'list');
+  const [structure, setStructure] = useState(board.structure || 'grid');
   const [visibility, setVisibility] = useState(board.filters?.visibility || 'public');
   const [category, setCategory] = useState(board.category || '');
   const [items, setItems] = useState<(string | null)[]>(board.items || []);

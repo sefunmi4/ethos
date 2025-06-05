@@ -15,7 +15,7 @@ export interface CreateQuestPayload {
   tags?: string[];
   repoUrl?: string;
   assignedRoles?: string[];
-  fromPostId?: string;
+  fromPostId?: string; // ✅ This matches `initialPostId` logic in LinkControls
 }
 
 /**
@@ -25,6 +25,15 @@ export interface CreateQuestPayload {
  */
 export const createQuest = async (data: CreateQuestPayload): Promise<Quest> => {
   const res = await axiosWithAuth.post(BASE_URL, data);
+  return res.data;
+};
+
+/**
+ * Fetch all quests
+ * @returns Array of Quest objects
+ */
+export const getAllQuests = async (): Promise<Quest[]> => {
+  const res = await axiosWithAuth.get(BASE_URL);
   return res.data;
 };
 

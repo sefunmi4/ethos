@@ -1,3 +1,7 @@
+import type { LinkedItem } from './postTypes';
+import type { CollaberatorRoles } from './postTypes';
+
+
 export interface Quest {
   id: string;
   authorId: string;
@@ -5,12 +9,11 @@ export interface Quest {
   description?: string;
   status: 'active' | 'completed' | 'archived';
   headPostId: string;
-  linkedPostIds: { itemId: string; itemType: string; nodeId?: string }[];
-  collaborators: string[];
+  linkedPosts: LinkedItem[];
+  collaborators: CollaberatorRoles[]; // ✅ Change this line
   repoUrl?: string;
   createdAt?: string;
   ownerId?: string;
   // 🆕 Optional additions
   tags?: string[];
-  roles?: { role: string; assignedTo: string }[]; // or however you're modeling roles
 }

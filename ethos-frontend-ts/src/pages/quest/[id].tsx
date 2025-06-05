@@ -45,7 +45,7 @@ const QuestPage: React.FC = () => {
   useSocket('boardUpdated', (updatedBoard: BoardData) => {
     if (updatedBoard.questId !== id) return;
     if (updatedBoard.structure === 'graph') refreshMap();
-    if (updatedBoard.structure === 'list') refreshLog();
+    if (updatedBoard.structure === 'grid') refreshLog();
   });
 
   if (questError) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoard } from '../hooks/useBoard';
-import { useSocket } from '../hooks/useSocket';
+import { useSocketListener } from '../hooks/useSocket';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
@@ -24,7 +24,7 @@ const ProfilePage: React.FC = () => {
     isLoading: loadingPosts,
   } = useBoard('my-posts');
 
-  useSocket('boardUpdated', (updatedBoard: BoardData) => {
+  useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (!updatedBoard || !user) return;
     if (updatedBoard.id === userQuestBoard?.id) setUserQuestBoard(updatedBoard);
     if (updatedBoard.id === userPostBoard?.id) setUserPostBoard(updatedBoard);
@@ -53,7 +53,7 @@ const ProfilePage: React.FC = () => {
         ) : userQuestBoard?.enrichedItems?.length ? (
           <Board
             board={userQuestBoard}
-            structure="scroll" 
+            structure="list" 
             user={castUser}
           />
         ) : (

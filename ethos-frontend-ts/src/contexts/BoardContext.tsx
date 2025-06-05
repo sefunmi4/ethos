@@ -4,36 +4,25 @@ import React, {
   useState,
   useEffect,
   type ReactNode,
+  useMemo,
 } from 'react';
 import { axiosWithAuth } from '../utils/authUtils';
 import { useAuth } from './AuthContext';
-  
+import type { Post } from '../types/postTypes'; // replace with your actual types
+import type { Quest } from '../types/questTypes';
+import type { BoardData } from '../types/boardTypes'; // update import if needed
+
+
 /**
- * Represents an item within a board's enrichedItems array.
+ * Represents an item within a board.
  */
 export interface BoardItem {
   id: string;
   [key: string]: any;
 }
-  
-/**
- * Represents a board returned from the API.
- */
-export interface Board {
-  id: string;
-  name?: string;
-  enrichedItems?: BoardItem[];
-  [key: string]: any;
-}
 
-/**
- * A dictionary of boards indexed by board ID.
- */
-export type BoardMap = Record<string, Board>;
+export type BoardMap = Record<string, BoardData>;
 
-/**
- * Shape of the BoardContext value.
- */
 export interface BoardContextType {
   boards: BoardMap;
   selectedBoard: string | null;
@@ -46,11 +35,11 @@ export interface BoardContextType {
   setBoardMeta: (meta: { id: string; title: string; layout: string }) => void;
 }
 
-// Create context with undefined default to force use inside provider
+// Create context
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
 /**
- * Provider component to supply board state and actions to children.
+ * Provider that loads boards and exposes board manipulation functions.
  */
 export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
@@ -62,11 +51,9 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const setBoardMeta = (meta: { id: string; title: string; layout: string }) => {
     setBoardMetaState(meta);
-  }; 
+  };
 
-  /**
-   * Load boards from API based on user authentication status.
-   */
+  // Load user or guest boards on mount
   useEffect(() => {
     const loadBoards = async () => {
       setLoading(true);
@@ -76,7 +63,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           : await axiosWithAuth.get('/boards?guestBoards=true');
 
         const boardMap: BoardMap = {};
-        res.data.forEach((b: Board) => {
+        res.data.forEach((b: BoardData) => {
           boardMap[b.id] = b;
         });
 
@@ -92,9 +79,6 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     loadBoards();
   }, [user]);
 
-  /**
-   * Add a new item to the top of a board's item list.
-   */
   const appendToBoard = (boardId: string, newItem: BoardItem) => {
     setBoards((prev) => ({
       ...prev,
@@ -105,9 +89,6 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }));
   };
 
-  /**
-   * Replace a board item by ID.
-   */
   const updateBoardItem = (boardId: string, updatedItem: BoardItem) => {
     setBoards((prev) => ({
       ...prev,
@@ -120,9 +101,6 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }));
   };
 
-  /**
-   * Remove a board item by ID.
-   */
   const removeFromBoard = (boardId: string, itemId: string) => {
     setBoards((prev) => ({
       ...prev,
@@ -135,15 +113,12 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }));
   };
 
-  /**
-   * Re-fetch boards from the server.
-   */
   const refreshBoards = async () => {
     if (!user) return;
     try {
       const res = await axiosWithAuth.get('/boards?userBoards=true');
       const boardMap: BoardMap = {};
-      res.data.forEach((b: Board) => {
+      res.data.forEach((b: BoardData) => {
         boardMap[b.id] = b;
       });
       setBoards(boardMap);
@@ -161,15 +136,14 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     appendToBoard,
     updateBoardItem,
     removeFromBoard,
-    setBoardMeta, // ✅ now available to consumers
+    setBoardMeta,
   };
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
 };
 
 /**
- * Hook to safely consume the BoardContext.
- * Throws if used outside the BoardProvider.
+ * Safely consumes the BoardContext.
  */
 export const useBoardContext = (): BoardContextType => {
   const context = useContext(BoardContext);
@@ -177,4 +151,40 @@ export const useBoardContext = (): BoardContextType => {
     throw new Error('useBoardContext must be used within a BoardProvider');
   }
   return context;
+};
+
+/**
+ * Enhanced hook that returns board objects directly for userQuestBoard and userPostBoard
+ */
+export const useBoardContextEnhanced = () => {
+  const context = useBoardContext();
+
+  const convertToBoardData = (raw: any, type: 'quest' | 'post'): BoardData => ({
+    id: raw.id,
+    title: raw.name || 'Untitled',
+    type,
+    createdAt: raw.createdAt || new Date().toISOString(),
+    structure: raw.structure as BoardData['structure'],
+    items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null), // ✅ fixed
+  });
+
+  const userQuestBoard = useMemo<BoardData | undefined>(() => {
+    const found = Object.values(context.boards).find((b) =>
+      b.enrichedItems?.some((item) => item.type === 'quest')
+    );
+    return found ? convertToBoardData(found, 'quest') : undefined;
+  }, [context.boards]);
+
+  const userPostBoard = useMemo<BoardData | undefined>(() => {
+    const found = Object.values(context.boards).find((b) =>
+      b.enrichedItems?.some((item) => item.type === 'post')
+    );
+    return found ? convertToBoardData(found, 'post') : undefined;
+  }, [context.boards]);
+
+  return {
+    ...context,
+    userQuestBoard,
+    userPostBoard,
+  };
 };

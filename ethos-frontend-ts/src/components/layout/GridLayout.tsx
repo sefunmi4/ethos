@@ -13,21 +13,11 @@ type GridLayoutProps = {
   onDelete?: (id: string) => void;
 };
 
-/**
- * GridLayout Component
- * 
- * - Displays a list of contributions in a flexible layout.
- * - Defaults to vertical grid (2–4 columns based on screen size).
- * - Supports horizontal scroll with snap or Kanban-style columns.
- *
- * Layout Modes:
- * - 'vertical': standard responsive grid
- * - 'horizontal': scrollable row with snap alignment
- * - 'kanban': column-based board with default stages and drag potential
- */
+const defaultKanbanColumns = ['To Do', 'In Progress', 'Done'];
+
 const GridLayout: React.FC<GridLayoutProps> = ({
-  questId,   //TODO: questId
   items,
+  questId,
   user,
   layout = 'vertical',
   compact = false,
@@ -42,29 +32,26 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     );
   }
 
-  // Default Kanban buckets (To Do, In Progress, Done)
-  const defaultColumns = ['To Do', 'In Progress', 'Done'];
-
-  // Group items by status (assuming `item.status` exists)
-  const groupedItems = defaultColumns.reduce((acc, col) => {
+  /** Grouping logic for Kanban */
+  const grouped = defaultKanbanColumns.reduce((acc, col) => {
     acc[col] = items.filter(
-      (item) => 'status' in item && (item as any).status === col
+      (item) => 'status' in item && (item.status === col)
     );
     return acc;
   }, {} as Record<string, Post[]>);
 
-  // Kanban Layout
+  /** 📌 Kanban Layout */
   if (layout === 'kanban') {
     return (
-      <div className="flex overflow-auto space-x-6 pb-4">
-        {defaultColumns.map((col) => (
+      <div className="flex overflow-auto space-x-4 pb-4 px-2">
+        {defaultKanbanColumns.map((col) => (
           <div
             key={col}
-            className="min-w-[280px] w-[300px] flex-shrink-0 snap-start bg-gray-50 border rounded-md p-3 shadow-sm"
+            className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
           >
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">{col}</h3>
-            <div className="flex flex-col gap-3">
-              {groupedItems[col].map((item) => (
+            <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
+            <div className="flex flex-col gap-4">
+              {grouped[col].map((item) => (
                 <ContributionCard
                   key={item.id}
                   contribution={item}
@@ -77,18 +64,17 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             </div>
           </div>
         ))}
-        {/* Add Column Button (mockup) */}
-        <div className="min-w-[280px] w-[300px] flex items-center justify-center bg-white border rounded-md shadow-sm hover:bg-gray-100 cursor-pointer">
-          <span className="text-blue-600 font-medium">+ Add Column</span>
+        <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
+          + Add Column
         </div>
       </div>
     );
   }
 
-  // Horizontal Layout
+  /** 📌 Horizontal Grid Layout */
   if (layout === 'horizontal') {
     return (
-      <div className="flex overflow-x-auto space-x-4 snap-x snap-mandatory px-2 pb-4">
+      <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4">
         {items.map((item) => (
           <div
             key={item.id}
@@ -107,9 +93,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     );
   }
 
-  // Vertical Grid (default)
+  /** 📌 Vertical Grid Layout (default) */
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 px-2">
       {items.map((item) => (
         <ContributionCard
           key={item.id}

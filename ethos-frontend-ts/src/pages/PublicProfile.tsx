@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useSocket } from '../hooks/useSocket';
+import { useSocketListener } from '../hooks/useSocket';
 import { useBoard } from '../hooks/useBoard';
 import { useQuest } from '../hooks/useQuest';
 import { usePost } from '../hooks/usePost';
@@ -47,7 +47,7 @@ const PublicProfilePage: React.FC = () => {
   }, [userId]);
 
   // 🔁 Real-time board updates
-  useSocket('boardUpdated', (updatedBoard: BoardData) => {
+  useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (!userId || updatedBoard.userId !== userId) return;
 
     if (updatedBoard.id === questBoard?.id) {

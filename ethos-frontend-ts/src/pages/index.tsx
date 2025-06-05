@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
         {defaultFeedBoardId ? (
           <Board
             boardId={defaultFeedBoardId}
-            structure="list"
+            structure="grid"
             title="🧭 Latest Posts"
             user={user as User}
             filter={{
@@ -98,7 +98,7 @@ const HomePage: React.FC = () => {
         ) : selectedBoard ? (
           <Board
             boardId={selectedBoard}
-            structure="list"
+            structure="grid"
             title="🧭 Latest Posts"
             user={user as User}
           />
@@ -113,13 +113,13 @@ const HomePage: React.FC = () => {
         <div className="space-y-6">
           {featuredBoards.length > 0 ? (
             featuredBoards
-              .filter((board) => hasAccessToBoard(board.id))
+              .filter((board): board is BoardData & { id: string } => !!board.id && hasAccessToBoard(board.id))
               .map((board) => (
                 <Board
                   key={board.id}
                   boardId={board.id}
                   title={`📌 ${board.title || 'Untitled Board'}`}
-                  structure="list"
+                  structure="grid"
                   user={user as User}
                 />
               ))

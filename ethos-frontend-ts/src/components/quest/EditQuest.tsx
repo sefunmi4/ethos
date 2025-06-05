@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react'; 
 import { patchQuest } from '../../api/quest';  //TODO: patchQuest
 import type { Quest } from '../../types/questTypes';  
+import type { CollaberatorRoles } from '../../types/postTypes';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { Button, Label, TextArea, FormSection, Input } from '../ui';
 import LinkControls from '../controls/LinkControls'; 
@@ -33,8 +34,8 @@ const EditQuest: React.FC<EditQuestProps> = ({
   const [title, setTitle] = useState<string>(quest.title || '');
   const [description, setDescription] = useState<string>(quest.description || '');
   const [tags, setTags] = useState<string[]>(quest.tags || []);
-  const [links, setLinks] = useState(quest.linkedPostIds || []);
-  const [roles, setRoles] = useState(quest.roles || []);
+  const [links, setLinks] = useState(quest.linkedPosts || []);
+  const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [repoUrl, setRepoUrl] = useState<string>(quest.repoUrl || '');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -50,7 +51,7 @@ const EditQuest: React.FC<EditQuestProps> = ({
 
     const payload: Partial<Quest> = {
       title,
-      ...(compact ? {} : { description, tags, links, roles, repoUrl }),
+      ...(compact ? {} : { description, tags, links, collaberatorRoles, repoUrl }),
     };
 
     try {
@@ -133,7 +134,7 @@ const EditQuest: React.FC<EditQuestProps> = ({
 
           {/* Roles */}
           <FormSection title="Assigned Roles">
-            <CollaberatorControls value={roles} onChange={setRoles} />
+            <CollaberatorControls value={collaberatorRoles} onChange={setCollaberatorRoles} />
           </FormSection>
         </>
       )}

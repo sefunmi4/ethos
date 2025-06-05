@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { fetchBoardById, fetchBoardItems } from '../../api/board';
-import { usePermissions } from '../../hooks/usePermissions'; //TODO: complte usePermissions file
-import { useSocket } from '../../hooks/useSocket'; //TODO: complte socket file
-import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions'; 
+import { useSocketListener } from '../../hooks/useSocket'; 
 import { getDisplayTitle } from '../../utils/displayUtils';
 
 import EditBoard from './EditBoard';
 import CreateContribution from '../contribution/CreateContribution';
 
-import ListLayout from '../layout/ListLayout';
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
 import ThreadLayout from '../layout/ThreadLayout';
@@ -37,13 +35,11 @@ const Board: React.FC<BoardProps> = ({
   loading: loadingMore = false,
   quest,
 }) => {
-  const { user: currentUser } = useAuth();
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Post[]>([]); // Can support Post[] or (Post | Quest)[]
 
-  const { canEditBoard } = usePermissions(currentUser, board);
-
+  const { canEditBoard } = usePermissions();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -80,11 +76,11 @@ const Board: React.FC<BoardProps> = ({
   /**
    * Subscribes to real-time board updates via socket.
    */
-  useSocket('board:update', (payload: { boardId: string }) => {
-    if (payload.boardId === board?.id) {
-      fetchBoardById(board.id).then(setBoard);
-      fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
-    }
+  useSocketListener('board:update', (payload: { boardId: string }) => {
+    if (!board?.id || payload.boardId !== board.id) return;
+  
+    fetchBoardById(board.id).then(setBoard);
+    fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
   });
 
   /**
@@ -118,14 +114,17 @@ const Board: React.FC<BoardProps> = ({
   };
 
   // Resolve layout and permissions
-  const structure: BoardStructure = forcedStructure || board?.structure || 'list';
-  const editable = !readOnly && (typeof forcedEditable === 'boolean' ? forcedEditable : canEditBoard);
+  const structure: BoardStructure = forcedStructure || board?.structure || 'grid';
+  const editable = useMemo(() => {
+    if (readOnly) return false;
+    if (typeof forcedEditable === 'boolean') return forcedEditable;
+    return board?.id ? canEditBoard(board.id) : false;
+  }, [readOnly, forcedEditable, board?.id, canEditBoard]);
   const Layout = {
-    list: ListLayout,
     grid: GridLayout,
     graph: GraphLayout,
     thread: ThreadLayout,
-  }[structure] ?? ListLayout;
+  }[structure] ?? GridLayout;
 
   // Handle loading and missing board cases
   if (loading) {

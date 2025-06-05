@@ -17,6 +17,7 @@ interface ContributionCardProps {
   compact?: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  questId?: string;
 }
 
 /**
@@ -32,6 +33,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   compact = false,
   onEdit,
   onDelete,
+  questId,
 }) => {
   if (!contribution) return null;
 
@@ -49,7 +51,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     const postType = contribution.type as PostType;
 
     if (['free_speech', 'request', 'quest'].includes(postType)) {
-      return <PostCard post={contribution as Post} {...sharedProps} />;
+        return <PostCard post={contribution as Post} questId={questId} {...sharedProps} />;
     }
 
     console.warn('[ContributionCard] Unsupported post type:', postType);

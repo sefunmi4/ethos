@@ -17,7 +17,7 @@ const CreateBoard: React.FC<{
 }> = ({ onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [structure, setStructure] = useState<BoardStructure>('list');
+  const [structure, setStructure] = useState<BoardStructure>('grid');
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
   const [category, setCategory] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

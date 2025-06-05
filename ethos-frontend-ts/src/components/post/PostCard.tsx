@@ -17,6 +17,7 @@ interface PostCardProps {
   onUpdate?: (post: Post) => void;
   onDelete?: (id: string) => void;
   compact?: boolean;
+  questId?: string;
 }
 
 const PostCard: React.FC<PostCardProps> = ({

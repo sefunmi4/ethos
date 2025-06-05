@@ -15,7 +15,7 @@ const PostPage: React.FC = () => {
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
-  const [viewMode, setViewMode] = useState<'thread' | 'list'>('thread');
+  const [viewMode, setViewMode] = useState<'thread' | 'grid'>('thread');
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -100,8 +100,8 @@ const PostPage: React.FC = () => {
             Thread View
           </button>
           <button
-            className={`px-3 py-1 rounded ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('list')}
+            className={`px-3 py-1 rounded ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+            onClick={() => setViewMode('grid')}
           >
             Timeline View
           </button>

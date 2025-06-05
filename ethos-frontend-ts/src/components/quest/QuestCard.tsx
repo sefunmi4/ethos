@@ -59,7 +59,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <div className="space-y-1">
         <h2 className="text-xl font-bold text-gray-800">{questData.title}</h2>
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <PostTypeBadge type="quest_log" />
+          <PostTypeBadge type="quest" />
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.repoUrl && (
             <a

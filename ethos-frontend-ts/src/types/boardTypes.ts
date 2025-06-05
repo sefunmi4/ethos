@@ -5,11 +5,11 @@ import type { Quest } from '../types/questTypes';
 export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
 
 /** Supported board structures for organizing items */
-export type BoardStructure = 'list' | 'grid' | 'graph' | 'thread';
+export type BoardStructure = 'grid' | 'graph' | 'thread';
 
 /** Generic board interface shared across profile, quests, etc. */
 export interface Board {
-  id?: string;
+  id: string;
   title: string;
   description?: string;
   type: BoardType;

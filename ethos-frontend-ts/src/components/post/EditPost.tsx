@@ -98,10 +98,8 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
       <FormSection title="Linked Items">
         <LinkControls
           label="Link to quests/projects"
-          value={null}
-          onChange={(newLink: LinkedItem) =>
-            setLinkedItems((prev) => [...prev, newLink])
-          }
+          value={[]}
+          onChange={(newLinks: LinkedItem[]) => setLinkedItems(newLinks)}
           allowCreateNew={false}
         />
         {linkedItems.length > 0 && (

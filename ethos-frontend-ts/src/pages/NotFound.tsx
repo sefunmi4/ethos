@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
-import { useBoardContext } from '../contexts/BoardContext';
+import { useBoardContextEnhanced } from '../contexts/BoardContext';
 //import { usePermissions } from '../hooks/usePermissions';
 import { useTimeline } from '../hooks/useTimeline';
 import { useSocket } from '../hooks/useSocket';
@@ -14,7 +14,7 @@ import Button from '../components/ui/Button';
 
 const NotFound: React.FC = () => {
   const { user } = useAuth();
-  const { userQuestBoard, userPostBoard } = useBoardContext();
+  const { userQuestBoard, userPostBoard } = useBoardContextEnhanced();
   const { addTimelineEvent } = useTimeline();
   const { socket } = useSocket();
 
@@ -53,7 +53,7 @@ const NotFound: React.FC = () => {
           </h3>
           <Board
             board={userQuestBoard}
-            structure={userQuestBoard.structure || 'list'}
+            structure={userQuestBoard.structure || 'grid'}
             editable={false}
             compact={true}
             title="Suggested Quests"
@@ -69,7 +69,7 @@ const NotFound: React.FC = () => {
           </h3>
           <Board
             board={userPostBoard}
-            structure={userPostBoard.structure || 'list'}
+            structure={userPostBoard.structure || 'grid'}
             editable={false}
             compact={true}
             title="Suggested Posts"
