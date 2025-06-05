@@ -10,7 +10,7 @@ import type { Post } from '../types/postTypes';
  * - Forked task: Q:name:Tx1:Tx2
  */
 export const getQuestLinkLabel = (post: Post): string => {
-  const quest = post.questName?.trim() || 'Q';
+  const quest = 'Q';
   const node = post.nodeId?.trim();
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 

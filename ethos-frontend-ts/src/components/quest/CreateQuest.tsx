@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createQuest } from '../../api/quest'; //TODO: createQuest quest
 import { Button, Input, TextArea, Label, FormSection } from '../ui';
-import RoleAssignment from '../controls/RoleAssignment'; //TODO: RoleAssignment RoleAssignment
+import CollaberatorControls from '../controls/CollaberatorControls';
 
 import type { Quest } from '../../types/questTypes';
-import type { Post } from '../../types/postTypes';
-import type { RoleAssignmentData } from '../../types/userTypes'; //TODO: userTypes RoleAssignmentData
+import type { Post, CollaberatorRoles} from '../../types/postTypes';
 
 /**
  * Payload shape for creating a new quest
@@ -16,7 +15,7 @@ type CreateQuestPayload = {
   description: string;
   tags: string[];
   repoUrl?: string;
-  assignedRoles: RoleAssignmentData[];
+  collaberatorRoles: CollaberatorRoles[];
   fromPostId?: string;
 };
 
@@ -47,7 +46,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [repoUrl, setRepoUrl] = useState('');
-  const [assignedRoles, setAssignedRoles] = useState<RoleAssignmentData[]>([]);
+  const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
@@ -64,7 +63,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
       description: description.trim(),
       tags: tags.split(',').map((tag) => tag.trim()).filter(Boolean),
       repoUrl: repoUrl.trim() || undefined,
-      assignedRoles,
+      collaberatorRoles,
       fromPostId: fromPost?.id,
     };
 
@@ -122,7 +121,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
       </FormSection>
 
       <FormSection title="Assign Roles (optional)">
-        <RoleAssignment value={assignedRoles} onChange={setAssignedRoles} />
+        <CollaberatorControls value={collaberatorRoles} onChange={setCollaberatorRoles} />
       </FormSection>
 
       <div className="flex justify-end gap-3">

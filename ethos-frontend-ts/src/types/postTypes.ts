@@ -66,7 +66,7 @@ export interface Post {
 
   /** Optional: Quest context */
   questId?: string | null;
-  questName?: string;
+  questNodeTitle?: string;
   nodeId?: string;
 
   /** Hashtags and topic labels */
@@ -76,7 +76,7 @@ export interface Post {
   status?: QuestTaskStatus;
 
   /** Collaborators on the post */
-  collaborators: string[];
+  collaborators: CollaberatorRoles[];
 
   /** Reply chain support */
   replyTo?: string | null;
@@ -98,11 +98,21 @@ export interface Post {
 /**
  * If a post links to another quest/post/board.
  */
+export interface CollaberatorRoles {
+  //TODO:
+  userId:string;
+  username: string | undefined;
+  roles?:string[];
+}
+
+/**
+ * If a post links to another quest/post/board.
+ */
 export interface LinkedItem {
   itemId: string;
   itemType: 'quest';
   nodeId?: string;
-  name?: string;
+  title?: string;
 }
 
 /**

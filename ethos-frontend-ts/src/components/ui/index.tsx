@@ -9,3 +9,5 @@ export { default as Label } from './Label';
 export { default as NavBar } from './NavBar';
 export { default as Select } from './Select';
 export { default as TextArea } from './TextArea';
+export { default as ActionMenu } from './ActionMenu';
+export { default as PostTypeBadge } from './PostTypeBadge';

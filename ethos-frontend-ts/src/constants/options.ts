@@ -1,5 +1,6 @@
 // options.ts
 import type { BoardStructure } from '../types/boardTypes';
+import type { PostType } from '../types/postTypes';
 
 export const STRUCTURE_OPTIONS: { value: BoardStructure; label: string }[] = [
   { value: 'list', label: 'List' },

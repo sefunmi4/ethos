@@ -1,12 +1,13 @@
 // src/components/quest/EditQuest.tsx
 
-import React, { useState, FormEvent } from 'react'; //TODO: FormEvent
+import React, { useState } from 'react'; 
+import type { FormEvent } from 'react'; 
 import { patchQuest } from '../../api/quest';  //TODO: patchQuest
-import { Quest } from '../../types/questTypes';  //TODO: Quest
+import type { Quest } from '../../types/questTypes';  
 import { useBoardContext } from '../../contexts/BoardContext';
 import { Button, Label, TextArea, FormSection, Input } from '../ui';
-import LinkControls from '../controls/LinkControls';  //TODO:LinkControls
-import RoleAssignment from '../controls/RoleAssignment';  //TODO:RoleAssignment
+import LinkControls from '../controls/LinkControls'; 
+import CollaberatorControls from '../controls/CollaberatorControls';
 
 /**
  * Props for EditQuest component
@@ -132,7 +133,7 @@ const EditQuest: React.FC<EditQuestProps> = ({
 
           {/* Roles */}
           <FormSection title="Assigned Roles">
-            <RoleAssignment value={roles} onChange={setRoles} />
+            <CollaberatorControls value={roles} onChange={setRoles} />
           </FormSection>
         </>
       )}

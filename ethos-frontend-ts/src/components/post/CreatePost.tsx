@@ -1,15 +1,11 @@
-// src/components/post/CreatePost.tsx
-
 import React, { useState } from 'react';
 import { POST_TYPES } from '../../constants/options';
-import { createPost } from '../../api/posts';   //TODO: posts createPost
+import { createPost } from '../../api/post';
 import { Button, TextArea, Select, Label, FormSection } from '../ui';
-import RoleAssignment from '../controls/RoleAssignment'; //TODO: RoleAssignment
-import LinkControls from '../controls/LinkControls'; //TODO: LinkControls
+import CollaberatorControls from '../controls/CollaberatorControls';
+import LinkControls from '../controls/LinkControls';
 import { useBoardContext } from '../../contexts/BoardContext';
-import type { Post, PostType, LinkedItem } from '../../types/postTypes'; 
-import { QuestNodeLink, RoleAssignmentData } from '../../types/postTypes'; //TODO: postTypes
-// import { isDefined } from '../../utils/displayUtils'; //TODO: Utility type guard
+import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
 
 type CreatePostProps = {
   onSave?: (post: Post) => void;
@@ -18,77 +14,51 @@ type CreatePostProps = {
   repostSource?: Post | null;
 };
 
-/**
- * CreatePost – Form for composing a new post.
- * Supports free speech, requests, quest logs/tasks, reply and repost semantics.
- */
 const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = null, repostSource = null }) => {
   const [type, setType] = useState<PostType>('free_speech');
   const [content, setContent] = useState<string>('');
-  const [linkedQuestNode, setLinkedQuestNode] = useState<QuestNodeLink | null>(null);
-  const [linkedItems, setLinkedItems] = useState<any[]>([]);
-  const [assignedRoles, setAssignedRoles] = useState<RoleAssignmentData[]>([]);
+  const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
+  const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
 
-  /**
-   * Handles submission of the post creation form.
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
-
     setIsSubmitting(true);
-    
-    // Ensure quest-type posts have a linked quest
-    if (type === 'quest' && !linkedQuestNode?.questId) {
+
+    // Check for quest linkage if required
+    if (requiresQuestLink(type)) {
+      const hasQuest = linkedItems.some((item) => item.itemType === 'quest');
+      if (!hasQuest) {
         alert('Please link a quest before submitting.');
         setIsSubmitting(false);
         return;
+      }
     }
 
-    const payload: Partial<Post> & {
-      type: PostType;
-      content: string;
-      visibility: 'public';
-      boardId?: string | null;
-      questId?: string | null;
-      nodeId?: string | null;
-      assignedRoles?: RoleAssignmentData[];
-      linkedItems?: any[];
-      parentPostId?: string;
-      linkType?: 'reply' | 'repost';
-      repostedFrom?: { id: string; username?: string; originalPostId: string };
-      replyTo?: string | null;
-    } = {
+    const payload: Partial<Post> = {
       type,
       content,
       visibility: 'public',
-      boardId: selectedBoard || null,
-      questId: linkedQuestNode?.questId || null,
-      nodeId: linkedQuestNode?.nodeId || null,
-      assignedRoles: type === 'quest' ? assignedRoles : [],
-      linkedItems: linkedItems,
-      replyTo: replyTo?.id || null,
+      linkedItems,
+      ...(selectedBoard ? { boardId: selectedBoard } : {}),
+      ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
+      ...(repostSource
+        ? {
+            parentPostId: repostSource.id,
+            linkType: 'repost',
+            repostedFrom: {
+              originalPostId: repostSource.id,
+              username: repostSource.author?.username,
+              originalContent: repostSource.content,
+              originalTimestamp: repostSource.timestamp,
+            },
+          }
+        : {}),
+      ...(requiresQuestRoles(type) && { collaborators }),
     };
-
-    if (replyTo) {
-      payload.parentPostId = replyTo.id;
-      payload.linkType = 'reply';
-    }
-
-    if (repostSource) {
-      payload.parentPostId = repostSource.id;
-      payload.linkType = 'repost';
-      payload.repostedFrom = {
-        id: repostSource.author?.id || '',
-        username: repostSource.author?.username,
-        originalPostId: repostSource.id,
-        originalContent: repostSource.content,
-        originalTimestamp: repostSource.timestamp,
-      };
-    }
 
     try {
       const newPost = await createPost(payload);
@@ -109,10 +79,10 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
           <>
             <Label htmlFor="post-type">Post Type</Label>
             <Select
-                id="post-type"
-                value={type}
-                onChange={(e) => setType(e.target.value as PostType)}
-                options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+              id="post-type"
+              value={type}
+              onChange={(e) => setType(e.target.value as PostType)}
+              options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
             />
           </>
         )}
@@ -133,37 +103,28 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
         />
       </FormSection>
 
-      {requiresQuestType(type) && (
+      {requiresQuestLink(type) && (
         <FormSection title="Linked Quest">
-            <LinkControls
+          <LinkControls
             label="Quest"
             value={linkedItems}
-            onChange={(items: LinkedItem[]) => {
-                const quest = items.find((i) => i.itemType === 'quest');
-                if (quest) {
-                setLinkedQuestNode({ questId: quest.itemId, nodeId: quest.nodeId || null });
-                setLinkedItems([quest]);
-                } else {
-                setLinkedQuestNode(null);
-                setLinkedItems([]);
-                }
-            }}
+            onChange={setLinkedItems}
             allowCreateNew
             allowNodeSelection
-            />
+          />
         </FormSection>
       )}
 
-      {type === 'quest' && (
-        <FormSection title="Assigned Roles">
-          <RoleAssignment value={assignedRoles} onChange={setAssignedRoles} />
+      {requiresQuestRoles(type) && (
+        <FormSection title="Collaborators">
+          <CollaberatorControls value={collaborators} onChange={setCollaborators} />
         </FormSection>
       )}
 
       {repostSource && (
         <FormSection title="Repost Info">
           <p className="text-xs text-gray-600">
-            Reposting from <strong>@{repostSource.authorId || 'anonymous'}</strong>
+            Reposting from <strong>@{repostSource.author?.username || 'anonymous'}</strong>
           </p>
         </FormSection>
       )}
@@ -188,11 +149,12 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
   );
 };
 
-/**
- * Helper function to determine if post type requires quest linkage.
- */
-function requiresQuestType(type: PostType): boolean {
-  return type === 'quest';
+function requiresQuestLink(type: PostType): boolean {
+  return ['quest_log', 'quest_task'].includes(type);
+}
+
+function requiresQuestRoles(type: PostType): boolean {
+  return ['quest_log', 'quest_task'].includes(type);
 }
 
 export default CreatePost;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Quest } from '../../types/questTypes';  // TODO:  
-import { Post } from '../../types/postTypes';   // TODO:  
-import { User } from '../../types/userTypes'; // TODO:  
+import type { Quest } from '../../types/questTypes';  // TODO:  
+import type { Post } from '../../types/postTypes';   // TODO:  
+import type { User } from '../../types/userTypes'; // TODO:  
 import { Button, PostTypeBadge } from '../ui'; // TODO:  
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
@@ -73,15 +73,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
           )}
         </div>
       </div>
-
-      <div className="flex gap-2 mt-2 md:mt-0 items-center">
+  
+      <div className="flex gap-2 mt-2 md:mt-0 items-center flex-wrap">
         {!isOwner && (
           <Button onClick={() => onJoinToggle?.(questData)} variant="primary">
             Join Quest
           </Button>
         )}
-
-        {/* 🧠 Action Menu for Edit / Archive / Delete / Copy Link */}
+  
         {isOwner && (
           <ActionMenu
             type="quest"
@@ -90,16 +89,21 @@ const QuestCard: React.FC<QuestCardProps> = ({
             onEdit={() => onEdit?.(questData)}
             onDelete={() => onDelete?.(questData)}
             onArchived={() => {
-              // Optional: update UI on archive
               console.log(`[QuestCard] Quest ${quest.id} archived`);
             }}
             permalink={`${window.location.origin}/quests/${quest.id}`}
           />
         )}
-
+  
         <Button onClick={() => setView('timeline')}>Timeline</Button>
         <Button onClick={() => setView('kanban')}>Kanban</Button>
         <Button onClick={() => setView('map')}>Map</Button>
+  
+        {onCancel && (
+          <Button onClick={onCancel} variant="secondary">
+            Cancel
+          </Button>
+        )}
       </div>
     </div>
   );

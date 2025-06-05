@@ -5,7 +5,7 @@ import { useSocket } from '../hooks/useSocket';
 import { usePermissions } from '../hooks/usePermissions';
 
 import Board from '../components/board/Board';
-import { fetchFeaturedBoards, fetchDefaultHomeBoard } from '../services/boardService';
+import { fetchFeaturedBoards, fetchDefaultHomeBoard } from '../api/board';
 
 import type { User } from '../types/userTypes';
 import type { BoardData } from '../types/boardTypes';

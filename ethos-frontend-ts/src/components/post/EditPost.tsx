@@ -1,74 +1,54 @@
 // src/components/post/EditPost.tsx
 
-import React, { useState, FormEvent } from 'react';
-import { patchPost } from '../../api/posts';
+import React, { useState } from 'react';
+import type { FormEvent } from 'react';
+import { patchPost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
-import { PostType, Post, RoleAssignmentType, LinkItem } from '../../types/postTypes'; //TODO: postTypes PostType, Post, RoleAssignmentType, LinkItem
-import { QuestNodeLink } from '../../types/questTypes'; //TODO: QuestNodeLink
+import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
 import { TextArea, Select, Button, Label, FormSection } from '../ui';
-import LinkControls from '../controls/LinkControls'; //TODO: LinkControls
-import RoleAssignment from '../controls/RoleAssignment'; //TODO: RoleAssignment
+import LinkControls from '../controls/LinkControls';
+import CollaberatorControls from '../controls/CollaberatorControls';
 
-// Define the expected props for the component
 interface EditPostProps {
   post: Post;
   onCancel: () => void;
   onUpdated?: (updatedPost: Post) => void;
 }
 
-/**
- * EditPost Component
- * Allows users to edit an existing post with support for markdown, quest/task metadata,
- * reactions, reposting, and modular link connections.
- */
 const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [type, setType] = useState<PostType>(post.type);
   const [content, setContent] = useState<string>(post.content || '');
-  const [linkedQuestNode, setLinkedQuestNode] = useState<QuestNodeLink>({
-    questId: post.questId || '',
-    nodeId: post.nodeId || null,
-  });
-  const [assignedRoles, setAssignedRoles] = useState<RoleAssignmentType[]>(post.collaborators || []);
-  const [links, setLinks] = useState<LinkItem[]>(post.linkedItems || []);
+  const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>(post.collaborators || []);
+  const [linkedItems, setLinkedItems] = useState<LinkedItem[]>(post.linkedItems || []);
   const [repostedFrom] = useState(post.repostedFrom || null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { selectedBoard, updateBoardItem } = useBoardContext() || {};
 
-  /**
-   * Handles submission of the edited post.
-   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Ensure quest linkage is valid if needed
-    if ((type === 'quest') && !linkedQuestNode?.questId) {
-      alert('Please link a quest.');
+    // Validation: For 'quest' post type, require at least one linked quest
+    if (type === 'quest' && linkedItems.length === 0) {
+      alert('Please link at least one quest.');
       setIsSubmitting(false);
       return;
     }
 
-    // Construct payload with required fields
     const payload: Partial<Post> = {
       type,
       content,
-      ...(linkedQuestNode?.questId && { questId: linkedQuestNode.questId }),
-      ...(linkedQuestNode?.nodeId && { nodeId: linkedQuestNode.nodeId }),
-      ...(type === 'quest' && { assignedRoles }),
-      links: links.map((l) => ({ id: l.id, type: l.type })),
+      ...(type === 'quest' && { collaborators }),
+      linkedItems,
       repostedFrom: repostedFrom || null,
     };
 
     try {
       const updatedPost = await patchPost(post.id, payload);
-
-      if (selectedBoard) {
-        updateBoardItem(selectedBoard, updatedPost);
-      }
-
+      if (selectedBoard) updateBoardItem(selectedBoard, updatedPost);
       if (onUpdated) onUpdated(updatedPost);
     } catch (error) {
       console.error('[EditPost] Failed to update post:', error);
@@ -92,6 +72,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
             { value: 'review', label: 'Review' },
             { value: 'quest_log', label: 'Quest Log' },
             { value: 'quest_task', label: 'Quest Task' },
+            { value: 'quest', label: 'Quest Root' },
           ]}
         />
 
@@ -106,40 +87,34 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
         />
       </FormSection>
 
-      {(type === 'quest') && (
-        <FormSection title="Linked Quest">
-          <LinkControls
-            label="Quest"
-            value={linkedQuestNode}
-            onChange={setLinkedQuestNode}
-            allowCreateNew={false}
-            allowNodeSelection
-          />
-        </FormSection>
-      )}
-
       {type === 'quest' && (
-        <FormSection title="Assigned Roles">
-          <RoleAssignment value={assignedRoles} onChange={setAssignedRoles} />
-        </FormSection>
+        <>
+          <FormSection title="Assigned Roles">
+            <CollaberatorControls value={collaborators} onChange={setCollaborators} />
+          </FormSection>
+        </>
       )}
 
       <FormSection title="Linked Items">
         <LinkControls
           label="Link to quests/projects"
           value={null}
-          onChange={(newLink: LinkItem) => setLinks([...links, newLink])}
+          onChange={(newLink: LinkedItem) =>
+            setLinkedItems((prev) => [...prev, newLink])
+          }
           allowCreateNew={false}
         />
-        {links.length > 0 && (
+        {linkedItems.length > 0 && (
           <ul className="list-disc pl-6 mt-2 text-sm text-blue-700">
-            {links.map((l, idx) => (
+            {linkedItems.map((l, idx) => (
               <li key={idx}>
-                {l.type}: {l.title || l.id}
+                {l.itemType}: {l.title || l.nodeId}
                 <button
                   type="button"
                   className="text-red-500 ml-2 text-xs hover:underline"
-                  onClick={() => setLinks(links.filter((_, i) => i !== idx))}
+                  onClick={() =>
+                    setLinkedItems(linkedItems.filter((_, i) => i !== idx))
+                  }
                 >
                   Remove
                 </button>
