@@ -6,7 +6,12 @@ import { questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest } from '../utils/enrich';
 import type { Quest, LinkedItem, Post } from '../types/api';
 
-interface AuthRequest extends Request {
+interface AuthRequest<
+  P = any,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = any
+> extends Request<P, ResBody, ReqBody, ReqQuery> {
   user?: { id: string };
 }
 
@@ -24,8 +29,6 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
     title,
     description = '',
     tags = [],
-    repoUrl = '',
-    assignedRoles = [],
     fromPostId = '',
   } = req.body;
 
@@ -40,8 +43,6 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
     title,
     description,
     tags,
-    repoUrl, // Object literal may only specify known properties, and 'repoUrl' does not exist in type 'Quest'.
-    assignedRoles,
     linkedPosts: fromPostId
       ? [{ itemId: fromPostId, itemType: 'post' } satisfies LinkedItem]
       : [],
@@ -60,7 +61,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
 });
 
 // PATCH quest (e.g. add a log)
-router.patch('/:id', (req: Request, res: Response) => { //TODO: No overload matches this call.
+router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response) => {
   const { id } = req.params;
   const { logId } = req.body;
 
@@ -78,7 +79,10 @@ router.patch('/:id', (req: Request, res: Response) => { //TODO: No overload matc
 });
 
 // GET enriched quest
-router.get('/:id', authOptional, async (req: AuthRequest, res: Response) => { //TODO: No overload matches this call.
+router.get(
+  '/:id',
+  authOptional,
+  async (req: AuthRequest<{ id: string }, any, any, { enrich?: string }>, res: Response) => {
   const { id } = req.params;
   const { enrich } = req.query;
   const userId = req.user?.id || null;
@@ -98,7 +102,10 @@ router.get('/:id', authOptional, async (req: AuthRequest, res: Response) => { //
 });
 
 // POST to link a post to quest
-router.post('/:id/link', authMiddleware, (req: AuthRequest, res: Response) => { //TODO: No overload matches this call.
+router.post(
+  '/:id/link',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {
   const { id } = req.params;
   const { postId } = req.body;
   if (!postId) return res.status(400).json({ error: 'Missing postId' });
@@ -118,7 +125,7 @@ router.post('/:id/link', authMiddleware, (req: AuthRequest, res: Response) => { 
 });
 
 // GET quest tree (hierarchy)
-router.get('/:id/tree', authOptional, (req: Request, res: Response) => { //TODO: No overload matches this call.
+router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
 
   const quests = questsStore.read();
@@ -132,7 +139,7 @@ router.get('/:id/tree', authOptional, (req: Request, res: Response) => { //TODO:
     const q = quests.find(x => x.id === questId);
     if (q) {
       nodes.push({ ...q, type: 'quest' });
-      (q.tasks || []).forEach(childId => recurse(childId)); //todo: Parameter 'childId' implicitly has an 'any' type.t ecurse = (questId: string) => {
+      (q.tasks || []).forEach((childId: string) => recurse(childId));
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
@@ -144,7 +151,7 @@ router.get('/:id/tree', authOptional, (req: Request, res: Response) => { //TODO:
 });
 
 // DELETE quest
-router.delete('/:id', authMiddleware, (req: AuthRequest, res: Response) => { //TODO: No overload matches this call.
+router.delete('/:id', authMiddleware, (req: AuthRequest<{ id: string }>, res: Response) => {
   const { id } = req.params;
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);

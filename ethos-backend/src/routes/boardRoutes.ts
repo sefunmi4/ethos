@@ -183,7 +183,7 @@ router.post(
 router.patch(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const boards = boardsStore.read();
     const board = boards.find(b => b.id === req.params.id);
     if (!board) {
@@ -203,7 +203,7 @@ router.patch(
 router.post(
   '/:id/remove',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const { itemId } = req.body;
     const boards = boardsStore.read();
     const board = boards.find(b => b.id === req.params.id);
@@ -224,7 +224,7 @@ router.post(
 router.delete(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const boards = boardsStore.read();
     const index = boards.findIndex(b => b.id === req.params.id);
     if (index === -1) {
