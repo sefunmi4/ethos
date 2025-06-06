@@ -68,7 +68,7 @@ export const enrichUser = (
     isNew:
       !user.createdAt ||
       Date.now() - new Date(user.createdAt).getTime() < 1000 * 60 * 60 * 24 * 7,
-    isOnline: false, // TODO: implement online tracking
+    isOnline: false,
 
     displayRole:
       user.role === 'admin'
