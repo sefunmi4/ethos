@@ -1,0 +1,228 @@
+import type { DBPost, DBQuest, DBBoard, DBUser } from '../types/db';
+import type { User, Post, RepostMeta } from '../types/api';
+import type { EnrichedPost, EnrichedQuest, EnrichedUser, EnrichedBoard } from '../types/enriched';
+
+import { usersStore, postsStore, questsStore } from '../models/stores';
+import { formatPosts } from '../logic/postFormatter';
+
+
+/**
+ * Normalize DBPost into valid Post structure.
+ */
+const normalizePost = (post: DBPost): Post => {
+  const repostMeta: RepostMeta | null = //todo : Type '{ originalPostId: string; } | null' is not assignable to type 'RepostMeta | null'.
+    typeof post.repostedFrom === 'string'
+      ? { originalPostId: post.repostedFrom }
+      : post.repostedFrom ?? null;
+
+  return {
+    ...post,
+    tags: post.tags ?? [],
+    collaborators: post.collaborators ?? [],
+    linkedItems: post.linkedItems ?? [],
+    repostedFrom: repostMeta,
+  };
+};
+
+/**
+ * Enrich a single user with computed metadata.
+ */
+export const enrichUser = (
+  user: User,
+  {
+    currentUserId = null,
+    posts = [],
+    quests = [],
+  }: {
+    currentUserId?: string | null;
+    posts?: DBPost[];
+    quests?: DBQuest[];
+  } = {}
+): EnrichedUser => {
+  const safeLinks = user.links ?? {
+    github: '',
+    linkedin: '',
+    twitter: '',
+    tiktok: '',
+    youtube: '',
+    website: '',
+    blog: '',
+    other: '',
+  };
+
+  const normalizedPosts = posts.map(normalizePost);
+  const userPosts = normalizedPosts.filter((p) => p.authorId === user.id);
+  const userQuests = quests.filter((q) => q.authorId === user.id || q.ownerId === user.id);
+
+  return {
+    ...user,
+    links: safeLinks, // ✅ ensures shape matches expected type
+
+    recentPosts: userPosts.slice(0, 5),
+    activeQuests: userQuests.filter((q) => q.status === 'active'),
+
+    postCount: userPosts.length,
+    questCount: userQuests.length,
+
+    isStaff: ['admin', 'moderator'].includes(user.role),
+    isNew:
+      !user.createdAt ||
+      Date.now() - new Date(user.createdAt).getTime() < 1000 * 60 * 60 * 24 * 7,
+    isOnline: false, // TODO: implement online tracking
+
+    displayRole:
+      user.role === 'admin'
+        ? 'Admin'
+        : user.role === 'moderator'
+        ? 'Moderator'
+        : 'Adventurer',
+  };
+};
+
+/**
+ * Enrich a single post with author info.
+ */
+export const enrichPost = (
+  post: DBPost,
+  {
+    users = usersStore.read(),
+    currentUserId = null,
+  }: {
+    users?: DBUser[];
+    currentUserId?: string | null;
+  } = {}
+): EnrichedPost | null => {
+  return enrichPosts([post], users, currentUserId)[0] || null;
+};
+
+/**
+ * Enrich multiple posts with author info and formatting.
+ */
+export const enrichPosts = (
+  posts: DBPost[],
+  users: DBUser[] = usersStore.read(),
+  currentUserId: string | null = null
+): EnrichedPost[] => {
+  const enriched = posts.map((post) => {
+    const author = users.find((u) => u.id === post.authorId);
+    const enrichedAuthor = author
+      ? enrichUser(author, { currentUserId })
+      : {
+          id: 'anon',
+          username: 'Anonymous',
+          bio: '',
+          tags: [],
+          links: {},
+          experienceTimeline: [],
+          email: '',
+          role: 'user',
+          profileUrl: '#',
+          rank: 'guest',
+          level: 0,
+          xp: {},
+        };
+
+    return {
+      ...post,
+      author: {
+        id: enrichedAuthor.id,
+        username: enrichedAuthor.username,
+      },
+      enriched: true,
+    };
+  });
+
+  return formatPosts(enriched, currentUserId);
+};
+
+/**
+ * Enrich a quest with logs, tasks, and user references.
+ */
+export const enrichQuest = (
+  quest: DBQuest,
+  {
+    posts = postsStore.read(),
+    users = usersStore.read(),
+    currentUserId = null,
+  }: {
+    posts?: DBPost[];
+    users?: DBUser[];
+    currentUserId?: string | null;
+  } = {}
+): EnrichedQuest => {
+  const allPosts = enrichPosts(posts, users, currentUserId);
+  const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
+  const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');
+  const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech');
+
+  const linkedPostsResolved = allPosts.filter((p) =>
+    quest.linkedPosts?.some((l) => l.itemId === p.id)
+  );
+
+  const enrichedCollaborators = quest.collaborators.map((c) => {
+    const u = users.find((u) => u.id === c.userId);
+    return u
+      ? {
+          userId: u.id,
+          username: u.username,
+          roles: c.roles,
+          avatarUrl: u.avatarUrl,
+          bio: u.bio,
+        }
+      : { ...c };
+  });
+
+  return {
+    ...quest,
+    headPost: posts.find((p) => p.id === quest.headPostId),
+    logs,
+    tasks,
+    discussion,
+    linkedPostsResolved,
+    collaborators: enrichedCollaborators,
+    taskGraph: [], // Extend later
+    percentComplete: 0, // Optional: compute from task statuses
+    taskCount: tasks.length,
+    completedTasks: tasks.filter((t) => t.status === 'Done').length,
+    blockedTasks: tasks.filter((t) => t.status === 'Blocked').length,
+  };
+};
+
+/**
+ * Enrich multiple quests.
+ */
+export const enrichQuests = (
+  quests: DBQuest[],
+  {
+    posts = postsStore.read(),
+    users = usersStore.read(),
+    currentUserId = null,
+  }: {
+    posts?: DBPost[];
+    users?: DBUser[];
+    currentUserId?: string | null;
+  } = {}
+): EnrichedQuest[] => quests.map((q) => enrichQuest(q, { posts, users, currentUserId }));
+
+/**
+ * Enrich a board by resolving its items to posts or quests.
+ */
+export const enrichBoard = (
+  board: DBBoard,
+  {
+    posts = postsStore.read(),
+    quests = questsStore.read(),
+  }: {
+    posts?: DBPost[];
+    quests?: DBQuest[];
+  }
+): EnrichedBoard => {
+  const enrichedItems = board.items
+    .map((id) => posts.find((p) => p.id === id) || quests.find((q) => q.id === id))
+    .filter(Boolean);
+
+  return {
+    ...board,
+    enrichedItems,
+  };
+};

@@ -1,9 +1,0 @@
-export { default as Button } from './Button.jsx';
-export { default as Input } from './Input.jsx';
-export { default as TextArea } from './TextArea.jsx';
-export { default as Select } from './Select.jsx';
-export { default as Label } from './Label.jsx';
-export { default as FormSection } from './FormSection.jsx';
-export { default as Modal } from './Modal.jsx';
-export { default as Tag } from './Tag.jsx';
-export { default as PostTypeBadge } from './PostTypeBadge.jsx';
