@@ -102,7 +102,7 @@ VITE_API_URL=http://localhost:5000/api
 ```bash
 cd ethos-backend
 npm install
-npm run dev
+node src/server.js
 ```
 
 `.env` for backend:
