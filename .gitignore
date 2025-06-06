@@ -1,0 +1,5 @@
+node_modules/
+package-lock.json
+package.json
+ethos-backend-ts/dist/
+.DS_Store

@@ -84,3 +84,44 @@ export const fetchGitCommitHistory = async (
   return res.data;
 };
 
+export const createRepo = async (
+  questId: string,
+  name: string
+): Promise<GitRepoMeta> => {
+  const res = await axiosWithAuth.post(`/api/git/create`, { questId, name });
+  return res.data;
+};
+
+export const createRepoFolder = async (
+  questId: string,
+  folderPath: string
+): Promise<GitRepoMeta> => {
+  const res = await axiosWithAuth.post(`/api/git/folders`, { questId, folderPath });
+  return res.data;
+};
+
+export const createRepoFile = async (
+  questId: string,
+  filePath: string,
+  content: string
+): Promise<GitRepoMeta> => {
+  const res = await axiosWithAuth.post(`/api/git/files`, { questId, filePath, content });
+  return res.data;
+};
+
+export const updateRepoFile = async (
+  questId: string,
+  filePath: string,
+  content: string
+): Promise<GitRepoMeta> => {
+  const res = await axiosWithAuth.put(`/api/git/files`, { questId, filePath, content });
+  return res.data;
+};
+
+export const downloadRepo = async (questId: string): Promise<Blob> => {
+  const res = await axiosWithAuth.get(`/api/git/download/${questId}`, {
+    responseType: 'blob',
+  });
+  return res.data;
+};
+

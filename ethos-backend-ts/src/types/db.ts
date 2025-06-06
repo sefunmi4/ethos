@@ -5,11 +5,12 @@ import type {
   PostTag, 
   QuestTaskStatus, 
   LinkedItem, 
-  GitStatus, 
+  GitStatus,
   GitLinkedItem,
-  GitMetaData, 
-  UserRole
- } from './api';
+  GitMetaData,
+  UserRole,
+  BoardLayout
+} from './api';
 
 // types/db.ts
 export interface DBPost {
@@ -49,10 +50,14 @@ export interface DBQuest {
   linkedPosts: LinkedItem[];
   collaborators: { userId: string; roles?: string[] }[];
 
-  repoUrl?: string;
+  gitRepo?: {
+    repoId: string;
+    headCommitId?: string;
+    defaultBranch?: string;
+  };
   createdAt?: string;
-  ownerId?: string;
   tags?: string[];
+  defaultBoardId?: string;
 }
 
 // types/db.ts
@@ -60,12 +65,14 @@ export interface DBBoard {
   id: string;
   title: string;
   description?: string;
-
-  structure?: 'grid' | 'list' | 'graph' | 'thread';
-  defaultFor?: string;
-
-  items: string[]; // Array of item IDs (Post, Quest, etc.)
-  createdAt?: string;
+  layout: BoardLayout;
+  items: (string | null)[];
+  filters?: Record<string, any>;
+  featured?: boolean;
+  defaultFor?: 'home' | 'profile' | 'quests';
+  createdAt: string;
+  category?: string;
+  userId: string;
 }
 
 // Efficient DB model for quick lookups and storage
@@ -74,11 +81,11 @@ export interface BoardDB {
   title: string;
   description?: string;
   type: BoardType;
-  structure: BoardStructure;
-  items: string[];
+  layout: BoardLayout;
+  items: (string | null)[];
   filters?: Record<string, any>;
   featured?: boolean;
-  defaultFor?: string;
+  defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
   userId: string;
   category?: string;
