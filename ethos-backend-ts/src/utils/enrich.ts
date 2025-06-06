@@ -1,5 +1,5 @@
-import { Post, Quest, Board, User } from '../types/api';
-import { EnrichedPost, EnrichedQuest, EnrichedUser, EnrichedBoard } from '../types/enriched';
+import { Post, Quest, Board, User, BoardData } from '../types/api';
+import { EnrichedPost, EnrichedQuest, EnrichedUser } from '../types/enriched';
 import { usersStore, postsStore, questsStore } from '../models/stores';
 import { formatPosts } from '../logic/postFormatter';
 
@@ -57,30 +57,25 @@ export const enrichPosts = (
 /**
  * Enrich a board with full post/quest objects (does not mutate original board).
  */
+// utils/enrich.ts
 export const enrichBoard = (
   board: Board,
   {
-    posts = postsStore.read(),
-    quests = questsStore.read(),
-    users = usersStore.read(),
-    currentUserId = null
+    posts,
+    quests,
   }: {
-    posts?: Post[];
-    quests?: Quest[];
-    users?: User[];
-    currentUserId?: string | null;
-  } = {}
-): EnrichedBoard => {
-  const enrichedPosts = enrichPosts(posts, users, currentUserId);
-  const enrichedQuests = enrichQuests(quests, { posts, users, currentUserId });
-
-  const idMap = Object.fromEntries(
-    (board.itemType === 'post' ? enrichedPosts : enrichedQuests).map((item) => [item.id, item])
-  );
+    posts: Post[];
+    users: User[];
+    quests: Quest[];
+  }
+): BoardData => {
+  const enrichedItems = board.items
+    .map((id) => posts.find((p) => p.id === id) || quests.find((q) => q.id === id))
+    .filter(Boolean) as (Post | Quest)[];
 
   return {
     ...board,
-    items: (board as any).items?.map((id: string) => idMap[id]).filter(Boolean) || [],
+    enrichedItems, // ✅ now correctly typed as (Post | Quest)[]
   };
 };
 

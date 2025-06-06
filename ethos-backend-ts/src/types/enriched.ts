@@ -43,11 +43,10 @@ export interface QuestTaskPost extends EnrichedPost {
  * Combines layout + resolved posts/quests
  */
 export interface EnrichedBoard extends Board {
-  items: EnrichedPost[] | EnrichedQuest[];
+  enrichedItems: EnrichedPost[] | EnrichedQuest[];
   itemType: 'post' | 'quest';
   selectedItemId?: string;
   layoutMeta?: {
-    // Optional layout state or UI metadata
     compact?: boolean;
     filterTag?: string;
   };
@@ -63,6 +62,7 @@ export interface EnrichedUser extends User {
   xp?: Record<string, number>;       // XP per skill
   level?: number;                    // Derived overall level
   profileUrl?: string;               // Route to their profile
+  createdAt?:string;
 }
 
 /**
