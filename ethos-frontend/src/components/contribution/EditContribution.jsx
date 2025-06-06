@@ -2,7 +2,7 @@ import React from 'react';
 import EditPost from '../posts/EditPost';
 import EditQuest from '../quests/EditQuest';
 import EditProject from '../projects/EditProject';
-import EditBoard from '../board/EditBoard';
+import EditBoard from '../boards/EditBoard';
 
 const EditContribution = ({ contribution, onSave, onCancel, context = {} }) => {
   if (!contribution || !contribution.type) {
