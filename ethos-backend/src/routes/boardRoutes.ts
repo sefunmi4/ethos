@@ -32,7 +32,7 @@ router.get(
           ...enriched,
           layout: board.layout ?? 'grid',
           items: board.items,
-          enrichedItems: enriched.enrichedItems,
+          enrichedItems: enriched.enrichedItems, //TODO: Property 'enrichedItems' does not exist on type 'EnrichedBoard'.ts(2339)
         };
       });
     }
