@@ -10,7 +10,7 @@ import {
   getFileTree,
   getCommits,
 } from '../services/gitService';
-import type { AuthenticatedRequest } from '../types/api';
+import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
 
