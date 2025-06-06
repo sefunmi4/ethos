@@ -9,7 +9,8 @@ import type {
   GitLinkedItem,
   GitMetaData,
   UserRole,
-  BoardLayout
+  BoardLayout,
+  BoardType
 } from './api';
 
 // types/db.ts

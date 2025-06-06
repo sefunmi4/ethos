@@ -27,10 +27,10 @@ router.get(
 
     if (enrich === 'true') {
       result = boards.map(board => {
-        const enriched = enrichBoard(board, { posts, users, quests });
+        const enriched = enrichBoard(board, { posts, quests });
         return {
           ...enriched,
-          structure: board.structure ?? 'grid',
+          layout: board.layout ?? 'grid',
           items: board.items,
           enrichedItems: enriched.enrichedItems,
         };
@@ -74,7 +74,7 @@ router.get(
       const enriched = enrichBoard(board, { posts, quests });
       result = {
         ...enriched,
-        structure: board.structure ?? 'grid',
+        layout: board.layout ?? 'grid',
       };
     }
 
@@ -108,7 +108,7 @@ router.get(
     let result: BoardData = board;
     if (enrich === 'true') {
       const enriched = enrichBoard(board, { posts, quests });
-      result = { ...enriched, structure: board.structure ?? 'grid' };
+      result = { ...enriched, layout: board.layout ?? 'grid' };
     }
 
     res.json(result);
@@ -183,7 +183,7 @@ router.post(
 router.patch(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const boards = boardsStore.read();
     const board = boards.find(b => b.id === req.params.id);
     if (!board) {
@@ -203,7 +203,7 @@ router.patch(
 router.post(
   '/:id/remove',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const { itemId } = req.body;
     const boards = boardsStore.read();
     const board = boards.find(b => b.id === req.params.id);
@@ -224,7 +224,7 @@ router.post(
 router.delete(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const boards = boardsStore.read();
     const index = boards.findIndex(b => b.id === req.params.id);
     if (index === -1) {

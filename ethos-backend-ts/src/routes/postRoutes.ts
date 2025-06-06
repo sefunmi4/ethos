@@ -26,7 +26,7 @@ router.get('/:id/replies', (req: Request<{ id: string }>, res: Response) => {
 router.post(
   '/:id/repost',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const posts = postsStore.read();
     const original = posts.find((p) => p.id === req.params.id);
     if (!original) return void res.status(404).json({ error: 'Original post not found' });
@@ -34,6 +34,7 @@ router.post(
     const repost: Post = {
       id: uuidv4(),
       authorId: req.user!.id,
+      author: { id: string; username: string }, //TODO: please afix username
       type: original.type,
       content: original.content,
       visibility: original.visibility,
@@ -43,9 +44,10 @@ router.post(
       replyTo: null,
       timestamp: new Date().toISOString(),
       repostedFrom: {
-        id: original.id,
-        authorId: original.authorId,
-        timestamp: original.timestamp,
+        originalPostId: original.id,
+        username: original.authorId, //TODO: return user name
+        originalContent: original.content,
+        originalTimestamp: original.timestamp,
       },
       linkedItems: [...(original.linkedItems || [])],
 
@@ -63,10 +65,10 @@ router.post(
       reactionCounts: undefined,
     };
 
-    posts.push(repost);
+    posts.push(repost); //TODO: GETTINg an error here Argument of type 'Post' is not assignable to parameter of type 'DBPost'.
     postsStore.write(posts);
     const users = usersStore.read();
-    res.status(201).json(enrichPost(repost, { users }));
+    res.status(201).json(enrichPost(repost, { users })); //TODO: getting similar error here
   }
 );
 
@@ -76,7 +78,7 @@ router.post(
 router.get(
   '/:id/reposts/user',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const posts = postsStore.read();
     const repost = posts.find(
       (p) => p.repostedFrom === req.params.id && p.authorId === req.user!.id
@@ -101,15 +103,15 @@ router.get('/:id/reposts/count', (_req: Request<{ id: string }>, res: Response) 
 router.post(
   '/:id/reactions/:type',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const { id, type } = req.params;
     const userId = req.user!.id;
-    const reactions = reactionsStore.read();
+    const reactions = reactionsStore.read(); // TODO: Cannot find name 'reactionsStore'.
     const key = `${id}_${userId}_${type}`;
 
     if (!reactions.includes(key)) {
       reactions.push(key);
-      reactionsStore.write(reactions);
+      reactionsStore.write(reactions); // TODO: Cannot find name 'reactionsStore'.
     }
 
     res.json({ success: true });
@@ -122,15 +124,15 @@ router.post(
 router.delete(
   '/:id/reactions/:type',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const { id, type } = req.params;
     const userId = req.user!.id;
-    const reactions = reactionsStore.read();
+    const reactions = reactionsStore.read(); // TODO: Cannot find name 'reactionsStore'.
     const index = reactions.indexOf(`${id}_${userId}_${type}`);
 
     if (index !== -1) {
       reactions.splice(index, 1);
-      reactionsStore.write(reactions);
+      reactionsStore.write(reactions); // TODO: Cannot find name 'reactionsStore'.
     }
 
     res.json({ success: true });
@@ -142,7 +144,7 @@ router.delete(
 //
 router.get('/:id/reactions', (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
-  const reactions = reactionsStore.read();
+  const reactions = reactionsStore.read(); // TODO: Cannot find name 'reactionsStore'.
   const postReactions = reactions
     .filter((r) => r.startsWith(`${id}_`))
     .map((r) => {
@@ -159,7 +161,7 @@ router.get('/:id/reactions', (req: Request<{ id: string }>, res: Response) => {
 router.post(
   '/:id/solve',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => { //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     const posts = postsStore.read();
     const post = posts.find((p) => p.id === req.params.id);
     if (!post) return void res.status(404).json({ error: 'Post not found' });

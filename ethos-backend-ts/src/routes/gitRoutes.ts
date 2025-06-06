@@ -27,7 +27,7 @@ router.get(
   '/status/:questId',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{ questId: string }>,
+    req: AuthenticatedRequest<{ questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -47,7 +47,7 @@ router.post(
   '/connect',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{}, any, { questId: string; repoUrl: string; branch?: string }>,
+    req: AuthenticatedRequest<{}, any, { questId: string; repoUrl: string; branch?: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     const { questId, repoUrl, branch = 'main' } = req.body;
@@ -69,7 +69,7 @@ router.post(
   '/sync',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{}, any, { questId: string }>,
+    req: AuthenticatedRequest<{}, any, { questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -89,7 +89,7 @@ router.delete(
   '/disconnect/:questId',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{ questId: string }>,
+    req: AuthenticatedRequest<{ questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -109,7 +109,7 @@ router.post(
   '/archive',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{}, any, { questId: string }>,
+    req: AuthenticatedRequest<{}, any, { questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -129,7 +129,7 @@ router.get(
   '/diff/:questId',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{ questId: string }, any, any, { filePath?: string; commitId?: string }>,
+    req: AuthenticatedRequest<{ questId: string }, any, any, { filePath?: string; commitId?: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     const { filePath, commitId } = req.query;
@@ -155,7 +155,7 @@ router.get(
   '/files/:questId',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{ questId: string }>,
+    req: AuthenticatedRequest<{ questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -175,7 +175,7 @@ router.get(
   '/commits/:questId',
   authMiddleware,
   async (
-    req: AuthenticatedRequest<{ questId: string }>,
+    req: AuthenticatedRequest<{ questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
     res: Response
   ): Promise<void> => {
     try {
@@ -191,7 +191,7 @@ router.get(
 // ✅ POST /api/git/create
 // Initialize a new repo for a quest
 router.post('/create', authMiddleware, async (
-  req: AuthenticatedRequest<{}, any, { questId: string; name: string }>,
+  req: AuthenticatedRequest<{}, any, { questId: string; name: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
   res: Response
 ): Promise<void> => {
   try {
@@ -207,7 +207,7 @@ router.post('/create', authMiddleware, async (
 // ✅ POST /api/git/folders
 // Create a folder inside a repo
 router.post('/folders', authMiddleware, async (
-  req: AuthenticatedRequest<{}, any, { questId: string; folderPath: string }>,
+  req: AuthenticatedRequest<{}, any, { questId: string; folderPath: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
   res: Response
 ): Promise<void> => {
   try {
@@ -223,7 +223,7 @@ router.post('/folders', authMiddleware, async (
 // ✅ POST /api/git/files
 // Create a new file
 router.post('/files', authMiddleware, async (
-  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content?: string }>,
+  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content?: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
   res: Response
 ): Promise<void> => {
   try {
@@ -239,7 +239,7 @@ router.post('/files', authMiddleware, async (
 // ✅ PUT /api/git/files
 // Update file content
 router.put('/files', authMiddleware, async (
-  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content: string }>,
+  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
   res: Response
 ): Promise<void> => {
   try {
@@ -255,7 +255,7 @@ router.put('/files', authMiddleware, async (
 // ✅ GET /api/git/download/:questId
 // Download repo as zip
 router.get('/download/:questId', authMiddleware, async (
-  req: AuthenticatedRequest<{ questId: string }>,
+  req: AuthenticatedRequest<{ questId: string }>, //TODO: geteting an error here Type 'AuthenticatedRequest' is not generic.
   res: Response
 ): Promise<void> => {
   try {
