@@ -11,18 +11,18 @@ export interface Quest {
   description?: string;
   status: 'active' | 'completed' | 'archived';
   headPostId: string;
-  linkedPosts: LinkedItem[];
-  collaborators: CollaberatorRoles[]; // ✅ Change this line
   createdAt?: string;
-  ownerId?: string;
 
-  // Git metadata
-  gitRepoUrl?: string;
-  repoStatus?: GitStatus;
-  repoTree?: GitFileNode[];
-  
-  // 🆕 Optional additions
+  linkedPosts: LinkedItem[];
+  collaborators: CollaberatorRoles[];
+  gitRepo: {
+    repoId: string;
+    headCommitId?: string;
+    defaultBranch?: string;
+  };
+
   tags?: string[];
+  defaultBoardId?: string;
 }
 
 

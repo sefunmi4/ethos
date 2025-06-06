@@ -15,6 +15,7 @@ export interface Board {
   defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
   category?: string; // Optional board grouping
+  userId: string;
 }
 
 /**

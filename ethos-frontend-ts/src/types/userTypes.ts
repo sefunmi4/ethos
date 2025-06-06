@@ -16,6 +16,8 @@ export interface User {
   tags: string[];
   location?: string;
 
+  gitAccounts?: GitAccount[];
+
   // Public-facing links and portfolio sites
   links: {
     github?: string;
@@ -43,6 +45,13 @@ export interface User {
   status?: 'active' | 'archived' | 'banned';
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface GitAccount {
+  provider: 'github' | 'gitlab';
+  username: string;
+  tokenHash?: string;
+  linkedRepoIds?: string[];
 }
 
 
