@@ -24,7 +24,7 @@ export type ReactionCountMap = Record<ReactionType, number>;
 //
 // 🧭 BOARD
 //
-export type BoardStructure = 'grid' | 'thread' | 'graph';
+export type BoardLayout = 'grid' | 'graph' | 'thread';
   
 /**
  * Supported tags for labeling and filtering posts.
@@ -131,19 +131,23 @@ export interface RepostMeta {
 // types/api.ts
 export interface Quest {
   id: string;
-  authorId: string;
   title: string;
   description?: string;
+  authorId: string;
   status: 'active' | 'completed' | 'archived';
-
   headPostId: string;
+  createdAt?: string;
+
   linkedPosts: LinkedItem[];
   collaborators: CollaberatorRoles[];
+  gitRepo: {
+    repoId: string;
+    headCommitId?: string;
+    defaultBranch?: string;
+  };
 
-  repoUrl?: string;
-  createdAt?: string;
-  ownerId?: string;
   tags?: string[];
+  defaultBoardId?: string;
 }
 /**
  * Users associated with a post.
@@ -159,20 +163,22 @@ export interface Board {
   id: string;
   title: string;
   description?: string;
-  structure?: 'grid' | 'list' | 'graph' | 'thread';
-  defaultFor?: string;
-  createdAt?: string;
-  filters: Record<string, any>;
-  items: string[]; // Still just IDs here
+  layout: BoardLayout;
+  items: (string | null)[];
+  filters?: Record<string, any>;
+  featured?: boolean;
+  defaultFor?: 'home' | 'profile' | 'quests';
+  createdAt: string;
+  category?: string;
+  userId: string;
 }
 
 /**
  * Enriched board format used when fetching detailed items
  */
 export interface BoardData extends Board {
-  enrichedItems?: any[];       // hydrated post/quest objects
-  questId?: string;            // Used to associate board with a quest, if relevant
-  userId?: string;             // (optional) used for permission checks
+  enrichedItems?: (Post | Quest | Board)[];
+  questId?: string;
 }
 
 export interface RenderableItem {
@@ -218,6 +224,12 @@ export interface GitCommit {
   metadata?: GitMetaData;
 }
 
+export interface GitFileChange {
+  fileId: string;
+  type: 'add' | 'modify' | 'delete';
+  diff?: string;
+}
+
 export interface GitFile {
   path: string;
   name: string;
@@ -243,6 +255,29 @@ export interface GitMetaData {
   deletions?: number;
 }
 
+export interface GitFileNode {
+  id: string;
+  path: string;
+  name: string;
+  type: 'file' | 'dir';
+  status: 'added' | 'modified' | 'deleted' | 'unchanged';
+  children?: GitFileNode[];
+  commitIds?: string[];
+  linkedItem?: GitLinkedItem;
+}
+
+export interface GitRepo {
+  id: string;
+  repoUrl: string;
+  defaultBranch: string;
+  branches: string[];
+  lastCommitSha: string;
+  lastSync?: string;
+  status: GitStatus;
+  fileTree: GitFileNode[];
+  commits: GitCommit[];
+}
+
 export interface GitRepoMeta {
   repoUrl?: string;
   connected?: boolean;
@@ -251,9 +286,11 @@ export interface GitRepoMeta {
 }
 
 export interface GitStatus {
-  ahead: number;
-  behind: number;
-  uncommittedChanges: GitFile[];
+  branch?: string;
+  ahead?: number;
+  behind?: number;
+  isDirty?: boolean;
+  uncommittedChanges?: GitFile[];
 }
 
 export interface GitLinkedItem {
@@ -276,6 +313,8 @@ export interface User {
   avatarUrl?: string;
   tags: string[];
   location?: string;
+
+  gitAccounts?: GitAccount[];
 
   links: {
     github?: string;
@@ -314,4 +353,11 @@ export interface UserExperienceEvent {
   datetime: string;
   title: string;
   tags?: string[];
+}
+
+export interface GitAccount {
+  provider: 'github' | 'gitlab';
+  username: string;
+  tokenHash?: string;
+  linkedRepoIds?: string[];
 }

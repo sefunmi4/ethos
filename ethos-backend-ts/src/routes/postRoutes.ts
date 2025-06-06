@@ -4,7 +4,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { postsStore, usersStore } from '../models/stores';
 import { enrichPost } from '../utils/enrich';
 import type { Post } from '../types/api';
-import type { AuthenticatedRequest } from '../types/api';
+import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
 //

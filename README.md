@@ -147,6 +147,19 @@ Ethos is not just a social platform—it’s a new approach to collaboration whe
 Join to explore, contribute, or lead your own adventures. ⚔️🛠️🌍
 
 ---
+### Beta Stage (v0.1)
+
+Current build includes:
+- User sign up and login via API
+- Posting messages, logs and tasks
+- Quests linking posts with Git repo metadata
+- Boards to visualize posts and quests in grid, graph or thread views
+
+Planned enhancements before stable release:
+- In-app file change views for Git commits
+- Iterative quest scoring and progress calculations
+- CI/CD integration for commit posts
+
 
 ## 📜 License
 

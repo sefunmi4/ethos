@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import authMiddleware from '../middleware/authMiddleware';
+import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { questsStore, postsStore, usersStore } from '../utils/loaders';
+import { questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest } from '../utils/enrich';
-import type { Quest, LinkedItem } from '../types/questTypes';
-import type { Post } from '../types/postTypes';
+import type { Quest, LinkedItem, Post } from '../types/api';
 
 interface AuthRequest extends Request {
   user?: { id: string };
