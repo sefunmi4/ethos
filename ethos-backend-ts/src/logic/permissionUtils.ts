@@ -10,7 +10,7 @@ export const canEditPost = (post: Post, userId: UUID | null): boolean => {
   if (!post || !userId) return false;
   return (
     post.authorId === userId ||
-    (post.type === 'quest_log' && !!post.collaborators?.includes(userId))
+    (post.type === 'quest_log' && post.collaborators?.some(c => c.userId === userId))
   );
 };
 
@@ -23,7 +23,7 @@ export const canCommentOnPost = (post: Post, userId: UUID | null): boolean => {
   if (!post || !userId) return false;
   if (post.visibility === 'public') return true;
   return (
-    post.authorId === userId || !!post.collaborators?.includes(userId)
+    post.authorId === userId || post.collaborators?.some(c => c.userId === userId)
   );
 };
 
@@ -37,7 +37,7 @@ export const canViewPost = (post: Post, userId: UUID | null): boolean => {
   if (post.visibility === 'public') return true;
   if (!userId) return false;
 
-  return post.authorId === userId || !!post.collaborators?.includes(userId);
+  return post.authorId === userId || post.collaborators?.some(c => c.userId === userId);
 };
 
 /**
@@ -46,9 +46,7 @@ export const canViewPost = (post: Post, userId: UUID | null): boolean => {
  */
 export const canEditQuest = (quest: Quest, userId: UUID | null): boolean => {
   if (!quest || !userId) return false;
-  return (
-    quest.ownerId === userId || !!quest.collaborators?.includes(userId)
-  );
+  return quest.authorId === userId || quest.collaborators?.some(c => c.userId === userId);
 };
 
 /**
@@ -57,7 +55,7 @@ export const canEditQuest = (quest: Quest, userId: UUID | null): boolean => {
  */
 export const canJoinQuest = (quest: Quest, userId: UUID | null): boolean => {
   if (!quest || !userId) return false;
-  return !quest.collaborators?.includes(userId);
+  return !quest.collaborators?.some(c => c.userId === userId);
 };
 
 /**
@@ -65,8 +63,8 @@ export const canJoinQuest = (quest: Quest, userId: UUID | null): boolean => {
  * Works on posts or quests.
  */
 export const isCollaborator = (
-  resource: { collaborators?: UUID[] },
+  resource: { collaborators?: Array<{ userId: UUID }> },
   userId: UUID | null
 ): boolean => {
-  return !!userId && !!resource.collaborators?.includes(userId);
+  return !!userId && resource.collaborators?.some(c => c.userId === userId) === true;
 };

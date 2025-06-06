@@ -1,7 +1,7 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest } from '../types/api';
+import { AuthenticatedRequest } from '../types/express';
 
 export const authMiddleware = (
   req: AuthenticatedRequest,

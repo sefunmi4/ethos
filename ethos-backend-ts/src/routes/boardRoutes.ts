@@ -154,7 +154,7 @@ router.post(
       filters = {},
       featured = false,
       defaultFor = null,
-      structure = 'grid'
+      layout = "grid"
     } = req.body;
 
     const boards = boardsStore.read();
@@ -166,9 +166,9 @@ router.post(
       filters,
       featured,
       defaultFor,
-      structure,
+      layout,
       createdAt: new Date().toISOString(),
-      userId: req.user as string
+      userId: (req.user as any)?.id || ""
     };
 
     boards.push(newBoard);

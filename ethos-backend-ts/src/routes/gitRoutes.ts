@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
 import { authMiddleware } from '../middleware/authMiddleware';
 import {
   getQuestRepoMeta,
@@ -9,8 +10,13 @@ import {
   getDiff,
   getFileTree,
   getCommits,
+  initRepo,
+  createFolder,
+  createFile,
+  updateFile,
+  downloadRepo,
 } from '../services/gitService';
-import type { AuthenticatedRequest } from '../types/api';
+import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
 
@@ -182,4 +188,83 @@ router.get(
   }
 );
 
+// ✅ POST /api/git/create
+// Initialize a new repo for a quest
+router.post('/create', authMiddleware, async (
+  req: AuthenticatedRequest<{}, any, { questId: string; name: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const repo = await initRepo(req.body.questId, req.body.name);
+    res.json(repo);
+  } catch (err) {
+    console.error('[GIT CREATE ERROR]', err);
+    res.status(500).json({ error: 'Failed to create repo' });
+  }
+});
+
+//
+// ✅ POST /api/git/folders
+// Create a folder inside a repo
+router.post('/folders', authMiddleware, async (
+  req: AuthenticatedRequest<{}, any, { questId: string; folderPath: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const repo = await createFolder(req.body.questId, req.body.folderPath);
+    res.json(repo);
+  } catch (err) {
+    console.error('[GIT CREATE FOLDER ERROR]', err);
+    res.status(500).json({ error: 'Failed to create folder' });
+  }
+});
+
+//
+// ✅ POST /api/git/files
+// Create a new file
+router.post('/files', authMiddleware, async (
+  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content?: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const repo = await createFile(req.body.questId, req.body.filePath, req.body.content || '');
+    res.json(repo);
+  } catch (err) {
+    console.error('[GIT CREATE FILE ERROR]', err);
+    res.status(500).json({ error: 'Failed to create file' });
+  }
+});
+
+//
+// ✅ PUT /api/git/files
+// Update file content
+router.put('/files', authMiddleware, async (
+  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const repo = await updateFile(req.body.questId, req.body.filePath, req.body.content);
+    res.json(repo);
+  } catch (err) {
+    console.error('[GIT UPDATE FILE ERROR]', err);
+    res.status(500).json({ error: 'Failed to update file' });
+  }
+});
+
+//
+// ✅ GET /api/git/download/:questId
+// Download repo as zip
+router.get('/download/:questId', authMiddleware, async (
+  req: AuthenticatedRequest<{ questId: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const zipPath = path.join('/tmp', `${req.params.questId}.zip`);
+    await downloadRepo(req.params.questId, zipPath);
+    res.download(zipPath);
+  } catch (err) {
+    console.error('[GIT DOWNLOAD ERROR]', err);
+    res.status(500).json({ error: 'Failed to download repo' });
+  }
+});
 export default router;
