@@ -1,6 +1,19 @@
 // Shared type for linking Git data to quests or posts
 export type GitItemType = 'post' | 'quest';
 
+// Complete repository representation used across API responses
+export interface GitRepo {
+  id: string;
+  repoUrl: string;
+  defaultBranch: string;
+  branches: string[];
+  lastCommitSha: string;
+  lastSync?: string;
+  status: GitStatus;
+  fileTree: GitFileNode[];
+  commits: GitCommit[];
+}
+
 export interface GitLinkedItem {
   itemId: string;
   itemType: GitItemType;
@@ -62,6 +75,12 @@ export interface DBGitCommit {
   metadata?: GitMetaData;
 }
 
+export interface GitFileChange {
+  fileId: string;
+  type: 'add' | 'modify' | 'delete';
+  diff?: string;
+}
+
 export interface GitMetaData {
   size?: number;           // Size in bytes
   linesChanged?: number;
@@ -102,16 +121,21 @@ export interface GitBranch {
 // Git status relative to origin
 export interface GitStatus {
   branch?: string;
-  ahead: number;
-  behind: number;
+  ahead?: number;
+  behind?: number;
   isDirty?: boolean;
-  uncommittedChanges: GitFile[];
+  uncommittedChanges?: GitFile[];
 }
 
 export interface GitFileNode {
+  id?: string;
   path: string;
+  name?: string;
   type: 'file' | 'dir';
+  status?: 'added' | 'modified' | 'deleted' | 'unchanged';
   children?: GitFileNode[];
+  commitIds?: string[];
+  linkedItem?: GitLinkedItem;
 }
 
   
@@ -122,4 +146,4 @@ export interface GitRepoMeta {
   branch?: string;
 }
 
-  
+
