@@ -1,89 +1,110 @@
-// src/types/enriched.ts
+import type { Post, Quest, Board, User, GitRepoMeta, AppItem, GitCommit, GitFile, GitStatus } from './api';
 
-import { Post, Quest, Board, User } from './api';
 
-/**
- * 💬 Enriched Post
- * Used in PostCard, PostTimeline, QuestLogs, etc.
- */
 export interface EnrichedPost extends Post {
-  author?: EnrichedUser;              // Resolved user object
-  quest?: Partial<EnrichedQuest>;     // Basic quest data if linked
-  replies?: EnrichedPost[];           // Nested replies (threaded view)
-  reactions?: ReactionSummary;        // Reaction count summary
-  editable?: boolean;                 // For current user
-  isLinked?: boolean;                 // If it belongs to a quest/task
+  enrichedCollaborators?: Array<{
+    userId: string;
+    username?: string;
+    roles?: string[];
+    avatarUrl?: string;
+    bio?: string;
+  }>;
+
+  renderedContent?: string; // Markdown, etc.
+
+  mediaPreviews?: Array<{
+    url: string;
+    type: 'image' | 'video' | 'embed' | 'file';
+    title?: string;
+    thumbnail?: string;
+  }>;
+
+  quotedPost?: Post; // For reply or embed
+  originalEnrichedPost?: EnrichedPost; // For reposts
 }
 
-type BaseQuest = Omit<Quest, 'collaborators'>;
+export interface EnrichedQuest extends Quest {
+  headPost?: Post; // Head/intro post
+  linkedPostsResolved?: Post[]; // All posts linked
 
-/**
- * 📦 Enriched Quest
- */
-export interface EnrichedQuest extends BaseQuest {
-  logs?: EnrichedPost[];
-  tasks?: QuestTaskPost[];
-  owner?: EnrichedUser;
-  collaborators?: EnrichedUser[];
-  repoMeta?: GitRepoMeta;
+  // Subsets for UI filtering
+  logs?: Post[];
+  tasks?: Post[];
+  discussion?: Post[];
 
-  isEditable?: boolean;           // ✅ NEW
-  isCollaborator?: boolean;       // ✅ NEW
-  topLevelTasks?: QuestTaskPost[];// ✅ NEW
+  // Graph structure between posts/tasks
+  taskGraph?: TaskEdge[];
+
+  // Task progress summary
+  percentComplete?: number;
+  taskCount?: number;
+  completedTasks?: number;
+  blockedTasks?: number;
+
+  // UI-specific flags
+  isFeatured?: boolean;
+  isNew?: boolean;
 }
 
-export interface QuestTaskPost extends EnrichedPost {
-  status?: string;
-  priority?: number;
-  parentId?: string | null;
+
+// 🔍 TaskEdge type to define sub-problem relationships in the graph
+export interface TaskEdge {
+  from: string; // Node ID
+  to: string;   // Node ID
+  type?: 'sub_problem' | 'solution_branch' | 'folder_split'; // Describes edge purpose
+  label?: string;
 }
 
-/**
- * 🧠 Enriched Board
- * Combines layout + resolved posts/quests
- */
+
 export interface EnrichedBoard extends Board {
-  enrichedItems: EnrichedPost[] | EnrichedQuest[];
-  itemType: 'post' | 'quest';
-  selectedItemId?: string;
-  layoutMeta?: {
-    compact?: boolean;
-    filterTag?: string;
-  };
+  resolvedItems: AppItem[];
+
+  /** Optional computed groups */
+  posts?: AppItem[];   // Filtered for posts
+  quests?: AppItem[];  // Filtered for quests
+  tasks?: AppItem[];   // Filtered for 'task' type posts
+
+  /** Optional board-level stats */
+  postCount?: number;
+  questCount?: number;
+  taskCount?: number;
 }
 
-/**
- * 🧑 Enriched User
- * Used in PostHeader, ProfileBanner, etc.
- */
+export interface EnrichedGitCommit extends GitCommit {
+  linkedPost?: Post;
+  linkedQuest?: Quest;
+
+  // Optional enhancements
+  isRelease?: boolean;
+  isRevert?: boolean;
+  enrichedDiffHtml?: string;
+}
+
+export interface EnrichedGitRepo extends GitRepoMeta {
+  commits: EnrichedGitCommit[];
+  files: GitFile[];
+  branches: GitBranch[];
+  status: GitStatus;
+}
+
+// Branch metadata from Git
+export interface GitBranch {
+  name: string;
+  isDefault: boolean;
+  lastCommitSha: string;
+}
+
 export interface EnrichedUser extends User {
-  rank?: string;                      // Optional rank or skill title
-  skillTags?: string[];              // User tags like "developer", "artist"
-  xp?: Record<string, number>;       // XP per skill
-  level?: number;                    // Derived overall level
-  profileUrl?: string;               // Route to their profile
-  createdAt?:string;
-}
+  recentPosts?: Post[];
+  activeQuests?: Quest[];
 
-/**
- * 📊 Reaction Summary
- * Render emoji totals for post reaction buttons
- */
-export interface ReactionSummary {
-  like: number;
-  dislike: number;
-  laugh?: number;
-  fire?: number;
-  [emoji: string]: number | undefined;
-}
+  postCount?: number;
+  questCount?: number;
 
-/**
- * 🔁 Git Repo Metadata (if quest has linked GitHub repo)
- */
-export interface GitRepoMeta {
-  commits?: number;
-  contributors?: string[];
-  latestCommitDate?: string;
-  repoName?: string;
-  repoUrl?: string;
+  isOnline?: boolean;
+  isNew?: boolean;
+  isStaff?: boolean;
+
+  // Used for displaying roles as badges
+  displayRole?: string;
 }

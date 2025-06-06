@@ -120,6 +120,15 @@ export interface ReactionSet {
 }
 
 /**
+ * Optional log event in user timeline (e.g., “posted a quest”).
+ */
+export interface TimelineEvent {
+  userId: string;
+  type: string;
+  content: string;
+}
+
+/**
  * Extended post format for rendering, editing, and UI previews.
  */
 export interface EnrichedPost extends Post {
@@ -142,13 +151,4 @@ export interface EnrichedPost extends Post {
 
   quotedPost?: Post;
   originalEnrichedPost?: EnrichedPost;
-}
-
-/**
- * Optional log event in user timeline (e.g., “posted a quest”).
- */
-export interface TimelineEvent {
-  userId: string;
-  type: string;
-  content: string;
 }

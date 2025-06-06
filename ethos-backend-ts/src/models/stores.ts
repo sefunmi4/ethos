@@ -1,19 +1,10 @@
 
 // src/models/GitModel.ts
+import type { DBSchema } from '../types/db';
+import { createDataStore } from '../utils/loaders'
 
-export interface GitRepoMeta {
-  repoName: string;
-  repoUrl: string;
-  contributors?: string[];
-  commits?: number;
-  latestCommitDate?: string;
-}
-  
-import { JsonStore } from '../utils/loaders';
-import { User, Post, Quest, Board } from '../types/api';
-
-export const usersStore = new JsonStore<User>('src/data/users.json');
-export const postsStore = new JsonStore<Post>('src/data/posts.json');
-export const questsStore = new JsonStore<Quest>('src/data/quests.json');
-export const boardsStore = new JsonStore<Board>('src/data/boards.json');
-export const GitStore = new JsonStore<GitRepoMeta>('gitMeta.json');
+export const boardsStore = createDataStore<DBSchema['boards']>('boards.json');
+export const gitStore = createDataStore<DBSchema['git']>('git.json');
+export const postsStore = createDataStore<DBSchema['posts']>('posts.json');
+export const questsStore = createDataStore<DBSchema['quests']>('quests.json');
+export const usersStore = createDataStore<DBSchema['users']>('user.json');
