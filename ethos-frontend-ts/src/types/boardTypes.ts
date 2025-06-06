@@ -9,13 +9,13 @@ export interface Board {
   title: string;
   description?: string;
   layout: BoardLayout;
-  items: (string | null)[]; // item IDs (can be null if deleted)
-  filters?: Record<string, any>; // e.g., { visibility: 'public' }
+  items: (string | null)[];
+  filters?: Record<string, any>;
   featured?: boolean;
   defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
-  category?: string; // Optional board grouping
-  userId: string;
+  category?: string;
+  userId?: string; // 🔄 changed from required to optional
 }
 
 /**
@@ -24,7 +24,6 @@ export interface Board {
 export interface BoardData extends Board {
   enrichedItems?: any[];       // hydrated post/quest objects
   questId?: string;            // Used to associate board with a quest, if relevant
-  userId?: string;             // (optional) used for permission checks
 }
 
 export interface RenderableItem {
