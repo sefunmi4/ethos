@@ -2,6 +2,8 @@ import type { LinkedItem } from './itemTypes';
 import type { CollaberatorRoles } from './postTypes';
 import type { Post } from './postTypes';
 
+
+
 export interface Quest {
   id: string;
   authorId: string;
@@ -11,9 +13,14 @@ export interface Quest {
   headPostId: string;
   linkedPosts: LinkedItem[];
   collaborators: CollaberatorRoles[]; // ✅ Change this line
-  repoUrl?: string;
   createdAt?: string;
   ownerId?: string;
+
+  // Git metadata
+  gitRepoUrl?: string;
+  repoStatus?: GitStatus;
+  repoTree?: GitFileNode[];
+  
   // 🆕 Optional additions
   tags?: string[];
 }

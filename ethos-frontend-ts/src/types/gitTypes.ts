@@ -8,12 +8,6 @@ export interface GitLinkedItem {
   label?: string;
 }
 
-export interface GitMetaData {
-    size?: number;           // Size in bytes
-    linesChanged?: number;
-    additions?: number;
-    deletions?: number;
-}
 
 // File type used across commits, status, and diffs
 export interface GitFile {
@@ -35,6 +29,44 @@ export interface GitFile {
   blobUrl?: string; // optional link to raw file
   filesChanged: GitFile[];
   parentHashes?: string[];
+}
+
+export interface DBGitRepo {
+  repoUrl: string;
+  defaultBranch: string;
+  branches: string[];
+  lastCommitSha: string;
+  status: GitStatus;
+  lastSync?: string;
+  files?: DBGitFile;
+}
+
+export interface DBGitFile {
+  path: string;
+  name: string;
+  type: string;
+  status: string;
+  linkedTo?: GitLinkedItem;
+  commits?: DBGitCommit;
+}
+
+export interface DBGitCommit {
+  id: string;
+  message: string;
+  authorId: string;
+  timestamp: string;
+  files: string[]; // array of file paths or file IDs
+  parentShas?: string[];
+  linkedItem?: GitLinkedItem;
+  tags?: string[];
+  metadata?: GitMetaData;
+}
+
+export interface GitMetaData {
+  size?: number;           // Size in bytes
+  linesChanged?: number;
+  additions?: number;
+  deletions?: number;
 }
 
 // Metadata about a commit in a Git repo
@@ -69,16 +101,25 @@ export interface GitBranch {
 
 // Git status relative to origin
 export interface GitStatus {
+  branch?: string;
   ahead: number;
   behind: number;
+  isDirty?: boolean;
   uncommittedChanges: GitFile[];
 }
 
+export interface GitFileNode {
+  path: string;
+  type: 'file' | 'dir';
+  children?: GitFileNode[];
+}
 
   
-  export interface GitRepoMeta {
-    repoUrl?: string;
-    connected?: boolean;
-    lastSync?: string;
-    branch?: string;
-  }
+export interface GitRepoMeta {
+  repoUrl?: string;
+  connected?: boolean;
+  lastSync?: string;
+  branch?: string;
+}
+
+  

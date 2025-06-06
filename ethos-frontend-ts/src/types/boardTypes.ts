@@ -1,44 +1,20 @@
-import type { User } from '../types/userTypes';
-import type { Quest } from '../types/questTypes';
-
-/** Supported board categories used for grouping items like posts, quests, maps, or logs */
-export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
-
-/** Supported board structures for organizing items */
-export type BoardStructure = 'grid' | 'graph' | 'thread';
-
-/** Git metadata attached to boards or items */
-export interface GitStatus {
-  branch?: string;
-  ahead?: number;
-  behind?: number;
-  isDirty?: boolean;
-}
-
-export interface GitFileNode {
-  path: string;
-  type: 'file' | 'dir';
-  children?: GitFileNode[];
-}
+import type { User } from './userTypes';
+import type { Post } from './postTypes';
+import type { Quest } from './questTypes';
+import type { Visibility, ItemType } from './common';
 
 /** Generic board interface shared across profile, quests, etc. */
 export interface Board {
   id: string;
   title: string;
   description?: string;
-  type: BoardType;
-  structure: BoardStructure;
+  layout: BoardLayout;
   items: (string | null)[]; // item IDs (can be null if deleted)
   filters?: Record<string, any>; // e.g., { visibility: 'public' }
   featured?: boolean;
   defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
   category?: string; // Optional board grouping
-
-  // Git metadata
-  gitRepoUrl?: string;
-  repoStatus?: GitStatus;
-  repoTree?: GitFileNode[];
 }
 
 /**
@@ -50,11 +26,29 @@ export interface BoardData extends Board {
   userId?: string;             // (optional) used for permission checks
 }
 
+export interface RenderableItem {
+  id: string;
+  type: ItemType;
+  title?: string;
+  content?: string;
+  status?: string;
+  authorId?: string;
+  visibility?: Visibility;
+  tags?: string[];
+  enriched?: boolean;
+  // You can safely add more based on shared fields
+}
+
+export type BoardItem = RenderableItem | Post | Quest | Board ;
+
+export type BoardLayout = 'grid' | 'graph' | 'thread';
+
+
 /** Props passed to the Board component */
 export interface BoardProps {
   boardId?: string;
   board?: BoardData;
-  structure?: BoardStructure;
+  layout?: BoardLayout;
   title?: string;
   user?: User;
   editable?: boolean;

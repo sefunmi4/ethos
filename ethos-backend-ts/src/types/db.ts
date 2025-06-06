@@ -68,6 +68,22 @@ export interface DBBoard {
   createdAt?: string;
 }
 
+// Efficient DB model for quick lookups and storage
+export interface BoardDB {
+  id: string;
+  title: string;
+  description?: string;
+  type: BoardType;
+  structure: BoardStructure;
+  items: string[];
+  filters?: Record<string, any>;
+  featured?: boolean;
+  defaultFor?: string;
+  createdAt: string;
+  userId: string;
+  category?: string;
+}
+
 
 export interface DBGitRepo {
   repoUrl: string;

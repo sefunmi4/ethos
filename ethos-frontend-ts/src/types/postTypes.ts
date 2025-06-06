@@ -1,41 +1,4 @@
-import type { Visibility } from './common';
-import type { LinkedItem } from './itemTypes';
-
-/**
- * Supported types of posts used throughout the system.
- */
-export type PostType =
-  | 'free_speech'
-  | 'request'
-  | 'log'
-  | 'task'
-  | 'quest'
-  | 'meta_system'
-  | 'meta_announcement'
-  | 'commit'
-  | 'issue'
-  | 'solved';
-  
-/**
- * Supported tags for labeling and filtering posts.
- */
-export type PostTag =
-  | 'ai'
-  | 'feedback'
-  | 'story'
-  | 'system'
-  | 'bug'
-  | 'progress'
-  | 'event'
-  | 'release'
-  | 'repost'
-  | 'quest'
-  | string;
-
-/**
- * Optional task progress label for posts in quest boards.
- */
-export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | string;
+import type { Visibility, ItemType } from './common';
 
 /**
  * Base post structure used across the platform.
@@ -75,10 +38,37 @@ export interface Post {
 
   enriched?: boolean;
 
-  /** Commit-style enhancements */
-  linkedNodeId?: string;         // link to file or code node
-  gitDiff?: string;              // unified diff format (commit or patch)
-  commitSummary?: string;        // short summary for commit-type posts
+  // 🆕 Git metadata
+  gitCommitSha?: string;
+  gitFilePath?: string;
+  gitDiff?: string;                // Optional: diff in unified format
+  commitSummary?: string;         // short description for commit-type post
+  linkedNodeId?: string;          // optional file/folder node reference
+}
+
+/**
+ * Extended post format for rendering, editing, and UI previews.
+ */
+export interface EnrichedPost extends Post {
+  enrichedCollaborators?: Array<{
+    userId: string;
+    username?: string;
+    roles?: string[];
+    avatarUrl?: string;
+    bio?: string;
+  }>;
+
+  renderedContent?: string;
+
+  mediaPreviews?: Array<{
+    url: string;
+    type: 'image' | 'video' | 'embed' | 'file';
+    title?: string;
+    thumbnail?: string;
+  }>;
+
+  quotedPost?: Post;
+  originalEnrichedPost?: EnrichedPost;
 }
 
 /**
@@ -119,6 +109,57 @@ export interface ReactionSet {
   repost?: Record<string, string>;
 }
 
+export interface LinkedItem {
+  itemId: string;
+  itemType: ItemType;
+  nodeId?: string;
+  title?: string;
+  linkType?: LinkType;
+  linkStatus?: LinkStatus;
+  notifyOnChange?: boolean;     // Triggers alert if updated
+  cascadeSolution?: boolean;   // Triggers downstream propagation
+}
+
+export type LinkType = 'related' | 'solution' | 'duplicate' | 'quote' | 'reference';
+export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
+
+/**
+ * Optional task progress label for posts in quest boards.
+ */
+export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | string;
+
+/**
+ * Supported types of posts used throughout the system.
+ */
+export type PostType =
+  | 'free_speech'
+  | 'request'
+  | 'log'
+  | 'task'
+  | 'quest'
+  | 'meta_system'
+  | 'meta_announcement'
+  | 'commit'
+  | 'issue'
+  | 'solved';
+  
+/**
+ * Supported tags for labeling and filtering posts.
+ */
+export type PostTag =
+  | 'ai'
+  | 'feedback'
+  | 'story'
+  | 'system'
+  | 'bug'
+  | 'progress'
+  | 'event'
+  | 'release'
+  | 'repost'
+  | 'quest'
+  | string;
+
+
 /**
  * Optional log event in user timeline (e.g., “posted a quest”).
  */
@@ -126,29 +167,4 @@ export interface TimelineEvent {
   userId: string;
   type: string;
   content: string;
-}
-
-/**
- * Extended post format for rendering, editing, and UI previews.
- */
-export interface EnrichedPost extends Post {
-  enrichedCollaborators?: Array<{
-    userId: string;
-    username?: string;
-    roles?: string[];
-    avatarUrl?: string;
-    bio?: string;
-  }>;
-
-  renderedContent?: string;
-
-  mediaPreviews?: Array<{
-    url: string;
-    type: 'image' | 'video' | 'embed' | 'file';
-    title?: string;
-    thumbnail?: string;
-  }>;
-
-  quotedPost?: Post;
-  originalEnrichedPost?: EnrichedPost;
 }

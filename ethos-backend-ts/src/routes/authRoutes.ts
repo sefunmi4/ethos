@@ -194,6 +194,32 @@ router.get('/me', cookieAuth, (req: AuthenticatedRequest, res: Response): void =
   res.json({ id, username, role, tags, bio, links, experienceTimeline });
 });
 
+router.patch('/me', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const users = loadUsers();
+  const user = users.find(u => u.id === req.user?.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  Object.assign(user, req.body); // validate if needed
+  saveUsers(users);
+  res.json(user);
+}));
+
+router.post('/archive', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const users = loadUsers();
+  const user = users.find(u => u.id === req.user?.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  user.status = 'archived';
+  saveUsers(users);
+  res.json({ success: true });
+}));
+
+router.delete('/me', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  let users = loadUsers();
+  users = users.filter(u => u.id !== req.user?.id);
+  saveUsers(users);
+  res.json({ success: true });
+}));
 router.post('/refresh', (req: Request, res: Response): void => {
   const token = req.cookies?.refreshToken;
   if (!token) {

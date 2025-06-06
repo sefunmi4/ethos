@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
 import { enrichBoard } from '../utils/enrich';
-import type { BoardData, AuthenticatedRequest } from '../types/api';
+import type { BoardData } from '../types/api';
+import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
 
@@ -70,7 +71,7 @@ router.get(
     let result: BoardData = board;
 
     if (enrich === 'true') {
-      const enriched = enrichBoard(board, { posts, users, quests });
+      const enriched = enrichBoard(board, { posts, quests });
       result = {
         ...enriched,
         structure: board.structure ?? 'grid',
@@ -106,7 +107,7 @@ router.get(
 
     let result: BoardData = board;
     if (enrich === 'true') {
-      const enriched = enrichBoard(board, { posts, users, quests });
+      const enriched = enrichBoard(board, { posts, quests });
       result = { ...enriched, structure: board.structure ?? 'grid' };
     }
 
@@ -149,9 +150,8 @@ router.post(
     const {
       title,
       description = '',
-      itemType = 'post',
       items = [],
-      filterTags = {},
+      filters = {},
       featured = false,
       defaultFor = null,
       structure = 'grid'
@@ -162,14 +162,13 @@ router.post(
       id: uuidv4(),
       title,
       description,
-      itemType,
       items,
-      filterTags,
+      filters,
       featured,
       defaultFor,
       structure,
       createdAt: new Date().toISOString(),
-      createdBy: req.user as string
+      userId: req.user as string
     };
 
     boards.push(newBoard);

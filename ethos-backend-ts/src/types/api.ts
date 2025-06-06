@@ -162,8 +162,17 @@ export interface Board {
   structure?: 'grid' | 'list' | 'graph' | 'thread';
   defaultFor?: string;
   createdAt?: string;
-
+  filters: Record<string, any>;
   items: string[]; // Still just IDs here
+}
+
+/**
+ * Enriched board format used when fetching detailed items
+ */
+export interface BoardData extends Board {
+  enrichedItems?: any[];       // hydrated post/quest objects
+  questId?: string;            // Used to associate board with a quest, if relevant
+  userId?: string;             // (optional) used for permission checks
 }
 
 export interface RenderableItem {
@@ -255,12 +264,11 @@ export interface GitLinkedItem {
 }
 
 
-// types/api.ts
-
 export interface User {
   id: string;
   email: string;
   username: string;
+  password: string;
   role: UserRole;
 
   name?: string;
