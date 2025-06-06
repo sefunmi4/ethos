@@ -7,6 +7,9 @@
     "outDir": "dist",
     "baseUrl": "./src",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": [
+      "node",
+      "jest"
+    ]
   }
 }
