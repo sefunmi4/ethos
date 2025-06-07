@@ -19,7 +19,7 @@ export async function initRepo(questId: string, name: string): Promise<GitRepo> 
   const repoDir = ensureRepoDir(questId);
   const repos = gitStore.read();
   const existing = repos.find((r) => (r as any).id === questId);
-  const repo: GitRepo = existing || {
+  const repo: GitRepo = existing || { //TODO: Type 'DBGitRepo | GitRepo' is not assignable to type 'GitRepo'.
     id: questId,
     repoUrl: '',
     defaultBranch: 'main',
@@ -154,7 +154,7 @@ export async function downloadRepo(
     const output = fs.createWriteStream(outPath);
     const archive = archiver('zip', { zlib: { level: 9 } });
     output.on('close', () => resolve());
-    archive.on('error', (err) => reject(err));
+    archive.on('error', (err) => reject(err));//TODO: Parameter 'err' implicitly has an 'any' type.t
     archive.pipe(output);
     archive.directory(repoDir, false);
     archive.finalize();

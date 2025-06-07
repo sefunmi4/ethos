@@ -4,7 +4,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest } from '../utils/enrich';
-import type { Quest, LinkedItem, Post } from '../types/api';
+import type { Quest, LinkedItem } from '../types/api';
 
 interface AuthRequest<
   P = any,
@@ -86,7 +86,7 @@ router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res:
 router.get(
   '/:id',
   authOptional,
-  async (req: AuthRequest<{ id: string }, any, any, { enrich?: string }>, res: Response) => {
+  async (req: AuthRequest<{ id: string }, any, any, { enrich?: string }>, res: Response) => { //TODO: No overload matches this call.
   const { id } = req.params;
   const { enrich } = req.query;
   const userId = req.user?.id || null;
