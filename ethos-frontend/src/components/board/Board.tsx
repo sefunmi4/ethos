@@ -76,18 +76,39 @@ const Board: React.FC<BoardProps> = ({
 
   const filteredItems = useMemo(() => {
     let result = [...items];
-    if (filter?.type) {
-      result = result.filter((item) => item.type === filter.type);
+
+    if (filter?.itemType) {
+      result = result.filter((item) =>
+        filter.itemType === 'quest'
+          ? 'headPostId' in item
+          : 'content' in item
+      );
+    }
+
+    if (filter?.postType) {
+      result = result.filter((item) =>
+        'type' in item && (item as Post).type === filter.postType
+      );
+    }
+
+    if (filter?.linkType) {
+      result = result.filter(
+        (item) =>
+          'linkedItems' in item &&
+          (item as Post).linkedItems?.some((l) => l.linkType === filter.linkType)
+      );
     }
 
     return result
       .filter((item: Post) => {
-        const title = getDisplayTitle(item) ?? '';
+        const title = getDisplayTitle(item as Post) ?? '';
         return title.toLowerCase().includes(filterText.toLowerCase());
       })
       .sort((a, b) => {
-        const aVal = sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a) ?? '';
-        const bVal = sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b) ?? '';
+        const aVal =
+          sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a as Post) ?? '';
+        const bVal =
+          sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as Post) ?? '';
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
