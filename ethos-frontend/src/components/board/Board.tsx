@@ -25,7 +25,7 @@ const Board: React.FC<BoardProps> = ({
   editable: forcedEditable,
   readOnly = false,
   compact = false,
-  showCreate = false,
+  showCreate = true,
   filter = {},
   onScrollEnd,
   loading: loadingMore = false,
