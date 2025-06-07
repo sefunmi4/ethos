@@ -1,0 +1,13 @@
+[
+  {
+    "id": "default-home-board",
+    "title": "Welcome Board",
+    "description": "This is the default home board for new users.",
+    "layout": "grid",
+    "items": [],
+    "defaultFor": "home",
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  }
+]
