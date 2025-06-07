@@ -59,7 +59,7 @@ export interface DBQuest {
 
   headPostId: string;
   linkedPosts: LinkedItem[];
-  collaborators: { userId: string; roles?: string[] }[];
+  collaborators: { userId?: string; roles?: string[] }[];
 
   gitRepo?: {
     repoId: string;

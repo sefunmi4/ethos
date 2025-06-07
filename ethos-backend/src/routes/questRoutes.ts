@@ -5,6 +5,7 @@ import authOptional from '../middleware/authOptional';
 import { questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest } from '../utils/enrich';
 import type { Quest, LinkedItem } from '../types/api';
+import type { DBQuest } from '../types/db';
 
 interface AuthRequest<
   P = any,
@@ -56,7 +57,17 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
   };
 
   const quests = questsStore.read();
-  quests.push(newQuest);
+  const dbQuest = {
+    ...newQuest,
+    gitRepo: newQuest.gitRepo
+      ? {
+          repoId: newQuest.gitRepo.repoId,
+          headCommitId: newQuest.gitRepo.headCommitId,
+          defaultBranch: newQuest.gitRepo.defaultBranch,
+        }
+      : undefined,
+  } as DBQuest;
+  quests.push(dbQuest);
   questsStore.write(quests);
 
   res.status(201).json(newQuest);
@@ -145,6 +156,35 @@ router.post(
 
   res.json(quest);
 });
+
+// POST add a collaborator or open role
+router.post(
+  '/:id/collaborators',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }, any, { userId?: string; roles?: string[] }>, res: Response): void => {
+    const { id } = req.params;
+    const { userId, roles = [] } = req.body;
+
+    const quests = questsStore.read();
+    const users = usersStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    if (userId && !users.find(u => u.id === userId)) {
+      res.status(400).json({ error: 'User not found' });
+      return;
+    }
+
+    quest.collaborators = quest.collaborators || [];
+    quest.collaborators.push({ userId, roles });
+    questsStore.write(quests);
+
+    res.json(quest);
+  }
+);
 
 // GET quest tree (hierarchy)
 router.get(
