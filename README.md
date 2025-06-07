@@ -97,6 +97,7 @@ Vite looks for `postcss.config.cjs` in this directory. If you encounter
 `@tailwindcss/postcss` plugin is available after pulling new changes.
 If the plugin cannot be found after installing, try running `npm install --legacy-peer-deps` to resolve peer dependency conflicts.
 
+
 `.env` for frontend:
 
 ```env
@@ -115,6 +116,7 @@ node src/server.js
 
 ```env
 PORT=3001
+
 ACCESS_SECRET=your_access_secret
 REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
