@@ -26,7 +26,7 @@ router.get(
     let result: BoardData[] = boards;
 
     if (enrich === 'true') {
-      result = boards.map(board => {
+      result = boards.map(board => { //todo: Type '{ layout: BoardLayout; items: (string | null)[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; resolvedItems: AppItem[]; posts?:
         const enriched = enrichBoard(board, { posts, quests });
         return {
           ...enriched,
@@ -72,7 +72,7 @@ router.get(
 
     if (enrich === 'true') {
       const enriched = enrichBoard(board, { posts, quests });
-      result = {
+      result = { //todo: Type '{ layout: BoardLayout; resolvedItems: AppItem[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; ... 15 more ...; userId: string; }' is not assignable to type 'BoardData'.
         ...enriched,
         layout: board.layout ?? 'grid',
       };
@@ -108,7 +108,7 @@ router.get(
     let result: BoardData = board;
     if (enrich === 'true') {
       const enriched = enrichBoard(board, { posts, quests });
-      result = { ...enriched, layout: board.layout ?? 'grid' };
+      result = { ...enriched, layout: board.layout ?? 'grid' }; //todo: Type '{ layout: BoardLayout; resolvedItems: AppItem[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; ... 15 more ...; userId: string; }' is not assignable to type 'BoardData'.
     }
 
     res.json(result);

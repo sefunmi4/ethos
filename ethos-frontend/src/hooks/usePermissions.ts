@@ -18,7 +18,7 @@ interface UsePermissions {
 }
 
 export const usePermissions = (): UsePermissions => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); //todo: tBoard: (boardId: string) => boolean;
   const permissionCache = useRef<PermissionCache>({});
 
   const hasAccessToBoard = useCallback((boardId: string): boolean => {

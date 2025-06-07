@@ -31,10 +31,11 @@ const PublicProfilePage: React.FC = () => {
     const fetchProfileData = async () => {
       try {
         const { profile, quests, posts } = await loadPublicBoards(userId);
-        const enrichedQuests = await enrichQuests(quests.items);
+        const enrichedQuests = await enrichQuests(quests.items); //todo: Argument of type '(string | null)[]' is not assignable to parameter of type '(Quest | Post)[]'.
         const enrichedPosts = await enrichPosts(posts.items);
 
         setProfile(profile);
+        //todo commentong 
         setQuestBoard({ ...quests, enrichedItems: enrichedQuests });
         setPostBoard({ ...posts, enrichedItems: enrichedPosts });
       } catch (err) {

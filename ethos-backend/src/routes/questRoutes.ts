@@ -129,7 +129,7 @@ router.post(
 });
 
 // GET quest tree (hierarchy)
-router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Response) => {
+router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Response) => {  //TODO: No overload matches this call.
   const { id } = req.params;
 
   const quests = questsStore.read();
@@ -155,7 +155,7 @@ router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Respon
 });
 
 // DELETE quest
-router.delete('/:id', authMiddleware, (req: AuthRequest<{ id: string }>, res: Response) => {
+router.delete('/:id', authMiddleware, (req: AuthRequest<{ id: string }>, res: Response) => {  //TODO: No overload matches this call.
   const { id } = req.params;
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);

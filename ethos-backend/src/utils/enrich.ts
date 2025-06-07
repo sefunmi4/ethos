@@ -239,7 +239,7 @@ export const enrichBoard = (
     })
     .filter((i): i is EnrichedPost | EnrichedQuest => i !== null);
 
-  return {
+  return { // tood: Property 'resolvedItems' is missing in type '{ enrichedItems: (EnrichedQuest | EnrichedPost)[]; id: string; title: string; des
     ...board,
     enrichedItems,
   };
