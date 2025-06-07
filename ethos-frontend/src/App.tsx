@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { BoardProvider } from './contexts/BoardContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
+import { TimelineProvider } from './contexts/TimelineContext';
 
 import NavBar from './components/ui/NavBar';
 import PrivateRoute from './routes/ProtectedRoute';
@@ -38,15 +39,16 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <BoardProvider>
-          <div className="min-h-screen flex flex-col bg-white text-gray-900">
-            {/* Top-level navigation */}
-            <NavBar />
+        <TimelineProvider>
+          <BoardProvider>
+            <div className="min-h-screen flex flex-col bg-white text-gray-900">
+              {/* Top-level navigation */}
+              <NavBar />
 
-            <main className="flex-1 w-full">
-              {/* Suspense fallback while lazy routes are loading */}
-              <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
-                <Routes>
+              <main className="flex-1 w-full">
+                {/* Suspense fallback while lazy routes are loading */}
+                <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+                  <Routes>
                   {/* ✅ Publicly accessible routes */}
                   <Route path={ROUTES.HOME} element={<Home />} />
                   <Route path={ROUTES.LOGIN} element={<Login />} />
@@ -67,7 +69,8 @@ const App: React.FC = () => {
               </Suspense>
             </main>
           </div>
-        </BoardProvider>
+          </BoardProvider>
+        </TimelineProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

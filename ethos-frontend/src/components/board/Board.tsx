@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { fetchBoard, fetchBoardItems } from '../../api/board';
-import { usePermissions } from '../../hooks/usePermissions'; 
+import { usePermissions } from '../../hooks/usePermissions';
 import { useSocketListener } from '../../hooks/useSocket'; 
 import { getDisplayTitle } from '../../utils/displayUtils';
 
@@ -25,7 +25,7 @@ const Board: React.FC<BoardProps> = ({
   editable: forcedEditable,
   readOnly = false,
   compact = false,
-  showCreate = false,
+  showCreate = true,
   filter = {},
   onScrollEnd,
   loading: loadingMore = false,
@@ -165,7 +165,7 @@ const Board: React.FC<BoardProps> = ({
               Reset View
             </Button>
           )}
-          {editable && showCreate && (
+          {showCreate && user && (
             <Button variant="primary" onClick={() => setShowCreateForm(true)}>
               + Add Item
             </Button>
