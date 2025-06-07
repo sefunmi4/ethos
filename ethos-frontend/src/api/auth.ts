@@ -109,3 +109,15 @@ export const deleteUserAccount = async (): Promise<{ success: boolean }> => {
   const res = await axiosWithAuth.delete('/auth/me');
   return res.data;
 };
+
+
+/**
+ * @function fetchUserById
+ * 📄 Fetch a public user profile by ID
+ * @param userId - The user's unique ID
+ * @returns A full User object (public fields only)
+ */
+export const fetchUserById = async (userId: string): Promise<User> => {
+  const res = await axiosWithAuth.get(`/users/${userId}`);
+  return res.data;
+};

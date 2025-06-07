@@ -1,3 +1,4 @@
+
 /**
  * Represents a registered user in the system.
  */
@@ -85,4 +86,4 @@ export interface UserExperienceEvent {
    * Example: ['education', 'achievement']
    */
   tags?: string[];
-
+}
