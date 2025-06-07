@@ -7,7 +7,7 @@ import { formatPosts } from '../logic/postFormatter';
 
 
 /**
- * Normalize DBPost into valid Post structure.
+ * Normalize DBPost into valid Post layout.
  */
 const normalizePost = (post: DBPost): Post => {
   const repostMeta: RepostMeta | null =
@@ -212,14 +212,28 @@ export const enrichBoard = (
   {
     posts = postsStore.read(),
     quests = questsStore.read(),
+    users = usersStore.read(),
+    currentUserId = null,
   }: {
     posts?: DBPost[];
     quests?: DBQuest[];
+    users?: DBUser[];
+    currentUserId?: string | null;
   }
 ): EnrichedBoard => {
-  const enrichedItems = board.items
-    .map((id) => posts.find((p) => p.id === id) || quests.find((q) => q.id === id))
-    .filter(Boolean);
+  const enrichedItems = board.items.map((id) => {
+    const post = posts.find((p) => p.id === id);
+    if (post) {
+      return enrichPost(post, { users, currentUserId });
+    }
+
+    const quest = quests.find((q) => q.id === id);
+    if (quest) {
+      return enrichQuest(quest, { posts, users, currentUserId });
+    }
+
+    return null;
+  }).filter(Boolean);
 
   return {
     ...board,

@@ -158,7 +158,7 @@ export interface DBUserExperienceEvent {
 }
 
 /**
- * Represents the in-memory or file-backed structure of your JSON data store.
+ * Represents the in-memory or file-backed layout of your JSON data store.
  * You can expand this to include reaction data, logs, etc.
  */
 export interface DBSchema {

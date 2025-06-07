@@ -41,8 +41,8 @@ const QuestPage: React.FC = () => {
   // 🧠 Listen to board updates over socket
   useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (updatedBoard.questId !== id) return;
-    if (updatedBoard.structure === 'graph') refreshMap?.();
-    if (updatedBoard.structure === 'grid') refreshLog?.();
+    if (updatedBoard.layout === 'graph') refreshMap?.();
+    if (updatedBoard.layout === 'grid') refreshLog?.();
   });
 
   // 🧱 Cache loaded boards
@@ -85,7 +85,7 @@ const QuestPage: React.FC = () => {
         {mapBoard ? (
           <Board
             board={mapBoard}
-            structure="graph"
+            layout="graph"
             editable={user?.id === quest.ownerId}
             quest={quest}
           />
@@ -100,7 +100,7 @@ const QuestPage: React.FC = () => {
         {logBoard ? (
           <Board
             board={logBoard}
-            structure="grid"
+            layout="grid"
             editable={true}
             quest={quest}
             user={user as User}

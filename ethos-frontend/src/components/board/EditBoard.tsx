@@ -3,13 +3,13 @@ import { Input, Select, TextArea, Button, Label, FormSection } from '../ui';
 import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
 import { updateBoard, removeBoard } from '../../api/board';
 import type { BoardData, EditBoardProps } from '../../types/boardTypes';
-import type { BoardStructure } from '../../types/boardTypes';
+import type { BoardLayout } from '../../types/boardTypes';
 import { getDisplayTitle } from '../../utils/displayUtils'; 
 
 const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete }) => {
   const [title, setTitle] = useState(board.title || '');
   const [description, setDescription] = useState(board.description || '');
-  const [structure, setStructure] = useState(board.structure || 'grid');
+  const [layout, setStructure] = useState(board.layout || 'grid');
   const [visibility, setVisibility] = useState(board.filters?.visibility || 'public');
   const [category, setCategory] = useState(board.category || '');
   const [items, setItems] = useState<(string | null)[]>(board.items || []);
@@ -32,7 +32,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
     const payload: Partial<BoardData> = {
       title: title.trim(),
       description: description.trim(),
-      structure,
+      layout,
       items,
       filters: { visibility },
       category: category.trim() || undefined,
@@ -74,11 +74,11 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <Label htmlFor="structure">Structure</Label>
+        <Label htmlFor="layout">Structure</Label>
         <Select
-          id="structure"
-          value={structure}
-          onChange={(e) => setStructure(e.target.value as BoardStructure)}
+          id="layout"
+          value={layout}
+          onChange={(e) => setStructure(e.target.value as BoardLayout)}
           options={STRUCTURE_OPTIONS.slice()}
         />
 

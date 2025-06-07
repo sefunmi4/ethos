@@ -142,6 +142,7 @@ export interface Quest {
   collaborators: CollaberatorRoles[];
   gitRepo: {
     repoId: string;
+    repoUrl: string;
     headCommitId?: string;
     defaultBranch?: string;
   };

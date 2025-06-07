@@ -32,7 +32,7 @@ export interface EnrichedQuest extends Quest {
   tasks?: Post[];
   discussion?: Post[];
 
-  // Graph structure between posts/tasks
+  // Graph layout between posts/tasks
   taskGraph?: TaskEdge[];
 
   // Task progress summary
@@ -58,10 +58,11 @@ export interface TaskEdge {
 
 export interface EnrichedBoard extends Board {
   resolvedItems: AppItem[];
+  enrichedItems: (EnrichedPost | EnrichedQuest)[];
 
   /** Optional computed groups */
-  posts?: AppItem[];   // Filtered for posts
-  quests?: AppItem[];  // Filtered for quests
+  posts?: EnrichedPost[];   // Filtered for posts
+  quests?: EnrichedQuest[];  // Filtered for quests
   tasks?: AppItem[];   // Filtered for 'task' type posts
 
   /** Optional board-level stats */

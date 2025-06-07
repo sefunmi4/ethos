@@ -14,7 +14,7 @@ import { useTimeline } from '../hooks/useTimeline';
 import { useGraph } from '../hooks/useGraph';
 
 
-// Type guard to validate structure of user object
+// Type guard to validate layout of user object
 const isValidAuthUser = (data: any): data is AuthUser => {
   return data && typeof data.id === 'string' && typeof data.email === 'string';
 };

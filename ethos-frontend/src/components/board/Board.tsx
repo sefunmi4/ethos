@@ -13,14 +13,14 @@ import ThreadLayout from '../layout/ThreadLayout';
 
 import { Button, Input, Select } from '../ui';
 
-import type { BoardData, BoardProps, BoardStructure } from '../../types/boardTypes';
+import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
 import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 const Board: React.FC<BoardProps> = ({
   boardId,
   title: forcedTitle,
-  structure: forcedStructure,
+  layout: forcedStructure,
   user,
   editable: forcedEditable,
   readOnly = false,
@@ -34,7 +34,7 @@ const Board: React.FC<BoardProps> = ({
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Post[]>([]);
-  const [viewMode, setViewMode] = useState<BoardStructure | null>(null);
+  const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
   const [filterText, setFilterText] = useState('');
@@ -97,8 +97,8 @@ const Board: React.FC<BoardProps> = ({
     setShowCreateForm(false);
   };
 
-  const resolvedStructure: BoardStructure =
-    viewMode || forcedStructure || board?.structure || 'grid';
+  const resolvedStructure: BoardLayout =
+    viewMode || forcedStructure || board?.layout || 'grid';
 
   const editable = useMemo(() => {
     if (readOnly) return false;
@@ -153,7 +153,7 @@ const Board: React.FC<BoardProps> = ({
           />
           <Select
             value={resolvedStructure}
-            onChange={(e) => setViewMode(e.target.value as BoardStructure)}
+            onChange={(e) => setViewMode(e.target.value as BoardLayout)}
             options={[
               { value: 'grid', label: 'Grid' },
               { value: 'graph', label: 'Graph' },

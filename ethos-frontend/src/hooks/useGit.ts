@@ -90,7 +90,7 @@ export const useGitDiff = ({
   });
 };
 
-// Hook to fetch file/folder structure from Git
+// Hook to fetch file/folder layout from Git
 export const useGitFileTree = (questId: string) => {
   return useQuery<{ files: string[]; folders: string[] }>({
     queryKey: ['gitFileTree', questId],

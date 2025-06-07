@@ -1,7 +1,7 @@
 import type { Visibility, ItemType } from './common';
 
 /**
- * Base post structure used across the platform.
+ * Base post layout used across the platform.
  */
 export interface Post {
   id: string;

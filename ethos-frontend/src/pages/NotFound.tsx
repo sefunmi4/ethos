@@ -53,7 +53,7 @@ const NotFound: React.FC = () => {
           </h3>
           <Board
             board={userQuestBoard}
-            structure={userQuestBoard.structure || 'grid'}
+            layout={userQuestBoard.layout || 'grid'}
             editable={false}
             compact={true}
             title="Suggested Quests"
@@ -69,7 +69,7 @@ const NotFound: React.FC = () => {
           </h3>
           <Board
             board={userPostBoard}
-            structure={userPostBoard.structure || 'grid'}
+            layout={userPostBoard.layout || 'grid'}
             editable={false}
             compact={true}
             title="Suggested Posts"

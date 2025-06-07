@@ -4,7 +4,7 @@ import { axiosWithAuth } from '../utils/authUtils';
 import type { BoardData } from '../types/boardTypes';
 import type { Post } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
-import type { BoardStructure, BoardType } from '../types/boardTypes';
+import type { BoardLayout, BoardType } from '../types/boardTypes';
 
 const BASE_URL = '/api/boards';
 
@@ -46,13 +46,13 @@ export const fetchBoardItems = async (id: string): Promise<(Post | Quest)[]> => 
 
 /**
  * ➕ addBoard → Create a new board
- * @param data Object containing board fields (title, type, structure, etc)
+ * @param data Object containing board fields (title, type, layout, etc)
  */
 export const addBoard = async (data: {
   title: string;
   description: string;
   type: BoardType;
-  structure: BoardStructure;
+  layout: BoardLayout;
   items: string[];
   filters: Record<string, any>;
   featured: boolean;

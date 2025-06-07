@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'; 
 import type { FormEvent } from 'react'; 
-import { patchQuest } from '../../api/quest';  //TODO: patchQuest
+import { updateQuestById } from '../../api/quest';  //TODO: updateQuestById
 import type { Quest } from '../../types/questTypes';  
 import type { CollaberatorRoles } from '../../types/postTypes';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -36,7 +36,7 @@ const EditQuest: React.FC<EditQuestProps> = ({
   const [tags, setTags] = useState<string[]>(quest.tags || []);
   const [links, setLinks] = useState(quest.linkedPosts || []);
   const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
-  const [repoUrl, setRepoUrl] = useState<string>(quest.repoUrl || '');
+  const [repoUrl, setRepoUrl] = useState<string>(quest.gitRepo.repoUrl || '');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { selectedBoard, updateBoardItem } = useBoardContext() || {};
@@ -55,7 +55,7 @@ const EditQuest: React.FC<EditQuestProps> = ({
     };
 
     try {
-      const updated = await patchQuest(quest.id, payload);
+      const updated = await updateQuestById(quest.id, payload);
       if (selectedBoard) {
         updateBoardItem(selectedBoard, updated);
       }

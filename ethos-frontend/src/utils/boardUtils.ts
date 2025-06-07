@@ -18,7 +18,7 @@ export const createMockBoard = (
   return {
     id,
     title,
-    structure: 'grid',
+    layout: 'grid',
     items,
     enrichedItems: items,
     type: 'custom',

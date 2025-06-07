@@ -88,7 +88,7 @@ const PublicProfilePage: React.FC = () => {
           questBoard.enrichedItems?.length ? (
             <Board
               board={questBoard}
-              structure="graph" // for quest overview in graph/tree format
+              layout="graph" // for quest overview in graph/tree format
               user={profile}
               readOnly
             />
@@ -107,7 +107,7 @@ const PublicProfilePage: React.FC = () => {
           postBoard.enrichedItems?.length ? (
             <Board
               board={postBoard}
-              structure="grid" // for post history
+              layout="grid" // for post history
               user={profile}
               readOnly
             />

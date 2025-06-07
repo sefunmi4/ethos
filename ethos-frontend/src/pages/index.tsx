@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
         setBoardMeta({
           id: updatedBoard.id,
           title: updatedBoard.title,
-          layout: updatedBoard.structure,
+          layout: updatedBoard.layout,
         });
       }
 
@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
         {defaultFeedBoardId ? (
           <Board
             boardId={defaultFeedBoardId}
-            structure="grid"
+            layout="grid"
             title="🧭 Latest Posts"
             user={user as User}
             filter={{
@@ -98,7 +98,7 @@ const HomePage: React.FC = () => {
         ) : selectedBoard ? (
           <Board
             boardId={selectedBoard}
-            structure="grid"
+            layout="grid"
             title="🧭 Latest Posts"
             user={user as User}
           />
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
                   key={board.id}
                   boardId={board.id}
                   title={`📌 ${board.title || 'Untitled Board'}`}
-                  structure="grid"
+                  layout="grid"
                   user={user as User}
                 />
               ))

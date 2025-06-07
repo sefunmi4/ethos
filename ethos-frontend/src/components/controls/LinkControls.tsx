@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
-import type { LinkedItem } from '../../types/itemTypes';
+import type { LinkedItem } from '../../types/postTypes';
 
 interface LinkControlsProps {
   value: LinkedItem[];

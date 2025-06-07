@@ -54,7 +54,7 @@ app.use('/api/auth', authRoutes);     // 🔐 Authentication (login, register, s
 app.use('/api/git', gitRoutes);       // 🔁 Git sync, commits, diffs
 app.use('/api/posts', postRoutes);    // 📝 Posts, reactions, replies
 app.use('/api/quests', questRoutes);  // 📦 Quests, task maps
-app.use('/api/boards', boardRoutes);  // 🧭 Boards and view structures
+app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 
 /**
  * Default server port

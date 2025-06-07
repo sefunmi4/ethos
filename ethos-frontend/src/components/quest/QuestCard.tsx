@@ -6,8 +6,8 @@ import { Button, PostTypeBadge } from '../ui'; // TODO:
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
-import { getQuestById } from '../../api/quest';  // TODO:  getQuestById
-import { fetchQuestPosts } from '../../api/post'; // TODO:  FECTCH API/POST
+import { fetchQuestById } from '../../api/quest';  // TODO:  getQuestById
+import { fetchPostsByQuestId } from '../../api/post'; // TODO:  FECTCH API/POST
 import ActionMenu from '../ui/ActionMenu';
 
 /**
@@ -36,14 +36,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
 
-  const isOwner = user?.id === questData.ownerId;
+  const isOwner = user?.id === questData.authorId;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [questDetails, questLogs] = await Promise.all([
-          getQuestById(quest.id),
-          fetchQuestPosts(quest.id),
+          fetchQuestById(quest.id),
+          fetchPostsByQuestId(quest.id),
         ]);
         setQuestData(questDetails);
         setLogs(questLogs);
@@ -61,9 +61,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <PostTypeBadge type="quest" />
           <span>{questData.createdAt?.slice(0, 10)}</span>
-          {questData.repoUrl && (
+          {questData.gitRepo.repoUrl && (
             <a
-              href={questData.repoUrl}
+              href={questData.gitRepo.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline"
@@ -117,7 +117,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
       case 'map':
         return (
           <GraphLayout
-            questId={quest.id}
             items={logs as any}
             user={user}
           />

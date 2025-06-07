@@ -39,7 +39,7 @@ const BoardPage: React.FC = () => {
       setBoardMeta({
         id: boardData.id,
         title: boardData.title,
-        layout: boardData.structure,
+        layout: boardData.layout,
       });
     }
   }, [boardData, setBoardMeta]);
@@ -79,7 +79,7 @@ const BoardPage: React.FC = () => {
 
       <Board
         board={boardData}
-        structure={boardData.structure}
+        layout={boardData.layout}
         editable={canEditBoard(boardData)}
         onScrollEnd={loadMore}
         loading={loadingMore}

@@ -1,8 +1,8 @@
 // options.ts
-import type { BoardStructure } from '../types/boardTypes';
+import type { BoardLayout } from '../types/boardTypes';
 import type { PostType } from '../types/postTypes';
 
-export const STRUCTURE_OPTIONS: { value: BoardStructure; label: string }[] = [
+export const STRUCTURE_OPTIONS: { value: BoardLayout; label: string }[] = [
   { value: 'grid', label: 'Grid' },
   { value: 'graph', label: 'Graph' },
   { value: 'thread', label: 'Thread' },

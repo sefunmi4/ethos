@@ -128,7 +128,7 @@ const PostPage: React.FC = () => {
         {replyBoard ? (
           <Board
             board={replyBoard}
-            structure={viewMode}
+            layout={viewMode}
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}

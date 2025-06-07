@@ -3,7 +3,7 @@ import { EnrichedQuest, EnrichedPost, QuestTaskPost, EnrichedUser } from '../typ
 import { canEditQuest, isCollaborator } from './permissionUtils';
 
 /**
- * Add structure and permission info to a single quest object.
+ * Add layout and permission info to a single quest object.
  * Accepts optional posts to derive logs and tasks.
  */
 export const formatQuest = (

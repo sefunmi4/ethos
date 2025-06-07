@@ -14,7 +14,7 @@ import {
   addRepost,
   fetchReactions,
   fetchRepostCount,
-  getUserRepost,
+  fetchUserRepost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap  } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -41,7 +41,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdat
         const [allReactions, repostCountRes, userRepostRes] = await Promise.all([
           fetchReactions(post.id),
           fetchRepostCount(post.id),
-          user?.id ? getUserRepost(post.id) : Promise.resolve(null),
+          user?.id ? fetchUserRepost(post.id) : Promise.resolve(null),
         ]);
 
         const userReactions = allReactions.filter((r: any) => r.userId === user?.id);

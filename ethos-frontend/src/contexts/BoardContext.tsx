@@ -170,7 +170,7 @@ export const useBoardContextEnhanced = () => {
     title: raw.name || 'Untitled',
     type,
     createdAt: raw.createdAt || new Date().toISOString(),
-    structure: raw.structure as BoardData['structure'],
+    layout: raw.layout as BoardData['layout'],
     items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null),
   });
 
