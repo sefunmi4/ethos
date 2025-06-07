@@ -3,7 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const SECRET = process.env.JWT_SECRET || 'your-secret';
+const SECRET = process.env.ACCESS_SECRET || 'your-secret';
 
 // Extend Request to support user field
 export interface OptionalAuthRequest extends Request {
