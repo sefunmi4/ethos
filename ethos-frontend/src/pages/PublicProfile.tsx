@@ -9,6 +9,9 @@ import { usePost } from '../hooks/usePost';
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 
+import type { EnrichedQuest, Quest } from '../types/questTypes';
+import type { EnrichedPost, Post } from '../types/postTypes';
+
 import type { BoardData } from '../types/boardTypes';
 import type { User } from '../types/userTypes';
 
@@ -31,11 +34,14 @@ const PublicProfilePage: React.FC = () => {
     const fetchProfileData = async () => {
       try {
         const { profile, quests, posts } = await loadPublicBoards(userId);
-        const enrichedQuests = await enrichQuests(quests.items); //todo: Argument of type '(string | null)[]' is not assignable to parameter of type '(Quest | Post)[]'.
-        const enrichedPosts = await enrichPosts(posts.items);
+        const enrichedQuests: EnrichedQuest[] =
+          (quests.enrichedItems as EnrichedQuest[]) ||
+          (await enrichQuests(quests.items as unknown as (Quest | Post)[]));
+        const enrichedPosts: EnrichedPost[] =
+          (posts.enrichedItems as EnrichedPost[]) ||
+          (await enrichPosts(posts.items as unknown as Post[]));
 
         setProfile(profile);
-        //todo commentong 
         setQuestBoard({ ...quests, enrichedItems: enrichedQuests });
         setPostBoard({ ...posts, enrichedItems: enrichedPosts });
       } catch (err) {

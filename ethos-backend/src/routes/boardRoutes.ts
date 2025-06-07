@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
+import { boardsStore, postsStore, questsStore } from '../models/stores';
 import { enrichBoard } from '../utils/enrich';
 import type { BoardData } from '../types/api';
+import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
@@ -21,19 +22,18 @@ router.get(
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
-    const users = usersStore.read();
 
-    let result: BoardData[] = boards;
+    let result: (BoardData | EnrichedBoard)[] = boards;
 
     if (enrich === 'true') {
-      result = boards.map(board => { //todo: Type '{ layout: BoardLayout; items: (string | null)[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; resolvedItems: AppItem[]; posts?:
+      result = boards.map((board) => {
         const enriched = enrichBoard(board, { posts, quests });
         return {
           ...enriched,
           layout: board.layout ?? 'grid',
           items: board.items,
           enrichedItems: enriched.enrichedItems,
-        };
+        } as EnrichedBoard;
       });
     }
 
@@ -60,7 +60,6 @@ router.get(
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
-    const users = usersStore.read();
 
     const board = boards.find((b) => b.defaultFor === context);
     if (!board) {
@@ -68,14 +67,14 @@ router.get(
       return;
     }
 
-    let result: BoardData = board;
+    let result: BoardData | EnrichedBoard = board;
 
     if (enrich === 'true') {
       const enriched = enrichBoard(board, { posts, quests });
-      result = { //todo: Type '{ layout: BoardLayout; resolvedItems: AppItem[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; ... 15 more ...; userId: string; }' is not assignable to type 'BoardData'.
+      result = {
         ...enriched,
         layout: board.layout ?? 'grid',
-      };
+      } as EnrichedBoard;
     }
 
     res.json(result);
@@ -96,7 +95,6 @@ router.get(
 
     const boards = boardsStore.read();
     const posts = postsStore.read();
-    const users = usersStore.read();
     const quests = questsStore.read();
 
     const board = boards.find(b => b.id === id);
@@ -105,10 +103,13 @@ router.get(
       return;
     }
 
-    let result: BoardData = board;
+    let result: BoardData | EnrichedBoard = board;
     if (enrich === 'true') {
       const enriched = enrichBoard(board, { posts, quests });
-      result = { ...enriched, layout: board.layout ?? 'grid' }; //todo: Type '{ layout: BoardLayout; resolvedItems: AppItem[]; enrichedItems: (EnrichedPost | EnrichedQuest)[]; ... 15 more ...; userId: string; }' is not assignable to type 'BoardData'.
+      result = {
+        ...enriched,
+        layout: board.layout ?? 'grid',
+      } as EnrichedBoard;
     }
 
     res.json(result);
