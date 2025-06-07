@@ -1,7 +1,20 @@
+@import "tailwindcss";
+/* Import Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Custom theme extension fallback for bg-soft and text-primary */
+:root {
+  --bg-soft: #f9fafb; /* light gray background */
+  --text-primary: #1f2937; /* slate-800 */
+}
+
 html, body {
-  @apply bg-soft text-primary font-inter;
+  background-color: var(--bg-soft);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }

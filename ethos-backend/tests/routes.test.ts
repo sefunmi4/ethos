@@ -78,7 +78,7 @@ describe('route handlers', () => {
     expect(res.status).toBe(200);
     expect(res.body.id).toBe('q1');
   });
-
+  
   it('POST /quests/:id/collaborators adds open role', async () => {
     const res = await request(app)
       .post('/quests/q1/collaborators')
