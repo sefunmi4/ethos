@@ -86,7 +86,10 @@ router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res:
 router.get(
   '/:id',
   authOptional,
-  async (req: AuthRequest<{ id: string }, any, any, { enrich?: string }>, res: Response) => { //TODO: No overload matches this call.
+  async (
+    req: AuthRequest<{ id: string }, any, any, { enrich?: string }>,
+    res: Response
+  ): Promise<void> => {
   const { id } = req.params;
   const { enrich } = req.query;
   const userId = req.user?.id || null;
@@ -129,7 +132,10 @@ router.post(
 });
 
 // GET quest tree (hierarchy)
-router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Response) => {  //TODO: No overload matches this call.
+router.get(
+  '/:id/tree',
+  authOptional,
+  (req: Request<{ id: string }>, res: Response): void => {
   const { id } = req.params;
 
   const quests = questsStore.read();
@@ -155,7 +161,10 @@ router.get('/:id/tree', authOptional, (req: Request<{ id: string }>, res: Respon
 });
 
 // DELETE quest
-router.delete('/:id', authMiddleware, (req: AuthRequest<{ id: string }>, res: Response) => {  //TODO: No overload matches this call.
+router.delete(
+  '/:id',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
   const { id } = req.params;
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);
