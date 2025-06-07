@@ -73,7 +73,7 @@ export const enrichUser = (
   const normalizedQuests = quests.map(normalizeQuest);
   const userQuests = normalizedQuests.filter((q) => q.authorId === user.id);
 
-  return {
+  return { //TODO:Type '{ links: { github?: string | undefined; linkedin?: string | undefined; twitter?: string | undefined; tiktok?: string | undefined; youtube?: string | undefined; website?: string | undefined; blog?: string | undefined; other?: string | undefined; } | Record<...>; ... 23 more ...; updatedAt?: string | undefined; } | { ...' is not assignable to type 'EnrichedUser'.
     ...user,
     links: safeLinks, // ✅ ensures shape matches expected type
 

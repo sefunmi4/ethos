@@ -164,7 +164,7 @@ router.get(
     const q = quests.find(x => x.id === questId);
     if (q) {
       nodes.push({ ...q, type: 'quest' });
-      (q.tasks || []).forEach((childId: string) => recurse(childId)); // NEED TO CHECK NODEID OF LINKEDPOSTS to know if its a task or log post Q:name: ... :Txx
+      (q.tasks || []).forEach((childId: string) => recurse(childId)); // TODO: NEED TO CHECK NODEID OF LINKEDPOSTS to know if its a task or log post Q:name: ... :Txx
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');

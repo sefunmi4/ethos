@@ -96,6 +96,7 @@ export interface GitBranch {
   lastCommitSha: string;
 }
 
+
 export interface EnrichedUser extends User {
   recentPosts?: Post[];
   activeQuests?: Quest[];
