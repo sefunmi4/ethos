@@ -47,7 +47,7 @@ export const useTimeline = () => {
     try {
       const posts = await fetchPostsByBoardId(boardId);
       const timelineEvents = posts.filter(p => p.type === 'meta_system');
-      setTimelineEvents(boardId, timelineEvents);
+      setTimelineEvents(boardId, timelineEvents); //todo: Argument of type 'Post[]' is not assignable to parameter of type 'TimelineEvent[]'.
     } catch (error) {
       console.error('[useTimeline] Failed to load timeline for board:', error);
     }

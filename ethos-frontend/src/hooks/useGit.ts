@@ -8,7 +8,7 @@ import {
   fetchGitDiff,
   fetchGitFileTree,
 } from '../api/git';
-import type { GitRepoMeta } from '../types/questTypes';
+import type { GitRepoMeta } from '../types/gitTypes';
 
 // Hook to fetch Git repo status for a quest
 export const useGitStatus = (questId: string) => {
@@ -94,7 +94,7 @@ export const useGitDiff = ({
 export const useGitFileTree = (questId: string) => {
   return useQuery<{ files: string[]; folders: string[] }>({
     queryKey: ['gitFileTree', questId],
-    queryFn: () => fetchGitFileTree(questId),
+    queryFn: () => fetchGitFileTree(questId), //TODO: Overload 1 of 3, '(options: DefinedInitialDataOptions<{ files: string[]; folders: string[]; }, Error, { files: string[]; folders: string[]; }, readonly 
     enabled: !!questId,
   });
 };

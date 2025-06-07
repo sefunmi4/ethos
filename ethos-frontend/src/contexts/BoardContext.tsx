@@ -8,7 +8,8 @@ import React, {
 } from 'react';
 import { useAuth } from './AuthContext';
 import { fetchBoards as fetchBoardsAPI } from '../api/board';
-import type { BoardData, GitFileNode, GitStatus } from '../types/boardTypes';
+import type { BoardData } from '../types/boardTypes';
+import type { GitFileNode, GitStatus } from '../types/gitTypes';
 
 export interface BoardItem {
   id: string;
@@ -165,10 +166,9 @@ export const useBoardContext = (): BoardContextType => {
 export const useBoardContextEnhanced = () => {
   const context = useBoardContext();
 
-  const convertToBoardData = (raw: any, type: 'quest' | 'post'): BoardData => ({
+  const convertToBoardData = (raw: any): BoardData => ({
     id: raw.id,
     title: raw.name || 'Untitled',
-    type,
     createdAt: raw.createdAt || new Date().toISOString(),
     layout: raw.layout as BoardData['layout'],
     items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null),
@@ -178,14 +178,14 @@ export const useBoardContextEnhanced = () => {
     const found = Object.values(context.boards).find((b) =>
       b.enrichedItems?.some((item) => item.type === 'quest')
     );
-    return found ? convertToBoardData(found, 'quest') : undefined;
+    return found ? convertToBoardData(found) : undefined;
   }, [context.boards]);
 
   const userPostBoard = useMemo<BoardData | undefined>(() => {
     const found = Object.values(context.boards).find((b) =>
       b.enrichedItems?.some((item) => item.type === 'post')
     );
-    return found ? convertToBoardData(found, 'post') : undefined;
+    return found ? convertToBoardData(found) : undefined;
   }, [context.boards]);
 
   return {

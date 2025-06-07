@@ -20,7 +20,7 @@ const PublicProfilePage: React.FC = () => {
   const [postBoard, setPostBoard] = useState<BoardData | null>(null);
   const [error, setError] = useState('');
 
-  const { loadPublicBoards } = useBoard();
+  const { loadPublicBoards } = useBoard(); //TODO: roperty 'loadPublicBoards' does not exist on type '{ board: BoardData | undefined; setBoard: Dispatch<SetStateAction<BoardData | undefined>>; isLoading: boolean; 
   const { fetchPostsForBoard, enrichPosts } = usePost();
   const { fetchQuestsForBoard, enrichQuests } = useQuest();
 

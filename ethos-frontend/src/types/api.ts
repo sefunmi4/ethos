@@ -1,5 +1,9 @@
 // Central API types re-exported for convenience
 
+import type { Post } from './postTypes';
+import type { Quest } from './questTypes';
+import type { Board, RenderableItem } from './boardTypes';
+
 export * from './boardTypes';
 export * from './questTypes';
 export * from './postTypes';

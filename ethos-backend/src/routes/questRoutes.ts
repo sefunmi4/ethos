@@ -24,7 +24,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // CREATE a new quest
-router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
+router.post('/', authMiddleware, (req: AuthRequest, res: Response) => { //TODO:    Argument of type '(req: AuthRequest, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to parameter of type 
   const {
     title,
     description = '',
@@ -61,7 +61,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
 });
 
 // PATCH quest (e.g. add a log)
-router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response) => {
+router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response) => { //TODO:    Argument of type '(req: AuthRequest, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to parameter of type
   const { id } = req.params;
   const { logId } = req.body;
 

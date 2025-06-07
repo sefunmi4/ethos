@@ -1,5 +1,5 @@
 import { Post, Quest, User } from '../types/api';
-import { EnrichedQuest, EnrichedPost, QuestTaskPost, EnrichedUser } from '../types/enriched';
+import { EnrichedQuest, EnrichedPost, QuestTaskPost, EnrichedUser } from '../types/enriched'; // todo: Module '"../types/enriched"' has no exported member 'QuestTaskPost'.ts(2305)
 import { canEditQuest, isCollaborator } from './permissionUtils';
 
 /**
@@ -13,10 +13,9 @@ export const formatQuest = (
   allUsers: User[] = []
 ): EnrichedQuest => {
   const logs: EnrichedPost[] = posts
-    .filter(p => p.type === 'quest_log' && p.questId === quest.id) as EnrichedPost[];
-
+    .filter(p => p.type === 'log' && p.questId === quest.id) as EnrichedPost[]; 
   const tasks: QuestTaskPost[] = posts
-    .filter(p => p.type === 'quest_task' && p.questId === quest.id)
+    .filter(p => p.type === 'task' && p.questId === quest.id)
     .map((task) => {
       const enriched = task as QuestTaskPost;
       return {
@@ -28,12 +27,12 @@ export const formatQuest = (
     });
 
   const enrichedCollaborators: EnrichedUser[] = (quest.collaborators || [])
-    .map(id => allUsers.find(u => u.id === id))
+    .map(id => allUsers.find(u => u.id === id)) //TODO: This comparison appears to be unintentional because the types 'string' and 'CollaberatorRoles' have no overlap.ts(2367)
     .filter((u): u is EnrichedUser => !!u); // 👈 type guard to exclude undefined
 
   return {
     ...quest,
-    collaborators: enrichedCollaborators, // ✅ now EnrichedUser[]
+    collaborators: enrichedCollaborators, // ✅ now EnrichedUser[] TODO: Type 'EnrichedUser[]' is not assignable to type 'CollaberatorRoles[]'.
     logs,
     tasks,
     isEditable: canEditQuest(quest, currentUserId),

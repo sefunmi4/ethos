@@ -21,7 +21,6 @@ export const createMockBoard = (
     layout: 'grid',
     items,
     enrichedItems: items,
-    type: 'custom',
     createdAt: new Date().toISOString(),
   };
 };

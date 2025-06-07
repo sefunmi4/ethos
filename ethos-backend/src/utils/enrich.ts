@@ -106,7 +106,7 @@ export const enrichPosts = (
   const enriched = posts.map((post) => {
     const author = users.find((u) => u.id === post.authorId);
     const enrichedAuthor = author
-      ? enrichUser(author, { currentUserId })
+      ? enrichUser(author, { currentUserId }) // TODO: Argument of type 'DBUser' is not assignable to parameter of type 'User'.
       : {
           id: 'anon',
           username: 'Anonymous',
@@ -132,7 +132,7 @@ export const enrichPosts = (
     };
   });
 
-  return formatPosts(enriched, currentUserId);
+  return formatPosts(enriched, currentUserId); //TODO: Argument of type '{ author: { id: string; username: string; }; enriched: boolean; id: string; authorId: string; type: PostType; content: string; visibility:
 };
 
 /**
@@ -174,7 +174,7 @@ export const enrichQuest = (
 
   return {
     ...quest,
-    headPost: posts.find((p) => p.id === quest.headPostId),
+    headPost: posts.find((p) => p.id === quest.headPostId), //TODO: Type 'DBPost | undefined' is not assignable to type 'Post | undefined'.
     logs,
     tasks,
     discussion,
@@ -237,6 +237,6 @@ export const enrichBoard = (
 
   return {
     ...board,
-    enrichedItems,
+    enrichedItems, //TODO: Type '(EnrichedPost | EnrichedQuest | null)[]' is not assignable to type '(EnrichedPost | EnrichedQuest)[]'.
   };
 };

@@ -8,7 +8,7 @@ import {
   TextArea,
 } from '../ui';
 import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
-import type { BoardLayout, BoardType } from '../../types/boardTypes';
+import type { BoardLayout } from '../../types/boardTypes';
 import { addBoard } from '../../api/board'; 
 
 const CreateBoard: React.FC<{
@@ -41,7 +41,6 @@ const CreateBoard: React.FC<{
     const boardData = {
       title: title.trim(),
       description: description.trim(),
-      type: 'post' as BoardType,
       layout,
       items: items.map(item => item.id),
       filters: { visibility },
