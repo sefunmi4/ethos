@@ -45,6 +45,13 @@ export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
   // UI-specific flags
   isFeatured?: boolean;
   isNew?: boolean;
+
+  /** Permissions computed for the current user */
+  isEditable?: boolean;
+  isCollaborator?: boolean;
+
+  /** Convenience subset for rendering */
+  topLevelTasks?: Post[];
 }
 
 
