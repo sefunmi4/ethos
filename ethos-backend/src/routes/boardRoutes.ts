@@ -41,7 +41,40 @@ router.get(
       result = result.filter(board => board.featured === true); 
     }
 
-    res.json(result);
+  res.json(result);
+  }
+);
+
+//
+// ✅ GET thread board for a post
+//
+router.get(
+  '/thread/:postId',
+  (req: Request<{ postId: string }, any, undefined, { enrich?: string }>, res: Response): void => {
+    const { postId } = req.params;
+    const { enrich } = req.query;
+
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const replies = posts.filter(p => p.replyTo === postId);
+
+    const board: BoardData = {
+      id: `thread-${postId}`,
+      title: 'Thread',
+      items: replies.map(r => r.id),
+      layout: 'thread',
+      createdAt: new Date().toISOString(),
+      userId: '',
+    };
+
+    if (enrich === 'true') {
+      const enriched = enrichBoard(board, { posts, quests });
+      res.json(enriched);
+      return;
+    }
+
+    res.json(board);
   }
 );
 
@@ -140,6 +173,7 @@ router.get(
     res.json(items);
   }
 );
+
 
 //
 // ✅ POST create a new board

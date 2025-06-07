@@ -1,12 +1,26 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
+import authOptional from '../middleware/authOptional';
 import { postsStore, usersStore, reactionsStore } from '../models/stores';
 import { enrichPost } from '../utils/enrich';
 import type { DBPost } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
+
+//
+// ✅ GET all posts
+//
+router.get('/', authOptional, (_req: Request, res: Response): void => {
+  const posts = postsStore.read();
+  const users = usersStore.read();
+  res.json(posts.map((p) => enrichPost(p, { users, currentUserId: (_req as any).user?.id || null })));
+});
+
+//
+// ✅ GET a single post by ID
+//
 
 //
 // ✅ POST create a new post
@@ -248,6 +262,20 @@ router.get('/:id/propagation-status', (req: Request<{ id: string }>, res: Respon
   // This is a placeholder – you can replace with actual propagation logic
   const affected = [req.params.id];
   res.json({ cascadeCompleted: true, affectedIds: affected });
+});
+
+//
+// ✅ GET single post (placed last to avoid route conflicts)
+//
+router.get('/:id', authOptional, (req: Request<{ id: string }>, res: Response): void => {
+  const posts = postsStore.read();
+  const post = posts.find((p) => p.id === req.params.id);
+  if (!post) {
+    res.status(404).json({ error: 'Post not found' });
+    return;
+  }
+  const users = usersStore.read();
+  res.json(enrichPost(post, { users, currentUserId: (req as any).user?.id || null }));
 });
 
 export default router;
