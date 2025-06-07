@@ -109,7 +109,8 @@ node src/server.js
 
 ```env
 PORT=5000
-JWT_SECRET=your_secret_key
+ACCESS_SECRET=your_access_secret
+REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
 
