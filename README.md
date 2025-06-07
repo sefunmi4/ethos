@@ -91,6 +91,12 @@ npm install
 npm run dev
 ```
 
+Vite looks for `postcss.config.cjs` in this directory. If you encounter
+"Failed to load PostCSS config" errors, ensure there is no leftover
+`postcss.config.js` file. Make sure to rerun `npm install` so the
+`@tailwindcss/postcss` plugin is available after pulling new changes.
+If the plugin cannot be found after installing, try running `npm install --legacy-peer-deps` to resolve peer dependency conflicts.
+
 `.env` for frontend:
 
 ```env
@@ -108,8 +114,9 @@ node src/server.js
 `.env` for backend:
 
 ```env
-PORT=5000
-JWT_SECRET=your_secret_key
+PORT=3001
+ACCESS_SECRET=your_access_secret
+REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
 

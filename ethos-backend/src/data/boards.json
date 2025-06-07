@@ -1,22 +1,35 @@
 [
-    {
-      "id": "default-home-board",
-      "title": "Welcome Board",
-      "description": "This is the default home board for new users.",
-      "layout": "grid",
-      "items": [],
-      "defaultFor": "home",
-      "createdAt": "2025-06-07T00:00:00Z",
-      "userId": "system",
-      "category": "default"
-    },
-    {
-      "id": "featured-community-board",
-      "title": "Community Highlights",
-      "layout": "grid",
-      "items": [],
-      "category": "featured",
-      "createdAt": "2025-06-07T00:00:00Z",
-      "userId": "system"
-    }
-  ]
+  {
+    "id": "default-home-board",
+    "title": "Welcome Board",
+    "description": "This is the default home board for new users.",
+    "layout": "grid",
+    "items": [],
+    "defaultFor": "home",
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  },
+  {
+    "id": "my-posts",
+    "title": "My Posts",
+    "description": "Personal posts board.",
+    "layout": "grid",
+    "items": [],
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  },
+  {
+    "id": "my-quests",
+    "title": "My Quests",
+    "description": "Personal quests board.",
+    "layout": "grid",
+    "items": [],
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  }
+]

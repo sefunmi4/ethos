@@ -8,6 +8,7 @@ jest.mock('../src/models/stores', () => ({
   boardsStore: {
     read: jest.fn(() => [
       { id: 'b1', title: 'Board', description: '', layout: 'grid', items: [] },
+      { id: 'home', title: 'Home', description: '', layout: 'grid', items: [], defaultFor: 'home' },
     ]),
     write: jest.fn(),
   },
@@ -42,7 +43,7 @@ describe('route handlers', () => {
   it('GET /boards returns boards', async () => {
     const res = await request(app).get('/boards');
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
+    expect(res.body).toHaveLength(2);
     expect(res.body[0].id).toBe('b1');
   });
 
@@ -51,5 +52,23 @@ describe('route handlers', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
     expect(res.body[0].id).toBe('q1');
+  });
+
+  it('GET /boards/:id returns single board', async () => {
+    const res = await request(app).get('/boards/b1');
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe('b1');
+  });
+
+  it('GET /boards/default/home returns default board', async () => {
+    const res = await request(app).get('/boards/default/home');
+    expect(res.status).toBe(200);
+    expect(res.body.defaultFor).toBe('home');
+  });
+
+  it('GET /quests/:id returns quest', async () => {
+    const res = await request(app).get('/quests/q1');
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe('q1');
   });
 });
