@@ -28,7 +28,7 @@ const normalizePost = (post: DBPost): Post => {
  * Enrich a single user with computed metadata.
  */
 export const enrichUser = (
-  user: User,
+  user: User | DBUser,
   {
     currentUserId = null,
     posts = [],
@@ -104,9 +104,10 @@ export const enrichPosts = (
   currentUserId: string | null = null
 ): EnrichedPost[] => {
   const enriched = posts.map((post) => {
+    const normalized = normalizePost(post);
     const author = users.find((u) => u.id === post.authorId);
     const enrichedAuthor = author
-      ? enrichUser(author, { currentUserId }) // TODO: Argument of type 'DBUser' is not assignable to parameter of type 'User'.
+      ? enrichUser(author, { currentUserId })
       : {
           id: 'anon',
           username: 'Anonymous',
@@ -123,7 +124,7 @@ export const enrichPosts = (
         };
 
     return {
-      ...post,
+      ...normalized,
       author: {
         id: enrichedAuthor.id,
         username: enrichedAuthor.username,
@@ -132,7 +133,7 @@ export const enrichPosts = (
     };
   });
 
-  return formatPosts(enriched, currentUserId); //TODO: Argument of type '{ author: { id: string; username: string; }; enriched: boolean; id: string; authorId: string; type: PostType; content: string; visibility:
+  return formatPosts(enriched, currentUserId);
 };
 
 /**
@@ -172,9 +173,10 @@ export const enrichQuest = (
       : { ...c };
   });
 
+  const headPostDB = posts.find((p) => p.id === quest.headPostId);
   return {
     ...quest,
-    headPost: posts.find((p) => p.id === quest.headPostId), //TODO: Type 'DBPost | undefined' is not assignable to type 'Post | undefined'.
+    headPost: headPostDB ? normalizePost(headPostDB) : undefined,
     logs,
     tasks,
     discussion,
@@ -221,22 +223,24 @@ export const enrichBoard = (
     currentUserId?: string | null;
   }
 ): EnrichedBoard => {
-  const enrichedItems = board.items.map((id) => {
-    const post = posts.find((p) => p.id === id);
-    if (post) {
-      return enrichPost(post, { users, currentUserId });
-    }
+  const enrichedItems = board.items
+    .map((id) => {
+      const post = posts.find((p) => p.id === id);
+      if (post) {
+        return enrichPost(post, { users, currentUserId });
+      }
 
-    const quest = quests.find((q) => q.id === id);
-    if (quest) {
-      return enrichQuest(quest, { posts, users, currentUserId });
-    }
+      const quest = quests.find((q) => q.id === id);
+      if (quest) {
+        return enrichQuest(quest, { posts, users, currentUserId });
+      }
 
-    return null;
-  }).filter(Boolean);
+      return null;
+    })
+    .filter((i): i is EnrichedPost | EnrichedQuest => i !== null);
 
   return {
     ...board,
-    enrichedItems, //TODO: Type '(EnrichedPost | EnrichedQuest | null)[]' is not assignable to type '(EnrichedPost | EnrichedQuest)[]'.
+    enrichedItems,
   };
 };

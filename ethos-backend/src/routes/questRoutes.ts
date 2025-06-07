@@ -24,7 +24,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // CREATE a new quest
-router.post('/', authMiddleware, (req: AuthRequest, res: Response) => { //TODO:    Argument of type '(req: AuthRequest, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to parameter of type 
+router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
   const {
     title,
     description = '',
@@ -34,7 +34,8 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => { //TODO: 
 
   const authorId = req.user?.id;
   if (!authorId || !title) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    res.status(400).json({ error: 'Missing required fields' });
+    return;
   }
 
   const newQuest: Quest = {
@@ -61,13 +62,16 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => { //TODO: 
 });
 
 // PATCH quest (e.g. add a log)
-router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response) => { //TODO:    Argument of type '(req: AuthRequest, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to parameter of type
+router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response): void => {
   const { id } = req.params;
   const { logId } = req.body;
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' });
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
   quest.logs = quest.logs || [];
   if (!quest.logs.includes(logId)) {
