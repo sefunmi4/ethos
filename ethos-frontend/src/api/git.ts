@@ -3,7 +3,7 @@ import type { GitRepoMeta, GitCommit, GitFile } from '../types/gitTypes';
 
 // Fetch the current git status for a quest
 export const fetchGitStatus = async (questId: string): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.get(`/api/git/status/${questId}`);
+  const res = await axiosWithAuth.get(`/git/status/${questId}`);
   return res.data;
 };
 
@@ -13,7 +13,7 @@ export const updateGitRepo = async (
   repoUrl: string,
   branch: string = 'main'
 ): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.post(`/api/git/connect`, {
+  const res = await axiosWithAuth.post(`/git/connect`, {
     questId,
     repoUrl,
     branch,
@@ -23,13 +23,13 @@ export const updateGitRepo = async (
 
 // Trigger a manual sync (pull latest, optional push local changes)
 export const syncGitRepo = async (questId: string): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.post(`/api/git/sync`, { questId });
+  const res = await axiosWithAuth.post(`/git/sync`, { questId });
   return res.data;
 };
 
 // Remove git integration from quest
 export const removeGitRepo = async (questId: string): Promise<{ success: boolean }> => {
-  const res = await axiosWithAuth.delete(`/api/git/disconnect/${questId}`);
+  const res = await axiosWithAuth.delete(`/git/disconnect/${questId}`);
   return res.data;
 };
 
@@ -37,7 +37,7 @@ export const removeGitRepo = async (questId: string): Promise<{ success: boolean
 export const archiveGitHistory = async (
   questId: string
 ): Promise<{ archiveUrl: string }> => {
-  const res = await axiosWithAuth.post(`/api/git/archive`, { questId });
+  const res = await axiosWithAuth.post(`/git/archive`, { questId });
   return res.data;
 };
 
@@ -47,7 +47,7 @@ export const fetchGitDiff = async (
   filePath?: string,
   commitId?: string
 ): Promise<{ diffMarkdown: string }> => {
-  const res = await axiosWithAuth.get(`/api/git/diff/${questId}`, {
+  const res = await axiosWithAuth.get(`/git/diff/${questId}`, {
     params: { filePath, commitId },
   });
   return res.data;
@@ -57,7 +57,7 @@ export const fetchGitDiff = async (
 export const fetchGitFileTree = async (
   questId: string
 ): Promise<GitFile[]> => {
-  const res = await axiosWithAuth.get(`/api/git/files/${questId}`);
+  const res = await axiosWithAuth.get(`/git/files/${questId}`);
   const { files, folders } = res.data;
 
   return [
@@ -80,7 +80,7 @@ export const fetchGitFileTree = async (
 export const fetchGitCommitHistory = async (
   questId: string
 ): Promise<GitCommit[]> => {
-  const res = await axiosWithAuth.get(`/api/git/commits/${questId}`);
+  const res = await axiosWithAuth.get(`/git/commits/${questId}`);
   return res.data;
 };
 
@@ -88,7 +88,7 @@ export const createRepo = async (
   questId: string,
   name: string
 ): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.post(`/api/git/create`, { questId, name });
+  const res = await axiosWithAuth.post(`/git/create`, { questId, name });
   return res.data;
 };
 
@@ -96,7 +96,7 @@ export const createRepoFolder = async (
   questId: string,
   folderPath: string
 ): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.post(`/api/git/folders`, { questId, folderPath });
+  const res = await axiosWithAuth.post(`/git/folders`, { questId, folderPath });
   return res.data;
 };
 
@@ -105,7 +105,7 @@ export const createRepoFile = async (
   filePath: string,
   content: string
 ): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.post(`/api/git/files`, { questId, filePath, content });
+  const res = await axiosWithAuth.post(`/git/files`, { questId, filePath, content });
   return res.data;
 };
 
@@ -114,12 +114,12 @@ export const updateRepoFile = async (
   filePath: string,
   content: string
 ): Promise<GitRepoMeta> => {
-  const res = await axiosWithAuth.put(`/api/git/files`, { questId, filePath, content });
+  const res = await axiosWithAuth.put(`/git/files`, { questId, filePath, content });
   return res.data;
 };
 
 export const downloadRepo = async (questId: string): Promise<Blob> => {
-  const res = await axiosWithAuth.get(`/api/git/download/${questId}`, {
+  const res = await axiosWithAuth.get(`/git/download/${questId}`, {
     responseType: 'blob',
   });
   return res.data;

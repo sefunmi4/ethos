@@ -4,7 +4,7 @@ import { axiosWithAuth } from '../utils/authUtils';
 import type { Post } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
 
-const BASE_URL = '/api/posts';
+const BASE_URL = '/posts';
 
 /**
  * 🔍 Fetch a single post by ID
@@ -48,7 +48,7 @@ export const fetchReplyBoard = async (
   if (options.enrich) params.set('enrich', 'true');
   if (options.page) params.set('page', options.page.toString());
 
-  const url = `/api/boards/thread/${postId}${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `/boards/thread/${postId}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
@@ -67,7 +67,7 @@ export const fetchRepliesByPostId = async (postId: string): Promise<Post[]> => {
  * @param questId - Quest ID
  */
 export const fetchPostsByQuestId = async (questId: string): Promise<Post[]> => {
-  const res = await axiosWithAuth.get(`/api/quests/${questId}/posts`);
+  const res = await axiosWithAuth.get(`/quests/${questId}/posts`);
   return res.data;
 };
 
@@ -76,7 +76,7 @@ export const fetchPostsByQuestId = async (questId: string): Promise<Post[]> => {
  * @param boardId - Board ID
  */
 export const fetchPostsByBoardId = async (boardId: string): Promise<Post[]> => {
-  const res = await axiosWithAuth.get(`/api/boards/${boardId}/posts`);
+  const res = await axiosWithAuth.get(`/boards/${boardId}/posts`);
   return res.data || [];
 };
 

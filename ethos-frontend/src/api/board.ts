@@ -5,7 +5,7 @@ import type { BoardData, CreateBoardPayload, BoardLayout } from '../types/boardT
 import type { Post } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
 
-const BASE_URL = '/api/boards';
+const BASE_URL = '/boards';
 
 /**
  * 🧠 fetchBoards → Get all boards (optionally filtered by user)

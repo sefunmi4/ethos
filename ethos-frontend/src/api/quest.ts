@@ -3,7 +3,7 @@ import type { Quest, TaskEdge, EnrichedQuest } from '../types/questTypes';
 import type { Post } from '../types/postTypes';
 import { fetchPostById, fetchPostsByQuestId } from './post';
 
-const BASE_URL = '/api/quests';
+const BASE_URL = '/quests';
 
 /**
  * @typedef CreateQuestPayload
@@ -102,7 +102,7 @@ export const fetchQuestMapData = async (
  * @param boardId Board ID
  */
 export const fetchQuestsByBoardId = async (boardId: string): Promise<Quest[]> => {
-  const res = await axiosWithAuth.get(`/api/boards/${boardId}/quests`);
+  const res = await axiosWithAuth.get(`/boards/${boardId}/quests`);
   return res.data;
 };
 
