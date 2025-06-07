@@ -19,7 +19,10 @@ const router = express.Router();
 
 // GET all quests
 router.get('/', (req: Request, res: Response) => {
-  const quests: Quest[] = questsStore.read(); //todo: Type 'DBQuest[]' is not assignable to type 'Quest[]'. should be enriched
+  const quests: Quest[] = questsStore.read().map((q) => ({
+    ...q,
+    gitRepo: q.gitRepo ? { repoUrl: '', ...q.gitRepo } : undefined,
+  }));
   res.json(quests);
 });
 
@@ -60,25 +63,29 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
 });
 
 // PATCH quest (e.g. add a log)
-router.patch('/:id', (req: Request<{ id: string }, any, { itemId: string }>, res: Response): void => {
-  const { id } = req.params;
-  const { itemId } = req.body;
+router.patch(
+  '/:id',
+  (req: Request<{ id: string }, any, { itemId: string }>, res: Response): void => {
+    const { id } = req.params;
+    const { itemId } = req.body;
 
-  const quests = questsStore.read();
-  const quest = quests.find(q => q.id === id);
-  if (!quest) {
-    res.status(404).json({ error: 'Quest not found' });
-    return;
+    const quests = questsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    quest.linkedPosts = quest.linkedPosts || [];
+    const exists = quest.linkedPosts.some(l => l.itemId === itemId);
+    if (!exists) {
+      quest.linkedPosts.push({ itemId, itemType: 'post' });
+      questsStore.write(quests);
+    }
+
+    res.json(quest);
   }
-
-  quest.linkedPosts = quest.linkedPosts || [];
-  if (!quest.linkedPosts.includes(itemId)) { //todo: should be checking for quest.linkedPosts[linkeditem_i].itemID Argument of type 'string' is not assignable to parameter of type 'LinkedItem'.
-    quest.linkedPosts.push(itemId);
-    questsStore.write(quests);
-  }
-
-  res.json(quest);
-});
+);
 
 // GET enriched quest
 router.get(
@@ -94,13 +101,17 @@ router.get(
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
   if (enrich === 'true') {
     const posts = postsStore.read();
     const users = usersStore.read();
     const enriched = enrichQuest(quest, { posts, users, currentUserId: userId });
-    return res.json(enriched); //TODO: expects void return but is get function
+    res.json(enriched);
+    return;
   }
 
   res.json(quest);
@@ -110,14 +121,20 @@ router.get(
 router.post(
   '/:id/link',
   authMiddleware,
-  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {  //TODO: Argument of type '(req: AuthRequest<{ id: string; }, any, { postId: string; }>, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to par
+  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {
   const { id } = req.params;
   const { postId } = req.body;
-  if (!postId) return res.status(400).json({ error: 'Missing postId' });
+  if (!postId) {
+    res.status(400).json({ error: 'Missing postId' });
+    return;
+  }
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' });
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
   quest.linkedPosts = quest.linkedPosts || [];
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
@@ -139,7 +156,10 @@ router.get(
   const quests = questsStore.read();
   const posts = postsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
   const nodes: any[] = [];
 
@@ -147,7 +167,9 @@ router.get(
     const q = quests.find(x => x.id === questId);
     if (q) {
       nodes.push({ ...q, type: 'quest' });
-      (q.tasks || []).forEach((childId: string) => recurse(childId)); // NEED TO CHECK NODEID OF LINKEDPOSTS to know if its a task or log post Q:name: ... :Txx
+      q.linkedPosts
+        .filter(l => l.itemType === 'quest')
+        .forEach(l => recurse(l.itemId));
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
@@ -167,7 +189,10 @@ router.delete(
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);
 
-  if (index === -1) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
+  if (index === -1) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
   quests.splice(index, 1);
   questsStore.write(quests);
