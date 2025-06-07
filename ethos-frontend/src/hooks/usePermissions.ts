@@ -1,5 +1,6 @@
 import { useCallback, useContext, useRef } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import type { AuthContextType } from '../types/authTypes';
 import { getBoardPermissions } from '../api/board';
 
 interface BoardPermission {
@@ -18,7 +19,9 @@ interface UsePermissions {
 }
 
 export const usePermissions = (): UsePermissions => {
-  const { user } = useContext(AuthContext); //todo: tBoard: (boardId: string) => boolean;
+  const { user } = useContext(
+    AuthContext as React.Context<AuthContextType>
+  );
   const permissionCache = useRef<PermissionCache>({});
 
   const hasAccessToBoard = useCallback((boardId: string): boolean => {

@@ -30,7 +30,7 @@ export const formatQuest = (
     collaborators: enrichedCollaborators,
     logs,
     tasks,
-    isEditable: canEditQuest(quest, currentUserId), //todo: Object literal may only specify known properties, and 'isEditable' does not exist in type 'EnrichedQuest'.ts(2353)
+    isEditable: canEditQuest(quest, currentUserId),
 
     isCollaborator: isCollaborator(quest, currentUserId),
     topLevelTasks: tasks.filter(t => !(t as any).parentId),
