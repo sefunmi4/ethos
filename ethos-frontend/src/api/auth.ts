@@ -1,6 +1,6 @@
 // src/api/auth.ts
 
-import { axiosWithAuth } from '../utils/authUtils';
+import { axiosWithAuth, setAccessToken, refreshAccessToken } from '../utils/authUtils';
 import type { User } from '../types/userTypes';
 
 /**
@@ -25,6 +25,10 @@ export const login = async (
   password: string
 ): Promise<{ accessToken: string }> => {
   const res = await axiosWithAuth.post('/auth/login', { email, password });
+  // Store access token for subsequent authenticated requests
+  if (res.data?.accessToken) {
+    setAccessToken(res.data.accessToken);
+  }
   return res.data;
 };
 
@@ -34,6 +38,7 @@ export const login = async (
  */
 export const logout = async (): Promise<void> => {
   await axiosWithAuth.post('/auth/logout');
+  setAccessToken(null);
 };
 
 /**
