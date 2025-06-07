@@ -112,9 +112,12 @@ export interface EnrichedUser extends Omit<User, 'password'> {
 }
 
 export interface EnrichedCollaborator {
-  userId: string;
+  /** Undefined when representing an open role */
+  userId?: string;
   username?: string;
   roles?: string[];
   avatarUrl?: string;
   bio?: string;
+  /** Flag indicating this collaborator slot has no assigned user */
+  isOpenRole?: boolean;
 }

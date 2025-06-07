@@ -4,6 +4,13 @@ import express from 'express';
 import boardRoutes from '../src/routes/boardRoutes';
 import questRoutes from '../src/routes/questRoutes';
 
+jest.mock('../src/middleware/authMiddleware', () => ({
+  authMiddleware: (_req: any, _res: any, next: any) => {
+    _req.user = { id: 'u1' };
+    next();
+  },
+}));
+
 jest.mock('../src/models/stores', () => ({
   boardsStore: {
     read: jest.fn(() => [
@@ -70,5 +77,15 @@ describe('route handlers', () => {
     const res = await request(app).get('/quests/q1');
     expect(res.status).toBe(200);
     expect(res.body.id).toBe('q1');
+  });
+
+  it('POST /quests/:id/collaborators adds open role', async () => {
+    const res = await request(app)
+      .post('/quests/q1/collaborators')
+      .send({ roles: ['designer'] });
+    expect(res.status).toBe(200);
+    expect(res.body.collaborators).toHaveLength(1);
+    expect(res.body.collaborators[0].roles).toContain('designer');
+    expect(res.body.collaborators[0].userId).toBeUndefined();
   });
 });

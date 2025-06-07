@@ -154,8 +154,13 @@ export interface Quest {
  * Users associated with a post.
  */
 export interface CollaberatorRoles {
-  userId: string;
+  /** Optional user id if this role is filled by a registered user */
+  userId?: string;
   username?: string;
+  /**
+   * Roles requested or assigned. When `userId` is omitted this
+   * represents an open role that any user may request to fill.
+   */
   roles?: string[];
 }
 

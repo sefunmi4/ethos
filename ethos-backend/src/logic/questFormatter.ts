@@ -28,6 +28,10 @@ export const formatQuest = (
 
   const enrichedCollaborators: EnrichedCollaborator[] = (quest.collaborators || [])
     .map(c => {
+      if (!c.userId) {
+        return { roles: c.roles, isOpenRole: true };
+      }
+
       const user = allUsers.find(u => u.id === c.userId);
       return user
         ? {

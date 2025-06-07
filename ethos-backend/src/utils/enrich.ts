@@ -183,6 +183,10 @@ export const enrichQuest = (
   );
 
   const enrichedCollaborators: EnrichedCollaborator[] = quest.collaborators.map((c) => {
+    if (!c.userId) {
+      return { roles: c.roles, isOpenRole: true };
+    }
+
     const u = users.find((u) => u.id === c.userId);
     return u
       ? {
@@ -192,7 +196,7 @@ export const enrichQuest = (
           avatarUrl: u.avatarUrl,
           bio: u.bio,
         }
-      : { ...c };
+      : { userId: c.userId, roles: c.roles };
   });
 
   const headPostDB = posts.find((p) => p.id === quest.headPostId);
