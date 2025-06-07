@@ -6,6 +6,12 @@ import type { DataStore } from '../types/db';
 export function createDataStore<T>(filename: string, defaultData: T): DataStore<T> {
   const filepath = path.join(__dirname, '../data', filename);
 
+  const ensureFile = (): void => {
+    if (!fs.existsSync(filepath) || fs.readFileSync(filepath, 'utf-8').trim() === '') {
+      fs.writeFileSync(filepath, '[]');
+    }
+  };
+
   return {
     read: () => {
       try {
