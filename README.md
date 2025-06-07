@@ -91,6 +91,10 @@ npm install
 npm run dev
 ```
 
+Vite looks for `postcss.config.cjs` in this directory. If you encounter
+"Failed to load PostCSS config" errors, ensure there is no leftover
+`postcss.config.js` file.
+
 `.env` for frontend:
 
 ```env
