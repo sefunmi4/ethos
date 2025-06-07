@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, PostTypeBadge } from '../ui';
+import { Button, PostTypeBadge, Select } from '../ui';
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
@@ -35,6 +36,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('timeline');
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
+  const navigate = useNavigate();
+  const viewOptions = [
+    { value: 'timeline', label: 'Log' },
+    { value: 'kanban', label: 'Card' },
+    { value: 'map', label: 'Graph' },
+  ];
 
   const isOwner = user?.id === questData.authorId;
 
@@ -95,9 +102,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
           />
         )}
   
-        <Button onClick={() => setView('timeline')}>Timeline</Button>
-        <Button onClick={() => setView('kanban')}>Kanban</Button>
-        <Button onClick={() => setView('map')}>Map</Button>
+        <Select
+          value={view}
+          onChange={(e) => setView(e.target.value as 'timeline' | 'kanban' | 'map')}
+          options={viewOptions}
+        />
+        <Button onClick={() => navigate(`/quests/${quest.id}`)} variant="ghost">
+          View details
+        </Button>
   
         {onCancel && (
           <Button onClick={onCancel} variant="secondary">

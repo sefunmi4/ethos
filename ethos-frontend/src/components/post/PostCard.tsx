@@ -78,13 +78,14 @@ const PostCard: React.FC<PostCardProps> = ({
     return (
       <div className="text-xs text-blue-600 space-y-1">
         {sorted.map((item) => {
-          const label = `${item.itemType === 'quest' ? '🧭' : '📁'} ${item.title}${item.nodeId ? ` > ${item.nodeId}` : ''}`;
+          const questPrefix = item.itemType === 'quest' ? `Q:${item.title}` : '';
+          const nodePart = item.nodeId ? `:${item.nodeId}` : '';
+          const linkPart = item.linkType ? `-${item.linkType.toUpperCase()}` : '';
+          const label = `${questPrefix}${nodePart}${linkPart}`;
           return (
             <div key={item.itemId} className="flex gap-1 items-center">
               <span className="text-xs">🔗</span>
-              <span className={`${item.title?.toLowerCase().includes('solution') ? 'font-semibold text-green-700' : ''}`}>
-                {label}
-              </span>
+              <span className={`${item.title?.toLowerCase().includes('solution') ? 'font-semibold text-green-700' : ''}`}>{label}</span>
             </div>
           );
         })}
@@ -208,29 +209,40 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderCommitDiff()}
       {renderLinkSummary()}
 
-      <ReactionControls post={post} user={user} onUpdate={onUpdate} />
+      <ReactionControls
+        post={post}
+        user={user}
+        onUpdate={onUpdate}
+        replyCount={replies.length}
+        showReplies={showReplies}
+        onToggleReplies={toggleReplies}
+      />
 
-      {replies.length > 0 && (
-        <div className="mt-3">
-          <button onClick={toggleReplies} className="text-xs text-blue-600 hover:underline">
-            {showReplies ? 'Hide Replies' : `Show Replies (${replies.length})`}
+      {!compact && (
+        <div>
+          <button
+            onClick={() => navigate(`/posts/${post.id}`)}
+            className="text-blue-600 underline text-xs"
+          >
+            View details
           </button>
+        </div>
+      )}
+
+      {replies.length > 0 && showReplies && (
+        <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
           {loadingReplies && <p className="text-xs text-gray-400">Loading replies…</p>}
           {replyError && <p className="text-xs text-red-500">{replyError}</p>}
-          {showReplies && (
-            <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
-              {replies.map((r) => (
-                <PostCard
-                  key={r.id}
-                  post={r}
-                  user={user}
-                  compact
-                  onUpdate={onUpdate}
-                  onDelete={onDelete}
-                />
-              ))}
-            </div>
-          )}
+          {replies.map((r) => (
+            <PostCard
+              key={r.id}
+              post={r}
+              user={user}
+              compact
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
+          ))}
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { addPost } from '../../api/post';
 import { Button, TextArea, Select, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
+import CreateQuest from '../quest/CreateQuest';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
 
@@ -22,6 +23,15 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
+
+  if (type === 'quest') {
+    return (
+      <CreateQuest
+        onSave={(q) => onSave?.(q as any)}
+        onCancel={onCancel}
+      />
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
