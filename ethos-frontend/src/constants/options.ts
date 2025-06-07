@@ -17,6 +17,8 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
   { value: 'request', label: 'Request' },
   { value: 'quest', label: 'Quest' },
+  { value: 'task', label: 'Quest Task' },
+  { value: 'log', label: 'Quest Log' },
   { value: 'commit', label: 'Commit' },
   { value: 'issue', label: 'Issue' },
 ];

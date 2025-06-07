@@ -175,6 +175,9 @@ const PostCard: React.FC<PostCardProps> = ({
           id={post.id}
           type="post"
           canEdit={canEdit}
+          onEdit={() => setEditMode(true)}
+          onDelete={() => onDelete?.(post.id)}
+          permalink={`${window.location.origin}/posts/${post.id}`}
         />
       </div>
 
