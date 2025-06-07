@@ -1,5 +1,5 @@
 import { Post, Quest, User } from '../types/api';
-import { EnrichedQuest, EnrichedPost, QuestTaskPost, EnrichedUser } from '../types/enriched'; // todo: Module '"../types/enriched"' has no exported member 'QuestTaskPost'.ts(2305)
+import { EnrichedQuest, EnrichedPost, EnrichedUser } from '../types/enriched';
 import { canEditQuest, isCollaborator } from './permissionUtils';
 
 /**
@@ -14,30 +14,25 @@ export const formatQuest = (
 ): EnrichedQuest => {
   const logs: EnrichedPost[] = posts
     .filter(p => p.type === 'log' && p.questId === quest.id) as EnrichedPost[]; 
-  const tasks: QuestTaskPost[] = posts
-    .filter(p => p.type === 'task' && p.questId === quest.id)
-    .map((task) => {
-      const enriched = task as QuestTaskPost;
-      return {
-        ...enriched,
-        status: enriched.status || 'todo',
-        priority: enriched.priority ?? 0,
-        parentId: enriched.parentId || null,
-      };
-    });
+  const tasks: EnrichedPost[] = posts
+    .filter((p): p is EnrichedPost => p.type === 'task' && p.questId === quest.id)
+    .map((task) => ({
+      ...task,
+      status: task.status || 'todo',
+    }));
 
   const enrichedCollaborators: EnrichedUser[] = (quest.collaborators || [])
-    .map(id => allUsers.find(u => u.id === id)) //TODO: This comparison appears to be unintentional because the types 'string' and 'CollaberatorRoles' have no overlap.ts(2367)
-    .filter((u): u is EnrichedUser => !!u); // 👈 type guard to exclude undefined
+    .map(c => allUsers.find(u => u.id === c.userId))
+    .filter((u): u is EnrichedUser => !!u);
 
   return {
     ...quest,
-    collaborators: enrichedCollaborators, // ✅ now EnrichedUser[] TODO: Type 'EnrichedUser[]' is not assignable to type 'CollaberatorRoles[]'.
+    collaborators: enrichedCollaborators,
     logs,
     tasks,
     isEditable: canEditQuest(quest, currentUserId),
     isCollaborator: isCollaborator(quest, currentUserId),
-    topLevelTasks: tasks.filter(t => !t.parentId),
+    topLevelTasks: tasks.filter(t => !(t as any).parentId),
   };
 };
 

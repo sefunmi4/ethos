@@ -10,7 +10,7 @@ export const canEditPost = (post: Post, userId: UUID | null): boolean => {
   if (!post || !userId) return false;
   return (
     post.authorId === userId ||
-    (post.type === 'quest_log' && post.collaborators?.some(c => c.userId === userId))//TODO: This comparison appears to be unintentional because the types 'PostType' and '"quest_log"' have no overlap.ts(2367)
+    (post.type === 'log' && post.collaborators?.some(c => c.userId === userId))
   );
 };
 

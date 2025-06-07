@@ -12,7 +12,9 @@ import type { AuthContextType } from '../types/authTypes';
  * - Redirects to the login page if not authenticated
  */
 const PrivateRoute: React.FC = () => {
-  const { user, loading } = useContext<AuthContextType>(AuthContext); //TODO : rgument of type 'Context<AuthContextType | undefined>' is not assignable to parameter of type 'Context<AuthContextType>'.
+  const context = useContext(AuthContext);
+  if (!context) return <Navigate to="/login" replace />;
+  const { user, loading } = context;
 
   if (loading) {
     // Optional: replace with a spinner or skeleton loader

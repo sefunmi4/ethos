@@ -1,4 +1,5 @@
-import { Request, ParamsDictionary } from 'express'; // todo: MOdule '"express"' has no exported member 'ParamsDictionary'.ts(2305)
+import type { Request } from 'express';
+import type { ParamsDictionary } from 'express-serve-static-core';
 import type { ParsedQs } from 'qs';
 export interface AuthenticatedRequest<
   P = ParamsDictionary,

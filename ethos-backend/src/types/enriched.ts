@@ -23,7 +23,8 @@ export interface EnrichedPost extends Post {
   originalEnrichedPost?: EnrichedPost; // For reposts
 }
 
-export interface EnrichedQuest extends Quest {
+export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
+  collaborators: EnrichedUser[];
   headPost?: Post; // Head/intro post
   linkedPostsResolved?: Post[]; // All posts linked
 
@@ -44,6 +45,13 @@ export interface EnrichedQuest extends Quest {
   // UI-specific flags
   isFeatured?: boolean;
   isNew?: boolean;
+
+  /** Permissions computed for the current user */
+  isEditable?: boolean;
+  isCollaborator?: boolean;
+
+  /** Convenience subset for rendering */
+  topLevelTasks?: Post[];
 }
 
 
