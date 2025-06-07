@@ -1,10 +1,9 @@
 // src/api/board.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import type { BoardData } from '../types/boardTypes';
+import type { BoardData, CreateBoardPayload, BoardLayout } from '../types/boardTypes';
 import type { Post } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
-import type { BoardLayout } from '../types/boardTypes';
 
 const BASE_URL = '/api/boards';
 
@@ -48,16 +47,9 @@ export const fetchBoardItems = async (id: string): Promise<(Post | Quest)[]> => 
  * ➕ addBoard → Create a new board
  * @param data Object containing board fields (title, type, layout, etc)
  */
-export const addBoard = async (data: { // TODO: Addboard doesnt match baord type 
-  title: string;
-  description: string;
-  layout: BoardLayout;
-  items: string[];
-  filters: Record<string, any>;
-  featured: boolean;
-  defaultFor: string | null;
-  category?: string;
-}): Promise<BoardData> => {
+export const addBoard = async (
+  data: CreateBoardPayload
+): Promise<BoardData> => {
   const res = await axiosWithAuth.post(BASE_URL, data);
   return res.data;
 };
@@ -72,6 +64,16 @@ export const updateBoard = async (
   updates: Partial<BoardData>
 ): Promise<BoardData> => {
   const res = await axiosWithAuth.patch(`${BASE_URL}/${id}`, updates);
+  return res.data;
+};
+
+/**
+ * Fetch permissions for a board
+ */
+export const getBoardPermissions = async (
+  id: string
+): Promise<{ boardId: string; canView: boolean; canEdit?: boolean }> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${id}/permissions`);
   return res.data;
 };
 

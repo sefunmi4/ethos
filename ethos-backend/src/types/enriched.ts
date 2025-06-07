@@ -23,7 +23,8 @@ export interface EnrichedPost extends Post {
   originalEnrichedPost?: EnrichedPost; // For reposts
 }
 
-export interface EnrichedQuest extends Quest {
+export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
+  collaborators: EnrichedUser[];
   headPost?: Post; // Head/intro post
   linkedPostsResolved?: Post[]; // All posts linked
 

@@ -83,7 +83,8 @@ const Login: React.FC = () => {
       
         // 🔁 Sync boards
         const userBoards = await fetchBoards(user.id);
-        const defaultBoard = userBoards?.[0]; // TODO: smarter board selection
+        const defaultBoard =
+          userBoards.find(b => b.defaultFor === 'home') || userBoards[0];
         if (defaultBoard) {
           setSelectedBoard(defaultBoard.id);
           
