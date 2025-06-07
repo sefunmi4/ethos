@@ -23,9 +23,19 @@ interface ReactionControlsProps {
   post: Post;
   user?: User;
   onUpdate?: (data: any) => void;
+  replyCount?: number;
+  showReplies?: boolean;
+  onToggleReplies?: () => void;
 }
 
-const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdate }) => {
+const ReactionControls: React.FC<ReactionControlsProps> = ({
+  post,
+  user,
+  onUpdate,
+  replyCount,
+  showReplies,
+  onToggleReplies,
+}) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
   const [loading, setLoading] = useState(true);
@@ -135,6 +145,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({ post, user, onUpdat
         >
           <FaReply /> {showReplyPanel ? 'Cancel' : 'Reply'}
         </button>
+
+        {typeof replyCount === 'number' && replyCount > 0 && (
+          <button
+            onClick={onToggleReplies}
+            className="text-xs text-blue-600 underline"
+          >
+            {showReplies ? 'Hide Replies' : `View Replies (${replyCount})`}
+          </button>
+        )}
       </div>
 
       {showReplyPanel && (

@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions';
-import { useSocketListener } from '../../hooks/useSocket'; 
+import { useSocketListener } from '../../hooks/useSocket';
 import { getDisplayTitle } from '../../utils/displayUtils';
+import { useBoardContext } from '../../contexts/BoardContext';
 
 import EditBoard from './EditBoard';
-import CreateContribution from '../contribution/CreateContribution';
+import CreatePost from '../post/CreatePost';
 
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
@@ -37,6 +38,7 @@ const Board: React.FC<BoardProps> = ({
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
+  const { setSelectedBoard } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -55,6 +57,8 @@ const Board: React.FC<BoardProps> = ({
       try {
         const boardData = await fetchBoard(boardId);
         const boardItems = await fetchBoardItems(boardId);
+
+        setSelectedBoard(boardId);
 
         setBoard(boardData);
         setItems(boardItems as Post[]);
@@ -76,18 +80,39 @@ const Board: React.FC<BoardProps> = ({
 
   const filteredItems = useMemo(() => {
     let result = [...items];
-    if (filter?.type) {
-      result = result.filter((item) => item.type === filter.type);
+
+    if (filter?.itemType) {
+      result = result.filter((item) =>
+        filter.itemType === 'quest'
+          ? 'headPostId' in item
+          : 'content' in item
+      );
+    }
+
+    if (filter?.postType) {
+      result = result.filter((item) =>
+        'type' in item && (item as Post).type === filter.postType
+      );
+    }
+
+    if (filter?.linkType) {
+      result = result.filter(
+        (item) =>
+          'linkedItems' in item &&
+          (item as Post).linkedItems?.some((l) => l.linkType === filter.linkType)
+      );
     }
 
     return result
       .filter((item: Post) => {
-        const title = getDisplayTitle(item) ?? '';
+        const title = getDisplayTitle(item as Post) ?? '';
         return title.toLowerCase().includes(filterText.toLowerCase());
       })
       .sort((a, b) => {
-        const aVal = sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a) ?? '';
-        const bVal = sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b) ?? '';
+        const aVal =
+          sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a as Post) ?? '';
+        const bVal =
+          sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as Post) ?? '';
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
@@ -178,14 +203,12 @@ const Board: React.FC<BoardProps> = ({
         </div>
       </div>
 
-      {/* Create Contribution Form */}
+      {/* Create Post Form */}
       {showCreate && showCreateForm && (
         <div className="border rounded-lg p-4 bg-white shadow">
-          <CreateContribution
+          <CreatePost
             onSave={handleAdd}
             onCancel={() => setShowCreateForm(false)}
-            boards={[board]}
-            quests={quest ? [quest] : []}
           />
         </div>
       )}

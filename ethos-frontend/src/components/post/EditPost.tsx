@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { updatePost } from '../../api/post';
+import { POST_TYPES } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
@@ -69,16 +70,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           id="post-type"
           value={type}
           onChange={(e) => setType(e.target.value as PostType)}
-          options={[
-            { value: 'free_speech', label: 'Free Speech' },
-            { value: 'request', label: 'Request' },
-            { value: 'review', label: 'Review' },
-            { value: 'quest_log', label: 'Quest Log' },
-            { value: 'quest_task', label: 'Quest Task' },
-            { value: 'commit', label: 'Git Commit' },
-            { value: 'log', label: 'Code Log' },
-            { value: 'quest', label: 'Quest Root' },
-          ]}
+          options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
         />
 
         <Label htmlFor="content">Content (Markdown supported)</Label>
