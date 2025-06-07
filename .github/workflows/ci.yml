@@ -13,7 +13,17 @@ jobs:
         run: |
           cd ethos-backend
           npm ci
+      - name: Type check
+        run: |
+          cd ethos-backend
+          npx tsc --noEmit
       - name: Run tests
         run: |
           cd ethos-backend
           npm test -- -w=1
+      - name: Lint & build frontend
+        run: |
+          cd ethos-frontend
+          npm ci
+          npm run lint
+          npm run build
