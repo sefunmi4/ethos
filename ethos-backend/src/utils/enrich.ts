@@ -1,6 +1,12 @@
 import type { DBPost, DBQuest, DBBoard, DBUser } from '../types/db';
-import type { User, Post, RepostMeta } from '../types/api';
-import type { EnrichedPost, EnrichedQuest, EnrichedUser, EnrichedBoard } from '../types/enriched';
+import type { User, Post, Quest, RepostMeta } from '../types/api';
+import type {
+  EnrichedPost,
+  EnrichedQuest,
+  EnrichedUser,
+  EnrichedBoard,
+  EnrichedCollaborator,
+} from '../types/enriched';
 
 import { usersStore, postsStore, questsStore } from '../models/stores';
 import { formatPosts } from '../logic/postFormatter';
@@ -22,6 +28,18 @@ const normalizePost = (post: DBPost): Post => {
     linkedItems: post.linkedItems ?? [],
     repostedFrom: repostMeta,
   };
+};
+
+/**
+ * Normalize DBQuest into valid Quest layout.
+ */
+const normalizeQuest = (quest: DBQuest): Quest => {
+  return {
+    ...quest,
+    gitRepo: quest.gitRepo
+      ? { repoUrl: '', ...quest.gitRepo }
+      : undefined,
+  } as Quest;
 };
 
 /**
@@ -52,7 +70,8 @@ export const enrichUser = (
 
   const normalizedPosts = posts.map(normalizePost);
   const userPosts = normalizedPosts.filter((p) => p.authorId === user.id);
-  const userQuests = quests.filter((q) => q.authorId === user.id || q.ownerId === user.id);
+  const normalizedQuests = quests.map(normalizeQuest);
+  const userQuests = normalizedQuests.filter((q) => q.authorId === user.id);
 
   return {
     ...user,
@@ -152,6 +171,7 @@ export const enrichQuest = (
   } = {}
 ): EnrichedQuest => {
   const allPosts = enrichPosts(posts, users, currentUserId);
+  const normalizedQuest = normalizeQuest(quest);
   const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
   const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');
   const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech');
@@ -160,7 +180,7 @@ export const enrichQuest = (
     quest.linkedPosts?.some((l) => l.itemId === p.id)
   );
 
-  const enrichedCollaborators = quest.collaborators.map((c) => {
+  const enrichedCollaborators: EnrichedCollaborator[] = quest.collaborators.map((c) => {
     const u = users.find((u) => u.id === c.userId);
     return u
       ? {
@@ -171,11 +191,11 @@ export const enrichQuest = (
           bio: u.bio,
         }
       : { ...c };
-  }); //TODO this should be type enrinechedcolberator
+  });
 
   const headPostDB = posts.find((p) => p.id === quest.headPostId);
   return {
-    ...quest,
+    ...normalizedQuest,
     headPost: headPostDB ? normalizePost(headPostDB) : undefined,
     logs,
     tasks,
@@ -223,6 +243,22 @@ export const enrichBoard = (
     currentUserId?: string | null;
   }
 ): EnrichedBoard => {
+  const resolvedItems = board.items
+    .map((id) => {
+      const post = posts.find((p) => p.id === id);
+      if (post) {
+        return normalizePost(post);
+      }
+
+      const quest = quests.find((q) => q.id === id);
+      if (quest) {
+        return normalizeQuest(quest);
+      }
+
+      return null;
+    })
+    .filter((i): i is Post | Quest => i !== null);
+
   const enrichedItems = board.items
     .map((id) => {
       const post = posts.find((p) => p.id === id);
@@ -239,8 +275,9 @@ export const enrichBoard = (
     })
     .filter((i): i is EnrichedPost | EnrichedQuest => i !== null);
 
-  return { // Todo: Property 'resolvedItems' is missing in type '{ enrichedItems: (EnrichedQuest | EnrichedPost)[]; id: string; title: string; des
+  return {
     ...board,
+    resolvedItems,
     enrichedItems,
   };
 };
