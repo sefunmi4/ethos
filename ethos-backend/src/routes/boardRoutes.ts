@@ -38,7 +38,7 @@ router.get(
     }
 
     if (featured === 'true') {
-      result = result.filter(board => board.featured);
+      result = result.filter(board => board.featured === true); 
     }
 
     res.json(result);
