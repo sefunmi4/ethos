@@ -66,11 +66,13 @@ const BoardPage: React.FC = () => {
   if (isLoading) return <div className="p-6 text-center text-gray-500">Loading board...</div>;
   if (error || !boardData) return <div className="p-6 text-center text-red-500">Board not found.</div>;
 
+  const editable = canEditBoard(boardData.id);
+
   return (
     <main className="max-w-7xl mx-auto p-4 space-y-8">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">{boardData.title}</h1>
-        {canEditBoard(boardData) && (
+        {editable && (
           <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Edit Board
           </button>
@@ -80,7 +82,8 @@ const BoardPage: React.FC = () => {
       <Board
         board={boardData}
         layout={boardData.layout}
-        editable={canEditBoard(boardData)}
+        editable={editable}
+        showCreate={editable}
         onScrollEnd={loadMore}
         loading={loadingMore}
       />

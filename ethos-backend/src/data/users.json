@@ -1,0 +1,28 @@
+[
+  {
+    "id": "u_62e00dc0-4fc0-4730-b8a4-1dc01389a3f1",
+    "username": "testerbot1",
+    "email": "testerbot1@ethos.com",
+    "password": "$2b$10$CS1TXVBXOLJnCaAKRaRhXeDFZQi.JKHQOfJgSwAiysUFBv2.tFtxq",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-06-07T18:49:49.162Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  }
+]

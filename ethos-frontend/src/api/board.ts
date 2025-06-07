@@ -1,7 +1,7 @@
 // src/api/board.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import type { BoardData, CreateBoardPayload, BoardLayout } from '../types/boardTypes';
+import type { BoardData, CreateBoardPayload } from '../types/boardTypes';
 import type { Post } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
 
