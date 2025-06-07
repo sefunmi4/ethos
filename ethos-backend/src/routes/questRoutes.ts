@@ -19,7 +19,10 @@ const router = express.Router();
 
 // GET all quests
 router.get('/', (req: Request, res: Response) => {
-  const quests: Quest[] = questsStore.read(); //todo: Type 'DBQuest[]' is not assignable to type 'Quest[]'. should be enriched
+  const quests: Quest[] = questsStore.read().map((q) => ({
+    ...q,
+    gitRepo: q.gitRepo ? { repoUrl: '', ...q.gitRepo } : undefined,
+  }));
   res.json(quests);
 });
 
@@ -164,7 +167,9 @@ router.get(
     const q = quests.find(x => x.id === questId);
     if (q) {
       nodes.push({ ...q, type: 'quest' });
-      (q.tasks || []).forEach((childId: string) => recurse(childId)); // TODO: NEED TO CHECK NODEID OF LINKEDPOSTS to know if its a task or log post Q:name: ... :Txx
+      q.linkedPosts
+        .filter(l => l.itemType === 'quest')
+        .forEach(l => recurse(l.itemId));
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
