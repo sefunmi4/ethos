@@ -10,7 +10,9 @@ import type {
   GitMetaData,
   UserRole,
   BoardLayout,
-  BoardType
+  BoardType,
+  ReactionSet,
+  ReactionCountMap
 } from './api';
 
 // types/db.ts
@@ -22,9 +24,9 @@ export interface DBPost {
   visibility: Visibility;
   timestamp: string;
 
-  questId?: string | null;
   replyTo?: string | null;
   repostedFrom?: string | null;
+  reactions?: ReactionSet;
 
   tags?: PostTag[];
   status?: QuestTaskStatus;
@@ -37,6 +39,14 @@ export interface DBPost {
   linkedNodeId?: string;
   gitDiff?: string;
   commitSummary?: string;
+
+  enriched?: boolean;
+
+  questId?: string | null;
+  questNodeTitle?: string;
+  nodeId?: string;
+
+  reactionCounts?: ReactionCountMap;
 }
 
 // types/db.ts

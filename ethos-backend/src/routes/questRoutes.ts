@@ -19,7 +19,7 @@ const router = express.Router();
 
 // GET all quests
 router.get('/', (req: Request, res: Response) => {
-  const quests: Quest[] = questsStore.read();
+  const quests: Quest[] = questsStore.read(); //todo: Type 'DBQuest[]' is not assignable to type 'Quest[]'. should be enriched
   res.json(quests);
 });
 
@@ -47,8 +47,6 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     linkedPosts: fromPostId
       ? [{ itemId: fromPostId, itemType: 'post' } satisfies LinkedItem]
       : [],
-    logs: [],
-    tasks: [],
     collaborators: [],
     status: 'active',
     headPostId: fromPostId || '',
@@ -62,9 +60,9 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
 });
 
 // PATCH quest (e.g. add a log)
-router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res: Response): void => {
+router.patch('/:id', (req: Request<{ id: string }, any, { itemId: string }>, res: Response): void => {
   const { id } = req.params;
-  const { logId } = req.body;
+  const { itemId } = req.body;
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
@@ -73,9 +71,9 @@ router.patch('/:id', (req: Request<{ id: string }, any, { logId: string }>, res:
     return;
   }
 
-  quest.logs = quest.logs || [];
-  if (!quest.logs.includes(logId)) {
-    quest.logs.push(logId);
+  quest.linkedPosts = quest.linkedPosts || [];
+  if (!quest.linkedPosts.includes(itemId)) { //todo: should be checking for quest.linkedPosts[linkeditem_i].itemID Argument of type 'string' is not assignable to parameter of type 'LinkedItem'.
+    quest.linkedPosts.push(itemId);
     questsStore.write(quests);
   }
 
@@ -96,13 +94,13 @@ router.get(
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' });
+  if (!quest) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
 
   if (enrich === 'true') {
     const posts = postsStore.read();
     const users = usersStore.read();
     const enriched = enrichQuest(quest, { posts, users, currentUserId: userId });
-    return res.json(enriched);
+    return res.json(enriched); //TODO: expects void return but is get function
   }
 
   res.json(quest);
@@ -112,7 +110,7 @@ router.get(
 router.post(
   '/:id/link',
   authMiddleware,
-  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {
+  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {  //TODO: Argument of type '(req: AuthRequest<{ id: string; }, any, { postId: string; }>, res: Response) => express.Response<any, Record<string, any>> | undefined' is not assignable to par
   const { id } = req.params;
   const { postId } = req.body;
   if (!postId) return res.status(400).json({ error: 'Missing postId' });
@@ -141,7 +139,7 @@ router.get(
   const quests = questsStore.read();
   const posts = postsStore.read();
   const quest = quests.find(q => q.id === id);
-  if (!quest) return res.status(404).json({ error: 'Quest not found' });
+  if (!quest) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
 
   const nodes: any[] = [];
 
@@ -149,7 +147,7 @@ router.get(
     const q = quests.find(x => x.id === questId);
     if (q) {
       nodes.push({ ...q, type: 'quest' });
-      (q.tasks || []).forEach((childId: string) => recurse(childId));
+      (q.tasks || []).forEach((childId: string) => recurse(childId)); // NEED TO CHECK NODEID OF LINKEDPOSTS to know if its a task or log post Q:name: ... :Txx
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
@@ -169,7 +167,7 @@ router.delete(
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);
 
-  if (index === -1) return res.status(404).json({ error: 'Quest not found' });
+  if (index === -1) return res.status(404).json({ error: 'Quest not found' }); //TODO: expects void return but is get function
 
   quests.splice(index, 1);
   questsStore.write(quests);

@@ -140,7 +140,7 @@ export interface Quest {
 
   linkedPosts: LinkedItem[];
   collaborators: CollaberatorRoles[];
-  gitRepo: {
+  gitRepo?: {
     repoId: string;
     repoUrl: string;
     headCommitId?: string;

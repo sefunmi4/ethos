@@ -41,7 +41,7 @@ const PublicProfilePage: React.FC = () => {
           (posts.enrichedItems as EnrichedPost[]) ||
           (await enrichPosts(posts.items as unknown as Post[]));
 
-        setProfile(profile);
+        setProfile(profile); //todo: Argument of type '{ id: string; }' is not assignable to parameter of type 'SetStateAction<User | null>'.
         setQuestBoard({ ...quests, enrichedItems: enrichedQuests });
         setPostBoard({ ...posts, enrichedItems: enrichedPosts });
       } catch (err) {

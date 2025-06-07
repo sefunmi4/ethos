@@ -171,7 +171,7 @@ export const enrichQuest = (
           bio: u.bio,
         }
       : { ...c };
-  });
+  }); //TODO this should be type enrinechedcolberator
 
   const headPostDB = posts.find((p) => p.id === quest.headPostId);
   return {
@@ -181,7 +181,7 @@ export const enrichQuest = (
     tasks,
     discussion,
     linkedPostsResolved,
-    collaborators: enrichedCollaborators,
+    collaborators: enrichedCollaborators, 
     taskGraph: [], // Extend later
     percentComplete: 0, // Optional: compute from task statuses
     taskCount: tasks.length,
@@ -239,7 +239,7 @@ export const enrichBoard = (
     })
     .filter((i): i is EnrichedPost | EnrichedQuest => i !== null);
 
-  return { // tood: Property 'resolvedItems' is missing in type '{ enrichedItems: (EnrichedQuest | EnrichedPost)[]; id: string; title: string; des
+  return { // Todo: Property 'resolvedItems' is missing in type '{ enrichedItems: (EnrichedQuest | EnrichedPost)[]; id: string; title: string; des
     ...board,
     enrichedItems,
   };

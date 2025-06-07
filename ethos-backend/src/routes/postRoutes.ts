@@ -46,12 +46,7 @@ router.post(
       collaborators: [], // reposts are solo unless explicitly assigned
       replyTo: null,
       timestamp: new Date().toISOString(),
-      repostedFrom: {
-        originalPostId: original.id,
-        username: originalAuthorUsername,
-        originalContent: original.content,
-        originalTimestamp: original.timestamp,
-      },
+      repostedFrom: original.id,
       linkedItems: [...(original.linkedItems || [])],
 
       // 🧹 Clear non-transferable or enriched fields

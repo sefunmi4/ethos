@@ -2,13 +2,7 @@ import type { Post, Quest, Board, User, GitRepoMeta, AppItem, GitCommit, GitFile
 
 
 export interface EnrichedPost extends Post {
-  enrichedCollaborators?: Array<{
-    userId: string;
-    username?: string;
-    roles?: string[];
-    avatarUrl?: string;
-    bio?: string;
-  }>;
+  enrichedCollaborators?:  EnrichedCollaborator[];
 
   renderedContent?: string; // Markdown, etc.
 
@@ -24,7 +18,6 @@ export interface EnrichedPost extends Post {
 }
 
 export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
-  collaborators: EnrichedUser[];
   headPost?: Post; // Head/intro post
   linkedPostsResolved?: Post[]; // All posts linked
 
@@ -32,6 +25,7 @@ export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
   logs?: Post[];
   tasks?: Post[];
   discussion?: Post[];
+  collaborators: EnrichedCollaborator[];
 
   // Graph layout between posts/tasks
   taskGraph?: TaskEdge[];
@@ -53,7 +47,6 @@ export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
   /** Convenience subset for rendering */
   topLevelTasks?: Post[];
 }
-
 
 // 🔍 TaskEdge type to define sub-problem relationships in the graph
 export interface TaskEdge {
@@ -116,4 +109,12 @@ export interface EnrichedUser extends User {
 
   // Used for displaying roles as badges
   displayRole?: string;
+}
+
+export interface EnrichedCollaborator {
+  userId: string;
+  username?: string;
+  roles?: string[];
+  avatarUrl?: string;
+  bio?: string;
 }
