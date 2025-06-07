@@ -1,0 +1,19 @@
+name: CI
+on:
+  pull_request:
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: |
+          cd ethos-backend
+          npm ci
+      - name: Run tests
+        run: |
+          cd ethos-backend
+          npm test -- -w=1
