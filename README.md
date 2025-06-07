@@ -111,6 +111,16 @@ npm install
 node src/server.js
 ```
 
+### Running Tests
+
+Execute the backend test suite after installing dependencies:
+
+```bash
+npm test --prefix ethos-backend
+```
+
+This runs the Jest tests under `ethos-backend/tests`.
+
 `.env` for backend:
 
 ```env
