@@ -1,5 +1,5 @@
 // src/utils/authUtils.ts
-import axios, { type AxiosInstance } from 'axios';
+import axios, { type AxiosInstance, AxiosError } from 'axios';
 
 /**
  * 📡 Base API URL — should be environment-configurable
@@ -24,6 +24,22 @@ export const setAccessToken = (token: string | null): void => {
 };
 
 /**
+ * Request a new access token using the refresh token cookie
+ */
+export const refreshAccessToken = async (): Promise<string | null> => {
+  try {
+    const res = await axiosWithAuth.post('/auth/refresh');
+    if (res.data?.accessToken) {
+      setAccessToken(res.data.accessToken);
+      return res.data.accessToken as string;
+    }
+  } catch (err) {
+    console.error('[AuthUtils] Failed to refresh token:', err);
+  }
+  return null;
+};
+
+/**
  * 🧠 Authenticated axios instance using cookie credentials
  */
 export const axiosWithAuth: AxiosInstance = axios.create({
@@ -39,6 +55,28 @@ axiosWithAuth.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Refresh the access token and retry once on 401 responses
+axiosWithAuth.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest: any = error.config;
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/refresh')
+    ) {
+      originalRequest._retry = true;
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        return axiosWithAuth(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * 🚪 Optional: Redirect-based logout helper
