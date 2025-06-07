@@ -182,6 +182,13 @@ export interface BoardData extends Board {
   questId?: string;
 }
 
+export interface BoardPermission {
+  boardId: string;
+  canView: boolean;
+  canEdit?: boolean;
+  roles?: string[];
+}
+
 export interface RenderableItem {
   id: string;
   type: ItemType;

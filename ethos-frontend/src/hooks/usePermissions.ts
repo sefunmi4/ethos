@@ -1,6 +1,6 @@
 import { useCallback, useContext, useRef } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import { getBoardPermissions } from '../api/board'; // TODO: odule '"../api/board"' has no exported member 'getBoardPermissions'.ts
+import { getBoardPermissions } from '../api/board';
 
 interface BoardPermission {
   boardId: string;

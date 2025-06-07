@@ -26,6 +26,18 @@ export interface BoardData extends Board {
   questId?: string;            // Used to associate board with a quest, if relevant
 }
 
+/** Payload used when creating a new board */
+export interface CreateBoardPayload {
+  title: string;
+  description?: string;
+  layout: BoardLayout;
+  items: string[];
+  filters?: Record<string, any>;
+  featured?: boolean;
+  defaultFor?: 'home' | 'profile' | 'quests' | null;
+  category?: string;
+}
+
 export interface RenderableItem {
   id: string;
   type: ItemType;

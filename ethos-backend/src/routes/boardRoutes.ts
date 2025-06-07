@@ -238,4 +238,31 @@ router.delete(
   }
 );
 
+//
+// ✅ GET board permissions
+//
+router.get(
+  '/:id/permissions',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    const boards = boardsStore.read();
+    const board = boards.find(b => b.id === id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
+      return;
+    }
+
+    const permission = {
+      boardId: id,
+      canView: true,
+      canEdit: board.userId === userId,
+    };
+
+    res.json(permission);
+  }
+);
+
 export default router;

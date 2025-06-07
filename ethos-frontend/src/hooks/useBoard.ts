@@ -58,6 +58,18 @@ export const useBoard = (arg?: BoardArg) => {
     }
   }, []);
 
+  const loadPublicBoards = useCallback(async (userId: string) => {
+    const [quests, posts] = await Promise.all([
+      fetchBoard(`quests-${userId}`, { enrich: true }).catch(() => null),
+      fetchBoard(`posts-${userId}`, { enrich: true }).catch(() => null),
+    ]);
+    return {
+      profile: { id: userId },
+      quests: quests as BoardData,
+      posts: posts as BoardData,
+    };
+  }, []);
+
   // Auto-load if missing
   useEffect(() => {
     if (boardId && !board) {
@@ -72,6 +84,7 @@ export const useBoard = (arg?: BoardArg) => {
     loadBoard,
     refresh,
     fetchBoards: fetchAllBoards,
+    loadPublicBoards,
     setSelectedBoard,
     appendToBoard,
     removeItemFromBoard,

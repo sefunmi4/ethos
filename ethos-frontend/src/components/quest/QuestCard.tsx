@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import type { Quest } from '../../types/questTypes';  // TODO:  
-import type { Post } from '../../types/postTypes';   // TODO:  
-import type { User } from '../../types/userTypes'; // TODO:  
-import { Button, PostTypeBadge } from '../ui'; // TODO:  
+import type { Quest } from '../../types/questTypes';
+import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
+import { Button, PostTypeBadge } from '../ui';
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
-import { fetchQuestById } from '../../api/quest';  // TODO:  getQuestById
-import { fetchPostsByQuestId } from '../../api/post'; // TODO:  FECTCH API/POST
+import { fetchQuestById } from '../../api/quest';
+import { fetchPostsByQuestId } from '../../api/post';
 import ActionMenu from '../ui/ActionMenu';
 
 /**
@@ -30,7 +30,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onJoinToggle,
   onDelete,
   onEdit,
-  onCancel, // TODO:  NOT IMPLEMENTED
+  onCancel,
 }) => {
   const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('timeline');
   const [questData, setQuestData] = useState<Quest>(quest);
