@@ -73,9 +73,11 @@ export const enrichUser = (
   const normalizedQuests = quests.map(normalizeQuest);
   const userQuests = normalizedQuests.filter((q) => q.authorId === user.id);
 
+  const safeUser = user as Omit<User, 'password'>;
+
   return {
-    ...user,
-    links: safeLinks, // ✅ ensures shape matches expected type
+    ...safeUser,
+    links: safeLinks as User['links'],
 
     recentPosts: userPosts.slice(0, 5),
     activeQuests: userQuests.filter((q) => q.status === 'active'),
