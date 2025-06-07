@@ -96,6 +96,7 @@ Vite looks for `postcss.config.cjs` in this directory. If you encounter
 `postcss.config.js` file. Make sure to rerun `npm install` so the
 `@tailwindcss/postcss` plugin is available after pulling new changes.
 
+
 `.env` for frontend:
 
 ```env

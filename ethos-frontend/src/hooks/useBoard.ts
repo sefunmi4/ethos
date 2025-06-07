@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useBoardContext } from '../contexts/BoardContext';
 import { fetchBoards, fetchBoard } from '../api/board';
+import { fetchUserById } from '../api/auth';
 import type { BoardData } from '../types/boardTypes';
+import type { User } from '../types/userTypes';
 
 type BoardArg = string | { questId: string; type: string; enrich?: boolean };
 
@@ -59,12 +61,14 @@ export const useBoard = (arg?: BoardArg) => {
   }, []);
 
   const loadPublicBoards = useCallback(async (userId: string) => {
-    const [quests, posts] = await Promise.all([
+    const [quests, posts, profileRes] = await Promise.all([
       fetchBoard(`quests-${userId}`, { enrich: true }).catch(() => null),
       fetchBoard(`posts-${userId}`, { enrich: true }).catch(() => null),
+      fetchUserById(userId).catch(() => null), // ✅ Use the API
     ]);
+  
     return {
-      profile: { id: userId },
+      profile: profileRes as User,
       quests: quests as BoardData,
       posts: posts as BoardData,
     };
