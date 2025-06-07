@@ -4,6 +4,7 @@ import { addPost } from '../../api/post';
 import { Button, TextArea, Select, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
+import CreateQuest from '../quest/CreateQuest';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
 
@@ -22,6 +23,15 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
+
+  if (type === 'quest') {
+    return (
+      <CreateQuest
+        onSave={(q) => onSave?.(q as any)}
+        onCancel={onCancel}
+      />
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +92,9 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
               id="post-type"
               value={type}
               onChange={(e) => setType(e.target.value as PostType)}
-              options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+              options={POST_TYPES.filter(
+                ({ value }) => value !== 'quest' || linkedItems.length === 0
+              ).map(({ value, label }) => ({ value, label }))}
             />
           </>
         )}
@@ -150,11 +162,11 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
 };
 
 function requiresQuestLink(type: PostType): boolean {
-  return ['quest_log', 'quest_task'].includes(type);
+  return ['log', 'task'].includes(type);
 }
 
 function requiresQuestRoles(type: PostType): boolean {
-  return ['quest_log', 'quest_task'].includes(type);
+  return ['log', 'task'].includes(type);
 }
 
 export default CreatePost;
