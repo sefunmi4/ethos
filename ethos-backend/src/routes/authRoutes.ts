@@ -190,8 +190,8 @@ router.get('/me', cookieAuth, (req: AuthenticatedRequest, res: Response): void =
     return;
   }
 
-  const { id, username, role, tags, bio, links, experienceTimeline } = user;
-  res.json({ id, username, role, tags, bio, links, experienceTimeline });
+  const { id, email, username, role, tags, bio, links, experienceTimeline } = user;
+  res.json({ id, email, username, role, tags, bio, links, experienceTimeline });
 });
 
 router.patch('/me', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
