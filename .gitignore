@@ -3,3 +3,4 @@ package-lock.json
 package.json
 ethos-backend-ts/dist/
 .DS_Store
+.env

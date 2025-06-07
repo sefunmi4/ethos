@@ -7,6 +7,66 @@ import type { DBPost } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
+
+//
+// ✅ POST create a new post
+//
+router.post(
+  '/',
+  authMiddleware,
+  (req: AuthenticatedRequest, res: Response): void => {
+    const {
+      type = 'free_speech',
+      content = '',
+      visibility = 'public',
+      tags = [],
+      questId = null,
+    } = req.body;
+
+    const posts = postsStore.read();
+
+    const newPost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type,
+      content,
+      visibility,
+      timestamp: new Date().toISOString(),
+      tags,
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [],
+      questId,
+    };
+
+    posts.push(newPost);
+    postsStore.write(posts);
+    const users = usersStore.read();
+    res.status(201).json(enrichPost(newPost, { users }));
+  }
+);
+
+//
+// ✅ PATCH update post
+//
+router.patch(
+  '/:id',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const post = posts.find((p) => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    Object.assign(post, req.body);
+    postsStore.write(posts);
+    const users = usersStore.read();
+    res.json(enrichPost(post, { users }));
+  }
+);
 //
 // ✅ GET /api/posts/:id/replies – Fetch direct replies to a post
 //

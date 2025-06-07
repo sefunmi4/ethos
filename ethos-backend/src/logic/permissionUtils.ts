@@ -63,7 +63,7 @@ export const canJoinQuest = (quest: Quest, userId: UUID | null): boolean => {
  * Works on posts or quests.
  */
 export const isCollaborator = (
-  resource: { collaborators?: Array<{ userId: UUID }> },
+  resource: { collaborators?: Array<{ userId?: UUID }> },
   userId: UUID | null
 ): boolean => {
   return !!userId && resource.collaborators?.some(c => c.userId === userId) === true;

@@ -1,5 +1,10 @@
 import { Post, Quest, User } from '../types/api';
-import { EnrichedQuest, EnrichedPost, EnrichedUser } from '../types/enriched';
+import {
+  EnrichedQuest,
+  EnrichedPost,
+  EnrichedUser,
+  EnrichedCollaborator,
+} from '../types/enriched';
 import { canEditQuest, isCollaborator } from './permissionUtils';
 
 /**
@@ -21,9 +26,23 @@ export const formatQuest = (
       status: task.status || 'todo',
     }));
 
-  const enrichedCollaborators: EnrichedUser[] = (quest.collaborators || [])
-    .map(c => allUsers.find(u => u.id === c.userId))
-    .filter((u): u is EnrichedUser => !!u);
+  const enrichedCollaborators: EnrichedCollaborator[] = (quest.collaborators || [])
+    .map(c => {
+      if (!c.userId) {
+        return { roles: c.roles, isOpenRole: true };
+      }
+
+      const user = allUsers.find(u => u.id === c.userId);
+      return user
+        ? {
+            userId: user.id,
+            username: user.username,
+            avatarUrl: user.avatarUrl,
+            bio: user.bio,
+            roles: c.roles,
+          }
+        : { userId: c.userId, roles: c.roles };
+    });
 
   return {
     ...quest,

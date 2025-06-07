@@ -73,9 +73,11 @@ export const enrichUser = (
   const normalizedQuests = quests.map(normalizeQuest);
   const userQuests = normalizedQuests.filter((q) => q.authorId === user.id);
 
+  const safeUser = user as Omit<User, 'password'>;
+
   return {
-    ...user,
-    links: safeLinks, // ✅ ensures shape matches expected type
+    ...safeUser,
+    links: safeLinks as User['links'],
 
     recentPosts: userPosts.slice(0, 5),
     activeQuests: userQuests.filter((q) => q.status === 'active'),
@@ -181,6 +183,10 @@ export const enrichQuest = (
   );
 
   const enrichedCollaborators: EnrichedCollaborator[] = quest.collaborators.map((c) => {
+    if (!c.userId) {
+      return { roles: c.roles, isOpenRole: true };
+    }
+
     const u = users.find((u) => u.id === c.userId);
     return u
       ? {
@@ -190,7 +196,7 @@ export const enrichQuest = (
           avatarUrl: u.avatarUrl,
           bio: u.bio,
         }
-      : { ...c };
+      : { userId: c.userId, roles: c.roles };
   });
 
   const headPostDB = posts.find((p) => p.id === quest.headPostId);

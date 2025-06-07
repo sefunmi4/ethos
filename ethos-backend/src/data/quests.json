@@ -1,0 +1,12 @@
+[
+  {
+    "id": "q_default",
+    "authorId": "system",
+    "title": "First Quest",
+    "status": "active",
+    "headPostId": "",
+    "linkedPosts": [],
+    "collaborators": [],
+    "createdAt": "2025-06-07T00:00:00Z"
+  }
+]
