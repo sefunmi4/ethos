@@ -146,14 +146,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <FaReply /> {showReplyPanel ? 'Cancel' : 'Reply'}
         </button>
 
-        {typeof replyCount === 'number' && replyCount > 0 && (
-          <button
-            onClick={onToggleReplies}
-            className="text-xs text-blue-600 underline"
-          >
-            {showReplies ? 'Hide Replies' : `View Replies (${replyCount})`}
-          </button>
-        )}
       </div>
 
       {showReplyPanel && (

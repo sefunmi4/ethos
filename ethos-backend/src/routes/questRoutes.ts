@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { questsStore, postsStore, usersStore } from '../models/stores';
-import { enrichQuest } from '../utils/enrich';
+import { enrichQuest, enrichPost } from '../utils/enrich';
 import type { Quest, LinkedItem } from '../types/api';
 import type { DBQuest } from '../types/db';
 
@@ -127,6 +127,20 @@ router.get(
 
   res.json(quest);
 });
+
+// GET posts linked to a quest
+router.get(
+  '/:id/posts',
+  authOptional,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+
+    const posts = postsStore.read();
+    const users = usersStore.read();
+    const filtered = posts.filter((p) => p.questId === id);
+    res.json(filtered.map((p) => enrichPost(p, { users, currentUserId: req.user?.id || null })));
+  }
+);
 
 // POST to link a post to quest
 router.post(
