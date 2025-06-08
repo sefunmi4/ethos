@@ -3,6 +3,7 @@ import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useSocketListener } from '../../hooks/useSocket';
 import { getDisplayTitle } from '../../utils/displayUtils';
+import { getRenderableBoardItems } from '../../utils/boardUtils';
 import { useBoardContext } from '../../contexts/BoardContext';
 
 import EditBoard from './EditBoard';
@@ -38,7 +39,7 @@ const Board: React.FC<BoardProps> = ({
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
-  const { setSelectedBoard } = useBoardContext();
+  const { setSelectedBoard, appendToBoard } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -117,9 +118,37 @@ const Board: React.FC<BoardProps> = ({
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
 
+  const renderableItems = useMemo(
+    () => getRenderableBoardItems(filteredItems),
+    [filteredItems]
+  );
+
+  const questItems = useMemo(
+    () => renderableItems.filter((it) => 'headPostId' in it),
+    [renderableItems]
+  );
+  const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
+  const graphEligible = singleQuest !== null;
+
+  const graphItems = useMemo(() => {
+    if (!graphEligible) return renderableItems;
+    const qid = singleQuest!.id;
+    return renderableItems.filter(
+      (item) =>
+        'headPostId' in item ||
+        (item as Post).questId === qid ||
+        (item as Post).linkedItems?.some(
+          (l) => l.itemType === 'quest' && l.itemId === qid
+        )
+    );
+  }, [renderableItems, graphEligible, singleQuest]);
+
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
+    if (board) {
+      appendToBoard(board.id, item as any);
+    }
   };
 
   const resolvedStructure: BoardLayout =
@@ -181,7 +210,7 @@ const Board: React.FC<BoardProps> = ({
             onChange={(e) => setViewMode(e.target.value as BoardLayout)}
             options={[
               { value: 'grid', label: 'Grid' },
-              { value: 'graph', label: 'Graph' },
+              ...(graphEligible ? [{ value: 'graph', label: 'Graph' }] : []),
               { value: 'thread', label: 'Timeline' },
             ]}
           />
@@ -233,7 +262,7 @@ const Board: React.FC<BoardProps> = ({
         </div>
       ) : (
         <Layout
-          items={filteredItems}
+          items={resolvedStructure === 'graph' ? graphItems : renderableItems}
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}

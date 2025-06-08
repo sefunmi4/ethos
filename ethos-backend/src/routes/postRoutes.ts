@@ -2,8 +2,9 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { postsStore, usersStore, reactionsStore } from '../models/stores';
+import { postsStore, usersStore, reactionsStore, questsStore } from '../models/stores';
 import { enrichPost } from '../utils/enrich';
+import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
@@ -35,9 +36,15 @@ router.post(
       visibility = 'public',
       tags = [],
       questId = null,
+      replyTo = null,
+      linkedItems = [],
+      collaborators = [],
     } = req.body;
 
     const posts = postsStore.read();
+    const quests = questsStore.read();
+    const quest = questId ? quests.find(q => q.id === questId) : null;
+    const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
     const newPost: DBPost = {
       id: uuidv4(),
@@ -47,11 +54,12 @@ router.post(
       visibility,
       timestamp: new Date().toISOString(),
       tags,
-      collaborators: [],
-      replyTo: null,
+      collaborators,
+      replyTo,
       repostedFrom: null,
-      linkedItems: [],
+      linkedItems,
       questId,
+      nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
     posts.push(newPost);
