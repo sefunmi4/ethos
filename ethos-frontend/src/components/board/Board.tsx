@@ -30,11 +30,9 @@ const Board: React.FC<BoardProps> = ({
   showCreate = true,
   hideControls = false,
   filter = {},
-  hideControls = false,
   onScrollEnd,
   loading: loadingMore = false,
   quest,
-  hideControls = false,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);

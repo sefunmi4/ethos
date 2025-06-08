@@ -73,12 +73,6 @@ export interface BoardProps {
   onScrollEnd?: () => void;
   loading?: boolean;
   quest?: Quest;
-  /**
-   * Hide filter and sorting controls in the board header.
-   * Useful for compact or embedded boards where controls would be noisy.
-   */
-
-  hideControls?: boolean;
 }
 
 /** Props for the EditBoard component */
