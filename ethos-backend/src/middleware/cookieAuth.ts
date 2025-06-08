@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { error } from '../utils/logger';
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ export const cookieAuth: RequestHandler = (req, res, next) => {
     (req as any).user = decoded; // Extend `req` to include `user`
     return next(); // ✅ properly ends function with void return
   } catch (err) {
-    console.error('[COOKIE AUTH ERROR]', err);
+    error('[COOKIE AUTH ERROR]', err);
     res.status(403).json({ error: 'Invalid or expired token' });
     return; // ✅ ensures return type is void
   }

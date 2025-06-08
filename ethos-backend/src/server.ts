@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import type { CorsOptions } from 'cors';
+import { requestLogger, info } from './utils/logger';
 
 import authRoutes from './routes/authRoutes';
 import gitRoutes from './routes/gitRoutes';
@@ -45,6 +46,7 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use(requestLogger);
 
 /**
  * API Routes
@@ -68,6 +70,6 @@ const PORT: number = parseInt(process.env.PORT || '3001', 10);
  * Logs a message with the active port and frontend origin
  */
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server running at http://localhost:${PORT}`);
-  console.log(`🌐 Accepting requests from: ${CLIENT_URL}`);
+  info(`🚀 Backend server running at http://localhost:${PORT}`);
+  info(`🌐 Accepting requests from: ${CLIENT_URL}`);
 });
