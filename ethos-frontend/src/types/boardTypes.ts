@@ -71,6 +71,7 @@ export interface BoardProps {
   onScrollEnd?: () => void;
   loading?: boolean;
   quest?: Quest;
+  hideControls?: boolean;
 }
 
 /** Props for the EditBoard component */
