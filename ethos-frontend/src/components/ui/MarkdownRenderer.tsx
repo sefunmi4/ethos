@@ -11,6 +11,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     <div className="prose prose-sm max-w-none">
       <ReactMarkdown>{content}</ReactMarkdown>
     </div>
+
   );
 };
 
