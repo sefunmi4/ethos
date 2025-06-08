@@ -127,14 +127,14 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
       </FormSection>
 
       {showLinkControls(type) && !replyTo && (
-
-        <FormSection title="Linked Quest">
+        <FormSection title="Linked Items">
           <LinkControls
-            label="Quest"
+            label="Item"
             value={linkedItems}
             onChange={setLinkedItems}
             allowCreateNew
             allowNodeSelection
+            itemTypes={['quest', 'post']}
           />
         </FormSection>
       )}
