@@ -1,1 +1,43 @@
-[]
+[
+  {
+    "id": "post-welcome",
+    "authorId": "u_1fd378c6-f9b1-4b17-b151-e902664e81f6",
+    "type": "free_speech",
+    "content": "Hello Ethos! This is a welcome post.",
+    "visibility": "public",
+    "timestamp": "2025-06-07T00:00:00Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": []
+  },
+  {
+    "id": "post-launch-overview",
+    "authorId": "u_1fd378c6-f9b1-4b17-b151-e902664e81f6",
+    "type": "quest",
+    "content": "Overview of the Launch Ethos quest.",
+    "visibility": "public",
+    "timestamp": "2025-06-07T00:05:00Z",
+    "tags": [],
+    "collaborators": [],
+    "questId": "quest-launch-ethos",
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": []
+  },
+  {
+    "id": "post-seed-steps",
+    "authorId": "u_1fd378c6-f9b1-4b17-b151-e902664e81f6",
+    "type": "quest",
+    "content": "Initial steps for seeding data.",
+    "visibility": "public",
+    "timestamp": "2025-06-07T00:10:00Z",
+    "tags": [],
+    "collaborators": [],
+    "questId": "quest-seed-data",
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": []
+  }
+]
