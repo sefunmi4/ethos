@@ -147,6 +147,20 @@ router.get(
   }
 );
 
+// GET posts linked to a quest
+router.get(
+  '/:id/posts',
+  authOptional,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+
+    const posts = postsStore.read();
+    const users = usersStore.read();
+    const filtered = posts.filter((p) => p.questId === id);
+    res.json(filtered.map((p) => enrichPost(p, { users, currentUserId: req.user?.id || null })));
+  }
+);
+
 // POST to link a post to quest
 router.post(
   '/:id/link',
