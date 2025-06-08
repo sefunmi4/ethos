@@ -20,6 +20,7 @@ export interface DBPost {
   id: string;
   authorId: string;
   type: PostType;
+  subtype?: string;
   content: string;
   visibility: Visibility;
   timestamp: string;
