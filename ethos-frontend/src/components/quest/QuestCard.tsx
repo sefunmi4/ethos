@@ -34,6 +34,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onCancel,
 }) => {
   const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('timeline');
+  const [expanded, setExpanded] = useState(false);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <PostTypeBadge type="quest" />
           <span>{questData.createdAt?.slice(0, 10)}</span>
-          {questData.gitRepo.repoUrl && (
+          {questData.gitRepo?.repoUrl && (
             <a
               href={questData.gitRepo.repoUrl}
               target="_blank"
@@ -102,11 +103,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
           />
         )}
   
-        <Select
-          value={view}
-          onChange={(e) => setView(e.target.value as 'timeline' | 'kanban' | 'map')}
-          options={viewOptions}
-        />
+        {expanded && (
+          <Select
+            value={view}
+            onChange={(e) => setView(e.target.value as 'timeline' | 'kanban' | 'map')}
+            options={viewOptions}
+          />
+        )}
         <Button onClick={() => navigate(`/quests/${quest.id}`)} variant="ghost">
           View details
         </Button>
@@ -121,6 +124,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   );
 
   const renderView = () => {
+    if (!expanded) return null;
     switch (view) {
       case 'timeline':
         return <ThreadLayout contributions={logs} user={user} />;
@@ -141,7 +145,25 @@ const QuestCard: React.FC<QuestCardProps> = ({
   return (
     <div className="border rounded-lg shadow bg-white p-6">
       {renderHeader()}
+      {!expanded && (
+        <button
+          onClick={() => {
+            setExpanded(true);
+            setView('map');
+          }}
+          className="text-blue-600 underline text-sm"
+        >
+          🗺 Map
+        </button>
+      )}
       {renderView()}
+      {expanded && (
+        <div className="text-right mt-2">
+          <button className="text-xs underline" onClick={() => setExpanded(false)}>
+            Collapse
+          </button>
+        </div>
+      )}
     </div>
   );
 };

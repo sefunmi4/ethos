@@ -117,6 +117,26 @@ const Board: React.FC<BoardProps> = ({
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
 
+  const questItems = useMemo(
+    () => filteredItems.filter((it) => 'headPostId' in it),
+    [filteredItems]
+  );
+  const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
+  const graphEligible = singleQuest !== null;
+
+  const graphItems = useMemo(() => {
+    if (!graphEligible) return filteredItems;
+    const qid = singleQuest!.id;
+    return filteredItems.filter(
+      (item) =>
+        'headPostId' in item ||
+        (item as Post).questId === qid ||
+        (item as Post).linkedItems?.some(
+          (l) => l.itemType === 'quest' && l.itemId === qid
+        )
+    );
+  }, [filteredItems, graphEligible, singleQuest]);
+
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
@@ -184,7 +204,7 @@ const Board: React.FC<BoardProps> = ({
             onChange={(e) => setViewMode(e.target.value as BoardLayout)}
             options={[
               { value: 'grid', label: 'Grid' },
-              { value: 'graph', label: 'Graph' },
+              ...(graphEligible ? [{ value: 'graph', label: 'Graph' }] : []),
               { value: 'thread', label: 'Timeline' },
             ]}
           />
@@ -236,7 +256,7 @@ const Board: React.FC<BoardProps> = ({
         </div>
       ) : (
         <Layout
-          items={filteredItems}
+          items={resolvedStructure === 'graph' ? graphItems : filteredItems}
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}
