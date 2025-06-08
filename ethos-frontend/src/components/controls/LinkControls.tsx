@@ -37,6 +37,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     const fetchData = async () => {
       setLoading(true);
       const promises = [] as PromiseSettledResult<any>[];
+
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
 

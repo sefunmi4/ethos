@@ -77,13 +77,41 @@ router.patch(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
+    const quests = questsStore.read();
     const post = posts.find((p) => p.id === req.params.id);
     if (!post) {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
 
+    const originalQuestId = post.questId;
+    const originalReplyTo = post.replyTo;
+
     Object.assign(post, req.body);
+
+    const questIdChanged =
+      'questId' in req.body && req.body.questId !== originalQuestId;
+    const replyToChanged =
+      'replyTo' in req.body && req.body.replyTo !== originalReplyTo;
+
+    if (questIdChanged || replyToChanged) {
+      const quest = post.questId
+        ? quests.find((q) => q.id === post.questId)
+        : null;
+      const parent = post.replyTo
+        ? posts.find((p) => p.id === post.replyTo) || null
+        : null;
+      const otherPosts = posts.filter((p) => p.id !== post.id);
+      post.nodeId = quest
+        ? generateNodeId({
+            quest,
+            posts: otherPosts,
+            postType: post.type,
+            parentPost: parent,
+          })
+        : undefined;
+    }
+
     postsStore.write(posts);
     const users = usersStore.read();
     res.json(enrichPost(post, { users }));
