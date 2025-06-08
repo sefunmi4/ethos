@@ -174,6 +174,7 @@ Current build includes:
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
 
+
 Planned enhancements before stable release:
 - In-app file change views for Git commits
 - Iterative quest scoring and progress calculations

@@ -114,7 +114,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 
   const filteredPosts = posts.filter(
     (p) => postTypeFilter === 'all' || p.type === postTypeFilter
-  );
+  );=
   type Option = { value: string; label: string; nodeId?: string; type?: string };
   const allOptions: Option[] = [
     ...(itemTypes.includes('quest')
