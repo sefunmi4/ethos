@@ -28,6 +28,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
+  const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
@@ -46,7 +47,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       }
       if (itemTypes.includes('post')) {
         const postRes = results[idx++];
-        if (postRes.status === 'fulfilled') setPosts(postRes.value || []);
+        if (postRes.status === 'fulfilled') {
+          const list = (postRes.value || []) as Post[];
+          setPosts(list.filter((p) => p.type !== 'free_speech'));
+        }
       }
       setLoading(false);
     };
@@ -107,6 +111,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     onChange(updated);
   };
 
+  const filteredPosts = posts.filter(
+    (p) => postTypeFilter === 'all' || p.type === postTypeFilter
+  );
   const allOptions = [
     ...(itemTypes.includes('quest')
       ? quests.map((q) => ({
@@ -115,9 +122,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         }))
       : []),
     ...(itemTypes.includes('post')
-      ? posts.map((p) => ({
+      ? filteredPosts.map((p) => ({
           value: `post:${p.id}`,
-          label: `📝 ${p.nodeId || p.content.slice(0, 30)}`,
+          label: `${p.content.slice(0, 30)} - ${p.nodeId || p.type}`,
         }))
       : []),
   ];
@@ -132,7 +139,21 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       {loading ? (
         <p className="text-sm text-gray-500">Loading items...</p>
       ) : (
-        <>
+        <> 
+          {itemTypes.includes('post') && (
+            <div className="flex gap-1 mb-1 flex-wrap">
+              {['all', 'request', 'task', 'log', 'commit', 'issue'].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setPostTypeFilter(t as any)}
+                  className={`text-xs px-2 py-0.5 rounded ${postTypeFilter===t ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
           <input
             type="text"
             value={search}
@@ -181,7 +202,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
           {value.map((item, idx) => (
             <div key={idx} className="p-2 border rounded space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-sm">🔗 {item.itemType}: {item.itemId}</span>
+                <span className="text-sm">
+                  🔗 {item.itemType}: {item.itemId}
+                  {item.nodeId && ` (${item.nodeId})`}
+                </span>
                 <button
                   type="button"
                   onClick={() => handleUnlink(item)}
