@@ -36,7 +36,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const promises = [] as PromiseSettledResult<any>[];
+      const promises: Promise<any>[] = [];
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
 
@@ -114,7 +114,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 
   const filteredPosts = posts.filter(
     (p) => postTypeFilter === 'all' || p.type === postTypeFilter
-  );=
+  );
   type Option = { value: string; label: string; nodeId?: string; type?: string };
   const allOptions: Option[] = [
     ...(itemTypes.includes('quest')
@@ -144,12 +144,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
     return a.label.localeCompare(b.label);
   });
-  const filtered = allOptions.filter(
-    (o) =>
-      o.label.toLowerCase().includes(search.toLowerCase()) ||
-      o.value.includes(search)
-  );
-
   return (
     <div className="space-y-2">
       {loading ? (
