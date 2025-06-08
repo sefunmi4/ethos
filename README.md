@@ -25,6 +25,7 @@ It’s a new operating system for solving problems together.
 * **Boards & Threads** – Navigate via visual boards, timelines, or threaded views.
 * **Adventure Guilds** – Collaborate through guilds with defined roles and ranks.
 * **Quest Logs** – Track the history, updates, and team discussions around any quest.
+* **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
