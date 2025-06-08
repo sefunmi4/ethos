@@ -32,6 +32,7 @@ const Board: React.FC<BoardProps> = ({
   onScrollEnd,
   loading: loadingMore = false,
   quest,
+  hideControls = false,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -190,37 +191,41 @@ const Board: React.FC<BoardProps> = ({
         </h2>
 
         <div className="flex gap-2 flex-wrap items-center">
-          <Input
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            placeholder="Filter..."
-            className="w-40 text-sm"
-          />
-          <Select
-            value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as 'createdAt' | 'displayTitle')}
-            options={[
-              { value: 'createdAt', label: 'Date' },
-              { value: 'displayTitle', label: 'Node Label' },
-            ]}
-          />
-          <Select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-            options={[
-              { value: 'asc', label: 'Asc' },
-              { value: 'desc', label: 'Desc' },
-            ]}
-          />
-          <Select
-            value={resolvedStructure}
-            onChange={(e) => setViewMode(e.target.value as BoardLayout)}
-            options={[
-              { value: 'grid', label: 'Grid' },
-              ...(graphEligible ? [{ value: 'graph', label: 'Graph' }] : []),
-              { value: 'thread', label: 'Timeline' },
-            ]}
-          />
+          {!hideControls && (
+            <>
+              <Input
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
+                placeholder="Filter..."
+                className="w-40 text-sm"
+              />
+              <Select
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value as 'createdAt' | 'displayTitle')}
+                options={[
+                  { value: 'createdAt', label: 'Date' },
+                  { value: 'displayTitle', label: 'Node Label' },
+                ]}
+              />
+              <Select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                options={[
+                  { value: 'asc', label: 'Asc' },
+                  { value: 'desc', label: 'Desc' },
+                ]}
+              />
+              <Select
+                value={resolvedStructure}
+                onChange={(e) => setViewMode(e.target.value as BoardLayout)}
+                options={[
+                  { value: 'grid', label: 'Grid' },
+                  ...(graphEligible ? [{ value: 'graph', label: 'Graph' }] : []),
+                  { value: 'thread', label: 'Timeline' },
+                ]}
+              />
+            </>
+          )}
           {editable && viewMode && (
             <Button variant="ghost" size="sm" onClick={() => setViewMode(null)}>
               Reset View
