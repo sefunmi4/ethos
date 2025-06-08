@@ -14,6 +14,7 @@ jest.mock('../src/models/stores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   usersStore: { read: jest.fn(() => []), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
+  questsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
 const app = express();
