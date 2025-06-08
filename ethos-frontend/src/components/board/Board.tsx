@@ -128,20 +128,25 @@ const Board: React.FC<BoardProps> = ({
     [renderableItems]
   );
   const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
-  const graphEligible = singleQuest !== null;
+
+  const isItemRelatedToQuest = (item: Post | Quest, qid: string) =>
+    'headPostId' in item ||
+    (item as Post).questId === qid ||
+    (item as Post).linkedItems?.some(
+      (l) => l.itemType === 'quest' && l.itemId === qid
+    );
+
+  const graphEligible = useMemo(() => {
+    if (!singleQuest) return false;
+    const qid = singleQuest.id;
+    return renderableItems.every((item) => isItemRelatedToQuest(item, qid));
+  }, [singleQuest, renderableItems]);
 
   const graphItems = useMemo(() => {
-    if (!graphEligible) return renderableItems;
-    const qid = singleQuest!.id;
-    return renderableItems.filter(
-      (item) =>
-        'headPostId' in item ||
-        (item as Post).questId === qid ||
-        (item as Post).linkedItems?.some(
-          (l) => l.itemType === 'quest' && l.itemId === qid
-        )
-    );
-  }, [renderableItems, graphEligible, singleQuest]);
+    if (!singleQuest) return renderableItems;
+    const qid = singleQuest.id;
+    return renderableItems.filter((item) => isItemRelatedToQuest(item, qid));
+  }, [renderableItems, singleQuest]);
 
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
@@ -151,8 +156,10 @@ const Board: React.FC<BoardProps> = ({
     }
   };
 
+  const baseStructure: BoardLayout =
+    (viewMode || forcedStructure || board?.layout || 'grid') as BoardLayout;
   const resolvedStructure: BoardLayout =
-    viewMode || forcedStructure || board?.layout || 'grid';
+    baseStructure === 'graph' && !graphEligible ? 'grid' : baseStructure;
 
   const editable = useMemo(() => {
     if (readOnly) return false;

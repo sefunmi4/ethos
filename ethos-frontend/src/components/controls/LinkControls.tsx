@@ -30,13 +30,15 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [search, setSearch] = useState('');
   const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
+
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const promises: Promise<any>[] = [];
+      const promises = [] as PromiseSettledResult<any>[];
+
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
 
@@ -144,6 +146,12 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
     return a.label.localeCompare(b.label);
   });
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+
   return (
     <div className="space-y-2">
       {loading ? (
