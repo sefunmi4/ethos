@@ -33,6 +33,7 @@ const Board: React.FC<BoardProps> = ({
   onScrollEnd,
   loading: loadingMore = false,
   quest,
+  hideControls = false,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -201,9 +202,7 @@ const Board: React.FC<BoardProps> = ({
               />
               <Select
                 value={sortKey}
-                onChange={(e) =>
-                  setSortKey(e.target.value as 'createdAt' | 'displayTitle')
-                }
+                onChange={(e) => setSortKey(e.target.value as 'createdAt' | 'displayTitle')}
                 options={[
                   { value: 'createdAt', label: 'Date' },
                   { value: 'displayTitle', label: 'Node Label' },
