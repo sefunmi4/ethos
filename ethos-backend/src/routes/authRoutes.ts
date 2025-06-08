@@ -15,6 +15,7 @@ import { hashPassword, comparePasswords } from '../utils/passwordUtils';
 import type { User } from '../types/api';
 
 import { asyncHandler } from '../utils/asyncHandler';
+import { error } from '../utils/logger';
 
 import type { AuthenticatedRequest } from '../types/express';
 
@@ -86,7 +87,7 @@ router.post( '/forgot-password', asyncHandler(async (req: Request, res: Response
     await sendResetEmail(email, resetUrl);
     res.json({ message: 'Password reset link sent' });
   } catch (err) {
-    console.error('[EMAIL ERROR]', err);
+    error('[EMAIL ERROR]', err);
     res.status(500).json({ error: 'Failed to send reset email' });
   }
 }));
@@ -149,7 +150,7 @@ router.post('/register', asyncHandler(async (req: Request, res: Response) => {
 
     res.status(201).json({ message: 'User registered', userId: newUser.id });
   } catch (err) {
-    console.error('[REGISTER ERROR]', err);
+    error('[REGISTER ERROR]', err);
     res.status(500).json({ error: 'Registration failed' });
   }
 }));
@@ -176,7 +177,7 @@ router.post('/login', asyncHandler( async (req: Request, res: Response) => {
 
     res.json({ message: 'Login successful', accessToken });
   } catch (err) {
-    console.error('[LOGIN ERROR]', err);
+    error('[LOGIN ERROR]', err);
     res.status(500).json({ error: 'Internal error' });
   }
 }));

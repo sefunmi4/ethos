@@ -28,6 +28,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
+  const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
+  const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
+
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
@@ -35,6 +38,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     const fetchData = async () => {
       setLoading(true);
       const promises = [] as PromiseSettledResult<any>[];
+
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
 
@@ -46,7 +50,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       }
       if (itemTypes.includes('post')) {
         const postRes = results[idx++];
-        if (postRes.status === 'fulfilled') setPosts(postRes.value || []);
+        if (postRes.status === 'fulfilled') {
+          const list = (postRes.value || []) as Post[];
+          setPosts(list.filter((p) => p.type !== 'free_speech'));
+        }
       }
       setLoading(false);
     };
@@ -107,20 +114,38 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     onChange(updated);
   };
 
-  const allOptions = [
+  const filteredPosts = posts.filter(
+    (p) => postTypeFilter === 'all' || p.type === postTypeFilter
+  );
+  type Option = { value: string; label: string; nodeId?: string; type?: string };
+  const allOptions: Option[] = [
     ...(itemTypes.includes('quest')
       ? quests.map((q) => ({
           value: `quest:${q.id}`,
           label: `🧭 Quest: ${q.title}`,
+          nodeId: q.title,
+          type: 'quest',
         }))
       : []),
     ...(itemTypes.includes('post')
-      ? posts.map((p) => ({
+      ? filteredPosts.map((p) => ({
           value: `post:${p.id}`,
-          label: `📝 ${p.nodeId || p.content.slice(0, 30)}`,
+          label: `${p.content.slice(0, 30)} - ${p.nodeId || p.type}`,
+          nodeId: p.nodeId,
+          type: p.type,
         }))
       : []),
   ];
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      (o.nodeId || '').toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
+    return a.label.localeCompare(b.label);
+  });
   const filtered = allOptions.filter(
     (o) =>
       o.label.toLowerCase().includes(search.toLowerCase()) ||
@@ -132,7 +157,21 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       {loading ? (
         <p className="text-sm text-gray-500">Loading items...</p>
       ) : (
-        <>
+        <> 
+          {itemTypes.includes('post') && (
+            <div className="flex gap-1 mb-1 flex-wrap">
+              {['all', 'request', 'task', 'log', 'commit', 'issue'].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setPostTypeFilter(t as any)}
+                  className={`text-xs px-2 py-0.5 rounded ${postTypeFilter===t ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
           <input
             type="text"
             value={search}
@@ -140,12 +179,23 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             placeholder="Search items..."
             className="border rounded px-2 py-1 text-sm w-full"
           />
+          <div className="flex items-center gap-2 my-1">
+            <label className="text-xs text-gray-600">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'label' | 'node')}
+              className="border rounded px-1 py-0.5 text-xs"
+            >
+              <option value="label">Title</option>
+              <option value="node">Node ID</option>
+            </select>
+          </div>
           <Select
             value=""
             onChange={handleLinkSelect}
             options={[
               { value: '', label: `-- Select ${label} --`, disabled: true },
-              ...filtered,
+              ...sorted,
             ]}
           />
 
@@ -181,7 +231,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
           {value.map((item, idx) => (
             <div key={idx} className="p-2 border rounded space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-sm">🔗 {item.itemType}: {item.itemId}</span>
+                <span className="text-sm">
+                  🔗 {item.itemType}: {item.itemId}
+                  {item.nodeId && ` (${item.nodeId})`}
+                </span>
                 <button
                   type="button"
                   onClick={() => handleUnlink(item)}

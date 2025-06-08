@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  FaEllipsisH, FaEdit, FaTrash, FaArchive, FaLink
+  FaEllipsisH,
+  FaEdit,
+  FaTrash,
+  FaArchive,
+  FaLink,
+  FaCopy,
 } from 'react-icons/fa';
 import { removePost, archivePost } from '../../api/post';
 import { removeQuestById, archiveQuestById } from '../../api/quest';
@@ -14,6 +19,7 @@ interface ActionMenuProps {
   onDelete?: () => void;
   onArchived?: () => void;
   permalink?: string;
+  content?: string;
   boardId?: string;
   className?: string;
 }
@@ -31,6 +37,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   onDelete,
   onArchived,
   permalink,
+  content,
   boardId,
   className = '',
 }) => {
@@ -94,6 +101,20 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     setShowMenu(false);
   };
 
+  const handleCopyQuote = () => {
+    if (!content) return;
+    navigator.clipboard.writeText(content);
+    alert('Quote copied!');
+    setShowMenu(false);
+  };
+
+  const handleLinkToPost = () => {
+    if (!permalink) return;
+    navigator.clipboard.writeText(permalink);
+    alert(`Link to post ${id} copied!`);
+    setShowMenu(false);
+  };
+
   return (
     <div ref={menuRef} className={`relative ${className}`}>
       <button onClick={() => setShowMenu(!showMenu)} aria-label="More options">
@@ -117,6 +138,22 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
                 <FaArchive className="inline mr-2" /> {isArchiving ? 'Archiving…' : 'Archive'}
               </button>
             </>
+          )}
+          {content && (
+            <button
+              onClick={handleCopyQuote}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              <FaCopy className="inline mr-2" /> Copy Quote
+            </button>
+          )}
+          {permalink && type === 'post' && (
+            <button
+              onClick={handleLinkToPost}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              <FaLink className="inline mr-2" /> Link to This Post
+            </button>
           )}
           <button onClick={handleCopyLink} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
             <FaLink className="inline mr-2" /> Copy Link

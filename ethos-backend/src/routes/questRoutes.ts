@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { questsStore, postsStore, usersStore } from '../models/stores';
-import { enrichQuest } from '../utils/enrich';
+import { enrichQuest, enrichPost } from '../utils/enrich';
 import type { Quest, LinkedItem } from '../types/api';
 import type { DBQuest } from '../types/db';
 
@@ -98,6 +98,24 @@ router.patch(
   }
 );
 
+// GET posts linked to a quest
+router.get(
+  '/:id/posts',
+  authOptional,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+
+    const posts = postsStore.read();
+    const users = usersStore.read();
+    const filtered = posts.filter((p) => p.questId === id);
+    res.json(
+      filtered.map((p) =>
+        enrichPost(p, { users, currentUserId: req.user?.id || null })
+      )
+    );
+  }
+);
+
 // GET enriched quest
 router.get(
   '/:id',
@@ -106,27 +124,28 @@ router.get(
     req: AuthRequest<{ id: string }, any, any, { enrich?: string }>,
     res: Response
   ): Promise<void> => {
-  const { id } = req.params;
-  const { enrich } = req.query;
-  const userId = req.user?.id || null;
+    const { id } = req.params;
+    const { enrich } = req.query;
+    const userId = req.user?.id || null;
 
-  const quests = questsStore.read();
-  const quest = quests.find(q => q.id === id);
-  if (!quest) {
-    res.status(404).json({ error: 'Quest not found' });
-    return;
+    const quests = questsStore.read();
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    if (enrich === 'true') {
+      const posts = postsStore.read();
+      const users = usersStore.read();
+      const enriched = enrichQuest(quest, { posts, users, currentUserId: userId });
+      res.json(enriched);
+      return;
+    }
+
+    res.json(quest);
   }
-
-  if (enrich === 'true') {
-    const posts = postsStore.read();
-    const users = usersStore.read();
-    const enriched = enrichQuest(quest, { posts, users, currentUserId: userId });
-    res.json(enriched);
-    return;
-  }
-
-  res.json(quest);
-});
+);
 
 // POST to link a post to quest
 router.post(
