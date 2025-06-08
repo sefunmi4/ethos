@@ -7,6 +7,7 @@ import { Button, PostTypeBadge, Select } from '../ui';
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
+import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
 import LinkViewer from '../ui/LinkViewer';
@@ -39,6 +40,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showLogForm, setShowLogForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const navigate = useNavigate();
@@ -142,15 +145,52 @@ const QuestCard: React.FC<QuestCardProps> = ({
     if (!expanded) return null;
     switch (view) {
       case 'timeline':
-        return <ThreadLayout contributions={logs} user={user} />;
+        return (
+          <>
+            {showLogForm && (
+              <div className="mb-4">
+                <CreatePost
+                  initialType="log"
+                  onSave={(p) => {
+                    setLogs((prev) => [...prev, p]);
+                    setShowLogForm(false);
+                  }}
+                  onCancel={() => setShowLogForm(false)}
+                />
+              </div>
+            )}
+            <ThreadLayout contributions={logs} user={user} questId={quest.id} />
+            <div className="text-right mt-2">
+              <Button size="sm" variant="secondary" onClick={() => setShowLogForm(true)}>
+                + Add Log
+              </Button>
+            </div>
+          </>
+        );
       case 'kanban':
         return <GridLayout questId={quest.id} items={logs} user={user} />;
       case 'map':
         return (
-          <GraphLayout
-            items={logs as any}
-            user={user}
-          />
+          <>
+            {showTaskForm && (
+              <div className="mb-4">
+                <CreatePost
+                  initialType="task"
+                  onSave={(p) => {
+                    setLogs((prev) => [...prev, p]);
+                    setShowTaskForm(false);
+                  }}
+                  onCancel={() => setShowTaskForm(false)}
+                />
+              </div>
+            )}
+            <GraphLayout items={logs as any} user={user} />
+            <div className="text-right mt-2">
+              <Button size="sm" variant="secondary" onClick={() => setShowTaskForm(true)}>
+                + Add Task
+              </Button>
+            </div>
+          </>
         );
       default:
         return null;
