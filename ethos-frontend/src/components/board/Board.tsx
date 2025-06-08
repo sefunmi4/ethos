@@ -38,7 +38,7 @@ const Board: React.FC<BoardProps> = ({
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
-  const { setSelectedBoard } = useBoardContext();
+  const { setSelectedBoard, appendToBoard } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -120,6 +120,9 @@ const Board: React.FC<BoardProps> = ({
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
+    if (board) {
+      appendToBoard(board.id, item as any);
+    }
   };
 
   const resolvedStructure: BoardLayout =

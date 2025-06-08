@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import { useAuth } from './AuthContext';
-import { fetchBoards as fetchBoardsAPI } from '../api/board';
+import { fetchBoards as fetchBoardsAPI, updateBoard } from '../api/board';
 import type { BoardData } from '../types/boardTypes';
 import type { GitFileNode, GitStatus } from '../types/gitTypes';
 
@@ -71,13 +71,22 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [user]);
 
   const appendToBoard = (boardId: string, newItem: BoardItem) => {
-    setBoards((prev) => ({
-      ...prev,
-      [boardId]: {
-        ...prev[boardId],
-        enrichedItems: [newItem, ...(prev[boardId]?.enrichedItems || [])],
-      },
-    }));
+    setBoards((prev) => {
+      const current = prev[boardId] || { items: [], enrichedItems: [] } as any;
+      const updatedItems = [newItem.id, ...(current.items || [])];
+      // persist
+      updateBoard(boardId, { items: updatedItems }).catch((err) =>
+        console.error('[BoardContext] Failed to persist board items:', err)
+      );
+      return {
+        ...prev,
+        [boardId]: {
+          ...current,
+          items: updatedItems,
+          enrichedItems: [newItem, ...(current.enrichedItems || [])],
+        },
+      };
+    });
   };
 
   const updateBoardItem = (boardId: string, updatedItem: BoardItem) => {
