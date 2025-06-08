@@ -7,8 +7,10 @@ import { Button, PostTypeBadge, Select } from '../ui';
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
-import { fetchQuestById } from '../../api/quest';
+import { fetchQuestById, updateQuestById } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
+import LinkViewer from '../ui/LinkViewer';
+import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 
 /**
@@ -37,6 +39,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
+  const [showLinkEditor, setShowLinkEditor] = useState(false);
+  const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const navigate = useNavigate();
   const viewOptions = [
     { value: 'timeline', label: 'Log' },
@@ -45,6 +49,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
   ];
 
   const isOwner = user?.id === questData.authorId;
+
+  const saveLinks = async () => {
+    try {
+      await updateQuestById(quest.id, { linkedPosts: linkDraft });
+      setQuestData({ ...questData, linkedPosts: linkDraft });
+      setShowLinkEditor(false);
+    } catch (err) {
+      console.error('[QuestCard] Failed to save links:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +69,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         ]);
         setQuestData(questDetails);
         setLogs(questLogs);
+        setLinkDraft(questDetails.linkedPosts || []);
       } catch (error) {
         console.error('[QuestCard] Failed to fetch quest data:', error);
       }
@@ -145,6 +160,49 @@ const QuestCard: React.FC<QuestCardProps> = ({
   return (
     <div className="border rounded-lg shadow bg-white p-6">
       {renderHeader()}
+      <div className="text-xs text-gray-500 space-y-1 mb-2">
+        <button
+          type="button"
+          onClick={() => setShowLinkEditor((v) => !v)}
+          className="text-blue-600 underline"
+        >
+          {questData.linkedPosts && questData.linkedPosts.length > 0
+            ? `🔗 Linked to ${questData.linkedPosts.length} items`
+            : 'Link to item'}
+        </button>
+        {showLinkEditor && (
+          <div className="mt-2">
+            <LinkControls
+              value={linkDraft}
+              onChange={setLinkDraft}
+              allowCreateNew={false}
+              itemTypes={['quest', 'post']}
+            />
+            <div className="flex gap-2 mt-2">
+              <button
+                type="button"
+                className="text-xs bg-indigo-600 text-white px-2 py-1 rounded"
+                onClick={saveLinks}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="text-xs underline"
+                onClick={() => {
+                  setLinkDraft(questData.linkedPosts || []);
+                  setShowLinkEditor(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+        {questData.linkedPosts && questData.linkedPosts.length > 0 && (
+          <LinkViewer items={questData.linkedPosts} />
+        )}
+      </div>
       {!expanded && (
         <button
           onClick={() => {

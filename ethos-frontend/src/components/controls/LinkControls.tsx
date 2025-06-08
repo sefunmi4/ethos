@@ -29,6 +29,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
   const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
+  const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
@@ -113,21 +114,36 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 
   const filteredPosts = posts.filter(
     (p) => postTypeFilter === 'all' || p.type === postTypeFilter
-  );
-  const allOptions = [
+  );=
+  type Option = { value: string; label: string; nodeId?: string; type?: string };
+  const allOptions: Option[] = [
     ...(itemTypes.includes('quest')
       ? quests.map((q) => ({
           value: `quest:${q.id}`,
           label: `🧭 Quest: ${q.title}`,
+          nodeId: q.title,
+          type: 'quest',
         }))
       : []),
     ...(itemTypes.includes('post')
       ? filteredPosts.map((p) => ({
           value: `post:${p.id}`,
           label: `${p.content.slice(0, 30)} - ${p.nodeId || p.type}`,
+          nodeId: p.nodeId,
+          type: p.type,
         }))
       : []),
   ];
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      (o.nodeId || '').toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
+    return a.label.localeCompare(b.label);
+  });
   const filtered = allOptions.filter(
     (o) =>
       o.label.toLowerCase().includes(search.toLowerCase()) ||
@@ -161,12 +177,23 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             placeholder="Search items..."
             className="border rounded px-2 py-1 text-sm w-full"
           />
+          <div className="flex items-center gap-2 my-1">
+            <label className="text-xs text-gray-600">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'label' | 'node')}
+              className="border rounded px-1 py-0.5 text-xs"
+            >
+              <option value="label">Title</option>
+              <option value="node">Node ID</option>
+            </select>
+          </div>
           <Select
             value=""
             onChange={handleLinkSelect}
             options={[
               { value: '', label: `-- Select ${label} --`, disabled: true },
-              ...filtered,
+              ...sorted,
             ]}
           />
 
