@@ -171,6 +171,8 @@ Current build includes:
 - Posting messages, logs and tasks
 - Quests linking posts with Git repo metadata
 - Boards to visualize posts and quests in grid, graph or thread views
+- Inline linking of quests and posts
+- Link dropdowns support node ID search and sorting
 
 Planned enhancements before stable release:
 - In-app file change views for Git commits

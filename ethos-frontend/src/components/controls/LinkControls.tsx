@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
-import type { LinkedItem } from '../../types/postTypes';
+import { fetchAllPosts } from '../../api/post';
+import type { LinkedItem, Post } from '../../types/postTypes';
 
 interface LinkControlsProps {
   value: LinkedItem[];
@@ -10,6 +11,7 @@ interface LinkControlsProps {
   allowNodeSelection?: boolean;
   label?: string;
   currentPostId?: string | null;
+  itemTypes?: ('quest' | 'post')[];
 }
 
 const LinkControls: React.FC<LinkControlsProps> = ({
@@ -18,34 +20,54 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   allowCreateNew = true,
   label = 'Linked Item',
   currentPostId = null,
+  itemTypes = ['quest'],
 }) => {
   const [quests, setQuests] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [search, setSearch] = useState('');
+  const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
+  const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [questRes] = await Promise.allSettled([fetchAllQuests()]);
-      if (questRes.status === 'fulfilled') setQuests(questRes.value || []);
+      const promises = [] as PromiseSettledResult<any>[];
+      if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
+      if (itemTypes.includes('post')) promises.push(fetchAllPosts());
+
+      const results = await Promise.allSettled(promises);
+      let idx = 0;
+      if (itemTypes.includes('quest')) {
+        const questRes = results[idx++];
+        if (questRes.status === 'fulfilled') setQuests(questRes.value || []);
+      }
+      if (itemTypes.includes('post')) {
+        const postRes = results[idx++];
+        if (postRes.status === 'fulfilled') {
+          const list = (postRes.value || []) as Post[];
+          setPosts(list.filter((p) => p.type !== 'free_speech'));
+        }
+      }
       setLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [itemTypes]);
 
   const handleLinkSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const [type, id] = e.target.value.split(':');
-    const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === type);
+    const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === (type as any));
     if (!alreadyLinked) {
       onChange([
         ...value,
         {
           itemId: id,
-          itemType: type as 'quest',
+          itemType: type as 'quest' | 'post',
           nodeId: '',
           linkType: 'related',
           linkStatus: 'active',
@@ -90,25 +112,92 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     onChange(updated);
   };
 
+  const filteredPosts = posts.filter(
+    (p) => postTypeFilter === 'all' || p.type === postTypeFilter
+  );
+  type Option = { value: string; label: string; nodeId?: string; type?: string };
+  const allOptions: Option[] = [
+    ...(itemTypes.includes('quest')
+      ? quests.map((q) => ({
+          value: `quest:${q.id}`,
+          label: `🧭 Quest: ${q.title}`,
+          nodeId: q.title,
+          type: 'quest',
+        }))
+      : []),
+    ...(itemTypes.includes('post')
+      ? filteredPosts.map((p) => ({
+          value: `post:${p.id}`,
+          label: `${p.content.slice(0, 30)} - ${p.nodeId || p.type}`,
+          nodeId: p.nodeId,
+          type: p.type,
+        }))
+      : []),
+  ];
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      (o.nodeId || '').toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
+    return a.label.localeCompare(b.label);
+  });
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+
   return (
     <div className="space-y-2">
       {loading ? (
-        <p className="text-sm text-gray-500">Loading quests...</p>
+        <p className="text-sm text-gray-500">Loading items...</p>
       ) : (
-        <>
+        <> 
+          {itemTypes.includes('post') && (
+            <div className="flex gap-1 mb-1 flex-wrap">
+              {['all', 'request', 'task', 'log', 'commit', 'issue'].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setPostTypeFilter(t as any)}
+                  className={`text-xs px-2 py-0.5 rounded ${postTypeFilter===t ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search items..."
+            className="border rounded px-2 py-1 text-sm w-full"
+          />
+          <div className="flex items-center gap-2 my-1">
+            <label className="text-xs text-gray-600">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'label' | 'node')}
+              className="border rounded px-1 py-0.5 text-xs"
+            >
+              <option value="label">Title</option>
+              <option value="node">Node ID</option>
+            </select>
+          </div>
           <Select
             value=""
             onChange={handleLinkSelect}
             options={[
               { value: '', label: `-- Select ${label} --`, disabled: true },
-              ...quests.map((q) => ({
-                value: `quest:${q.id}`,
-                label: `🧭 Quest: ${q.title}`,
-              })),
+              ...sorted,
             ]}
           />
 
-          {allowCreateNew && !creating && (
+          {allowCreateNew && itemTypes.includes('quest') && !creating && (
             <button
               type="button"
               className="text-blue-600 text-xs underline"
@@ -118,7 +207,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             </button>
           )}
 
-          {creating && (
+          {creating && itemTypes.includes('quest') && (
             <div className="flex gap-2 items-center mt-2">
               <input
                 type="text"
@@ -140,7 +229,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
           {value.map((item, idx) => (
             <div key={idx} className="p-2 border rounded space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-sm">🔗 {item.itemType}: {item.itemId}</span>
+                <span className="text-sm">
+                  🔗 {item.itemType}: {item.itemId}
+                  {item.nodeId && ` (${item.nodeId})`}
+                </span>
                 <button
                   type="button"
                   onClick={() => handleUnlink(item)}

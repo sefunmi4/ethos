@@ -5,12 +5,13 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId } from '../../api/post';
+import { fetchRepliesByPostId, updatePost } from '../../api/post';
 import ReactionControls from '../controls/ReactionControls';
 import { PostTypeBadge } from '../ui';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
+import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 
@@ -33,6 +34,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [replyError, setReplyError] = useState('');
   const [showFullDiff, setShowFullDiff] = useState(false);
+  const [showLinkEditor, setShowLinkEditor] = useState(false);
+  const [linkDraft, setLinkDraft] = useState(post.linkedItems || []);
   const [initialReplies, setInitialReplies] = useState<number>(0);
 
   const navigate = useNavigate();
@@ -202,14 +205,72 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderCommitDiff()}
       {renderLinkSummary()}
 
+      {['request','quest','task','log','commit','issue'].includes(post.type) && (
+        <div className="text-xs text-gray-500 space-y-1">
+          <button
+            type="button"
+            onClick={() => setShowLinkEditor((v) => !v)}
+            className="text-blue-600 underline"
+          >
+            {post.linkedItems && post.linkedItems.length > 0
+              ? `🔗 Linked to ${post.linkedItems.length} items`
+              : 'Link to item'}
+          </button>
+          {showLinkEditor && (
+            <div className="mt-2">
+              <LinkControls
+                value={linkDraft}
+                onChange={setLinkDraft}
+                allowCreateNew={false}
+                itemTypes={['quest', 'post']}
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  className="text-xs bg-indigo-600 text-white px-2 py-1 rounded"
+                  onClick={async () => {
+                    try {
+                      const updated = await updatePost(post.id, { linkedItems: linkDraft });
+                      setShowLinkEditor(false);
+                      onUpdate?.(updated);
+                    } catch (err) {
+                      console.error('[PostCard] Failed to update links:', err);
+                    }
+                  }}
+                >
+                  Save
+                </button>
+                <button
+                  className="text-xs underline"
+                  onClick={() => {
+                    setLinkDraft(post.linkedItems || []);
+                    setShowLinkEditor(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {post.questId && post.nodeId && (
+            <div>🧭 Linked to Quest: {post.nodeId}</div>
+          )}
+        </div>
+      )}
+
       <ReactionControls
         post={post}
         user={user}
         onUpdate={onUpdate}
-        replyCount={replies.length || initialReplies}
-        showReplies={showReplies}
-        onToggleReplies={toggleReplies}
       />
+
+      {(initialReplies > 0 || replies.length > 0) && (
+        <button
+          onClick={toggleReplies}
+          className="text-blue-600 underline text-xs"
+        >
+          {showReplies ? 'Hide Replies' : `\u{1F4AC} See Replies (${initialReplies || replies.length})`}
+        </button>
+      )}
 
       {!compact && (
         <div>
