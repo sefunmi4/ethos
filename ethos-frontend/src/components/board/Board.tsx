@@ -126,6 +126,7 @@ const Board: React.FC<BoardProps> = ({
   const questItems = useMemo(
     () => renderableItems.filter((it) => 'headPostId' in it),
     [renderableItems]
+
   );
   const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
   const graphEligible = singleQuest !== null;
@@ -134,6 +135,7 @@ const Board: React.FC<BoardProps> = ({
     if (!graphEligible) return renderableItems;
     const qid = singleQuest!.id;
     return renderableItems.filter(
+
       (item) =>
         'headPostId' in item ||
         (item as Post).questId === qid ||
@@ -142,6 +144,7 @@ const Board: React.FC<BoardProps> = ({
         )
     );
   }, [renderableItems, graphEligible, singleQuest]);
+
 
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
@@ -263,6 +266,7 @@ const Board: React.FC<BoardProps> = ({
       ) : (
         <Layout
           items={resolvedStructure === 'graph' ? graphItems : renderableItems}
+
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}
