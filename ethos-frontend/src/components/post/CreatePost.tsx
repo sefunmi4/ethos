@@ -127,6 +127,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
       </FormSection>
 
       {showLinkControls(type) && !replyTo && (
+
         <FormSection title="Linked Quest">
           <LinkControls
             label="Quest"
