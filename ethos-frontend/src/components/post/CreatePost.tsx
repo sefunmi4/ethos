@@ -6,6 +6,7 @@ import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
 import CreateQuest from '../quest/CreateQuest';
 import { useBoardContext } from '../../contexts/BoardContext';
+import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
 
 type CreatePostProps = {
@@ -22,16 +23,9 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { selectedBoard, appendToBoard } = useBoardContext() || {};
+  const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
-  if (type === 'quest') {
-    return (
-      <CreateQuest
-        onSave={(q) => onSave?.(q as any)}
-        onCancel={onCancel}
-      />
-    );
-  }
+  const renderQuestForm = type === 'quest';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +66,13 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
 
     try {
       const newPost = await addPost(payload);
-      if (selectedBoard) appendToBoard(selectedBoard, newPost);
+      if (selectedBoard) {
+        appendToBoard(selectedBoard, newPost);
+        const boardItems = [newPost.id, ...(boards?.[selectedBoard]?.items || [])];
+        updateBoard(selectedBoard, { items: boardItems }).catch((err) =>
+          console.error('[CreatePost] Failed to persist board items:', err)
+        );
+      }
       onSave?.(newPost);
     } catch (err) {
       console.error('[CreatePost] Error creating post:', err);
@@ -82,22 +82,33 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
     }
   };
 
+  if (renderQuestForm) {
+    return (
+      <div className="space-y-6">
+        <FormSection title="Item Details">
+          <Label htmlFor="post-type">Item Type</Label>
+          <Select
+            id="post-type"
+            value={type}
+            onChange={(e) => setType(e.target.value as PostType)}
+            options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+          />
+        </FormSection>
+        <CreateQuest onSave={(q) => onSave?.(q as any)} onCancel={onCancel} />
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <FormSection title="Post Details">
-        {!replyTo && !repostSource && (
-          <>
-            <Label htmlFor="post-type">Post Type</Label>
-            <Select
-              id="post-type"
-              value={type}
-              onChange={(e) => setType(e.target.value as PostType)}
-              options={POST_TYPES.filter(
-                ({ value }) => value !== 'quest' || linkedItems.length === 0
-              ).map(({ value, label }) => ({ value, label }))}
-            />
-          </>
-        )}
+      <FormSection title="Item Details">
+        <Label htmlFor="post-type">Item Type</Label>
+        <Select
+          id="post-type"
+          value={type}
+          onChange={(e) => setType(e.target.value as PostType)}
+          options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+        />
 
         <Label htmlFor="content">Content</Label>
         <TextArea
@@ -115,19 +126,20 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
         />
       </FormSection>
 
-      {requiresQuestLink(type) && (
-        <FormSection title="Linked Quest">
+      {showLinkControls(type) && !replyTo && (
+        <FormSection title="Linked Items">
           <LinkControls
-            label="Quest"
+            label="Item"
             value={linkedItems}
             onChange={setLinkedItems}
             allowCreateNew
             allowNodeSelection
+            itemTypes={['quest', 'post']}
           />
         </FormSection>
       )}
 
-      {requiresQuestRoles(type) && (
+      {requiresQuestRoles(type) && !replyTo && (
         <FormSection title="Collaborators">
           <CollaberatorControls value={collaborators} onChange={setCollaborators} />
         </FormSection>
@@ -167,6 +179,10 @@ function requiresQuestLink(type: PostType): boolean {
 
 function requiresQuestRoles(type: PostType): boolean {
   return ['log', 'task'].includes(type);
+}
+
+function showLinkControls(type: PostType): boolean {
+  return ['request', 'quest', 'task', 'log', 'commit', 'issue'].includes(type);
 }
 
 export default CreatePost;
