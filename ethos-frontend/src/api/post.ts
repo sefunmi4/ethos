@@ -16,6 +16,14 @@ export const fetchPostById = async (id: string): Promise<Post> => {
 };
 
 /**
+ * 📃 Fetch all posts
+ */
+export const fetchAllPosts = async (): Promise<Post[]> => {
+  const res = await axiosWithAuth.get(BASE_URL);
+  return res.data;
+};
+
+/**
  * ➕ Add a new post
  * @param data - Partial post data
  */

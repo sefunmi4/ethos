@@ -32,3 +32,39 @@ export const getBoardIdFromParams = (
   const { questId, type } = input;
   return `${type}-${questId}`;
 };
+
+/**
+ * Filter and deduplicate board items before rendering.
+ * - Removes duplicate IDs
+ * - Hides posts linked to quests that already appear on the board
+ */
+export const getRenderableBoardItems = (
+  items: Array<any>
+): Array<any> => {
+  const seen = new Set<string>();
+  const questIds = new Set<string>();
+  items.forEach((item) => {
+    if ('headPostId' in item) {
+      questIds.add(item.id);
+    }
+  });
+
+  const result: any[] = [];
+  for (const item of items) {
+    if (seen.has(item.id)) continue;
+    seen.add(item.id);
+
+    if (!('headPostId' in item)) {
+      const questId = item.questId;
+      const linkedQuest = item.linkedItems?.find(
+        (l: any) => l.itemType === 'quest' && questIds.has(l.itemId)
+      );
+      if ((questId && questIds.has(questId)) || linkedQuest) {
+        continue;
+      }
+    }
+
+    result.push(item);
+  }
+  return result;
+};

@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import { useAuth } from './AuthContext';
-import { fetchBoards as fetchBoardsAPI } from '../api/board';
+import { fetchBoards as fetchBoardsAPI, updateBoard } from '../api/board';
 import type { BoardData } from '../types/boardTypes';
 import type { GitFileNode, GitStatus } from '../types/gitTypes';
 
@@ -71,13 +71,29 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [user]);
 
   const appendToBoard = (boardId: string, newItem: BoardItem) => {
-    setBoards((prev) => ({
-      ...prev,
-      [boardId]: {
-        ...prev[boardId],
-        enrichedItems: [newItem, ...(prev[boardId]?.enrichedItems || [])],
-      },
-    }));
+    setBoards((prev) => {
+      const current = prev[boardId] || ({} as BoardData);
+      const existingIds = new Set(current.items || []);
+      existingIds.delete(newItem.id);
+      const updatedItems = [newItem.id, ...Array.from(existingIds)];
+
+      updateBoard(boardId, { items: updatedItems }).catch((err) =>
+        console.error('[BoardContext] Failed to persist board items:', err)
+      );
+
+      const existingEnriched = (current.enrichedItems || []).filter(
+        (it) => it.id !== newItem.id
+      );
+
+      return {
+        ...prev,
+        [boardId]: {
+          ...current,
+          items: updatedItems,
+          enrichedItems: [newItem, ...existingEnriched],
+        },
+      };
+    });
   };
 
   const updateBoardItem = (boardId: string, updatedItem: BoardItem) => {
