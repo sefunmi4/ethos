@@ -50,22 +50,21 @@ const ProfilePage: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
         {loadingQuests ? (
           <div className="text-gray-500 text-center py-8">Loading quests...</div>
-        ) : userQuestBoard ? (
+        ) : (
           <>
             <Board
+              boardId="my-quests"
               board={userQuestBoard}
               layout="grid"
               user={castUser}
               showCreate
             />
-            {userQuestBoard.enrichedItems?.length === 0 && (
+            {userQuestBoard?.enrichedItems?.length === 0 && (
               <div className="text-gray-500 text-center py-8">
                 You haven't created any quests yet.
               </div>
             )}
           </>
-        ) : (
-          <div className="text-gray-500 text-center py-8">You haven't created any quests yet.</div>
         )}
       </section>
 
@@ -74,22 +73,21 @@ const ProfilePage: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
         {loadingPosts ? (
           <div className="text-gray-500 text-center py-8">Loading posts...</div>
-        ) : userPostBoard ? (
+        ) : (
           <>
             <Board
+              boardId="my-posts"
               board={userPostBoard}
-              layout="grid" // 🧾 Timeline or message-board view
+              layout="grid"
               user={castUser}
               showCreate
             />
-            {userPostBoard.enrichedItems?.length === 0 && (
+            {userPostBoard?.enrichedItems?.length === 0 && (
               <div className="text-gray-500 text-center py-8">
                 You haven't posted anything yet.
               </div>
             )}
           </>
-        ) : (
-          <div className="text-gray-500 text-center py-8">You haven't posted anything yet.</div>
         )}
       </section>
     </main>
