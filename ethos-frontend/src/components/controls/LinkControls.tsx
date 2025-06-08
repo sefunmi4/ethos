@@ -146,11 +146,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
     return a.label.localeCompare(b.label);
   });
-  const filtered = allOptions.filter(
-    (o) =>
-      o.label.toLowerCase().includes(search.toLowerCase()) ||
-      o.value.includes(search)
-  );
 
   return (
     <div className="space-y-2">
