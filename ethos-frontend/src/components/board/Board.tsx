@@ -29,6 +29,7 @@ const Board: React.FC<BoardProps> = ({
   compact = false,
   showCreate = true,
   filter = {},
+  hideControls = false,
   onScrollEnd,
   loading: loadingMore = false,
   quest,

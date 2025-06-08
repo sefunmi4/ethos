@@ -90,6 +90,7 @@ const HomePage: React.FC = () => {
             layout="grid"
             title="🧭 Latest Posts"
             user={user as User}
+            hideControls
             filter={{
               visibility: 'public' satisfies Visibility,
               type: 'free_speech' satisfies PostType,

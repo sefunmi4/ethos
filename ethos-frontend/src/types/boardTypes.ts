@@ -75,6 +75,7 @@ export interface BoardProps {
    * Hide filter and sorting controls in the board header.
    * Useful for compact or embedded boards where controls would be noisy.
    */
+
   hideControls?: boolean;
 }
 
