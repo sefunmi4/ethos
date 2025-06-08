@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -8,6 +8,9 @@ import type { User } from '../../types/userTypes';
 import { fetchRepliesByPostId } from '../../api/post';
 import ReactionControls from '../controls/ReactionControls';
 import { PostTypeBadge } from '../ui';
+import MarkdownRenderer from '../ui/MarkdownRenderer';
+import MediaPreview from '../ui/MediaPreview';
+import LinkViewer from '../ui/LinkViewer';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 
@@ -30,6 +33,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [replyError, setReplyError] = useState('');
   const [showFullDiff, setShowFullDiff] = useState(false);
+  const [initialReplies, setInitialReplies] = useState<number>(0);
 
   const navigate = useNavigate();
 
@@ -38,6 +42,13 @@ const PostCard: React.FC<PostCardProps> = ({
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
 
+  useEffect(() => {
+    if (!post.replyTo) {
+      fetchRepliesByPostId(post.id)
+        .then((r) => setInitialReplies(r.length))
+        .catch(() => {});
+    }
+  }, [post.id, post.replyTo]);
   const toggleReplies = async () => {
     if (!repliesLoaded) {
       setLoadingReplies(true);
@@ -71,26 +82,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const renderLinkSummary = () => {
     if (!post.linkedItems || post.linkedItems.length === 0) return null;
-    const sorted = [...post.linkedItems].sort((a, b) =>
-      (b.title?.toLowerCase().includes('solution') ? 1 : 0) -
-      (a.title?.toLowerCase().includes('solution') ? 1 : 0)
-    );
-    return (
-      <div className="text-xs text-blue-600 space-y-1">
-        {sorted.map((item) => {
-          const questPrefix = item.itemType === 'quest' ? `Q:${item.title}` : '';
-          const nodePart = item.nodeId ? `:${item.nodeId}` : '';
-          const linkPart = item.linkType ? `-${item.linkType.toUpperCase()}` : '';
-          const label = `${questPrefix}${nodePart}${linkPart}`;
-          return (
-            <div key={item.itemId} className="flex gap-1 items-center">
-              <span className="text-xs">🔗</span>
-              <span className={`${item.title?.toLowerCase().includes('solution') ? 'font-semibold text-green-700' : ''}`}>{label}</span>
-            </div>
-          );
-        })}
-      </div>
-    );
+    return <LinkViewer items={post.linkedItems} />;
   };
 
   const renderCommitDiff = () => {
@@ -190,10 +182,10 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {renderRepostInfo()}
 
-      <div className="text-sm text-gray-800 whitespace-pre-wrap">
-        {compact && post.content.length > 240 ? (
+      <div className="text-sm text-gray-800">
+        {compact && (post.renderedContent || post.content).length > 240 ? (
           <>
-            {post.content.slice(0, 240)}…
+            <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
             <button
               onClick={() => navigate(`/posts/${post.id}`)}
               className="text-blue-600 underline text-xs ml-1"
@@ -202,8 +194,9 @@ const PostCard: React.FC<PostCardProps> = ({
             </button>
           </>
         ) : (
-          post.content
+          <MarkdownRenderer content={post.renderedContent || post.content} />
         )}
+        <MediaPreview media={post.mediaPreviews} />
       </div>
 
       {renderCommitDiff()}
@@ -213,7 +206,7 @@ const PostCard: React.FC<PostCardProps> = ({
         post={post}
         user={user}
         onUpdate={onUpdate}
-        replyCount={replies.length}
+        replyCount={replies.length || initialReplies}
         showReplies={showReplies}
         onToggleReplies={toggleReplies}
       />
@@ -248,5 +241,4 @@ const PostCard: React.FC<PostCardProps> = ({
     </div>
   );
 };
-
 export default PostCard;
