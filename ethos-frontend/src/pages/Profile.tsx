@@ -50,12 +50,20 @@ const ProfilePage: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
         {loadingQuests ? (
           <div className="text-gray-500 text-center py-8">Loading quests...</div>
-        ) : userQuestBoard?.enrichedItems?.length ? (
-          <Board
-            board={userQuestBoard}
-            layout="grid" 
-            user={castUser}
-          />
+        ) : userQuestBoard ? (
+          <>
+            <Board
+              board={userQuestBoard}
+              layout="grid"
+              user={castUser}
+              showCreate
+            />
+            {userQuestBoard.enrichedItems?.length === 0 && (
+              <div className="text-gray-500 text-center py-8">
+                You haven't created any quests yet.
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-gray-500 text-center py-8">You haven't created any quests yet.</div>
         )}
@@ -66,13 +74,20 @@ const ProfilePage: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
         {loadingPosts ? (
           <div className="text-gray-500 text-center py-8">Loading posts...</div>
-        ) : userPostBoard?.enrichedItems?.length ? (
-          <Board
-            board={userPostBoard}
-            layout="grid" // 🧾 Timeline or message-board view
-            user={castUser}
-            showCreate
-          />
+        ) : userPostBoard ? (
+          <>
+            <Board
+              board={userPostBoard}
+              layout="grid" // 🧾 Timeline or message-board view
+              user={castUser}
+              showCreate
+            />
+            {userPostBoard.enrichedItems?.length === 0 && (
+              <div className="text-gray-500 text-center py-8">
+                You haven't posted anything yet.
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-gray-500 text-center py-8">You haven't posted anything yet.</div>
         )}
