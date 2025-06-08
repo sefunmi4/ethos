@@ -14,10 +14,18 @@ type CreatePostProps = {
   onCancel: () => void;
   replyTo?: Post | null;
   repostSource?: Post | null;
+  /** Set an initial post type value */
+  initialType?: PostType;
 };
 
-const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = null, repostSource = null }) => {
-  const [type, setType] = useState<PostType>('free_speech');
+const CreatePost: React.FC<CreatePostProps> = ({
+  onSave,
+  onCancel,
+  replyTo = null,
+  repostSource = null,
+  initialType = 'free_speech',
+}) => {
+  const [type, setType] = useState<PostType>(initialType);
   const [content, setContent] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
