@@ -67,6 +67,8 @@ export interface BoardProps {
   readOnly?: boolean;
   compact?: boolean;
   showCreate?: boolean;
+  /** Hide filter and sort controls */
+  hideControls?: boolean;
   filter?: Record<string, any>;
   onScrollEnd?: () => void;
   loading?: boolean;
