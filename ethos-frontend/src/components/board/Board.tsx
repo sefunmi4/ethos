@@ -55,8 +55,8 @@ const Board: React.FC<BoardProps> = ({
 
       setLoading(true);
       try {
-        const boardData = await fetchBoard(boardId);
-        const boardItems = await fetchBoardItems(boardId);
+        const boardData = await fetchBoard(boardId, { enrich: true });
+        const boardItems = await fetchBoardItems(boardId, { enrich: true });
 
         setSelectedBoard(boardId);
 
@@ -74,8 +74,8 @@ const Board: React.FC<BoardProps> = ({
   useSocketListener('board:update', (payload: { boardId: string }) => {
     if (!board?.id || payload.boardId !== board.id) return;
 
-    fetchBoard(board.id).then(setBoard);
-    fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
+    fetchBoard(board.id, { enrich: true }).then(setBoard);
+    fetchBoardItems(board.id, { enrich: true }).then((items) => setItems(items as Post[]));
   });
 
   const filteredItems = useMemo(() => {
@@ -221,10 +221,12 @@ const Board: React.FC<BoardProps> = ({
             onCancel={() => setEditMode(false)}
             onSave={() => {
               if (!board?.id) return;
-              fetchBoard(board.id).then((updatedBoard) => {
+              fetchBoard(board.id, { enrich: true }).then((updatedBoard) => {
                 setBoard(updatedBoard);
                 setEditMode(false);
-                fetchBoardItems(board.id).then((items) => setItems(items as Post[]));
+                fetchBoardItems(board.id, { enrich: true }).then((items) =>
+                  setItems(items as Post[])
+                );
               });
             }}
           />
