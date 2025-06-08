@@ -68,7 +68,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <PostTypeBadge type="quest" />
           <span>{questData.createdAt?.slice(0, 10)}</span>
-          {questData.gitRepo.repoUrl && (
+          {questData.gitRepo?.repoUrl && (
             <a
               href={questData.gitRepo.repoUrl}
               target="_blank"
