@@ -30,6 +30,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [search, setSearch] = useState('');
   const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
+
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
