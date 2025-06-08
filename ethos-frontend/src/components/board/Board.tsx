@@ -3,6 +3,7 @@ import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useSocketListener } from '../../hooks/useSocket';
 import { getDisplayTitle } from '../../utils/displayUtils';
+import { getRenderableBoardItems } from '../../utils/boardUtils';
 import { useBoardContext } from '../../contexts/BoardContext';
 
 import EditBoard from './EditBoard';
@@ -117,17 +118,24 @@ const Board: React.FC<BoardProps> = ({
       });
   }, [items, filter, filterText, sortKey, sortOrder]);
 
-  const questItems = useMemo(
-    () => filteredItems.filter((it) => 'headPostId' in it),
+  const renderableItems = useMemo(
+    () => getRenderableBoardItems(filteredItems),
     [filteredItems]
+  );
+
+  const questItems = useMemo(
+    () => renderableItems.filter((it) => 'headPostId' in it),
+    [renderableItems]
+
   );
   const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
   const graphEligible = singleQuest !== null;
 
   const graphItems = useMemo(() => {
-    if (!graphEligible) return filteredItems;
+    if (!graphEligible) return renderableItems;
     const qid = singleQuest!.id;
-    return filteredItems.filter(
+    return renderableItems.filter(
+
       (item) =>
         'headPostId' in item ||
         (item as Post).questId === qid ||
@@ -135,7 +143,8 @@ const Board: React.FC<BoardProps> = ({
           (l) => l.itemType === 'quest' && l.itemId === qid
         )
     );
-  }, [filteredItems, graphEligible, singleQuest]);
+  }, [renderableItems, graphEligible, singleQuest]);
+
 
   const handleAdd = async (item: Post | Quest) => {
     setItems((prev) => [item as Post, ...prev]);
@@ -256,7 +265,8 @@ const Board: React.FC<BoardProps> = ({
         </div>
       ) : (
         <Layout
-          items={resolvedStructure === 'graph' ? graphItems : filteredItems}
+          items={resolvedStructure === 'graph' ? graphItems : renderableItems}
+
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}

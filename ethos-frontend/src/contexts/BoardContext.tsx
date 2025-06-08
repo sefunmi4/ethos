@@ -72,18 +72,25 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const appendToBoard = (boardId: string, newItem: BoardItem) => {
     setBoards((prev) => {
-      const current = prev[boardId] || { items: [], enrichedItems: [] } as any;
-      const updatedItems = [newItem.id, ...(current.items || [])];
-      // persist
+      const current = prev[boardId] || ({} as BoardData);
+      const existingIds = new Set(current.items || []);
+      existingIds.delete(newItem.id);
+      const updatedItems = [newItem.id, ...Array.from(existingIds)];
+
       updateBoard(boardId, { items: updatedItems }).catch((err) =>
         console.error('[BoardContext] Failed to persist board items:', err)
       );
+
+      const existingEnriched = (current.enrichedItems || []).filter(
+        (it) => it.id !== newItem.id
+      );
+
       return {
         ...prev,
         [boardId]: {
           ...current,
           items: updatedItems,
-          enrichedItems: [newItem, ...(current.enrichedItems || [])],
+          enrichedItems: [newItem, ...existingEnriched],
         },
       };
     });
