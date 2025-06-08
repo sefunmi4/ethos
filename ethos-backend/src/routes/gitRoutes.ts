@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import {
   getQuestRepoMeta,
@@ -34,7 +35,7 @@ router.get(
       const meta = await getQuestRepoMeta(req.params.questId);
       res.json(meta);
     } catch (err) {
-      console.error('[GIT STATUS ERROR]', err);
+      error('[GIT STATUS ERROR]', err);
       res.status(500).json({ error: 'Failed to get git status' });
     }
   }
@@ -56,7 +57,7 @@ router.post(
       const meta = await connectRepo(questId, repoUrl, branch);
       res.json(meta);
     } catch (err) {
-      console.error('[GIT CONNECT ERROR]', err);
+      error('[GIT CONNECT ERROR]', err);
       res.status(500).json({ error: 'Failed to connect git repo' });
     }
   }
@@ -76,7 +77,7 @@ router.post(
       const meta = await syncRepo(req.body.questId);
       res.json(meta);
     } catch (err) {
-      console.error('[GIT SYNC ERROR]', err);
+      error('[GIT SYNC ERROR]', err);
       res.status(500).json({ error: 'Git sync failed' });
     }
   }
@@ -96,7 +97,7 @@ router.delete(
       const result = await removeRepo(req.params.questId);
       res.json(result);
     } catch (err) {
-      console.error('[GIT DISCONNECT ERROR]', err);
+      error('[GIT DISCONNECT ERROR]', err);
       res.status(500).json({ error: 'Failed to remove git repo' });
     }
   }
@@ -116,7 +117,7 @@ router.post(
       const archive = await archiveHistory(req.body.questId);
       res.json(archive);
     } catch (err) {
-      console.error('[GIT ARCHIVE ERROR]', err);
+      error('[GIT ARCHIVE ERROR]', err);
       res.status(500).json({ error: 'Failed to archive git history' });
     }
   }
@@ -142,7 +143,7 @@ router.get(
       );
       res.json(diff);
     } catch (err) {
-      console.error('[GIT DIFF ERROR]', err);
+      error('[GIT DIFF ERROR]', err);
       res.status(500).json({ error: 'Failed to fetch git diff' });
     }
   }
@@ -162,7 +163,7 @@ router.get(
       const fileTree = await getFileTree(req.params.questId);
       res.json(fileTree);
     } catch (err) {
-      console.error('[GIT FILES ERROR]', err);
+      error('[GIT FILES ERROR]', err);
       res.status(500).json({ error: 'Failed to fetch git file tree' });
     }
   }
@@ -182,7 +183,7 @@ router.get(
       const commits = await getCommits(req.params.questId);
       res.json(commits);
     } catch (err) {
-      console.error('[GIT COMMITS ERROR]', err);
+      error('[GIT COMMITS ERROR]', err);
       res.status(500).json({ error: 'Failed to fetch git commit history' });
     }
   }
@@ -198,7 +199,7 @@ router.post('/create', authMiddleware, async (
     const repo = await initRepo(req.body.questId, req.body.name);
     res.json(repo);
   } catch (err) {
-    console.error('[GIT CREATE ERROR]', err);
+    error('[GIT CREATE ERROR]', err);
     res.status(500).json({ error: 'Failed to create repo' });
   }
 });
@@ -214,7 +215,7 @@ router.post('/folders', authMiddleware, async (
     const repo = await createFolder(req.body.questId, req.body.folderPath);
     res.json(repo);
   } catch (err) {
-    console.error('[GIT CREATE FOLDER ERROR]', err);
+    error('[GIT CREATE FOLDER ERROR]', err);
     res.status(500).json({ error: 'Failed to create folder' });
   }
 });
@@ -230,7 +231,7 @@ router.post('/files', authMiddleware, async (
     const repo = await createFile(req.body.questId, req.body.filePath, req.body.content || '');
     res.json(repo);
   } catch (err) {
-    console.error('[GIT CREATE FILE ERROR]', err);
+    error('[GIT CREATE FILE ERROR]', err);
     res.status(500).json({ error: 'Failed to create file' });
   }
 });
@@ -246,7 +247,7 @@ router.put('/files', authMiddleware, async (
     const repo = await updateFile(req.body.questId, req.body.filePath, req.body.content);
     res.json(repo);
   } catch (err) {
-    console.error('[GIT UPDATE FILE ERROR]', err);
+    error('[GIT UPDATE FILE ERROR]', err);
     res.status(500).json({ error: 'Failed to update file' });
   }
 });
@@ -263,7 +264,7 @@ router.get('/download/:questId', authMiddleware, async (
     await downloadRepo(req.params.questId, zipPath);
     res.download(zipPath);
   } catch (err) {
-    console.error('[GIT DOWNLOAD ERROR]', err);
+    error('[GIT DOWNLOAD ERROR]', err);
     res.status(500).json({ error: 'Failed to download repo' });
   }
 });
