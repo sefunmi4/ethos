@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
-import type { LinkedItem } from '../../types/postTypes';
+import { fetchAllPosts } from '../../api/post';
+import type { LinkedItem, Post } from '../../types/postTypes';
 
 interface LinkControlsProps {
   value: LinkedItem[];
@@ -10,6 +11,7 @@ interface LinkControlsProps {
   allowNodeSelection?: boolean;
   label?: string;
   currentPostId?: string | null;
+  itemTypes?: ('quest' | 'post')[];
 }
 
 const LinkControls: React.FC<LinkControlsProps> = ({
@@ -18,34 +20,49 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   allowCreateNew = true,
   label = 'Linked Item',
   currentPostId = null,
+  itemTypes = ['quest'],
 }) => {
   const [quests, setQuests] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [search, setSearch] = useState('');
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [questRes] = await Promise.allSettled([fetchAllQuests()]);
-      if (questRes.status === 'fulfilled') setQuests(questRes.value || []);
+      const promises = [] as PromiseSettledResult<any>[];
+      if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
+      if (itemTypes.includes('post')) promises.push(fetchAllPosts());
+
+      const results = await Promise.allSettled(promises);
+      let idx = 0;
+      if (itemTypes.includes('quest')) {
+        const questRes = results[idx++];
+        if (questRes.status === 'fulfilled') setQuests(questRes.value || []);
+      }
+      if (itemTypes.includes('post')) {
+        const postRes = results[idx++];
+        if (postRes.status === 'fulfilled') setPosts(postRes.value || []);
+      }
       setLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [itemTypes]);
 
   const handleLinkSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const [type, id] = e.target.value.split(':');
-    const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === type);
+    const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === (type as any));
     if (!alreadyLinked) {
       onChange([
         ...value,
         {
           itemId: id,
-          itemType: type as 'quest',
+          itemType: type as 'quest' | 'post',
           nodeId: '',
           linkType: 'related',
           linkStatus: 'active',
@@ -90,25 +107,49 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     onChange(updated);
   };
 
+  const allOptions = [
+    ...(itemTypes.includes('quest')
+      ? quests.map((q) => ({
+          value: `quest:${q.id}`,
+          label: `🧭 Quest: ${q.title}`,
+        }))
+      : []),
+    ...(itemTypes.includes('post')
+      ? posts.map((p) => ({
+          value: `post:${p.id}`,
+          label: `📝 ${p.nodeId || p.content.slice(0, 30)}`,
+        }))
+      : []),
+  ];
+  const filtered = allOptions.filter(
+    (o) =>
+      o.label.toLowerCase().includes(search.toLowerCase()) ||
+      o.value.includes(search)
+  );
+
   return (
     <div className="space-y-2">
       {loading ? (
-        <p className="text-sm text-gray-500">Loading quests...</p>
+        <p className="text-sm text-gray-500">Loading items...</p>
       ) : (
         <>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search items..."
+            className="border rounded px-2 py-1 text-sm w-full"
+          />
           <Select
             value=""
             onChange={handleLinkSelect}
             options={[
               { value: '', label: `-- Select ${label} --`, disabled: true },
-              ...quests.map((q) => ({
-                value: `quest:${q.id}`,
-                label: `🧭 Quest: ${q.title}`,
-              })),
+              ...filtered,
             ]}
           />
 
-          {allowCreateNew && !creating && (
+          {allowCreateNew && itemTypes.includes('quest') && !creating && (
             <button
               type="button"
               className="text-blue-600 text-xs underline"
@@ -118,7 +159,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             </button>
           )}
 
-          {creating && (
+          {creating && itemTypes.includes('quest') && (
             <div className="flex gap-2 items-center mt-2">
               <input
                 type="text"
