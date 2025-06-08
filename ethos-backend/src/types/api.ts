@@ -47,10 +47,11 @@ export type PostTag =
  */
 export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | string;
 
-export type PostType = 'free_speech' 
-  | 'request' 
-  | 'log' 
-  | 'task' 
+export type PostType = 'free_speech'
+  | 'request'
+  | 'log'
+  | 'quest_log'
+  | 'task'
   | 'quest' 
   | 'meta_system' 
   | 'meta_announcement' 
@@ -77,6 +78,7 @@ export interface Post {
   author?: { id: string; username?: string }; // 🔹 optional basic enrich
 
   type: PostType;
+  subtype?: string;
   content: string;
   visibility: Visibility;
   timestamp: string;

@@ -50,7 +50,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         const postRes = results[idx++];
         if (postRes.status === 'fulfilled') {
           const list = (postRes.value || []) as Post[];
-          setPosts(list.filter((p) => p.type !== 'free_speech'));
+          setPosts(list);
         }
       }
       setLoading(false);

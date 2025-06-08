@@ -13,6 +13,7 @@ export interface Post {
   };
 
   type: PostType;
+  subtype?: string;
   content: string;
   visibility: Visibility;
   timestamp: string;
@@ -135,6 +136,7 @@ export type PostType =
   | 'free_speech'
   | 'request'
   | 'log'
+  | 'quest_log'
   | 'task'
   | 'quest'
   | 'meta_system'

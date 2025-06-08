@@ -80,16 +80,25 @@ router.patch(
     const { id } = req.params;
     const { itemId } = req.body;
 
-    const quests = questsStore.read();
-    const quest = quests.find(q => q.id === id);
-    if (!quest) {
-      res.status(404).json({ error: 'Quest not found' });
-      return;
-    }
+  const quests = questsStore.read();
+  const quest = quests.find(q => q.id === id);
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
-    quest.linkedPosts = quest.linkedPosts || [];
-    const exists = quest.linkedPosts.some(l => l.itemId === itemId);
-    if (!exists) {
+  const posts = postsStore.read();
+  const post = posts.find(p => p.id === itemId);
+  if (post && post.type === 'free_speech') {
+    post.type = 'quest_log';
+    post.subtype = 'comment';
+    post.questId = id;
+    postsStore.write(posts);
+  }
+
+  quest.linkedPosts = quest.linkedPosts || [];
+  const exists = quest.linkedPosts.some(l => l.itemId === itemId);
+  if (!exists) {
       quest.linkedPosts.push({ itemId, itemType: 'post' });
       questsStore.write(quests);
     }
@@ -164,6 +173,15 @@ router.post(
   if (!quest) {
     res.status(404).json({ error: 'Quest not found' });
     return;
+  }
+
+  const posts = postsStore.read();
+  const post = posts.find(p => p.id === postId);
+  if (post && post.type === 'free_speech') {
+    post.type = 'quest_log';
+    post.subtype = 'comment';
+    post.questId = id;
+    postsStore.write(posts);
   }
 
   quest.linkedPosts = quest.linkedPosts || [];
