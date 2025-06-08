@@ -144,7 +144,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
     return a.label.localeCompare(b.label);
   });
-
   return (
     <div className="space-y-2">
       {loading ? (
