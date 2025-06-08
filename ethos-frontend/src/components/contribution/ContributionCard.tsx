@@ -4,7 +4,7 @@ import React from 'react';
 import PostCard from '../post/PostCard';
 import QuestCard from '../quest/QuestCard';
 
-import type { Post, PostType } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 import type { User } from '../../types/userTypes';
@@ -30,7 +30,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 }) => {
   if (!contribution) return null;
 
-  const { id, type, kind } = contribution as any;
+  const { id } = contribution as any;
 
   if (!id) {
     console.warn('[ContributionCard] Missing `id` on contribution:', contribution);
@@ -41,26 +41,17 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   // ✅ Render Post types
   if ('type' in contribution) {
-    const postType = contribution.type as PostType;
-
-    // Accept all supported post types including commit-style ones
-    if ([
-      'free_speech', 'request', 'quest', 'task',
-      'log', 'quest_log', 'commit', 'issue'
-    ].includes(postType)) {
-      return <PostCard post={contribution as Post} questId={questId} {...sharedProps} />;
-    }
-
-    console.warn('[ContributionCard] Unsupported post type:', postType);
     return (
-      <div className="p-4 border rounded text-sm text-red-600 bg-red-50">
-        Unsupported post type: <strong>{postType}</strong>
-      </div>
+      <PostCard
+        post={contribution as Post}
+        questId={questId}
+        {...sharedProps}
+      />
     );
   }
 
   // 🧭 Render Quest
-  if (kind === 'quest') {
+  if ("headPostId" in contribution || (contribution as any).kind === "quest") {
     return (
       <QuestCard
         quest={contribution as Quest}
@@ -71,12 +62,11 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
       />
     );
   }
-
   // 🛑 Fallback for unknown types
-  console.warn('[ContributionCard] Unknown contribution kind:', kind);
+  console.warn("[ContributionCard] Unknown contribution type:", contribution);
   return (
     <div className="p-4 border rounded text-sm text-gray-600 bg-gray-50">
-      Unknown contribution type: <strong>{type || kind || 'unknown'}</strong>
+      Unknown contribution type
     </div>
   );
 };

@@ -41,7 +41,40 @@ router.get(
       result = result.filter(board => board.featured === true); 
     }
 
-    res.json(result);
+  res.json(result);
+  }
+);
+
+//
+// ✅ GET thread board for a post
+//
+router.get(
+  '/thread/:postId',
+  (req: Request<{ postId: string }, any, undefined, { enrich?: string }>, res: Response): void => {
+    const { postId } = req.params;
+    const { enrich } = req.query;
+
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const replies = posts.filter(p => p.replyTo === postId);
+
+    const board: BoardData = {
+      id: `thread-${postId}`,
+      title: 'Thread',
+      items: replies.map(r => r.id),
+      layout: 'thread',
+      createdAt: new Date().toISOString(),
+      userId: '',
+    };
+
+    if (enrich === 'true') {
+      const enriched = enrichBoard(board, { posts, quests });
+      res.json(enriched);
+      return;
+    }
+
+    res.json(board);
   }
 );
 
@@ -121,25 +154,36 @@ router.get(
 //
 router.get(
   '/:id/items',
-  (req: Request<{ id: string }>, res: Response): void => {
+  (
+    req: Request<{ id: string }, any, undefined, { enrich?: string }>,
+    res: Response
+  ): void => {
     const { id } = req.params;
+    const { enrich } = req.query;
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const board = boards.find(b => b.id === id);
+    const board = boards.find((b) => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
     }
 
+    if (enrich === 'true') {
+      const enriched = enrichBoard(board, { posts, quests });
+      res.json(enriched.enrichedItems);
+      return;
+    }
+
     const items = board.items
-      .map(itemId => posts.find(p => p.id === itemId) || quests.find(q => q.id === itemId))
+      .map((itemId) => posts.find((p) => p.id === itemId) || quests.find((q) => q.id === itemId))
       .filter(Boolean);
 
     res.json(items);
   }
 );
+
 
 //
 // ✅ POST create a new board

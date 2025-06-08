@@ -38,8 +38,14 @@ export const fetchBoard = async (
  * 🧠 fetchBoardItems → Get items (posts/quests) in a board
  * @param id Board ID
  */
-export const fetchBoardItems = async (id: string): Promise<(Post | Quest)[]> => {
-  const res = await axiosWithAuth.get(`${BASE_URL}/${id}/items`);
+export const fetchBoardItems = async (
+  id: string,
+  options: { enrich?: boolean } = {}
+): Promise<(Post | Quest)[]> => {
+  const params = new URLSearchParams();
+  if (options.enrich) params.set('enrich', 'true');
+  const url = `${BASE_URL}/${id}/items${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await axiosWithAuth.get(url);
   return res.data;
 };
 
