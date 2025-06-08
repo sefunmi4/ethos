@@ -115,7 +115,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
         />
       </FormSection>
 
-      {requiresQuestLink(type) && (
+      {requiresQuestLink(type) && !replyTo && (
         <FormSection title="Linked Quest">
           <LinkControls
             label="Quest"
@@ -127,7 +127,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ onSave, onCancel, replyTo = nul
         </FormSection>
       )}
 
-      {requiresQuestRoles(type) && (
+      {requiresQuestRoles(type) && !replyTo && (
         <FormSection title="Collaborators">
           <CollaberatorControls value={collaborators} onChange={setCollaborators} />
         </FormSection>

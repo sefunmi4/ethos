@@ -202,14 +202,31 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderCommitDiff()}
       {renderLinkSummary()}
 
+      {['request','quest','task','log','commit','issue'].includes(post.type) && (
+        <div className="text-xs text-gray-500 space-y-1">
+          {post.linkedItems && post.linkedItems.length > 0 && (
+            <div>🔗 Linked to {post.linkedItems.length} items</div>
+          )}
+          {post.questId && post.nodeId && (
+            <div>🧭 Linked to Quest: {post.nodeId}</div>
+          )}
+        </div>
+      )}
+
       <ReactionControls
         post={post}
         user={user}
         onUpdate={onUpdate}
-        replyCount={replies.length || initialReplies}
-        showReplies={showReplies}
-        onToggleReplies={toggleReplies}
       />
+
+      {(initialReplies > 0 || replies.length > 0) && (
+        <button
+          onClick={toggleReplies}
+          className="text-blue-600 underline text-xs"
+        >
+          {showReplies ? 'Hide Replies' : `\u{1F4AC} See Replies (${initialReplies || replies.length})`}
+        </button>
+      )}
 
       {!compact && (
         <div>
