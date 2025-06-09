@@ -1,19 +1,34 @@
 import { RequestHandler } from 'express';
 
 /**
- * Simple logging helpers for consistent server logs.
+ * Logging levels mapped to a numeric severity.
  */
-export const info = (...args: unknown[]): void => {
-  console.log('[INFO]', ...args);
+const levels = { error: 0, warn: 1, info: 2, debug: 3 } as const;
+type LogLevel = keyof typeof levels;
+
+/**
+ * Current log level read from the environment.
+ * Defaults to 'info' if not provided.
+ */
+const currentLevel: number =
+  levels[(process.env.LOG_LEVEL?.toLowerCase() as LogLevel) || 'info'];
+
+/**
+ * Centralized logging function that prefixes output with level and timestamp.
+ */
+const log = (level: LogLevel, ...args: unknown[]): void => {
+  if (levels[level] <= currentLevel) {
+    const timestamp = new Date().toISOString();
+    const output =
+      level === 'error' ? console.error : level === 'warn' ? console.warn : console.log;
+    output(`[${level.toUpperCase()}] [${timestamp}]`, ...args);
+  }
 };
 
-export const warn = (...args: unknown[]): void => {
-  console.warn('[WARN]', ...args);
-};
-
-export const error = (...args: unknown[]): void => {
-  console.error('[ERROR]', ...args);
-};
+export const info = (...args: unknown[]): void => log('info', ...args);
+export const warn = (...args: unknown[]): void => log('warn', ...args);
+export const error = (...args: unknown[]): void => log('error', ...args);
+export const debug = (...args: unknown[]): void => log('debug', ...args);
 
 /**
  * Express middleware that logs the incoming request method and URL.
