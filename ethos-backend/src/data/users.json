@@ -24,5 +24,31 @@
         ]
       }
     ]
+  },
+  {
+    "id": "u_eccd6747-5d60-49c2-af0c-1f993f4d4203",
+    "username": "opensource_wizard",
+    "email": "opensource_wizard@ethos.com",
+    "password": "$2b$10$fN.ffCiOLPJJG8fJ5rarGufZ/2XZwdOvK6KOuQINhgf7Oxl2LBqVm",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-06-09T21:18:03.852Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
   }
 ]
