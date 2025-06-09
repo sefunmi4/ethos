@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useBoardContext } from '../contexts/BoardContext';
 import { fetchBoards, fetchBoard } from '../api/board';
+import { DEFAULT_PAGE_SIZE } from '../constants/pagination';
 import { fetchUserById } from '../api/auth';
 import type { BoardData } from '../types/boardTypes';
 import type { User } from '../types/userTypes';
@@ -30,24 +31,31 @@ export const useBoard = (arg?: BoardArg) => {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadBoard = useCallback(async (id: string) => {
-    setIsLoading(true);
-    try {
-      const enrich = typeof arg === 'object' && arg.enrich;
-      const result = await fetchBoard(id, enrich ? { enrich: true } : {});
-      setBoard(result);
-      return result;
-    } catch (err) {
-      console.error(`[useBoard] Failed to load board ${id}:`, err);
-      return undefined;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [arg]);
+  const loadBoard = useCallback(
+    async (id: string, page = 1, limit = DEFAULT_PAGE_SIZE) => {
+      setIsLoading(true);
+      try {
+        const enrich = typeof arg === 'object' && arg.enrich;
+        const result = await fetchBoard(id, {
+          enrich,
+          page,
+          limit,
+        });
+        setBoard(result);
+        return result;
+      } catch (err) {
+        console.error(`[useBoard] Failed to load board ${id}:`, err);
+        return undefined;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [arg]
+  );
 
   const refresh = useCallback(async () => {
     if (!boardId) return;
-    return await loadBoard(boardId);
+    return await loadBoard(boardId, 1, DEFAULT_PAGE_SIZE);
   }, [boardId, loadBoard]);
 
   const fetchAllBoards = useCallback(async (userId?: string) => {
@@ -77,7 +85,7 @@ export const useBoard = (arg?: BoardArg) => {
   // Auto-load if missing
   useEffect(() => {
     if (boardId && !board) {
-      loadBoard(boardId);
+      loadBoard(boardId, 1, DEFAULT_PAGE_SIZE);
     }
   }, [boardId]);
 
