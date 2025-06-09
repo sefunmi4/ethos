@@ -84,8 +84,8 @@ export const fetchPostsByQuestId = async (questId: string): Promise<Post[]> => {
  * @param boardId - Board ID
  */
 export const fetchPostsByBoardId = async (boardId: string): Promise<Post[]> => {
-  const res = await axiosWithAuth.get(`/boards/${boardId}/posts`);
-  return res.data || [];
+  const res = await axiosWithAuth.get(`/boards/${boardId}/items?enrich=true`);
+  return (res.data || []).filter((item: any) => 'content' in item);
 };
 
 /**

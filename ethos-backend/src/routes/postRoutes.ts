@@ -280,6 +280,46 @@ router.post(
 );
 
 //
+// ✅ POST /api/posts/:id/archive – Archive a post
+//
+router.post(
+  '/:id/archive',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const post = posts.find((p) => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    post.tags = Array.from(new Set([...(post.tags || []), 'archived']));
+    postsStore.write(posts);
+    res.json({ success: true });
+  }
+);
+
+//
+// ✅ DELETE /api/posts/:id – Permanently remove a post
+//
+router.delete(
+  '/:id',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const index = posts.findIndex((p) => p.id === req.params.id);
+    if (index === -1) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    posts.splice(index, 1);
+    postsStore.write(posts);
+    res.json({ success: true });
+  }
+);
+
+//
 // ✅ GET /api/posts/:id/linked – Get all posts linked to a post
 //
 router.get('/:id/linked', (req: Request<{ id: string }>, res: Response) => {
