@@ -7,6 +7,7 @@ import { useBoardContext } from '../../contexts/BoardContext';
 import { useSocket } from '../../hooks/useSocket';
 import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
+import { Spinner } from '../../components/ui';
 
 import type { BoardData } from '../../types/boardTypes';
 
@@ -79,7 +80,7 @@ const BoardPage: React.FC = () => {
     }
   };
 
-  if (isLoading) return <div className="p-6 text-center text-gray-500">Loading board...</div>;
+  if (isLoading) return <Spinner />;
   if (!boardData) return <div className="p-6 text-center text-red-500">Board not found.</div>;
 
   const editable = canEditBoard(boardData.id);

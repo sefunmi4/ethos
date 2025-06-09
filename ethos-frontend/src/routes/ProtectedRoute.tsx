@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import { Spinner } from '../components/ui';
 
 
 /**
@@ -16,8 +17,7 @@ const PrivateRoute: React.FC = () => {
   const { user, loading } = context;
 
   if (loading) {
-    // Optional: replace with a spinner or skeleton loader
-    return <div className="p-6 text-center text-gray-600">Loading...</div>;
+    return <Spinner />;
   }
 
   // If user is authenticated, render the nested route

@@ -5,6 +5,7 @@ import { useSocketListener } from '../hooks/useSocket';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
+import { Spinner } from '../components/ui';
 
 import type { User } from '../types/userTypes';
 import type { BoardData } from '../types/boardTypes';
@@ -31,7 +32,11 @@ const ProfilePage: React.FC = () => {
   });
 
   if (authLoading) {
-    return <div className="flex justify-center items-center h-screen text-gray-500">Loading session...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!user || !user.username) {
@@ -49,7 +54,7 @@ const ProfilePage: React.FC = () => {
       <section className="mt-10 mb-12">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
         {loadingQuests ? (
-          <div className="text-gray-500 text-center py-8">Loading quests...</div>
+          <Spinner />
         ) : (
           <>
             <Board
@@ -72,7 +77,7 @@ const ProfilePage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
         {loadingPosts ? (
-          <div className="text-gray-500 text-center py-8">Loading posts...</div>
+          <Spinner />
         ) : (
           <>
             <Board

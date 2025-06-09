@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Spinner } from '../ui';
 import ContributionCard from '../contribution/ContributionCard';
 import type { User } from '../../types/userTypes';
 import type { Post } from '../../types/postTypes';
@@ -123,7 +124,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     >
       {rootNodes.map((node) => renderNode(node))}
       {loadingMore && (
-        <p className="text-center text-gray-500 py-4">Loading more...</p>
+        <div className="flex justify-center py-4">
+          <Spinner />
+        </div>
       )}
     </div>
   );

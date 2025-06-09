@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { Spinner } from './components/ui';
 import { Routes, Route } from 'react-router-dom';
 
 import { ROUTES } from './constants/routes';
@@ -51,7 +52,7 @@ const App: React.FC = () => {
 
               <main className="flex-1 w-full">
                 {/* Suspense fallback while lazy routes are loading */}
-                <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+                <Suspense fallback={<Spinner />}>
                   <Routes>
                   {/* ✅ Publicly accessible routes */}
                   <Route path={ROUTES.HOME} element={<Home />} />
