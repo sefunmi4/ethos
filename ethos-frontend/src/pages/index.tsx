@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Board from '../components/board/Board';
+import PostTypeFilter from '../components/board/PostTypeFilter';
+import { Link } from 'react-router-dom';
 
 import type { User } from '../types/userTypes';
 
 const HomePage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
+  const [postType, setPostType] = useState('');
 
   if (authLoading) {
     return (
@@ -36,14 +39,21 @@ const HomePage: React.FC = () => {
         />
       </section>
 
-      <section>
+      <section className="space-y-4">
+        <PostTypeFilter value={postType} onChange={setPostType} />
         <Board
           boardId="request-board"
           title="🙋 Requests"
           layout="grid"
           user={user as User}
           hideControls
+          filter={postType ? { postType } : {}}
         />
+        <div className="text-right">
+          <Link to="/board/request-board" className="text-blue-600 underline text-sm">
+            View full board
+          </Link>
+        </div>
       </section>
 
       <section>
