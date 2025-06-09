@@ -56,7 +56,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
         return (
           <div key={contribution.id} className={`${alignmentClass} max-w-2xl w-full`}>
             <div
-              className="cursor-pointer hover:bg-gray-50 rounded"
+              className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded"
               onClick={() => toggleExpand(contribution.id)}
             >
               <ContributionCard

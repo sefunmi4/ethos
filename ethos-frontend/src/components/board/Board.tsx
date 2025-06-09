@@ -184,7 +184,7 @@ const Board: React.FC<BoardProps> = ({
   }[resolvedStructure] ?? GridLayout;
 
   if (loading) {
-    return <div className="text-gray-500 p-4">Loading board...</div>;
+    return <div className="text-gray-500 dark:text-gray-400 p-4">Loading board...</div>;
   }
 
   if (!board) {
@@ -195,7 +195,7 @@ const Board: React.FC<BoardProps> = ({
     <div className="space-y-4">
       {/* Board Header */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           {forcedTitle || board.title || 'Board'}
         </h2>
 
@@ -255,7 +255,7 @@ const Board: React.FC<BoardProps> = ({
 
       {/* Create Post Form */}
       {showCreate && showCreateForm && (
-        <div className="border rounded-lg p-4 bg-white shadow">
+        <div className="border rounded-lg p-4 bg-white dark:bg-gray-800 shadow">
           <CreatePost
             onSave={handleAdd}
             onCancel={() => setShowCreateForm(false)}
@@ -265,7 +265,7 @@ const Board: React.FC<BoardProps> = ({
 
       {/* Edit Board Form */}
       {editMode ? (
-        <div className="border rounded-lg p-4 bg-white shadow">
+        <div className="border rounded-lg p-4 bg-white dark:bg-gray-800 shadow">
           <EditBoard
             board={board}
             onCancel={() => setEditMode(false)}

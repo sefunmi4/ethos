@@ -15,6 +15,8 @@ module.exports = {
           primary: "#111827",
           accent: "#4F46E5",
           soft: "#F3F4F6",
+          "primary-dark": "#f9fafb",
+          "soft-dark": "#1f2937",
         },
         borderRadius: {
           xl: "1rem",
