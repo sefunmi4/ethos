@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { boardsStore, postsStore, questsStore } from '../models/stores';
-import { enrichBoard } from '../utils/enrich';
+import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
+import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import type { BoardData } from '../types/api';
 import type { EnrichedBoard } from '../types/enriched';
@@ -202,7 +202,45 @@ router.get(
       .map((itemId) => posts.find((p) => p.id === itemId) || quests.find((q) => q.id === itemId))
       .filter(Boolean);
 
-    res.json(items);
+  res.json(items);
+  }
+);
+
+//
+// ✅ GET quests from a board
+//
+router.get(
+  '/:id/quests',
+  (
+    req: Request<{ id: string }, any, undefined, { enrich?: string }>,
+    res: Response
+  ): void => {
+    const { id } = req.params;
+    const { enrich } = req.query;
+    const boards = boardsStore.read();
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+    const users = usersStore.read();
+
+    const board = boards.find((b) => b.id === id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
+      return;
+    }
+
+    const boardQuests = board.items
+      .map((itemId) => quests.find((q) => q.id === itemId))
+      .filter((q): q is NonNullable<typeof q> => Boolean(q));
+
+    if (enrich === 'true') {
+      const enriched = boardQuests.map((q) =>
+        enrichQuest(q, { posts, users })
+      );
+      res.json(enriched);
+      return;
+    }
+
+    res.json(boardQuests);
   }
 );
 
