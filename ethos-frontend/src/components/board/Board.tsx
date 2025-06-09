@@ -21,6 +21,7 @@ import type { Quest } from '../../types/questTypes';
 
 const Board: React.FC<BoardProps> = ({
   boardId,
+  board: boardProp,
   title: forcedTitle,
   layout: forcedStructure,
   user,
@@ -34,7 +35,7 @@ const Board: React.FC<BoardProps> = ({
   loading: loadingMore = false,
   quest,
 }) => {
-  const [board, setBoard] = useState<BoardData | null>(null);
+  const [board, setBoard] = useState<BoardData | null>(boardProp ?? null);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Post[]>([]);
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
@@ -70,8 +71,16 @@ const Board: React.FC<BoardProps> = ({
         setLoading(false);
       }
     };
-    loadBoard();
-  }, [boardId]);
+
+    if (boardProp) {
+      setSelectedBoard(boardProp.id);
+      setBoard(boardProp);
+      setItems((boardProp.enrichedItems || []) as Post[]);
+      setLoading(false);
+    } else {
+      loadBoard();
+    }
+  }, [boardId, boardProp]);
 
   useSocketListener('board:update', (payload: { boardId: string }) => {
     if (!board?.id || payload.boardId !== board.id) return;
