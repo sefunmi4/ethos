@@ -26,6 +26,7 @@ interface NodeMap {
 
 const GraphLayout: React.FC<GraphLayoutProps> = ({
   items,
+  edges,
   user,
   compact = false,
   onScrollEnd,
