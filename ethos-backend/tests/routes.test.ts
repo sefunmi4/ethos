@@ -33,6 +33,7 @@ jest.mock('../src/models/stores', () => ({
         headPostId: '',
         linkedPosts: [],
         collaborators: [],
+        taskGraph: [],
       },
     ]),
     write: jest.fn(),
@@ -87,5 +88,69 @@ describe('route handlers', () => {
     expect(res.body.collaborators).toHaveLength(1);
     expect(res.body.collaborators[0].roles).toContain('designer');
     expect(res.body.collaborators[0].userId).toBeUndefined();
+  });
+
+  it('GET /quests/:id/map returns nodes and edges', async () => {
+    const { postsStore, questsStore } = require('../src/models/stores');
+    postsStore.read.mockReturnValue([
+      {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        questId: 'q1',
+      },
+    ]);
+    questsStore.read.mockReturnValue([
+      {
+        id: 'q1',
+        authorId: 'u1',
+        title: 'Quest',
+        status: 'active',
+        headPostId: '',
+        linkedPosts: [],
+        collaborators: [],
+        taskGraph: [{ from: '', to: 't1' }],
+      },
+    ]);
+    const res = await request(app).get('/quests/q1/map');
+    expect(res.status).toBe(200);
+    expect(res.body.nodes).toHaveLength(1);
+    expect(res.body.edges).toHaveLength(1);
+  });
+
+  it('POST /quests/:id/link adds task edge when linking task', async () => {
+    const { postsStore, questsStore } = require('../src/models/stores');
+    const quest: any = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: 'h1',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    questsStore.read.mockReturnValue([quest]);
+    postsStore.read.mockReturnValue([
+      {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      },
+    ]);
+
+    const res = await request(app)
+      .post('/quests/q1/link')
+      .send({ postId: 't1' });
+
+    expect(res.status).toBe(200);
+    expect(quest.taskGraph).toHaveLength(1);
+    expect(quest.taskGraph[0].to).toBe('t1');
   });
 });
