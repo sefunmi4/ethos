@@ -161,14 +161,48 @@ const QuestCard: React.FC<QuestCardProps> = ({
             )}
             <ThreadLayout contributions={logs} user={user} questId={quest.id} />
             <div className="text-right mt-2">
-              <Button size="sm" variant="secondary" onClick={() => setShowLogForm(true)}>
-                + Add Log
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setShowLogForm(true)}
+              >
+                + Add Item
+              </Button>
+            </div>
+        </>
+      );
+      case 'kanban':
+        return (
+          <>
+            {showTaskForm && (
+              <div className="mb-4">
+                <CreatePost
+                  initialType="task"
+                  onSave={(p) => {
+                    setLogs((prev) => [...prev, p]);
+                    setShowTaskForm(false);
+                  }}
+                  onCancel={() => setShowTaskForm(false)}
+                />
+              </div>
+            )}
+            <GridLayout
+              questId={quest.id}
+              items={logs}
+              user={user}
+              layout="kanban"
+            />
+            <div className="text-right mt-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setShowTaskForm(true)}
+              >
+                + Add Item
               </Button>
             </div>
           </>
         );
-      case 'kanban':
-        return <GridLayout questId={quest.id} items={logs} user={user} />;
       case 'map':
         return (
           <>
@@ -186,8 +220,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
             )}
             <GraphLayout items={logs as any} user={user} />
             <div className="text-right mt-2">
-              <Button size="sm" variant="secondary" onClick={() => setShowTaskForm(true)}>
-                + Add Task
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setShowTaskForm(true)}
+              >
+                + Add Item
               </Button>
             </div>
           </>
