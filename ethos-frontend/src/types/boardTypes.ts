@@ -75,6 +75,8 @@ export interface BoardProps {
   onScrollEnd?: () => void;
   loading?: boolean;
   quest?: Quest;
+  /** Layout variant for GridLayout */
+  gridLayout?: 'vertical' | 'horizontal' | 'kanban';
 }
 
 /** Props for the EditBoard component */

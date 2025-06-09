@@ -34,6 +34,7 @@ const Board: React.FC<BoardProps> = ({
   onScrollEnd,
   loading: loadingMore = false,
   quest,
+  gridLayout,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(boardProp ?? null);
   const [loading, setLoading] = useState(true);
@@ -302,6 +303,7 @@ const Board: React.FC<BoardProps> = ({
           {...(resolvedStructure === 'graph'
             ? { edges: quest?.taskGraph }
             : {})}
+          {...(resolvedStructure === 'grid' ? { layout: gridLayout } : {})}
         />
       )}
     </div>
