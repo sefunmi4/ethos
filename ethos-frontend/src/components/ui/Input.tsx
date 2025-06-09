@@ -17,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full space-y-1">
         {srOnlyLabel && <label htmlFor={id} className="sr-only">{srOnlyLabel}</label>}
 
-        <div className="flex items-center border rounded-md shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden">
+        <div className="flex items-center border rounded-md shadow-sm focus-within:ring-2 focus-within:ring-accent focus-within:border-accent overflow-hidden">
           {prefix && <span className="px-2 text-gray-500 bg-gray-100">{prefix}</span>}
           <input
             id={id}

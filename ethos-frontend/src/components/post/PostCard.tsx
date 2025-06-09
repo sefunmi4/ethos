@@ -162,7 +162,7 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   return (
-    <div className="relative border rounded bg-white dark:bg-gray-800 shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100">
+    <div className="relative border rounded bg-white dark:bg-gray-800 shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100 max-w-prose mx-auto">
       <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />

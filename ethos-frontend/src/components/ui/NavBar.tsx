@@ -17,9 +17,9 @@ const NavBar: React.FC = () => {
   return (
     <nav className="w-full px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 backdrop-blur">
       <div className="w-full max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-24 mx-auto flex items-center justify-between flex-wrap gap-4">
-        
+
         {/* Logo or brand name linking to home */}
-        <Link to="/" className="text-xl font-bold tracking-tight">
+        <Link to="/" className="text-xl font-bold tracking-tight text-accent">
           Ethos
         </Link>
 
@@ -27,13 +27,13 @@ const NavBar: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base">
           {!user ? (
             // Guest user view
-            <Link to="/login" className="hover:text-indigo-600 transition">
+            <Link to="/login" className="hover:text-accent transition">
               Login
             </Link>
           ) : (
             // Authenticated user view
             <>
-              <Link to="/profile" className="hover:text-indigo-600 transition">
+              <Link to="/profile" className="hover:text-accent transition">
                 Account
               </Link>
               <button

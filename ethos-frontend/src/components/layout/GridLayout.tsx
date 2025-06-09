@@ -94,17 +94,25 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   }
 
   /** 📌 Vertical Grid Layout (default) */
+  const isSingle = items.length === 1;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 px-2">
+    <div
+      className={
+        isSingle
+          ? 'flex justify-center items-start p-2'
+          : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 px-2'
+      }
+    >
       {items.map((item) => (
-        <ContributionCard
-          key={item.id}
-          contribution={item}
-          user={user}
-          compact={compact}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <div key={item.id} className={isSingle ? 'max-w-prose w-full' : ''}>
+          <ContributionCard
+            contribution={item}
+            user={user}
+            compact={compact}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </div>
       ))}
     </div>
   );

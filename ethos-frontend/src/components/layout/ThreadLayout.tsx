@@ -42,7 +42,15 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   if (childItems.length === 0 || depth > maxDepth) return null;
 
   return (
-    <div className={depth === 0 ? 'space-y-6' : 'ml-6 border-l-2 border-gray-200 pl-4 space-y-4'}>
+    <div
+      className={
+        depth === 0
+          ? childItems.length === 1
+            ? 'flex justify-center space-y-6'
+            : 'space-y-6'
+          : 'ml-6 border-l-2 border-gray-200 pl-4 space-y-4'
+      }
+    >
       {childItems.map((contribution) => {
         const isAuthor = contribution.authorId === user?.id;
         const isCollaborator = contribution.collaborators?.some((c) => c.userId === user?.id);

@@ -26,7 +26,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             'w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none',
             error
               ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500',
+              : 'border-gray-300 focus:ring-accent focus:border-accent',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className
           )}

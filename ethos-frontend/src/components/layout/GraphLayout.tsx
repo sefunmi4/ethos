@@ -120,7 +120,10 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   return (
     <div
       ref={containerRef}
-      className="overflow-auto w-full h-full p-4 max-w-7xl mx-auto"
+      className={
+        'overflow-auto w-full h-full p-4 max-w-7xl mx-auto ' +
+        (rootNodes.length === 1 ? 'flex justify-center' : '')
+      }
       style={{ minHeight: '50vh' }}
     >
       {rootNodes.map((node) => renderNode(node))}
