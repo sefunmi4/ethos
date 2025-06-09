@@ -206,7 +206,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderCommitDiff()}
       {renderLinkSummary()}
 
-      {['request','quest','task','log','commit','issue'].includes(post.type) && (
+      {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
         <div className="text-xs text-gray-500 space-y-1">
           <button
             type="button"
