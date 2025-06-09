@@ -90,24 +90,26 @@ const BoardPage: React.FC = () => {
 
   return (
     <main className="max-w-7xl mx-auto p-4 space-y-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">{boardData.title}</h1>
-        {editable && (
-          <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Edit Board
-          </button>
-        )}
-      </div>
+      <div className="bg-gray-100 dark:bg-gray-900 rounded-xl shadow-lg p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">{boardData.title}</h1>
+          {editable && (
+            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Edit Board
+            </button>
+          )}
+        </div>
 
-      <Board
-        boardId={id}
-        board={boardData}
-        layout={boardData.layout}
-        editable={editable}
-        showCreate={editable}
-        onScrollEnd={loadMore}
-        loading={loadingMore}
-      />
+        <Board
+          boardId={id}
+          board={boardData}
+          layout={boardData.layout}
+          editable={editable}
+          showCreate={editable}
+          onScrollEnd={loadMore}
+          loading={loadingMore}
+        />
+      </div>
     </main>
   );
 };
