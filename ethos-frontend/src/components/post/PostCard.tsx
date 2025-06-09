@@ -166,6 +166,19 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
+          <button
+            type="button"
+            onClick={() =>
+              navigate(
+                post.authorId === user?.id
+                  ? ROUTES.PROFILE
+                  : ROUTES.PUBLIC_PROFILE(post.authorId)
+              )
+            }
+            className="text-blue-600 underline"
+          >
+            @{post.author?.username || post.authorId}
+          </button>
           <span>{timestamp}</span>
         </div>
         <ActionMenu
