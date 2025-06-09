@@ -180,6 +180,27 @@ router.post(
 );
 
 //
+// ✅ DELETE /api/posts/:id/repost – Remove current user's repost
+//
+router.delete(
+  '/:id/repost',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const index = posts.findIndex(
+      (p) => p.repostedFrom === req.params.id && p.authorId === req.user!.id
+    );
+    if (index === -1) {
+      res.status(404).json({ error: 'Repost not found' });
+      return;
+    }
+    const [removed] = posts.splice(index, 1);
+    postsStore.write(posts);
+    res.json({ success: true, id: removed.id });
+  }
+);
+
+//
 // ✅ GET /api/posts/:id/reposts/user – Get current user's repost of a post
 //
 router.get(

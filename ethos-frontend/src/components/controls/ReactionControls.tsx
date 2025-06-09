@@ -12,6 +12,7 @@ import CreatePost from '../post/CreatePost';
 import {
   updateReaction,
   addRepost,
+  removeRepost,
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
@@ -99,14 +100,20 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     if (!user?.id || repostLoading) return;
     setRepostLoading(true);
     try {
-      const res = await addRepost(post);
-      if (res?.id) {
-        setCounts(prev => ({ ...prev, repost: prev.repost + 1 }));
-        setUserRepostId(res.id);
-        onUpdate?.(res);
+      if (userRepostId) {
+        await removeRepost(post.id);
+        setCounts(prev => ({ ...prev, repost: Math.max(0, prev.repost - 1) }));
+        setUserRepostId(null);
+      } else {
+        const res = await addRepost(post);
+        if (res?.id) {
+          setCounts(prev => ({ ...prev, repost: prev.repost + 1 }));
+          setUserRepostId(res.id);
+          onUpdate?.(res);
+        }
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to repost:', err);
+      console.error('[ReactionControls] Failed to toggle repost:', err);
     } finally {
       setRepostLoading(false);
     }

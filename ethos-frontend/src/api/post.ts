@@ -160,6 +160,17 @@ export const addRepost = async (post: Post): Promise<Post> => {
 };
 
 /**
+ * 🔁 Remove current user's repost of a post
+ * @param postId - Original post ID
+ */
+export const removeRepost = async (
+  postId: string
+): Promise<{ success: boolean; id: string }> => {
+  const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/repost`);
+  return res.data;
+};
+
+/**
  * 🧪 (Utility) Enrich a post client-side
  * @param post - Raw post object
  */
