@@ -1,16 +1,2 @@
 [
-  {
-    "id": "quest1",
-    "title": "Demo Quest",
-    "description": "Explore Ethos features",
-    "authorId": "u_1fd378c6-f9b1-4b17-b151-e902664e81f6",
-    "status": "active",
-    "headPostId": "post1",
-    "createdAt": "2025-06-07T00:00:00Z",
-    "linkedPosts": [
-      { "itemId": "post1", "itemType": "post" }
-    ],
-    "collaborators": [],
-    "tags": ["demo"]
-  }
 ]
