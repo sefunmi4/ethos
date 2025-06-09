@@ -267,6 +267,7 @@ const Board: React.FC<BoardProps> = ({
           <CreatePost
             onSave={handleAdd}
             onCancel={() => setShowCreateForm(false)}
+            boardId={board.id}
           />
         </div>
       )}
