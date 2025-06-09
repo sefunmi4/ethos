@@ -40,21 +40,32 @@ const CreatePost: React.FC<CreatePostProps> = ({
     if (isSubmitting) return;
     setIsSubmitting(true);
 
+    const boardQuestMatch = selectedBoard?.match(/^(?:log|map)-(.+)$/);
+    const questIdFromBoard = boardQuestMatch ? boardQuestMatch[1] : null;
+
     // Check for quest linkage if required
     if (requiresQuestLink(type)) {
-      const hasQuest = linkedItems.some((item) => item.itemType === 'quest');
-      if (!hasQuest) {
+      const hasQuestLink =
+        linkedItems.some((item) => item.itemType === 'quest') ||
+        Boolean(questIdFromBoard);
+      if (!hasQuestLink) {
         alert('Please link a quest before submitting.');
         setIsSubmitting(false);
         return;
       }
     }
 
+    const autoLinkItems = [...linkedItems];
+    if (questIdFromBoard && !autoLinkItems.some((l) => l.itemId === questIdFromBoard)) {
+      autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
+    }
+
     const payload: Partial<Post> = {
       type,
       content,
       visibility: 'public',
-      linkedItems,
+      linkedItems: autoLinkItems,
+      ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
       ...(selectedBoard ? { boardId: selectedBoard } : {}),
       ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
       ...(repostSource
