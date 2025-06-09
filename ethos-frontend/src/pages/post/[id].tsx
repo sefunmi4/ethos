@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import { createMockBoard } from '../../utils/boardUtils';
 import { useSocket } from '../../hooks/useSocket';
+import { Spinner } from '../../components/ui';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
 
@@ -87,7 +88,7 @@ const PostPage: React.FC = () => {
   }, [socket, id, fetchPostData]);
 
   if (error) return <div className="text-center py-12 text-red-500">{error}</div>;
-  if (!post) return <div className="text-center py-12 text-gray-500">Loading post...</div>;
+  if (!post) return <Spinner />;
 
   return (
     <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12">

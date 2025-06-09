@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PostCard from './PostCard';
 import { fetchRepliesByPostId } from '../../api/post';
+import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
@@ -19,7 +20,7 @@ const ReplyThread: React.FC<ReplyThreadProps> = ({ postId, user }) => {
       .finally(() => setLoaded(true));
   }, [postId]);
 
-  if (!loaded) return <p className="text-xs text-gray-400">Loading replies...</p>;
+  if (!loaded) return <Spinner />;
   if (replies.length === 0) return null;
 
   return (

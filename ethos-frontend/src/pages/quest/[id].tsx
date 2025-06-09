@@ -10,7 +10,7 @@ import { useSocketListener } from '../../hooks/useSocket';
 
 import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
-import { Button } from '../../components/ui';
+import { Button, Spinner } from '../../components/ui';
 import { createMockBoard } from '../../utils/boardUtils';
 
 import type { User } from '../../types/userTypes';
@@ -82,11 +82,7 @@ const QuestPage: React.FC = () => {
 
   // ⏳ Loading state
   if (isQuestLoading || !quest) {
-    return (
-      <div className="p-6 text-center text-gray-500">
-        Loading quest...
-      </div>
-    );
+    return <Spinner />;
   }
 
   return (
