@@ -74,7 +74,7 @@ const QuestPage: React.FC = () => {
       {/* 🎯 Quest Summary Card */}
       <Banner quest={quest} />
       <Board
-        board={createMockBoard(`quest-${quest.id}`, 'Quest Overview', [quest.id])}
+        board={createMockBoard(`quest-${quest.id}`, 'Quest Overview', [quest])}
         editable={false}
         compact={false}
       />

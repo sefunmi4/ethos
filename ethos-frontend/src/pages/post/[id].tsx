@@ -99,7 +99,7 @@ const PostPage: React.FC = () => {
 
       <section>
         <Board
-          board={createMockBoard(`post-${post.id}`, 'Post', [post.id])}
+          board={createMockBoard(`post-${post.id}`, 'Post', [post])}
           editable={false}
           compact={false}
         />

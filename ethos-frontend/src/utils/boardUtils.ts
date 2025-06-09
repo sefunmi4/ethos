@@ -1,5 +1,7 @@
 // src/utils/boardUtils.ts
 import type { BoardData } from '../types/boardTypes';
+import type { Post } from '../types/postTypes';
+import type { Quest } from '../types/questTypes';
 
 /**
  * Creates a mock BoardData object for temporary or display-only purposes.
@@ -13,13 +15,20 @@ import type { BoardData } from '../types/boardTypes';
 export const createMockBoard = (
   id: string,
   title: string,
-  items: (string | null)[]
+  items: Array<string | Post | Quest | null>
 ): BoardData => {
+  const itemIds = items.map((item) => {
+    if (item && typeof item === 'object') {
+      return item.id;
+    }
+    return item as string | null;
+  });
+
   return {
     id,
     title,
     layout: 'grid',
-    items,
+    items: itemIds,
     enrichedItems: items,
     createdAt: new Date().toISOString(),
   };
