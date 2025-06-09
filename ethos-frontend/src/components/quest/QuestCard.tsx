@@ -219,7 +219,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 />
               </div>
             )}
-            <GraphLayout items={logs as any} user={user} />
+            <GraphLayout items={logs as any} user={user} edges={questData.taskGraph} />
             <div className="text-right mt-2">
               <Button
                 size="sm"

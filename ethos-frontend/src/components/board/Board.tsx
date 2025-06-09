@@ -290,6 +290,9 @@ const Board: React.FC<BoardProps> = ({
           loadingMore={loadingMore}
           contributions={items}
           questId={quest?.id || ''}
+          {...(resolvedStructure === 'graph'
+            ? { edges: quest?.taskGraph }
+            : {})}
         />
       )}
     </div>
