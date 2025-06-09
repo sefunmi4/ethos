@@ -46,7 +46,7 @@ const TextArea: React.FC<TextAreaProps> = ({
           'w-full p-3 rounded-md border shadow-sm resize-y text-sm text-gray-900 focus:outline-none',
           error
             ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-            : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500',
+            : 'border-gray-300 focus:ring-accent focus:border-accent',
           {
             'bg-gray-100 cursor-not-allowed': disabled || readOnly,
           },
