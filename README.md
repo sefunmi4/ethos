@@ -102,6 +102,7 @@ If the plugin cannot be found after installing, try running `npm install --legac
 
 ```env
 VITE_API_URL=http://localhost:3001/api
+VITE_SOCKET_URL=http://localhost:3001
 ```
 
 ### 3. Setup Backend
