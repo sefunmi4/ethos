@@ -11,6 +11,7 @@ import { TimelineProvider } from './contexts/TimelineContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 import NavBar from './components/ui/NavBar';
+import Footer from './components/ui/Footer';
 import PrivateRoute from './routes/ProtectedRoute';
 
 /**
@@ -71,6 +72,7 @@ const App: React.FC = () => {
                 </Routes>
               </Suspense>
             </main>
+            <Footer />
             </div>
             </ThemeProvider>
           </BoardProvider>
