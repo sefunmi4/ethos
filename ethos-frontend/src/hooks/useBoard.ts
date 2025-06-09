@@ -3,6 +3,8 @@ import { useBoardContext } from '../contexts/BoardContext';
 import { fetchBoards, fetchBoard } from '../api/board';
 import { DEFAULT_PAGE_SIZE } from '../constants/pagination';
 import { fetchUserById } from '../api/auth';
+import { fetchQuestsByBoardId } from '../api/quest';
+import { fetchPostsByBoardId } from '../api/post';
 import type { BoardData } from '../types/boardTypes';
 import type { User } from '../types/userTypes';
 
@@ -69,16 +71,41 @@ export const useBoard = (arg?: BoardArg) => {
   }, []);
 
   const loadPublicBoards = useCallback(async (userId: string) => {
-    const [quests, posts, profileRes] = await Promise.all([
-      fetchBoard(`quests-${userId}`, { enrich: true }).catch(() => null),
-      fetchBoard(`posts-${userId}`, { enrich: true }).catch(() => null),
+    const [questBoard, postBoard, profileRes, quests, posts] = await Promise.all([
+      fetchBoard(`quests-${userId}`).catch(() => null),
+      fetchBoard(`posts-${userId}`).catch(() => null),
       fetchUserById(userId).catch(() => null), // ✅ Use the API
+      fetchQuestsByBoardId(`quests-${userId}`).catch(() => []),
+      fetchPostsByBoardId(`posts-${userId}`).catch(() => []),
     ]);
-  
+
+    const qb: BoardData = questBoard
+      ? { ...questBoard, items: quests.map(q => q.id), enrichedItems: quests }
+      : {
+          id: `quests-${userId}`,
+          title: 'Quests',
+          layout: 'grid',
+          items: quests.map(q => q.id),
+          createdAt: '',
+          userId,
+          enrichedItems: quests,
+        };
+    const pb: BoardData = postBoard
+      ? { ...postBoard, items: posts.map(p => p.id), enrichedItems: posts }
+      : {
+          id: `posts-${userId}`,
+          title: 'Posts',
+          layout: 'grid',
+          items: posts.map(p => p.id),
+          createdAt: '',
+          userId,
+          enrichedItems: posts,
+        };
+
     return {
       profile: profileRes as User,
-      quests: quests as BoardData,
-      posts: posts as BoardData,
+      quests: qb,
+      posts: pb,
     };
   }, []);
 
