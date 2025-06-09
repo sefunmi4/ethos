@@ -17,13 +17,13 @@ const ProfilePage: React.FC = () => {
     board: userQuestBoard,
     setBoard: setUserQuestBoard,
     isLoading: loadingQuests,
-  } = useBoard('my-quests');
+  } = useBoard('my-quests', { pageSize: 1000 });
 
   const {
     board: userPostBoard,
     setBoard: setUserPostBoard,
     isLoading: loadingPosts,
-  } = useBoard('my-posts');
+  } = useBoard('my-posts', { pageSize: 1000 });
 
   useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (!updatedBoard || !user) return;
