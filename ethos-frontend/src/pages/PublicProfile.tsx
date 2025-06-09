@@ -61,14 +61,14 @@ const PublicProfilePage: React.FC = () => {
     try {
       // 🧭 If it's a quest board
       if (updatedBoard.id === questBoard?.id) {
-        const quests = await fetchQuestsForBoard(updatedBoard.id);
+        const quests = await fetchQuestsForBoard(updatedBoard.id, userId);
         const enriched = await enrichQuests(quests);
         setQuestBoard({ ...updatedBoard, enrichedItems: enriched });
       }
 
       // 📬 If it's a post board
       if (updatedBoard.id === postBoard?.id) {
-        const posts = await fetchPostsForBoard(updatedBoard.id);
+        const posts = await fetchPostsForBoard(updatedBoard.id, userId);
         const enriched = await enrichPosts(posts);
         setPostBoard({ ...updatedBoard, enrichedItems: enriched });
       }

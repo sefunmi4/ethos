@@ -55,9 +55,9 @@ export const useQuest = (questId?: string) => {
     load();
   }, [questId]);
 
-  const fetchQuestsForBoard = useCallback(async (boardId: string): Promise<Quest[]> => {
+  const fetchQuestsForBoard = useCallback(async (boardId: string, userId?: string): Promise<Quest[]> => {
     try {
-      return await fetchQuestsByBoardId(boardId);
+      return await fetchQuestsByBoardId(boardId, userId);
     } catch (err) {
       console.error(`[useQuest] Failed to fetch quests for board: ${boardId}`, err);
       return [];

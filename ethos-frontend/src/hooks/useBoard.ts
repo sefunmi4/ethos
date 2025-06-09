@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useBoardContext } from '../contexts/BoardContext';
 import { fetchBoards, fetchBoard } from '../api/board';
+import { useAuth } from '../contexts/AuthContext';
 import { DEFAULT_PAGE_SIZE } from '../constants/pagination';
 import { fetchUserById } from '../api/auth';
 import { fetchQuestsByBoardId } from '../api/quest';
@@ -25,6 +26,7 @@ export const useBoard = (arg?: BoardArg) => {
     appendToBoard,
     removeItemFromBoard,
   } = useBoardContext(); // ✅ useBoardContext instead of BoardContext
+  const { user } = useAuth();
 
   const boardId = useMemo(() => (arg ? getBoardIdFromArg(arg) : undefined), [arg]);
 
@@ -42,6 +44,7 @@ export const useBoard = (arg?: BoardArg) => {
           enrich,
           page,
           limit,
+          userId: user?.id,
         });
         setBoard(result);
         return result;
@@ -71,13 +74,13 @@ export const useBoard = (arg?: BoardArg) => {
   }, []);
 
   const loadPublicBoards = useCallback(async (userId: string) => {
-    const [questBoard, postBoard, profileRes, quests, posts] = await Promise.all([
-      fetchBoard(`quests-${userId}`).catch(() => null),
-      fetchBoard(`posts-${userId}`).catch(() => null),
-      fetchUserById(userId).catch(() => null), // ✅ Use the API
-      fetchQuestsByBoardId(`quests-${userId}`).catch(() => []),
-      fetchPostsByBoardId(`posts-${userId}`).catch(() => []),
-    ]);
+      const [questBoard, postBoard, profileRes, quests, posts] = await Promise.all([
+        fetchBoard(`quests-${userId}`, { userId }).catch(() => null),
+        fetchBoard(`posts-${userId}`, { userId }).catch(() => null),
+        fetchUserById(userId).catch(() => null), // ✅ Use the API
+        fetchQuestsByBoardId(`quests-${userId}`, userId).catch(() => []),
+        fetchPostsByBoardId(`posts-${userId}`, userId).catch(() => []),
+      ]);
 
     const qb: BoardData = questBoard
       ? { ...questBoard, items: quests.map(q => q.id), enrichedItems: quests }

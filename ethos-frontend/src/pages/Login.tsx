@@ -90,9 +90,9 @@ const Login: React.FC = () => {
           
           await Promise.all([
             loadPermissions(defaultBoard.id),
-            fetchPostsForBoard(defaultBoard.id),
-            fetchQuestsForBoard(defaultBoard.id),
-            loadTimeline(defaultBoard.id),
+              fetchPostsForBoard(defaultBoard.id, user.id),
+              fetchQuestsForBoard(defaultBoard.id, user.id),
+              loadTimeline(defaultBoard.id, user.id),
             loadGraph(defaultBoard.id),
           ]);
         }

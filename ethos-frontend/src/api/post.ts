@@ -83,8 +83,16 @@ export const fetchPostsByQuestId = async (questId: string): Promise<Post[]> => {
  * 📌 Fetch posts by board ID
  * @param boardId - Board ID
  */
-export const fetchPostsByBoardId = async (boardId: string): Promise<Post[]> => {
-  const res = await axiosWithAuth.get(`/boards/${boardId}/items?enrich=true`);
+export const fetchPostsByBoardId = async (
+  boardId: string,
+  userId?: string
+): Promise<Post[]> => {
+  const params = new URLSearchParams();
+  params.set('enrich', 'true');
+  if (userId) params.set('userId', userId);
+  const res = await axiosWithAuth.get(
+    `/boards/${boardId}/items?${params.toString()}`
+  );
   return (res.data || []).filter((item: any) => 'content' in item);
 };
 

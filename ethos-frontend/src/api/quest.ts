@@ -101,8 +101,15 @@ export const fetchQuestMapData = async (
  * @function fetchQuestsByBoardId  
  * @param boardId Board ID
  */
-export const fetchQuestsByBoardId = async (boardId: string): Promise<Quest[]> => {
-  const res = await axiosWithAuth.get(`/boards/${boardId}/quests`);
+export const fetchQuestsByBoardId = async (
+  boardId: string,
+  userId?: string
+): Promise<Quest[]> => {
+  const params = new URLSearchParams();
+  if (userId) params.set('userId', userId);
+  const res = await axiosWithAuth.get(
+    `/boards/${boardId}/quests${params.toString() ? `?${params.toString()}` : ''}`
+  );
   return res.data;
 };
 

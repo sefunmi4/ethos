@@ -17,9 +17,9 @@ import {
  * - propagateSolution: Check and handle solution propagation
  */
 export const usePost = () => {
-  const fetchPostsForBoard = useCallback(async (boardId: string): Promise<Post[]> => {
+  const fetchPostsForBoard = useCallback(async (boardId: string, userId?: string): Promise<Post[]> => {
     try {
-      const posts = await fetchPostsByBoardId(boardId);
+        const posts = await fetchPostsByBoardId(boardId, userId);
       return posts;
     } catch (err) {
       console.error(`[usePost] Failed to fetch posts for board ${boardId}:`, err);

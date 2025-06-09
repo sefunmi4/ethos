@@ -25,11 +25,12 @@ export const fetchBoards = async (userId?: string): Promise<BoardData[]> => {
  */
 export const fetchBoard = async (
   id: string,
-  options: { enrich?: boolean; page?: number; limit?: number } = {}
+  options: { enrich?: boolean; page?: number; limit?: number; userId?: string } = {}
 ): Promise<BoardData> => {
   const params = new URLSearchParams();
   if (options.enrich) params.set('enrich', 'true');
   if (options.page) params.set('page', options.page.toString());
+  if (options.userId) params.set('userId', options.userId);
   params.set('limit', (options.limit ?? DEFAULT_PAGE_SIZE).toString());
   const url = `${BASE_URL}/${id}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
@@ -42,10 +43,11 @@ export const fetchBoard = async (
  */
 export const fetchBoardItems = async (
   id: string,
-  options: { enrich?: boolean } = {}
+  options: { enrich?: boolean; userId?: string } = {}
 ): Promise<(Post | Quest)[]> => {
   const params = new URLSearchParams();
   if (options.enrich) params.set('enrich', 'true');
+  if (options.userId) params.set('userId', options.userId);
   const url = `${BASE_URL}/${id}/items${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;

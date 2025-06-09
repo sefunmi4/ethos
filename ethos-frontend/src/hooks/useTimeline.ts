@@ -43,9 +43,9 @@ export const useTimeline = () => {
    *
    * @param boardId - ID of the board to load timeline for
    */
-  const loadTimeline = useCallback(async (boardId: string) => {
+  const loadTimeline = useCallback(async (boardId: string, userId?: string) => {
     try {
-      const posts = await fetchPostsByBoardId(boardId);
+      const posts = await fetchPostsByBoardId(boardId, userId);
       const timelineEvents: TimelineEvent[] = posts
         .filter(p => p.type === 'meta_system')
         .map(p => ({
