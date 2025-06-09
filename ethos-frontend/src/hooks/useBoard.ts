@@ -48,8 +48,12 @@ export const useBoard = (arg?: BoardArg) => {
         });
         setBoard(result);
         return result;
-      } catch (err) {
-        console.error(`[useBoard] Failed to load board ${id}:`, err);
+      } catch (err: any) {
+        if (err?.response?.status === 404) {
+          console.info(`[useBoard] Board ${id} not found`);
+        } else {
+          console.error(`[useBoard] Failed to load board ${id}:`, err);
+        }
         return undefined;
       } finally {
         setIsLoading(false);
