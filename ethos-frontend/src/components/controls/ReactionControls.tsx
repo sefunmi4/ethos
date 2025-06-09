@@ -101,9 +101,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     setRepostLoading(true);
     try {
       if (userRepostId) {
-        await removeRepost(post.id);
-        setCounts(prev => ({ ...prev, repost: Math.max(0, prev.repost - 1) }));
+        await removeRepost(userRepostId);
+        setCounts(prev => ({ ...prev, repost: prev.repost - 1 }));
         setUserRepostId(null);
+        onUpdate?.({ id: userRepostId, removed: true });
       } else {
         const res = await addRepost(post);
         if (res?.id) {

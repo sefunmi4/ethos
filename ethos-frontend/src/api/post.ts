@@ -160,14 +160,13 @@ export const addRepost = async (post: Post): Promise<Post> => {
 };
 
 /**
- * 🔁 Remove current user's repost of a post
- * @param postId - Original post ID
+ * ❌ Remove a repost by ID
+ * @param postId - Repost Post ID
  */
 export const removeRepost = async (
   postId: string
-): Promise<{ success: boolean; id: string }> => {
-  const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/repost`);
-  return res.data;
+): Promise<{ success: boolean }> => {
+  return removePost(postId);
 };
 
 /**
