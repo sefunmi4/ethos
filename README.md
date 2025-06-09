@@ -134,6 +134,10 @@ REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
 
+The backend logger supports a `LOG_LEVEL` environment variable. Set it to
+`error`, `warn`, `info` (default), or `debug` to control the verbosity of
+console output. Each log line includes a timestamp for easier tracing.
+
 ---
 
 ## 🧠 Core Flow
