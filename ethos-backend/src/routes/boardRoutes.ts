@@ -312,9 +312,26 @@ router.patch(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const boards = boardsStore.read();
-    const board = boards.find(b => b.id === req.params.id);
+    let board = boards.find(b => b.id === req.params.id);
+
     if (!board) {
-      res.status(404).json({ error: 'Board not found' });
+      board = {
+        id: req.params.id,
+        title: req.body.title || 'Untitled Board',
+        description: req.body.description || '',
+        layout: req.body.layout || 'grid',
+        items: req.body.items ?? [],
+        filters: req.body.filters ?? {},
+        featured: req.body.featured ?? false,
+        defaultFor: req.body.defaultFor ?? null,
+        createdAt: new Date().toISOString(),
+        userId: (req.user as any)?.id || '',
+        category: req.body.category,
+        questId: req.body.questId,
+      } as BoardData;
+      boards.push(board);
+      boardsStore.write(boards);
+      res.status(201).json(board);
       return;
     }
 
