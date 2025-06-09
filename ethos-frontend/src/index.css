@@ -10,6 +10,11 @@
   --text-primary: #1f2937; /* slate-800 */
 }
 
+.dark {
+  --bg-soft: #1f2937; /* slate-800 */
+  --text-primary: #f9fafb; /* light gray */
+}
+
 html, body {
   background-color: var(--bg-soft);
   color: var(--text-primary);

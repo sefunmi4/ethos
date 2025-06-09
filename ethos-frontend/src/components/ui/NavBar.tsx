@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthContextType } from '../../types/authTypes';
 import { logoutUser } from '../../utils/authUtils';
+import { useTheme } from '../../contexts/ThemeContext';
 
 /**
  * NavBar component for displaying top-level navigation.
@@ -11,9 +12,10 @@ import { logoutUser } from '../../utils/authUtils';
 const NavBar: React.FC = () => {
   // Access authenticated user context
   const { user } = useContext(AuthContext as React.Context<AuthContextType>);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <nav className="w-full px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200 bg-white backdrop-blur">
+    <nav className="w-full px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 backdrop-blur">
       <div className="w-full max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-24 mx-auto flex items-center justify-between flex-wrap gap-4">
         
         {/* Logo or brand name linking to home */}
@@ -43,6 +45,9 @@ const NavBar: React.FC = () => {
               </button>
             </>
           )}
+          <button onClick={toggleTheme} className="px-2 py-1 rounded border text-xs sm:text-sm border-gray-300 dark:border-gray-600">
+            {theme === 'light' ? 'Light' : 'Dark'}
+          </button>
         </div>
       </div>
     </nav>

@@ -7,6 +7,7 @@ import { BoardProvider } from './contexts/BoardContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 import { TimelineProvider } from './contexts/TimelineContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import NavBar from './components/ui/NavBar';
 import PrivateRoute from './routes/ProtectedRoute';
@@ -41,7 +42,8 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <TimelineProvider>
           <BoardProvider>
-            <div className="min-h-screen flex flex-col bg-white text-gray-900">
+            <ThemeProvider>
+            <div className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
               {/* Top-level navigation */}
               <NavBar />
 
@@ -68,7 +70,8 @@ const App: React.FC = () => {
                 </Routes>
               </Suspense>
             </main>
-          </div>
+            </div>
+            </ThemeProvider>
           </BoardProvider>
         </TimelineProvider>
       </QueryClientProvider>
