@@ -127,6 +127,7 @@ const PostPage: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">💬 Replies</h2>
         {replyBoard ? (
           <Board
+            boardId={`thread-${id}`}
             board={replyBoard}
             layout={viewMode}
             onScrollEnd={loadMoreReplies}

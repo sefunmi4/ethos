@@ -96,6 +96,7 @@ const BoardPage: React.FC = () => {
       </div>
 
       <Board
+        boardId={id}
         board={boardData}
         layout={boardData.layout}
         editable={editable}

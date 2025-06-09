@@ -84,6 +84,7 @@ const QuestPage: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">🗺 Quest Map</h2>
         {mapBoard ? (
           <Board
+            boardId={`map-${id}`}
             board={mapBoard}
             layout="graph"
             editable={user?.id === quest.ownerId}
@@ -101,6 +102,7 @@ const QuestPage: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">📜 Quest Log</h2>
         {logBoard ? (
           <Board
+            boardId={`log-${id}`}
             board={logBoard}
             layout="grid"
             editable={true}
