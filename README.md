@@ -109,8 +109,10 @@ VITE_API_URL=http://localhost:3001/api
 ```bash
 cd ethos-backend
 npm install
-node src/server.js
+npx ts-node src/server.ts       # or: npm run dev
 ```
+
+For production builds, run `npm run build` and then start with `node dist/server.js`.
 
 ### Running Tests
 
