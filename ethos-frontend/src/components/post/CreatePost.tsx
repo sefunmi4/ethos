@@ -81,6 +81,13 @@ const CreatePost: React.FC<CreatePostProps> = ({
           console.error('[CreatePost] Failed to persist board items:', err)
         );
       }
+      if (boards?.['my-posts'] && selectedBoard !== 'my-posts') {
+        appendToBoard('my-posts', newPost);
+        const myItems = [newPost.id, ...(boards['my-posts'].items || [])];
+        updateBoard('my-posts', { items: myItems }).catch((err) =>
+          console.error('[CreatePost] Failed to update my-posts board:', err)
+        );
+      }
       onSave?.(newPost);
     } catch (err) {
       console.error('[CreatePost] Error creating post:', err);

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addQuest } from '../../api/quest';
+import { updateBoard } from '../../api/board';
+import { useBoardContext } from '../../contexts/BoardContext';
 import { Button, Input, TextArea, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import { useSyncGitRepo } from '../../hooks/useGit';
@@ -40,6 +42,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   const [syncRepo, setSyncRepo] = useState(true); // default checked
 
   const syncGit = useSyncGitRepo();
+  const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +63,21 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
 
       if (repoUrl && syncRepo) {
         await syncGit.mutateAsync(newQuest.id);
+      }
+
+      if (selectedBoard) {
+        appendToBoard(selectedBoard, newQuest as any);
+        const items = [newQuest.id, ...(boards?.[selectedBoard]?.items || [])];
+        updateBoard(selectedBoard, { items }).catch((err) =>
+          console.error('[CreateQuest] Failed to persist board items:', err)
+        );
+      }
+      if (boards?.['my-quests'] && selectedBoard !== 'my-quests') {
+        appendToBoard('my-quests', newQuest as any);
+        const myItems = [newQuest.id, ...(boards['my-quests'].items || [])];
+        updateBoard('my-quests', { items: myItems }).catch((err) =>
+          console.error('[CreateQuest] Failed to update my-quests board:', err)
+        );
       }
 
       onSave?.(newQuest);
