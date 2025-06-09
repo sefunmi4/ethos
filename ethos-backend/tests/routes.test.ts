@@ -121,7 +121,7 @@ describe('route handlers', () => {
     expect(res.body.edges).toHaveLength(1);
   });
 
-  it('POST /quests/:id/link adds task edge when linking task', async () => {
+  it('POST /quests/:id/link adds task edge with type and label', async () => {
     const { postsStore, questsStore } = require('../src/models/stores');
     const quest: any = {
       id: 'q1',
@@ -147,10 +147,56 @@ describe('route handlers', () => {
 
     const res = await request(app)
       .post('/quests/q1/link')
-      .send({ postId: 't1' });
+      .send({ postId: 't1', edgeType: 'sub_problem', edgeLabel: 'relates' });
 
     expect(res.status).toBe(200);
     expect(quest.taskGraph).toHaveLength(1);
-    expect(quest.taskGraph[0].to).toBe('t1');
+    expect(quest.taskGraph[0]).toEqual({
+      from: 'h1',
+      to: 't1',
+      type: 'sub_problem',
+      label: 'relates',
+    });
+  });
+
+  it('POST /quests/:id/link links task to task when parentId provided', async () => {
+    const { postsStore, questsStore } = require('../src/models/stores');
+    const quest: any = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: 'h1',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    questsStore.read.mockReturnValue([quest]);
+    postsStore.read.mockReturnValue([
+      {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      },
+      {
+        id: 't2',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      },
+    ]);
+
+    const res = await request(app)
+      .post('/quests/q1/link')
+      .send({ postId: 't2', parentId: 't1' });
+
+    expect(res.status).toBe(200);
+    expect(quest.taskGraph).toHaveLength(1);
+    expect(quest.taskGraph[0]).toEqual({ from: 't1', to: 't2', type: undefined, label: undefined });
   });
 });

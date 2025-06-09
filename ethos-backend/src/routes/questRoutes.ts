@@ -191,9 +191,21 @@ router.get(
 router.post(
   '/:id/link',
   authMiddleware,
-  (req: AuthRequest<{ id: string }, any, { postId: string }>, res: Response) => {
+  (
+    req: AuthRequest<
+      { id: string },
+      any,
+      {
+        postId: string;
+        parentId?: string;
+        edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
+        edgeLabel?: string;
+      }
+    >,
+    res: Response
+  ) => {
   const { id } = req.params;
-  const { postId } = req.body;
+  const { postId, parentId, edgeType, edgeLabel } = req.body;
   if (!postId) {
     res.status(400).json({ error: 'Missing postId' });
     return;
@@ -221,9 +233,12 @@ router.post(
     quest.linkedPosts.push({ itemId: postId, itemType: 'post' });
     if (post && post.type === 'task') {
       quest.taskGraph = quest.taskGraph || [];
-      const edgeExists = quest.taskGraph.some(e => e.to === postId);
+      const from = parentId || quest.headPostId;
+      const edgeExists = quest.taskGraph.some(
+        e => e.to === postId && e.from === from
+      );
       if (!edgeExists) {
-        quest.taskGraph.push({ from: quest.headPostId, to: postId });
+        quest.taskGraph.push({ from, to: postId, type: edgeType, label: edgeLabel });
       }
     }
     questsStore.write(quests);
