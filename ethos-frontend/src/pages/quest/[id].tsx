@@ -4,10 +4,13 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useQuest } from '../../hooks/useQuest';
 import { useBoard } from '../../hooks/useBoard';
+import { addBoard } from '../../api/board';
+import { useBoardContext } from '../../contexts/BoardContext';
 import { useSocketListener } from '../../hooks/useSocket';
 
 import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
+import { Button } from '../../components/ui';
 import { createMockBoard } from '../../utils/boardUtils';
 
 import type { User } from '../../types/userTypes';
@@ -16,6 +19,7 @@ import type { BoardData } from '../../types/boardTypes';
 const QuestPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { refreshBoards } = useBoardContext();
 
   const [mapBoard, setMapBoard] = useState<BoardData | null>(null);
   const [logBoard, setLogBoard] = useState<BoardData | null>(null);
@@ -31,12 +35,28 @@ const QuestPage: React.FC = () => {
   const {
     board: fetchedMap,
     refresh: refreshMap,
+    isLoading: isMapLoading,
   } = useBoard(`map-${id}`);
 
   const {
     board: fetchedLog,
     refresh: refreshLog,
   } = useBoard(`log-${id}`);
+
+  const handleCreateMapBoard = async () => {
+    if (!quest) return;
+    try {
+      const newBoard = await addBoard({
+        title: `${quest.title} Map`,
+        layout: 'graph',
+        items: [],
+      });
+      setMapBoard(newBoard);
+      await refreshBoards();
+    } catch (err) {
+      console.error('[QuestPage] Failed to create map board:', err);
+    }
+  };
 
   // 🧠 Listen to board updates over socket
   useSocketListener('board:update', (updatedBoard: BoardData) => {
@@ -93,7 +113,14 @@ const QuestPage: React.FC = () => {
             showCreate
           />
         ) : (
-          <p className="text-sm text-gray-500">No quest map defined yet.</p>
+          <div className="text-sm text-gray-500">
+            <p className="mb-2">No quest map defined yet.</p>
+            {user?.id === quest.ownerId && !isMapLoading && (
+              <Button variant="primary" onClick={handleCreateMapBoard}>
+                Create Map Board
+              </Button>
+            )}
+          </div>
         )}
       </section>
 
