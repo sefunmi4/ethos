@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
 import { Link } from 'react-router-dom';
+import { Spinner } from '../components/ui';
 
 import type { User } from '../types/userTypes';
 
@@ -12,8 +13,8 @@ const HomePage: React.FC = () => {
 
   if (authLoading) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        Loading session...
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
       </div>
     );
   }

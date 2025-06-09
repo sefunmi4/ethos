@@ -8,6 +8,7 @@ import { usePost } from '../hooks/usePost';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
+import { Spinner } from '../components/ui';
 
 import type { EnrichedQuest, Quest } from '../types/questTypes';
 import type { EnrichedPost, Post } from '../types/postTypes';
@@ -81,7 +82,7 @@ const PublicProfilePage: React.FC = () => {
   }
 
   if (!profile) {
-    return <div className="text-center text-gray-500 py-8">Loading profile...</div>;
+    return <Spinner />;
   }
 
   return (
@@ -103,7 +104,7 @@ const PublicProfilePage: React.FC = () => {
             <div className="text-gray-500 text-center py-8">No public quests available.</div>
           )
         ) : (
-          <div className="text-gray-500 text-center py-8">Loading quests...</div>
+          <Spinner />
         )}
       </section>
 
@@ -122,7 +123,7 @@ const PublicProfilePage: React.FC = () => {
             <div className="text-gray-500 text-center py-8">No public posts found.</div>
           )
         ) : (
-          <div className="text-gray-500 text-center py-8">Loading posts...</div>
+          <Spinner />
         )}
       </section>
     </main>

@@ -8,7 +8,7 @@ import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost } from '../../api/post';
 import ReactionControls from '../controls/ReactionControls';
-import { PostTypeBadge } from '../ui';
+import { PostTypeBadge, Spinner } from '../ui';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
@@ -287,7 +287,11 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {replies.length > 0 && showReplies && (
         <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
-          {loadingReplies && <p className="text-xs text-gray-400 dark:text-gray-500">Loading replies…</p>}
+          {loadingReplies && (
+            <div className="flex justify-center">
+              <Spinner />
+            </div>
+          )}
           {replyError && <p className="text-xs text-red-500">{replyError}</p>}
           {replies.map((r) => (
             <PostCard

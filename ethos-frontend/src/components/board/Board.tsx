@@ -13,7 +13,7 @@ import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
 import ThreadLayout from '../layout/ThreadLayout';
 
-import { Button, Input, Select } from '../ui';
+import { Button, Input, Select, Spinner } from '../ui';
 
 import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
 import type { Post } from '../../types/postTypes';
@@ -184,7 +184,7 @@ const Board: React.FC<BoardProps> = ({
   }[resolvedStructure] ?? GridLayout;
 
   if (loading) {
-    return <div className="text-gray-500 dark:text-gray-400 p-4">Loading board...</div>;
+    return <Spinner />;
   }
 
   if (!board) {

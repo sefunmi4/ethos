@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Spinner } from '../ui';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
 import { fetchAllPosts } from '../../api/post';
@@ -158,7 +159,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   return (
     <div className="space-y-2">
       {loading ? (
-        <p className="text-sm text-gray-500">Loading items...</p>
+        <div className="flex justify-center py-2">
+          <Spinner />
+        </div>
       ) : (
         <> 
           {itemTypes.includes('post') && (
