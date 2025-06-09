@@ -24,6 +24,7 @@ export interface Quest {
 
   tags?: string[];
   defaultBoardId?: string;
+  taskGraph?: TaskEdge[];
 }
 
 

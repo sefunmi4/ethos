@@ -207,8 +207,8 @@ export const enrichQuest = (
     tasks,
     discussion,
     linkedPostsResolved,
-    collaborators: enrichedCollaborators, 
-    taskGraph: [], // Extend later
+    collaborators: enrichedCollaborators,
+    taskGraph: quest.taskGraph ?? [],
     percentComplete: 0, // Optional: compute from task statuses
     taskCount: tasks.length,
     completedTasks: tasks.filter((t) => t.status === 'Done').length,

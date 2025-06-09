@@ -151,6 +151,8 @@ export interface Quest {
 
   tags?: string[];
   defaultBoardId?: string;
+  /** Graph edges between tasks/logs */
+  taskGraph?: TaskEdge[];
 }
 /**
  * Users associated with a post.
@@ -217,6 +219,14 @@ export interface LinkedItem {
   linkStatus?: LinkStatus;
   notifyOnChange?: boolean;
   cascadeSolution?: boolean;
+}
+
+// 🔍 TaskEdge type to define sub-problem relationships in the graph
+export interface TaskEdge {
+  from: string; // Node ID
+  to: string; // Node ID
+  type?: 'sub_problem' | 'solution_branch' | 'folder_split'; // Describes edge purpose
+  label?: string;
 }
 
 // types/api.ts

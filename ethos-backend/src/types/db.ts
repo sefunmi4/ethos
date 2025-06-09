@@ -70,6 +70,14 @@ export interface DBQuest {
   createdAt?: string;
   tags?: string[];
   defaultBoardId?: string;
+  taskGraph?: TaskEdge[];
+}
+
+export interface TaskEdge {
+  from: string; // Node ID
+  to: string; // Node ID
+  type?: 'sub_problem' | 'solution_branch' | 'folder_split';
+  label?: string;
 }
 
 // types/db.ts

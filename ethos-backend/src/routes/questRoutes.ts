@@ -54,6 +54,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     collaborators: [],
     status: 'active',
     headPostId: fromPostId || '',
+    taskGraph: [],
   };
 
   const quests = questsStore.read();
@@ -99,9 +100,16 @@ router.patch(
   quest.linkedPosts = quest.linkedPosts || [];
   const exists = quest.linkedPosts.some(l => l.itemId === itemId);
   if (!exists) {
-      quest.linkedPosts.push({ itemId, itemType: 'post' });
-      questsStore.write(quests);
+    quest.linkedPosts.push({ itemId, itemType: 'post' });
+    if (post && post.type === 'task') {
+      quest.taskGraph = quest.taskGraph || [];
+      const edgeExists = quest.taskGraph.some(e => e.to === itemId);
+      if (!edgeExists) {
+        quest.taskGraph.push({ from: quest.headPostId, to: itemId });
+      }
     }
+    questsStore.write(quests);
+  }
 
     res.json(quest);
   }
@@ -122,6 +130,29 @@ router.get(
         enrichPost(p, { users, currentUserId: req.user?.id || null })
       )
     );
+  }
+);
+
+// GET task graph map for a quest
+router.get(
+  '/:id/map',
+  authOptional,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const quests = questsStore.read();
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    const posts = postsStore.read();
+    const users = usersStore.read();
+    const nodes = posts
+      .filter((p) => p.questId === id)
+      .map((p) => enrichPost(p, { users, currentUserId: req.user?.id || null }));
+
+    res.json({ nodes, edges: quest.taskGraph || [] });
   }
 );
 
@@ -188,6 +219,13 @@ router.post(
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
   if (!alreadyLinked) {
     quest.linkedPosts.push({ itemId: postId, itemType: 'post' });
+    if (post && post.type === 'task') {
+      quest.taskGraph = quest.taskGraph || [];
+      const edgeExists = quest.taskGraph.some(e => e.to === postId);
+      if (!edgeExists) {
+        quest.taskGraph.push({ from: quest.headPostId, to: postId });
+      }
+    }
     questsStore.write(quests);
   }
 
