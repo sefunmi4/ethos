@@ -65,6 +65,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   };
 
   useEffect(() => {
+    if (!expanded) return;
+
     const fetchData = async () => {
       try {
         const [questDetails, questLogs] = await Promise.all([
@@ -79,7 +81,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       }
     };
     fetchData();
-  }, [quest.id]);
+  }, [quest.id, expanded]);
 
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
