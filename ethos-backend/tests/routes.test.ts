@@ -153,4 +153,50 @@ describe('route handlers', () => {
     expect(quest.taskGraph).toHaveLength(1);
     expect(quest.taskGraph[0].to).toBe('t1');
   });
+
+  it('GET /boards/:id/quests returns quests from board', async () => {
+    const { boardsStore, questsStore } = require('../src/models/stores');
+    boardsStore.read.mockReturnValue([
+      { id: 'b1', title: 'Board', description: '', layout: 'grid', items: ['q1'] },
+    ]);
+    questsStore.read.mockReturnValue([
+      {
+        id: 'q1',
+        authorId: 'u1',
+        title: 'Quest',
+        status: 'active',
+        headPostId: '',
+        linkedPosts: [],
+        collaborators: [],
+        taskGraph: [],
+      },
+    ]);
+    const res = await request(app).get('/boards/b1/quests');
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].id).toBe('q1');
+  });
+
+  it('GET /boards/:id/quests?enrich=true returns enriched quests', async () => {
+    const { boardsStore, questsStore, usersStore } = require('../src/models/stores');
+    boardsStore.read.mockReturnValue([
+      { id: 'b1', title: 'Board', description: '', layout: 'grid', items: ['q1'] },
+    ]);
+    questsStore.read.mockReturnValue([
+      {
+        id: 'q1',
+        authorId: 'u1',
+        title: 'Quest',
+        status: 'active',
+        headPostId: '',
+        linkedPosts: [],
+        collaborators: [],
+        taskGraph: [],
+      },
+    ]);
+    usersStore.read.mockReturnValue([{ id: 'u1', username: 'test', role: 'user' }]);
+    const res = await request(app).get('/boards/b1/quests?enrich=true');
+    expect(res.status).toBe(200);
+    expect(res.body[0]).toHaveProperty('logs');
+  });
 });
