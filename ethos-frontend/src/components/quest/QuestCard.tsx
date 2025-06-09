@@ -4,6 +4,7 @@ import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, PostTypeBadge, Select } from '../ui';
+import { ROUTES } from '../../constants/routes';
 import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
@@ -117,7 +118,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             onArchived={() => {
               console.log(`[QuestCard] Quest ${quest.id} archived`);
             }}
-            permalink={`${window.location.origin}/quests/${quest.id}`}
+            permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
           />
         )}
   
@@ -128,7 +129,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             options={viewOptions}
           />
         )}
-        <Button onClick={() => navigate(`/quests/${quest.id}`)} variant="ghost">
+        <Button onClick={() => navigate(ROUTES.QUEST(quest.id))} variant="ghost">
           View details
         </Button>
   
