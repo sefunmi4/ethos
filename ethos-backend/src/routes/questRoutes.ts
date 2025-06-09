@@ -4,6 +4,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
+import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, LinkedItem } from '../types/api';
 import type { DBQuest } from '../types/db';
 
@@ -84,6 +85,7 @@ router.patch(
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
   if (!quest) {
+    logQuest404(id, req.originalUrl);
     res.status(404).json({ error: 'Quest not found' });
     return;
   }
@@ -139,12 +141,13 @@ router.get(
   authOptional,
   (req: AuthRequest<{ id: string }>, res: Response): void => {
     const { id } = req.params;
-    const quests = questsStore.read();
-    const quest = quests.find((q) => q.id === id);
-    if (!quest) {
-      res.status(404).json({ error: 'Quest not found' });
-      return;
-    }
+  const quests = questsStore.read();
+  const quest = quests.find((q) => q.id === id);
+  if (!quest) {
+    logQuest404(id, req.originalUrl);
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
     const posts = postsStore.read();
     const users = usersStore.read();
@@ -168,12 +171,13 @@ router.get(
     const { enrich } = req.query;
     const userId = req.user?.id || null;
 
-    const quests = questsStore.read();
-    const quest = quests.find((q) => q.id === id);
-    if (!quest) {
-      res.status(404).json({ error: 'Quest not found' });
-      return;
-    }
+  const quests = questsStore.read();
+  const quest = quests.find((q) => q.id === id);
+  if (!quest) {
+    logQuest404(id, req.originalUrl);
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
     if (enrich === 'true') {
       const posts = postsStore.read();
@@ -214,6 +218,7 @@ router.post(
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
   if (!quest) {
+    logQuest404(id, req.originalUrl);
     res.status(404).json({ error: 'Quest not found' });
     return;
   }
@@ -255,13 +260,14 @@ router.post(
     const { id } = req.params;
     const { userId, roles = [] } = req.body;
 
-    const quests = questsStore.read();
-    const users = usersStore.read();
-    const quest = quests.find(q => q.id === id);
-    if (!quest) {
-      res.status(404).json({ error: 'Quest not found' });
-      return;
-    }
+  const quests = questsStore.read();
+  const users = usersStore.read();
+  const quest = quests.find(q => q.id === id);
+  if (!quest) {
+    logQuest404(id, req.originalUrl);
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
 
     if (userId && !users.find(u => u.id === userId)) {
       res.status(400).json({ error: 'User not found' });
@@ -287,6 +293,7 @@ router.get(
   const posts = postsStore.read();
   const quest = quests.find(q => q.id === id);
   if (!quest) {
+    logQuest404(id, req.originalUrl);
     res.status(404).json({ error: 'Quest not found' });
     return;
   }
@@ -320,6 +327,7 @@ router.delete(
   const index = quests.findIndex(q => q.id === id);
 
   if (index === -1) {
+    logQuest404(id, req.originalUrl);
     res.status(404).json({ error: 'Quest not found' });
     return;
   }
