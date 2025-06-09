@@ -2,6 +2,7 @@
 
 import { axiosWithAuth } from '../utils/authUtils';
 import type { BoardData, CreateBoardPayload } from '../types/boardTypes';
+import { DEFAULT_PAGE_SIZE } from '../constants/pagination';
 import type { Post } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
 
@@ -20,15 +21,16 @@ export const fetchBoards = async (userId?: string): Promise<BoardData[]> => {
 /**
  * 🧠 fetchBoard → Get a single board with optional enrichment
  * @param id Board ID
- * @param options Optional { enrich?: boolean; page?: number }
+ * @param options Optional { enrich?: boolean; page?: number; limit?: number }
  */
 export const fetchBoard = async (
   id: string,
-  options: { enrich?: boolean; page?: number } = {}
+  options: { enrich?: boolean; page?: number; limit?: number } = {}
 ): Promise<BoardData> => {
   const params = new URLSearchParams();
   if (options.enrich) params.set('enrich', 'true');
   if (options.page) params.set('page', options.page.toString());
+  params.set('limit', (options.limit ?? DEFAULT_PAGE_SIZE).toString());
   const url = `${BASE_URL}/${id}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;

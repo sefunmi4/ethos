@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore } from '../models/stores';
 import { enrichBoard } from '../utils/enrich';
+import { DEFAULT_PAGE_SIZE } from '../constants';
 import type { BoardData } from '../types/api';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
@@ -136,11 +137,11 @@ router.get(
 router.get(
   '/:id',
   (
-    req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string }>,
+    req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string; page?: string; limit?: string }>,
     res: Response
   ): void => {
     const { id } = req.params;
-    const { enrich } = req.query;
+    const { enrich, page = '1', limit } = req.query;
 
     const boards = boardsStore.read();
     const posts = postsStore.read();
@@ -151,10 +152,15 @@ router.get(
       res.status(404).json({ error: 'Board not found' });
       return;
     }
+    const pageNum = parseInt(page as string, 10) || 1;
+    const pageSize = parseInt(limit as string, 10) || DEFAULT_PAGE_SIZE;
+    const start = (pageNum - 1) * pageSize;
+    const end = start + pageSize;
+    const pagedBoard: BoardData = { ...board, items: board.items.slice(start, end) };
 
-    let result: BoardData | EnrichedBoard = board;
+    let result: BoardData | EnrichedBoard = pagedBoard;
     if (enrich === 'true') {
-      const enriched = enrichBoard(board, { posts, quests });
+      const enriched = enrichBoard(pagedBoard, { posts, quests });
       result = {
         ...enriched,
         layout: board.layout ?? 'grid',

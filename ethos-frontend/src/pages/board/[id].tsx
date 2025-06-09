@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useBoard } from '../../hooks/useBoard';
+import { fetchBoard } from '../../api/board';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useSocket } from '../../hooks/useSocket';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -13,7 +15,7 @@ const BoardPage: React.FC = () => {
   const { socket } = useSocket();
   const { canEditBoard } = usePermissions();
   const { setBoardMeta } = useBoardContext();
-  const { data: boardData, error, isLoading, refetch } = useBoard(id);
+  const { board: boardData, setBoard, isLoading, refresh: refetch } = useBoard(id);
 
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -48,11 +50,25 @@ const BoardPage: React.FC = () => {
     if (!id || loadingMore || !hasMore) return;
     setLoadingMore(true);
     try {
-      const res = await fetch(`/api/boards/${id}?page=${page + 1}`);
-      const moreData: BoardData = await res.json();
+      const moreData: BoardData = await fetchBoard(id, {
+        page: page + 1,
+        limit: DEFAULT_PAGE_SIZE,
+        enrich: true,
+      });
       if (moreData?.items?.length) {
-        // In the future you can merge into boardData.items here via context/local state
-        setPage(p => p + 1);
+        setBoard((prev) =>
+          prev
+            ? {
+                ...prev,
+                items: [...prev.items, ...moreData.items],
+                enrichedItems: [
+                  ...(prev.enrichedItems || []),
+                  ...(moreData.enrichedItems || []),
+                ],
+              }
+            : prev
+        );
+        setPage((p) => p + 1);
       } else {
         setHasMore(false);
       }
@@ -64,7 +80,7 @@ const BoardPage: React.FC = () => {
   };
 
   if (isLoading) return <div className="p-6 text-center text-gray-500">Loading board...</div>;
-  if (error || !boardData) return <div className="p-6 text-center text-red-500">Board not found.</div>;
+  if (!boardData) return <div className="p-6 text-center text-red-500">Board not found.</div>;
 
   const editable = canEditBoard(boardData.id);
 
