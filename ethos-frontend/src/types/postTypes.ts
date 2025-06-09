@@ -121,7 +121,13 @@ export interface LinkedItem {
   cascadeSolution?: boolean;   // Triggers downstream propagation
 }
 
-export type LinkType = 'related' | 'solution' | 'duplicate' | 'quote' | 'reference';
+export type LinkType =
+  | 'related'
+  | 'solution'
+  | 'duplicate'
+  | 'quote'
+  | 'reference'
+  | 'task_edge';
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 
 /**

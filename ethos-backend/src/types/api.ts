@@ -61,7 +61,13 @@ export type PostType = 'free_speech'
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 
-export type LinkType = 'related' | 'solution' | 'duplicate' | 'quote' | 'reference';
+export type LinkType =
+  | 'related'
+  | 'solution'
+  | 'duplicate'
+  | 'quote'
+  | 'reference'
+  | 'task_edge';
 
 export type ItemType = 'post' | 'quest' | 'board';
 

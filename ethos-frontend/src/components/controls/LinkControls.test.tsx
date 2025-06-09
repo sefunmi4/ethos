@@ -30,4 +30,22 @@ describe('LinkControls', () => {
       expect(screen.getByText(/hello world/)).toBeInTheDocument();
     });
   });
+
+  it('includes task_edge link type option', () => {
+    const linked = [
+      {
+        itemId: 'p1',
+        itemType: 'post',
+        nodeId: '',
+        linkType: 'task_edge',
+        linkStatus: 'active',
+      },
+    ];
+
+    render(<LinkControls value={linked} onChange={() => {}} itemTypes={['post']} />);
+
+    expect(
+      screen.getByText(/Link to parent \/ mark as sub-problem/)
+    ).toBeInTheDocument();
+  });
 });
