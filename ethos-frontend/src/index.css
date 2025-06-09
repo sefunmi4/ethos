@@ -1,13 +1,16 @@
 @import "tailwindcss";
-/* Import Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom theme extension fallback for bg-soft and text-primary */
 :root {
-  --bg-soft: #f9fafb; /* light gray background */
-  --text-primary: #1f2937; /* slate-800 */
+  --bg-soft: #f9fafb;
+  --text-primary: #1f2937;
+}
+
+.dark {
+  --bg-soft: #1f2937;
+  --text-primary: #f9fafb;
 }
 
 html, body {

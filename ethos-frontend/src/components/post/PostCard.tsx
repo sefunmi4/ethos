@@ -75,9 +75,9 @@ const PostCard: React.FC<PostCardProps> = ({
     const quote = post.repostedFrom;
     if (!quote?.originalContent) return null;
     return (
-      <blockquote className="border-l-4 pl-4 text-gray-500 italic bg-gray-50 rounded">
+      <blockquote className="border-l-4 pl-4 text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700 rounded">
         “{quote.originalContent.length > 180 ? quote.originalContent.slice(0, 180) + '…' : quote.originalContent}”
-        <div className="text-xs mt-1 text-gray-400">
+        <div className="text-xs mt-1 text-gray-400 dark:text-gray-500">
           — @{quote.username || 'unknown'}
         </div>
       </blockquote>
@@ -114,9 +114,9 @@ const PostCard: React.FC<PostCardProps> = ({
     }
 
     return (
-      <div className="text-sm bg-gray-50 rounded p-2 font-mono border">
+      <div className="text-sm bg-gray-50 dark:bg-gray-900 rounded p-2 font-mono border">
         {post.commitSummary && (
-          <div className="mb-1 text-gray-700 italic">{post.commitSummary}</div>
+          <div className="mb-1 text-gray-700 dark:text-gray-300 italic">{post.commitSummary}</div>
         )}
         {!showFullDiff && (
           <div className="mb-2">
@@ -129,7 +129,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {visibleLines.map((line, idx) => (
             <div key={idx} className={
               line.startsWith('+') ? 'text-green-600' :
-              line.startsWith('-') ? 'text-red-600' : 'text-gray-800'}>
+              line.startsWith('-') ? 'text-red-600' : 'text-gray-800 dark:text-gray-200'}>
               {line}
             </div>
           ))}
@@ -162,8 +162,8 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   return (
-    <div className="relative border rounded bg-white shadow-sm p-4 space-y-3">
-      <div className="flex justify-between text-sm text-gray-500">
+    <div className="relative border rounded bg-white dark:bg-gray-800 shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100">
+      <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           <span>{timestamp}</span>
@@ -180,14 +180,14 @@ const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {post.linkedNodeId && post.author?.username && (
-        <div className="text-xs text-gray-500 italic">
+        <div className="text-xs text-gray-500 dark:text-gray-400 italic">
           @{post.author.username} committed changes to <strong>{post.linkedNodeId}</strong> {timestamp}
         </div>
       )}
 
       {renderRepostInfo()}
 
-      <div className="text-sm text-gray-800">
+      <div className="text-sm text-gray-800 dark:text-gray-200">
         {compact && (post.renderedContent || post.content).length > 240 ? (
           <>
             <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
@@ -208,7 +208,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderLinkSummary()}
 
       {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
-        <div className="text-xs text-gray-500 space-y-1">
+        <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <button
             type="button"
             onClick={() => setShowLinkEditor((v) => !v)}
@@ -287,7 +287,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {replies.length > 0 && showReplies && (
         <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
-          {loadingReplies && <p className="text-xs text-gray-400">Loading replies…</p>}
+          {loadingReplies && <p className="text-xs text-gray-400 dark:text-gray-500">Loading replies…</p>}
           {replyError && <p className="text-xs text-red-500">{replyError}</p>}
           {replies.map((r) => (
             <PostCard

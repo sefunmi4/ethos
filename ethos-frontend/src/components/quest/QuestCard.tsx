@@ -84,8 +84,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-gray-800">{questData.title}</h2>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{questData.title}</h2>
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           <PostTypeBadge type="quest" />
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.gitRepo?.repoUrl && (
@@ -237,9 +237,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
   };
 
   return (
-    <div className="border rounded-lg shadow bg-white p-6">
+    <div className="border rounded-lg shadow bg-white dark:bg-gray-800 p-6 text-gray-900 dark:text-gray-100">
       {renderHeader()}
-      <div className="text-xs text-gray-500 space-y-1 mb-2">
+      <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-2">
         <button
           type="button"
           onClick={() => setShowLinkEditor((v) => !v)}

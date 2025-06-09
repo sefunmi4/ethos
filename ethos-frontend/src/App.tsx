@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
 import { BoardProvider } from './contexts/BoardContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 import { TimelineProvider } from './contexts/TimelineContext';
@@ -37,13 +38,14 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
  */
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <TimelineProvider>
-          <BoardProvider>
-            <div className="min-h-screen flex flex-col bg-white text-gray-900">
-              {/* Top-level navigation */}
-              <NavBar />
+    <ThemeProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <TimelineProvider>
+            <BoardProvider>
+              <div className="min-h-screen flex flex-col bg-white text-gray-900">
+                {/* Top-level navigation */}
+                <NavBar />
 
               <main className="flex-1 w-full">
                 {/* Suspense fallback while lazy routes are loading */}
@@ -68,11 +70,12 @@ const App: React.FC = () => {
                 </Routes>
               </Suspense>
             </main>
-          </div>
-          </BoardProvider>
-        </TimelineProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+              </div>
+            </BoardProvider>
+          </TimelineProvider>
+        </QueryClientProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 
