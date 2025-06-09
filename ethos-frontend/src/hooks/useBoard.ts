@@ -19,7 +19,10 @@ const getBoardIdFromArg = (arg: BoardArg): string => {
 /**
  * Hook to interact with the board system (load, refresh, manage).
  */
-export const useBoard = (arg?: BoardArg) => {
+export const useBoard = (
+  arg?: BoardArg,
+  options?: { pageSize?: number }
+) => {
   const {
     boards = {},
     setSelectedBoard,
@@ -35,8 +38,10 @@ export const useBoard = (arg?: BoardArg) => {
   );
   const [isLoading, setIsLoading] = useState(false);
 
+  const pageSize = options?.pageSize ?? DEFAULT_PAGE_SIZE;
+
   const loadBoard = useCallback(
-    async (id: string, page = 1, limit = DEFAULT_PAGE_SIZE) => {
+    async (id: string, page = 1, limit = pageSize) => {
       setIsLoading(true);
       try {
         const enrich = typeof arg === 'object' && arg.enrich;
@@ -59,13 +64,13 @@ export const useBoard = (arg?: BoardArg) => {
         setIsLoading(false);
       }
     },
-    [arg]
+    [arg, pageSize]
   );
 
   const refresh = useCallback(async () => {
     if (!boardId) return;
-    return await loadBoard(boardId, 1, DEFAULT_PAGE_SIZE);
-  }, [boardId, loadBoard]);
+    return await loadBoard(boardId, 1, pageSize);
+  }, [boardId, loadBoard, pageSize]);
 
   const fetchAllBoards = useCallback(async (userId?: string) => {
     try {
@@ -119,9 +124,9 @@ export const useBoard = (arg?: BoardArg) => {
   // Auto-load if missing
   useEffect(() => {
     if (boardId && !board) {
-      loadBoard(boardId, 1, DEFAULT_PAGE_SIZE);
+      loadBoard(boardId, 1, pageSize);
     }
-  }, [boardId]);
+  }, [boardId, pageSize]);
 
   return {
     board,
