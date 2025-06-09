@@ -5,7 +5,6 @@ import { Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
 import { BoardProvider } from './contexts/BoardContext';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 import { TimelineProvider } from './contexts/TimelineContext';
