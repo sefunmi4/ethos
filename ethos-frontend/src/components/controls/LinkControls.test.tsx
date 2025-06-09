@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import LinkControls from './LinkControls';
+import type { LinkedItem } from '../../types/postTypes';
 
 jest.mock('../../api/post', () => ({
   fetchAllPosts: jest.fn(() =>
@@ -32,7 +33,7 @@ describe('LinkControls', () => {
   });
 
   it('includes task_edge link type option', () => {
-    const linked = [
+    const linked: LinkedItem[] = [
       {
         itemId: 'p1',
         itemType: 'post',
