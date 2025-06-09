@@ -11,4 +11,5 @@ export { default as Select } from './Select';
 export { default as TextArea } from './TextArea';
 export { default as ActionMenu } from './ActionMenu';
 export { default as PostTypeBadge } from './PostTypeBadge';
+export { default as Footer } from './Footer';
 export { default as Spinner } from './Spinner';
