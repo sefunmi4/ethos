@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
 
 import type { Post } from '../../types/postTypes';
@@ -136,7 +137,7 @@ const PostCard: React.FC<PostCardProps> = ({
         {!showFullDiff && (
           <div className="mt-1">
             <button
-              onClick={() => navigate(`/posts/${post.id}`)}
+              onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 text-xs underline"
             >
               View full file with replies
@@ -174,7 +175,7 @@ const PostCard: React.FC<PostCardProps> = ({
           onEdit={() => setEditMode(true)}
           onDelete={() => onDelete?.(post.id)}
           content={post.content}
-          permalink={`${window.location.origin}/posts/${post.id}`}
+          permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />
       </div>
 
@@ -191,7 +192,7 @@ const PostCard: React.FC<PostCardProps> = ({
           <>
             <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
             <button
-              onClick={() => navigate(`/posts/${post.id}`)}
+              onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
             >
               View more
@@ -276,7 +277,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {!compact && (
         <div>
           <button
-            onClick={() => navigate(`/posts/${post.id}`)}
+            onClick={() => navigate(ROUTES.POST(post.id))}
             className="text-blue-600 underline text-xs"
           >
             View details
