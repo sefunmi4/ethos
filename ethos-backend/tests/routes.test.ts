@@ -245,4 +245,19 @@ describe('route handlers', () => {
     expect(res.status).toBe(200);
     expect(res.body[0]).toHaveProperty('logs');
   });
+
+  it('PATCH /boards/:id creates board when not found', async () => {
+    const { boardsStore } = require('../src/models/stores');
+    const store: any[] = [];
+    boardsStore.read.mockReturnValue(store);
+
+    const res = await request(app)
+      .patch('/boards/new-board')
+      .send({ title: 'New Board', items: ['i1'] });
+
+    expect(res.status).toBe(201);
+    expect(res.body.id).toBe('new-board');
+    expect(store).toHaveLength(1);
+    expect(store[0].items).toContain('i1');
+  });
 });
