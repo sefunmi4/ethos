@@ -114,7 +114,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         }
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to repost:', err);
+      console.error('[ReactionControls] Failed to toggle repost:', err);
     } finally {
       setRepostLoading(false);
     }
