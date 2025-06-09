@@ -160,6 +160,16 @@ export const addRepost = async (post: Post): Promise<Post> => {
 };
 
 /**
+ * ❌ Remove a repost by ID
+ * @param postId - Repost Post ID
+ */
+export const removeRepost = async (
+  postId: string
+): Promise<{ success: boolean }> => {
+  return removePost(postId);
+};
+
+/**
  * 🧪 (Utility) Enrich a post client-side
  * @param post - Raw post object
  */
