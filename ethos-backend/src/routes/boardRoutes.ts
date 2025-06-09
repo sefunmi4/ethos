@@ -15,18 +15,34 @@ const router = express.Router();
 router.get(
   '/',
   (
-    req: Request<{}, BoardData[], undefined, { featured?: string; enrich?: string }>,
+    req: Request<{}, BoardData[], undefined, { featured?: string; enrich?: string; userId?: string }>,
     res: Response
   ): void => {
-    const { featured, enrich } = req.query;
+    const { featured, enrich, userId } = req.query;
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    let result: (BoardData | EnrichedBoard)[] = boards;
+    let result: (BoardData | EnrichedBoard)[] = boards.map(board => {
+      if (userId && board.id === 'my-posts') {
+        const filtered = board.items.filter(id =>
+          posts.find(p => p.id === id && p.authorId === userId)
+        );
+        return { ...board, items: filtered };
+      }
+
+      if (userId && board.id === 'my-quests') {
+        const filtered = board.items.filter(id =>
+          quests.find(q => q.id === id && q.authorId === userId)
+        );
+        return { ...board, items: filtered };
+      }
+
+      return board;
+    });
 
     if (enrich === 'true') {
-      result = boards.map((board) => {
+      result = (result as BoardData[]).map((board) => {
         const enriched = enrichBoard(board, { posts, quests });
         return {
           ...enriched,
