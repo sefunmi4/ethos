@@ -47,9 +47,11 @@ const QuestPage: React.FC = () => {
     if (!quest) return;
     try {
       const newBoard = await addBoard({
+        id: `map-${quest.id}`,
         title: `${quest.title} Map`,
         layout: 'graph',
         items: [],
+        questId: quest.id,
       });
       setMapBoard(newBoard);
       await refreshBoards();

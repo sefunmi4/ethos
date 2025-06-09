@@ -28,6 +28,7 @@ export interface BoardData extends Board {
 
 /** Payload used when creating a new board */
 export interface CreateBoardPayload {
+  id?: string;
   title: string;
   description?: string;
   layout: BoardLayout;
@@ -36,6 +37,7 @@ export interface CreateBoardPayload {
   featured?: boolean;
   defaultFor?: 'home' | 'profile' | 'quests' | null;
   category?: string;
+  questId?: string;
 }
 
 export interface RenderableItem {

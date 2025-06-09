@@ -253,18 +253,20 @@ router.post(
   authMiddleware,
   (req: AuthenticatedRequest, res: Response): void => {
     const {
+      id: customId,
       title,
       description = '',
       items = [],
       filters = {},
       featured = false,
       defaultFor = null,
-      layout = "grid"
+      layout = "grid",
+      questId,
     } = req.body;
 
     const boards = boardsStore.read();
     const newBoard: BoardData = {
-      id: uuidv4(),
+      id: customId || uuidv4(),
       title,
       description,
       items,
@@ -273,7 +275,8 @@ router.post(
       defaultFor,
       layout,
       createdAt: new Date().toISOString(),
-      userId: (req.user as any)?.id || ""
+      userId: (req.user as any)?.id || "",
+      questId,
     };
 
     boards.push(newBoard);

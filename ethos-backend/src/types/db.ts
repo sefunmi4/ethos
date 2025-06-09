@@ -93,6 +93,8 @@ export interface DBBoard {
   createdAt: string;
   category?: string;
   userId: string;
+  /** Optional quest association */
+  questId?: string;
 }
 
 // Efficient DB model for quick lookups and storage
