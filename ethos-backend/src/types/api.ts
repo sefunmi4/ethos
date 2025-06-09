@@ -187,6 +187,7 @@ export interface Board {
   createdAt: string;
   category?: string;
   userId: string;
+  questId?: string;
 }
 
 /**
