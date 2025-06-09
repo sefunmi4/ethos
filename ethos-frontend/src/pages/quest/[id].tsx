@@ -88,6 +88,8 @@ const QuestPage: React.FC = () => {
             layout="graph"
             editable={user?.id === quest.ownerId}
             quest={quest}
+            user={user as User}
+            showCreate
           />
         ) : (
           <p className="text-sm text-gray-500">No quest map defined yet.</p>
