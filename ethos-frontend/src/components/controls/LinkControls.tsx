@@ -32,7 +32,14 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue' | 'meta_system'>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
 
-  const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
+  const linkTypes = [
+    { value: 'solution', label: 'solution' },
+    { value: 'duplicate', label: 'duplicate' },
+    { value: 'related', label: 'related' },
+    { value: 'quote', label: 'quote' },
+    { value: 'reference', label: 'reference' },
+    { value: 'task_edge', label: 'Link to parent / mark as sub-problem' },
+  ];
   const linkStatuses = ['active', 'solved', 'pending', 'private'];
 
   useEffect(() => {
@@ -248,7 +255,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                   className="border rounded px-1 py-0.5"
                 >
                   {linkTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
                   ))}
                 </select>
 
