@@ -167,6 +167,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <div className="mb-4">
                 <CreatePost
                   initialType="log"
+                  questId={quest.id}
+                  boardId={`log-${quest.id}`}
                   onSave={(p) => {
                     setLogs((prev) => [...prev, p]);
                     setShowLogForm(false);
@@ -194,6 +196,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <div className="mb-4">
                 <CreatePost
                   initialType="task"
+                  questId={quest.id}
+                  boardId={`map-${quest.id}`}
                   onSave={(p) => {
                     setLogs((prev) => [...prev, p]);
                     setShowTaskForm(false);
@@ -226,6 +230,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <div className="mb-4">
                 <CreatePost
                   initialType="task"
+                  questId={quest.id}
+                  boardId={`map-${quest.id}`}
                   onSave={(p) => {
                     setLogs((prev) => [...prev, p]);
                     setShowTaskForm(false);

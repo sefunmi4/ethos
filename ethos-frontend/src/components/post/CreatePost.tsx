@@ -16,6 +16,16 @@ type CreatePostProps = {
   repostSource?: Post | null;
   /** Set an initial post type value */
   initialType?: PostType;
+  /**
+   * Optional quest ID to automatically link the post to.
+   * Useful when creating quest tasks or logs from a quest board.
+   */
+  questId?: string;
+  /**
+   * Optional board ID to associate the new post with.
+   * When provided this overrides the currently selected board context.
+   */
+  boardId?: string;
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -24,6 +34,8 @@ const CreatePost: React.FC<CreatePostProps> = ({
   replyTo = null,
   repostSource = null,
   initialType = 'free_speech',
+  questId,
+  boardId,
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [content, setContent] = useState<string>('');
@@ -40,8 +52,9 @@ const CreatePost: React.FC<CreatePostProps> = ({
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const boardQuestMatch = selectedBoard?.match(/^(?:log|map)-(.+)$/);
-    const questIdFromBoard = boardQuestMatch ? boardQuestMatch[1] : null;
+    const targetBoard = boardId || selectedBoard;
+    const boardQuestMatch = targetBoard?.match(/^(?:log|map)-(.+)$/);
+    const questIdFromBoard = boardQuestMatch ? boardQuestMatch[1] : questId || null;
 
     // Check for quest linkage if required
     if (requiresQuestLink(type)) {
@@ -66,7 +79,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
       visibility: 'public',
       linkedItems: autoLinkItems,
       ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
-      ...(selectedBoard ? { boardId: selectedBoard } : {}),
+      ...(targetBoard ? { boardId: targetBoard } : {}),
       ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
       ...(repostSource
         ? {
@@ -85,14 +98,14 @@ const CreatePost: React.FC<CreatePostProps> = ({
 
     try {
       const newPost = await addPost(payload);
-      if (selectedBoard) {
-        appendToBoard(selectedBoard, newPost);
-        const boardItems = [newPost.id, ...(boards?.[selectedBoard]?.items || [])];
-        updateBoard(selectedBoard, { items: boardItems }).catch((err) =>
+      if (targetBoard) {
+        appendToBoard(targetBoard, newPost);
+        const boardItems = [newPost.id, ...(boards?.[targetBoard]?.items || [])];
+        updateBoard(targetBoard, { items: boardItems }).catch((err) =>
           console.error('[CreatePost] Failed to persist board items:', err)
         );
       }
-      if (boards?.['my-posts'] && selectedBoard !== 'my-posts') {
+      if (boards?.['my-posts'] && targetBoard !== 'my-posts') {
         appendToBoard('my-posts', newPost);
         const myItems = [newPost.id, ...(boards['my-posts'].items || [])];
         updateBoard('my-posts', { items: myItems }).catch((err) =>
