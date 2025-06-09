@@ -28,7 +28,8 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
-  const [postTypeFilter, setPostTypeFilter] = useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue'>('all');
+  const [postTypeFilter, setPostTypeFilter] =
+    useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue' | 'meta_system'>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
 
   const linkTypes = ['solution', 'duplicate', 'related', 'quote', 'reference'];
@@ -37,7 +38,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const promises = [] as PromiseSettledResult<any>[];
+      const promises: Promise<any>[] = [];
 
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
@@ -155,7 +156,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         <> 
           {itemTypes.includes('post') && (
             <div className="flex gap-1 mb-1 flex-wrap">
-              {['all', 'request', 'task', 'log', 'commit', 'issue'].map((t) => (
+              {['all', 'request', 'task', 'log', 'commit', 'issue', 'meta_system'].map((t) => (
                 <button
                   key={t}
                   type="button"

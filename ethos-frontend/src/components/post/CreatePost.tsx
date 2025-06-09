@@ -197,7 +197,7 @@ function requiresQuestRoles(type: PostType): boolean {
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'quest', 'task', 'log', 'commit', 'issue'].includes(type);
+  return ['request', 'quest', 'task', 'log', 'commit', 'issue', 'meta_system'].includes(type);
 }
 
 export default CreatePost;
