@@ -95,12 +95,15 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Vertical Grid Layout (default) */
   const isSingle = items.length === 1;
+  const isPair = items.length === 2;
   return (
     <div
       className={
         isSingle
           ? 'flex justify-center items-start p-2'
-          : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2'
+          : isPair
+            ? 'grid grid-cols-1 sm:grid-cols-2 gap-6 px-2'
+            : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2'
       }
     >
       {items.map((item) => (
