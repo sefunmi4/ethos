@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
 
 import type { User } from '../types/userTypes';
@@ -35,9 +36,15 @@ const HomePage: React.FC = () => {
           boardId="featured-quest"
           title="✨ Featured Quest"
           layout="grid"
+          gridLayout="horizontal"
           user={user as User}
           hideControls
         />
+        <div className="text-right mt-1">
+          <Link to={ROUTES.BOARD('featured-quest')} className="text-blue-600 underline text-sm">
+            View Board Details
+          </Link>
+        </div>
       </section>
 
       <section className="space-y-4">
@@ -51,8 +58,8 @@ const HomePage: React.FC = () => {
           filter={postType ? { postType } : {}}
         />
         <div className="text-right">
-          <Link to="/board/request-board" className="text-blue-600 underline text-sm">
-            View full board
+          <Link to={ROUTES.BOARD('request-board')} className="text-blue-600 underline text-sm">
+            View Board Details
           </Link>
         </div>
       </section>

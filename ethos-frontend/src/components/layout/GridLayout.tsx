@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -73,22 +73,68 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Horizontal Grid Layout */
   if (layout === 'horizontal') {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [index, setIndex] = useState(0);
+
+    const scrollToIndex = (i: number) => {
+      const el = containerRef.current;
+      if (!el) return;
+      const card = el.firstElementChild as HTMLElement | null;
+      const width = card?.offsetWidth || 0;
+      el.scrollTo({ left: i * width, behavior: 'smooth' });
+    };
+
+    const handlePrev = () => setIndex((i) => Math.max(0, i - 5));
+    const handleNext = () => setIndex((i) => Math.min(items.length - 1, i + 5));
+
+    React.useEffect(() => {
+      scrollToIndex(index);
+    }, [index]);
+
     return (
-      <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="snap-start min-w-[280px] flex-shrink-0"
-          >
-            <ContributionCard
-              contribution={item}
-              user={user}
-              compact={compact}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          </div>
-        ))}
+      <div className="relative">
+        <div
+          ref={containerRef}
+          className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
+        >
+          {items.map((item) => (
+            <div key={item.id} className="snap-center min-w-[280px] flex-shrink-0">
+              <ContributionCard
+                contribution={item}
+                user={user}
+                compact={compact}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            </div>
+          ))}
+        </div>
+        {items.length > 3 && (
+          <>
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+            >
+              ◀
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+            >
+              ▶
+            </button>
+            <div className="flex justify-center mt-2">
+              {items.map((_, i) => (
+                <span
+                  key={i}
+                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-blue-600' : 'bg-gray-300'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   }
@@ -96,6 +142,43 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   /** 📌 Vertical Grid Layout (default) */
   const isSingle = items.length === 1;
   const isPair = items.length === 2;
+
+  if (layout === 'vertical' && items.length > 6) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const handlePrev = () => containerRef.current?.scrollBy({ top: -200, behavior: 'smooth' });
+    const handleNext = () => containerRef.current?.scrollBy({ top: 200, behavior: 'smooth' });
+    return (
+      <div className="relative">
+        <div ref={containerRef} className="max-h-96 overflow-y-auto space-y-4 px-2 pb-4 scroll-smooth">
+          {items.map((item) => (
+            <ContributionCard
+              key={item.id}
+              contribution={item}
+              user={user}
+              compact={compact}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handlePrev}
+          className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+        >
+          ▲
+        </button>
+        <button
+          type="button"
+          onClick={handleNext}
+          className="absolute left-1/2 -translate-x-1/2 bottom-0 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+        >
+          ▼
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       className={
