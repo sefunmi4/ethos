@@ -26,16 +26,16 @@ router.get(
 
     let result: (BoardData | EnrichedBoard)[] = boards.map(board => {
       if (userId && board.id === 'my-posts') {
-        const filtered = board.items.filter(id =>
-          posts.find(p => p.id === id && p.authorId === userId)
-        );
+        const filtered = posts
+          .filter(p => p.authorId === userId)
+          .map(p => p.id);
         return { ...board, items: filtered };
       }
 
       if (userId && board.id === 'my-quests') {
-        const filtered = board.items.filter(id =>
-          quests.find(q => q.id === id && q.authorId === userId)
-        );
+        const filtered = quests
+          .filter(q => q.authorId === userId)
+          .map(q => q.id);
         return { ...board, items: filtered };
       }
 
@@ -137,11 +137,11 @@ router.get(
 router.get(
   '/:id',
   (
-    req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string; page?: string; limit?: string }>,
+    req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string; page?: string; limit?: string; userId?: string }>,
     res: Response
   ): void => {
     const { id } = req.params;
-    const { enrich, page = '1', limit } = req.query;
+    const { enrich, page = '1', limit, userId } = req.query;
 
     const boards = boardsStore.read();
     const posts = postsStore.read();
@@ -156,7 +156,14 @@ router.get(
     const pageSize = parseInt(limit as string, 10) || DEFAULT_PAGE_SIZE;
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
-    const pagedBoard: BoardData = { ...board, items: board.items.slice(start, end) };
+    let boardItems = board.items;
+    if (userId && board.id === 'my-posts') {
+      boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
+    } else if (userId && board.id === 'my-quests') {
+      boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+    }
+
+    const pagedBoard: BoardData = { ...board, items: boardItems.slice(start, end) };
 
     let result: BoardData | EnrichedBoard = pagedBoard;
     if (enrich === 'true') {
@@ -177,11 +184,11 @@ router.get(
 router.get(
   '/:id/items',
   (
-    req: Request<{ id: string }, any, undefined, { enrich?: string }>,
+    req: Request<{ id: string }, any, undefined, { enrich?: string; userId?: string }>,
     res: Response
   ): void => {
     const { id } = req.params;
-    const { enrich } = req.query;
+    const { enrich, userId } = req.query;
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -192,13 +199,20 @@ router.get(
       return;
     }
 
+    let boardItems = board.items;
+    if (userId && board.id === 'my-posts') {
+      boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
+    } else if (userId && board.id === 'my-quests') {
+      boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+    }
+
     if (enrich === 'true') {
-      const enriched = enrichBoard(board, { posts, quests });
+      const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests });
       res.json(enriched.enrichedItems);
       return;
     }
 
-    const items = board.items
+    const items = boardItems
       .map((itemId) => posts.find((p) => p.id === itemId) || quests.find((q) => q.id === itemId))
       .filter(Boolean);
 
@@ -212,11 +226,11 @@ router.get(
 router.get(
   '/:id/quests',
   (
-    req: Request<{ id: string }, any, undefined, { enrich?: string }>,
+    req: Request<{ id: string }, any, undefined, { enrich?: string; userId?: string }>,
     res: Response
   ): void => {
     const { id } = req.params;
-    const { enrich } = req.query;
+    const { enrich, userId } = req.query;
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -228,7 +242,12 @@ router.get(
       return;
     }
 
-    const boardQuests = board.items
+    let boardItems = board.items;
+    if (userId && board.id === 'my-quests') {
+      boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+    }
+
+    const boardQuests = boardItems
       .map((itemId) => quests.find((q) => q.id === itemId))
       .filter((q): q is NonNullable<typeof q> => Boolean(q));
 

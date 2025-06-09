@@ -5,6 +5,7 @@ import { fetchBoard } from '../../api/board';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useSocket } from '../../hooks/useSocket';
+import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
 import { Spinner } from '../../components/ui';
@@ -15,6 +16,7 @@ const BoardPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
   const { canEditBoard } = usePermissions();
+  const { user } = useAuth();
   const { setBoardMeta } = useBoardContext();
   const { board: boardData, setBoard, isLoading, refresh: refetch } = useBoard(id);
 
@@ -55,6 +57,7 @@ const BoardPage: React.FC = () => {
         page: page + 1,
         limit: DEFAULT_PAGE_SIZE,
         enrich: true,
+        userId: user?.id,
       });
       if (moreData?.items?.length) {
         setBoard((prev) =>
