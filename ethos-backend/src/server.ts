@@ -12,6 +12,7 @@ import gitRoutes from './routes/gitRoutes';
 import postRoutes from './routes/postRoutes';
 import questRoutes from './routes/questRoutes';
 import boardRoutes from './routes/boardRoutes';
+import reviewRoutes from './routes/reviewRoutes';
 
 // Load environment variables from `.env` file
 dotenv.config();
@@ -57,6 +58,7 @@ app.use('/api/git', gitRoutes);       // 🔁 Git sync, commits, diffs
 app.use('/api/posts', postRoutes);    // 📝 Posts, reactions, replies
 app.use('/api/quests', questRoutes);  // 📦 Quests, task maps
 app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
+app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 
 /**
  * Default server port

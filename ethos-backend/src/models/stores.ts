@@ -9,3 +9,4 @@ export const postsStore = createDataStore<DBSchema['posts']>('posts.json', []);
 export const questsStore = createDataStore<DBSchema['quests']>('quests.json', []);
 export const usersStore = createDataStore<DBSchema['users']>('users.json', []);
 export const reactionsStore = createDataStore<string[]>('reactions.json', []);
+export const reviewsStore = createDataStore<DBSchema['reviews']>('reviews.json', []);
