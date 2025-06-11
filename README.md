@@ -25,6 +25,7 @@ It’s a new operating system for solving problems together.
 * **Boards & Threads** – Navigate via visual boards, timelines, or threaded views.
 * **Adventure Guilds** – Collaborate through guilds with defined roles and ranks.
 * **Quest Logs** – Track the history, updates, and team discussions around any quest.
+* **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
 * **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
@@ -181,6 +182,7 @@ Current build includes:
 - Boards to visualize posts and quests in grid, graph or thread views
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
+- Review system for AI apps, quests and creators
 
 Planned enhancements before stable release:
 - In-app file change views for Git commits

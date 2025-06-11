@@ -12,7 +12,8 @@ import type {
   BoardLayout,
   BoardType,
   ReactionSet,
-  ReactionCountMap
+  ReactionCountMap,
+  ReviewTargetType
 } from './api';
 
 // types/db.ts
@@ -178,6 +179,20 @@ export interface DBUserExperienceEvent {
   tags?: string[];
 }
 
+export interface DBReview {
+  id: string;
+  reviewerId: string;
+  targetType: ReviewTargetType;
+  rating: number;
+  tags?: string[];
+  feedback?: string;
+  repoUrl?: string;
+  modelId?: string;
+  questId?: string;
+  postId?: string;
+  createdAt: string;
+}
+
 /**
  * Represents the in-memory or file-backed layout of your JSON data store.
  * You can expand this to include reaction data, logs, etc.
@@ -188,10 +203,11 @@ export interface DBSchema {
   posts: DBPost[];
   quests: DBQuest[];
   users: DBUser[];
+  reviews: DBReview[];
 }
 
 // Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users'
+export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews'
 
 /**
  * Generic type for file-based mock storage (can be used in utils/loaders.ts)

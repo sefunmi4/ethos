@@ -393,3 +393,26 @@ export interface GitAccount {
   tokenHash?: string;
   linkedRepoIds?: string[];
 }
+
+// --------------------------------------------
+// Reviews
+// --------------------------------------------
+
+export type ReviewTargetType = 'ai_app' | 'quest' | 'creator' | 'dataset';
+
+export interface Review {
+  id: string;
+  reviewerId: string;
+  targetType: ReviewTargetType;
+  rating: number; // 1-5
+  tags?: string[];
+  feedback?: string;
+
+  // Link references
+  repoUrl?: string;
+  modelId?: string;
+  questId?: string;
+  postId?: string;
+
+  createdAt: string;
+}
