@@ -1,2 +1,367 @@
 [
+  {
+    "id": "c882ad20-74f4-4f19-9484-81818ccd5915",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "Hello World :)",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:58:41.328Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "you can reply which is standard",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:58:58.605Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "c882ad20-74f4-4f19-9484-81818ccd5915",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "0f28dcf4-ba70-46da-b3b2-f39aab56d044",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "request",
+    "content": "I want to put on a battle of the bands.\nAny one down to help out and collaborate?",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:59:47.676Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": null
+  },
+  {
+    "id": "0daf8c76-5646-4100-8251-f119dcfcf66f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Make poster design's:\n\n- [ ] 1. Instagram poster\n- [ ] 2. Website event poster\n  - [ ] Pre event poster - Free\n  - [ ] Main event poster - Early Admission, Special Deals, & General admission\n  - [ ] Afterparty poster - Early bird, General entry\n  - [ ] Get Updates pages\n  - [ ] Get Tickets pages\n",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:08:03.282Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+    "nodeId": "Q:battleofthebands:T00"
+  },
+  {
+    "id": "2ccfcc93-65c3-4e6b-a2a1-fd2261d8d33e",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Post and quest I make aren't showing up on my profile page",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:11:15.473Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      },
+      {
+        "itemId": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+        "itemType": "post",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I00"
+  },
+  {
+    "id": "7d619748-99fd-4182-b445-36f064ec5d34",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Post detail page only shows replies in in timeline view.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:12:35.696Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I01"
+  },
+  {
+    "id": "c1fa9e19-08cb-4dca-bc6b-ef39ac2b0d4b",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Quest detail page should have:\n- quest map board \n- quest log board",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:16:13.046Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "2c93a340-d89f-47bd-a146-530b4b4df5df",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "changes don't instantly happen, also can only edit post in quest from the home page\n\nwhats up with that lol ",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:18:10.697Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "b925004c-ab1c-4893-aeac-ab4ea94eb0ca",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "link names need to be updated dynamically on display when the quest post is  type is updated",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:19:42.446Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I02"
+  },
+  {
+    "id": "6484f88a-1d54-4b42-a68b-901f336497de",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "when post graph get to condense the map view should make the post a node point dots awiht the laloe veing the node like id in the color of its tag type and some content from the post.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:22:28.504Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "c46d9061-03fd-4f41-bbd6-f0b65e282d34",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "tag should be easy to switch but fast to dynamically update all relevent meta data and info",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:23:22.536Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "25d83c49-4bcf-46af-96c5-8f0e68decf86",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "work on one shot symbol casting:\nuser clicks an icon in the to right corner (next to other icons, for quick input format updating) to create a new custom symbol or gesture.\n\nthey press start icon that shows next to the cancle icon which replaces the custom symbol icon or tap 3 times in row to start recording a new symbol.\n\nthe user will tap 2 times to end that symbol being recorded.\n\nthis can be stacked for custome gestures and command flow controles.\n\nnoramlly you tap 2 time to stat and once to end a simple rune command\n\nbut here you can tap 3 time to record a new custome catergory of what that command does. for example you can make a symbol that calls a 2 tap command  or sequence of commands\n\nthen the ai makes copyes of the symbols to train a pre trinaed model on as a new catergy of csymbol or geter to recognize\n\n",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:35:11.215Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+    "nodeId": "Q:symbolcast:T00"
+  },
+  {
+    "id": "505a2608-de85-47bf-8783-264c069a6181",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "symbol case syntax\n\ntap is a delimiter between symbols. 2 taps to start recording input for command mapping. 2 pas to end recording\nso 2 taps symbol 2 tap  for one action\n2 tap symbol 1 tap symbol 2 tap for syquence of symbols \n3 tap record a custom symbol. you can map that symbol to a computer compand, current symbol or sqence of symbols with taps inbetween .\n\nthere should be a defoualt way to make a command file that is a squence of symbols orgnaized and stored \nyou do double tap to start then double tap to end and curse emidatly moce to the next line with an assumes or manueal doubl tap. 4 taps to close and save \n\nit should als be aple to handle brialle, and sign palm symbols \n\nif nessay a swap down and a tap are inter changable. so if uses want to create there symbols using brail and the swipe down once or twice , etc then that should work too\n\n1 - deleiiter in squence\n2 start and end a sentance\n3 record a new symbol/ rune category \n4 open up a symbol file / scroll to wrie runes on \n3 taps to record a ",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:46:08.040Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+    "nodeId": "Q:symbolcast:T01"
+  },
+  {
+    "id": "0a2acb7c-2002-4926-88f1-85bc80916bbc",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Poughkeepsie, work on first episode \ncast\nstory beat\nscenes\nmusic",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:46:57.724Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9d58fe6f-0591-4eb0-b03e-54526b8c9650",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9d58fe6f-0591-4eb0-b03e-54526b8c9650",
+    "nodeId": "Q:idkcomics:T00"
+  },
+  {
+    "id": "188cbf3f-5962-48cd-976c-256866cec077",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Weekly Post and videos edits\nPublic TV -  Edited Videos \nPublic Radio - Live or streamed events \nIDK COMICS\nPOD SHOP : Fashion show\nSk Network: battle of the bands\n\nDEV LOG\nECO\nQ++\nSYMBOL CAST\nETHOS",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:49:40.142Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+    "nodeId": "Q:publicmedia:T00"
+  },
+  {
+    "id": "820d027e-dcdc-4597-b806-cdadfa3832aa",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Start working on spring fall season collection and fashion show",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:51:12.754Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "edb76e77-978a-410e-8f66-0167fc8ff153",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "edb76e77-978a-410e-8f66-0167fc8ff153",
+    "nodeId": "Q:podshop:T00"
+  },
+  {
+    "id": "bc9a97d0-3eef-4c2d-b4fc-18762740a0c3",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "the slide bar side buttons should be easy to use with a single tap moving one quest at a time to the right or left",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:53:35.677Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I03"
+  },
+  {
+    "id": "11b72eda-b1b3-42e4-b7fb-633c757d9f9d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "First time using this with saved memory that I might actually keep back ups of and hoenstly it's pretty nice. using the quest reallly help organize my work and its always nice when I know theres a post that links to it which will help me retrace my steps later. like a mind map for projects thats shared publicly. glad it has its own value out side or project management. :)",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:56:21.339Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  }
 ]

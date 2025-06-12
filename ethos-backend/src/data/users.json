@@ -50,5 +50,31 @@
         ]
       }
     ]
+  },
+  {
+    "id": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "username": "tester_bot3",
+    "email": "tester_bot3@ethos.com",
+    "password": "$2b$10$fcwcAbxryXur2jZiUpDdduUmB6b00BireYGicVocRrppjUkxyMXOq",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-06-12T15:58:04.668Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
   }
 ]

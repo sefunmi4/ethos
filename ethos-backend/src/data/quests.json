@@ -53,7 +53,11 @@
     "title": "POD Shop",
     "description": "",
     "tags": [],
-    "linkedPosts": [],
+    "linkedPosts": [
+      {
+        "itemType": "post"
+      }
+    ],
     "collaborators": [],
     "status": "active",
     "headPostId": "",
@@ -77,7 +81,31 @@
     "title": "Public Media",
     "description": "",
     "tags": [],
-    "linkedPosts": [],
+    "linkedPosts": [
+      {
+        "itemType": "post"
+      }
+    ],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "",
+    "taskGraph": []
+  },
+  {
+    "id": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "title": "Battle of The Bands",
+    "description": "Plan to track the work and task required for battle of the bands",
+    "tags": [
+      "music",
+      "dancing",
+      "creative"
+    ],
+    "linkedPosts": [
+      {
+        "itemType": "post"
+      }
+    ],
     "collaborators": [],
     "status": "active",
     "headPostId": "",
