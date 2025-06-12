@@ -128,6 +128,15 @@ export const useBoard = (
     }
   }, [boardId, pageSize]);
 
+  // Keep local board state in sync with context
+  useEffect(() => {
+    if (!boardId) return;
+    const ctxBoard = boards[boardId];
+    if (ctxBoard && ctxBoard !== board) {
+      setBoard(ctxBoard);
+    }
+  }, [boards, boardId]);
+
   return {
     board,
     setBoard,
