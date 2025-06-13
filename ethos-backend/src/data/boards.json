@@ -16,9 +16,7 @@
     "description": "Personal posts board.",
     "layout": "grid",
     "items": [
-      "11b72eda-b1b3-42e4-b7fb-633c757d9f9d",
-      "bc9a97d0-3eef-4c2d-b4fc-18762740a0c3",
-      "820d027e-dcdc-4597-b806-cdadfa3832aa",
+      "004b7f85-5d4a-4116-bb73-68090ed09b35",
       "c882ad20-74f4-4f19-9484-81818ccd5915",
       "acf42bea-ed75-4fd2-a558-ee64aaa66033",
       "0f28dcf4-ba70-46da-b3b2-f39aab56d044",
@@ -33,7 +31,10 @@
       "25d83c49-4bcf-46af-96c5-8f0e68decf86",
       "505a2608-de85-47bf-8783-264c069a6181",
       "0a2acb7c-2002-4926-88f1-85bc80916bbc",
-      "188cbf3f-5962-48cd-976c-256866cec077"
+      "188cbf3f-5962-48cd-976c-256866cec077",
+      "820d027e-dcdc-4597-b806-cdadfa3832aa",
+      "bc9a97d0-3eef-4c2d-b4fc-18762740a0c3",
+      "11b72eda-b1b3-42e4-b7fb-633c757d9f9d"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -80,6 +81,7 @@
     "description": "Posts seeking help",
     "layout": "grid",
     "items": [
+      "004b7f85-5d4a-4116-bb73-68090ed09b35",
       "0f28dcf4-ba70-46da-b3b2-f39aab56d044"
     ],
     "featured": true,

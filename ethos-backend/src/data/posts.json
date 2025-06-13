@@ -363,5 +363,19 @@
     "repostedFrom": null,
     "linkedItems": [],
     "questId": null
+  },
+  {
+    "id": "004b7f85-5d4a-4116-bb73-68090ed09b35",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "request",
+    "content": "add reviews to this application. lets users review expeircnes and products based on quality of product, customer service, and company culture. and lets them crequet request and quest to do something about even systematic change.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T17:00:52.643Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
   }
 ]
