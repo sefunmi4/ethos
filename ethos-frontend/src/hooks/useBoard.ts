@@ -84,17 +84,17 @@ export const useBoard = (
 
   const loadPublicBoards = useCallback(async (userId: string) => {
       const [questBoard, postBoard, profileRes, quests, posts] = await Promise.all([
-        fetchBoard(`quests-${userId}`, { userId }).catch(() => null),
-        fetchBoard(`posts-${userId}`, { userId }).catch(() => null),
+        fetchBoard('my-quests', { userId }).catch(() => null),
+        fetchBoard('my-posts', { userId }).catch(() => null),
         fetchUserById(userId).catch(() => null), // ✅ Use the API
-        fetchQuestsByBoardId(`quests-${userId}`, userId).catch(() => []),
-        fetchPostsByBoardId(`posts-${userId}`, userId).catch(() => []),
+        fetchQuestsByBoardId('my-quests', userId).catch(() => []),
+        fetchPostsByBoardId('my-posts', userId).catch(() => []),
       ]);
 
     const qb: BoardData = questBoard
       ? { ...questBoard, items: quests.map(q => q.id), enrichedItems: quests }
       : {
-          id: `quests-${userId}`,
+          id: 'my-quests',
           title: 'Quests',
           layout: 'grid',
           items: quests.map(q => q.id),
@@ -105,7 +105,7 @@ export const useBoard = (
     const pb: BoardData = postBoard
       ? { ...postBoard, items: posts.map(p => p.id), enrichedItems: posts }
       : {
-          id: `posts-${userId}`,
+          id: 'my-posts',
           title: 'Posts',
           layout: 'grid',
           items: posts.map(p => p.id),
