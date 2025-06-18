@@ -36,3 +36,11 @@ a:hover {
 .prose {
   max-width: 700px;
 }
+
+.task-list-item {
+  list-style: none;
+}
+
+.task-list-item input {
+  margin-right: 0.25rem;
+}
