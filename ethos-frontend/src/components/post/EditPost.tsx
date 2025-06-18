@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import ReactMarkdown from 'react-markdown';
+import MarkdownRenderer from '../ui/MarkdownRenderer';
 
 import { updatePost } from '../../api/post';
 import { POST_TYPES } from '../../constants/options';
@@ -94,7 +94,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 
           {showPreview && (
             <div className="mt-2 border rounded p-3 bg-gray-50 text-sm prose max-w-none">
-              <ReactMarkdown>{content}</ReactMarkdown>
+              <MarkdownRenderer content={content} />
             </div>
           )}
         </div>
