@@ -110,5 +110,17 @@
     "status": "active",
     "headPostId": "",
     "taskGraph": []
+  },
+  {
+    "id": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "title": "Graduate Applications",
+    "description": "(PRIVATE) this quest is to track my graduate applciations",
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "",
+    "taskGraph": []
   }
 ]
