@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { POST_TYPES } from '../../constants/options';
+import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, TextArea, Select, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
@@ -38,6 +38,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
 }) => {
   const [type, setType] = useState<PostType>(initialType);
+  const [status, setStatus] = useState<string>('To Do');
   const [content, setContent] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
@@ -73,13 +74,14 @@ const CreatePost: React.FC<CreatePostProps> = ({
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
-    const payload: Partial<Post> = {
-      type,
-      content,
-      visibility: 'public',
-      linkedItems: autoLinkItems,
-      ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
-      ...(targetBoard ? { boardId: targetBoard } : {}),
+      const payload: Partial<Post> = {
+        type,
+        content,
+        visibility: 'public',
+        linkedItems: autoLinkItems,
+        ...(type === 'task' ? { status } : {}),
+        ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
+        ...(targetBoard ? { boardId: targetBoard } : {}),
       ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
       ...(repostSource
         ? {
@@ -129,7 +131,11 @@ const CreatePost: React.FC<CreatePostProps> = ({
           <Select
             id="post-type"
             value={type}
-            onChange={(e) => setType(e.target.value as PostType)}
+            onChange={(e) => {
+              const val = e.target.value as PostType;
+              setType(val);
+              if (val === 'task') setStatus('To Do');
+            }}
             options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
           />
         </FormSection>
@@ -145,9 +151,25 @@ const CreatePost: React.FC<CreatePostProps> = ({
         <Select
           id="post-type"
           value={type}
-          onChange={(e) => setType(e.target.value as PostType)}
+          onChange={(e) => {
+            const val = e.target.value as PostType;
+            setType(val);
+            if (val === 'task') setStatus('To Do');
+          }}
           options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
         />
+
+        {type === 'task' && (
+          <>
+            <Label htmlFor="task-status">Status</Label>
+            <Select
+              id="task-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+            />
+          </>
+        )}
 
         <Label htmlFor="content">Content</Label>
         <TextArea
