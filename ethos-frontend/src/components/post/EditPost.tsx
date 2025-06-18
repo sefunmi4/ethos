@@ -5,7 +5,7 @@ import type { FormEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { updatePost } from '../../api/post';
-import { POST_TYPES } from '../../constants/options';
+import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
@@ -21,6 +21,7 @@ interface EditPostProps {
 
 const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [type, setType] = useState<PostType>(post.type);
+  const [status, setStatus] = useState<string>(post.status || 'To Do');
   const [content, setContent] = useState<string>(post.content || '');
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>(post.collaborators || []);
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>(post.linkedItems || []);
@@ -46,6 +47,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
       type,
       content,
       ...(type === 'quest' && { collaborators }),
+      ...(type === 'task' ? { status } : {}),
       linkedItems,
       repostedFrom: repostedFrom || null,
     };
@@ -69,9 +71,25 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
         <Select
           id="post-type"
           value={type}
-          onChange={(e) => setType(e.target.value as PostType)}
+          onChange={(e) => {
+            const val = e.target.value as PostType;
+            setType(val);
+            if (val === 'task') setStatus('To Do');
+          }}
           options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
         />
+
+        {type === 'task' && (
+          <>
+            <Label htmlFor="task-status">Status</Label>
+            <Select
+              id="task-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+            />
+          </>
+        )}
 
         <Label htmlFor="content">Content (Markdown supported)</Label>
         <TextArea
