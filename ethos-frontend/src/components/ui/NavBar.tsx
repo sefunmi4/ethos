@@ -45,8 +45,12 @@ const NavBar: React.FC = () => {
               </button>
             </>
           )}
-          <button onClick={toggleTheme} className="px-2 py-1 rounded border text-xs sm:text-sm border-gray-300 dark:border-gray-600">
-            {theme === 'light' ? 'Light' : 'Dark'}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="px-2 py-1 rounded border text-xs sm:text-sm border-gray-300 dark:border-gray-600"
+          >
+            {theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'}
           </button>
         </div>
       </div>

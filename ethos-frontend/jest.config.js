@@ -1,7 +1,7 @@
 export default {
   preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  roots: ['<rootDir>/src'],
+  testEnvironment: 'jest-environment-jsdom',
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   globals: {
     'ts-jest': {
