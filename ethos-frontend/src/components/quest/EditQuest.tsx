@@ -51,7 +51,13 @@ const EditQuest: React.FC<EditQuestProps> = ({
 
     const payload: Partial<Quest> = {
       title,
-      ...(compact ? {} : { description, tags, links, collaberatorRoles, repoUrl }),
+      ...(compact
+        ? {}
+        : {
+            description,
+            tags,
+            gitRepo: { repoUrl },
+          }),
     };
 
     try {

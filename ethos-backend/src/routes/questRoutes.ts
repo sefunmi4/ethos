@@ -23,7 +23,7 @@ const router = express.Router();
 router.get('/', (req: Request, res: Response) => {
   const quests: Quest[] = questsStore.read().map((q) => ({
     ...q,
-    gitRepo: q.gitRepo ? { repoUrl: '', ...q.gitRepo } : undefined,
+    gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
   }));
   res.json(quests);
 });
@@ -64,6 +64,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     gitRepo: newQuest.gitRepo
       ? {
           repoId: newQuest.gitRepo.repoId,
+          repoUrl: newQuest.gitRepo.repoUrl,
           headCommitId: newQuest.gitRepo.headCommitId,
           defaultBranch: newQuest.gitRepo.defaultBranch,
         }
@@ -78,9 +79,16 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
 // PATCH quest (e.g. add a log)
 router.patch(
   '/:id',
-  (req: Request<{ id: string }, any, { itemId: string }>, res: Response): void => {
+  (
+    req: Request<
+      { id: string },
+      any,
+      Partial<Quest> & { itemId?: string }
+    >,
+    res: Response
+  ): void => {
     const { id } = req.params;
-    const { itemId } = req.body;
+    const { itemId, gitRepo, title, description, tags } = req.body;
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
@@ -90,30 +98,39 @@ router.patch(
     return;
   }
 
-  const posts = postsStore.read();
-  const post = posts.find(p => p.id === itemId);
-  if (post && post.type === 'free_speech') {
-    post.type = 'quest_log';
-    post.subtype = 'comment';
-    post.questId = id;
-    postsStore.write(posts);
-  }
+  if (itemId) {
+    const posts = postsStore.read();
+    const post = posts.find(p => p.id === itemId);
+    if (post && post.type === 'free_speech') {
+      post.type = 'quest_log';
+      post.subtype = 'comment';
+      post.questId = id;
+      postsStore.write(posts);
+    }
 
-  quest.linkedPosts = quest.linkedPosts || [];
-  const exists = quest.linkedPosts.some(l => l.itemId === itemId);
-  if (!exists) {
-    quest.linkedPosts.push({ itemId, itemType: 'post' });
-    if (post && post.type === 'task') {
-      quest.taskGraph = quest.taskGraph || [];
-      const edgeExists = quest.taskGraph.some(e => e.to === itemId);
-      if (!edgeExists) {
-        quest.taskGraph.push({ from: quest.headPostId, to: itemId });
+    quest.linkedPosts = quest.linkedPosts || [];
+    const exists = quest.linkedPosts.some(l => l.itemId === itemId);
+    if (!exists) {
+      quest.linkedPosts.push({ itemId, itemType: 'post' });
+      if (post && post.type === 'task') {
+        quest.taskGraph = quest.taskGraph || [];
+        const edgeExists = quest.taskGraph.some(e => e.to === itemId);
+        if (!edgeExists) {
+          quest.taskGraph.push({ from: quest.headPostId, to: itemId });
+        }
       }
     }
-    questsStore.write(quests);
   }
 
-    res.json(quest);
+  if (title !== undefined) quest.title = title;
+  if (description !== undefined) quest.description = description;
+  if (tags !== undefined) quest.tags = tags;
+  if (gitRepo && typeof gitRepo.repoUrl === 'string') {
+    quest.gitRepo = { ...(quest.gitRepo || { repoId: '' }), ...quest.gitRepo, repoUrl: gitRepo.repoUrl } as any;
+  }
+
+  questsStore.write(quests);
+  res.json(quest);
   }
 );
 
