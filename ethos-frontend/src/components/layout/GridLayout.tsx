@@ -84,8 +84,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       el.scrollTo({ left: i * width, behavior: 'smooth' });
     };
 
-    const handlePrev = () => setIndex((i) => Math.max(0, i - 5));
-    const handleNext = () => setIndex((i) => Math.min(items.length - 1, i + 5));
+    const handlePrev = () => setIndex((i) => Math.max(0, i - 1));
+    const handleNext = () => setIndex((i) => Math.min(items.length - 1, i + 1));
 
     React.useEffect(() => {
       scrollToIndex(index);
@@ -127,9 +127,11 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             </button>
             <div className="flex justify-center mt-2">
               {items.map((_, i) => (
-                <span
+                <button
                   key={i}
-                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-blue-600' : 'bg-gray-300'}`}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-blue-600' : 'bg-gray-300'} focus:outline-none`}
                 />
               ))}
             </div>
