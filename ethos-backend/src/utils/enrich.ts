@@ -37,7 +37,7 @@ const normalizeQuest = (quest: DBQuest): Quest => {
   return {
     ...quest,
     gitRepo: quest.gitRepo
-      ? { repoUrl: '', ...quest.gitRepo }
+      ? { repoUrl: quest.gitRepo.repoUrl ?? '', ...quest.gitRepo }
       : undefined,
   } as Quest;
 };

@@ -260,4 +260,33 @@ describe('route handlers', () => {
     expect(store).toHaveLength(1);
     expect(store[0].items).toContain('i1');
   });
+
+  it('PATCH /quests/:id updates quest fields', async () => {
+    const { questsStore, postsStore } = require('../src/models/stores');
+    const quest: any = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      description: '',
+      tags: [],
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [],
+      gitRepo: { repoId: 'r1', repoUrl: '' },
+    };
+    questsStore.read.mockReturnValue([quest]);
+    postsStore.read.mockReturnValue([]);
+
+    const res = await request(app)
+      .patch('/quests/q1')
+      .send({ title: 'Updated', description: 'Desc', tags: ['x'], gitRepo: { repoUrl: 'http://example.com' } });
+
+    expect(res.status).toBe(200);
+    expect(quest.title).toBe('Updated');
+    expect(quest.description).toBe('Desc');
+    expect(quest.tags).toEqual(['x']);
+    expect(quest.gitRepo.repoUrl).toBe('http://example.com');
+  });
 });
