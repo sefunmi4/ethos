@@ -172,4 +172,39 @@ describe('post routes', () => {
     expect(posts[2].nodeId).toBe(expected);
     expect(res.body.nodeId).toBe(expected);
   });
+
+  it('PATCH /posts/:id regenerates nodeId on type change', async () => {
+    const posts = [
+      {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        questId: 'q1',
+        replyTo: null,
+        nodeId: 'Q:firstquest:T00',
+      },
+    ];
+
+    postsStore.read.mockReturnValue(posts);
+    questsStore.read.mockReturnValue([
+      { id: 'q1', title: 'First Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
+    ]);
+    usersStore.read.mockReturnValue([]);
+
+    const res = await request(app).patch('/posts/t1').send({ type: 'issue' });
+
+    const expected = generateNodeId({
+      quest: { id: 'q1', title: 'First Quest' },
+      posts: [],
+      postType: 'issue',
+      parentPost: null,
+    });
+
+    expect(res.status).toBe(200);
+    expect(posts[0].nodeId).toBe(expected);
+    expect(res.body.nodeId).toBe(expected);
+  });
 });

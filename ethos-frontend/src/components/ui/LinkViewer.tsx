@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { LinkedItem } from '../../types/postTypes';
+import { fetchQuestById } from '../../api/quest';
+import { fetchPostById } from '../../api/post';
 
 interface LinkViewerProps {
   items: LinkedItem[];
@@ -7,9 +9,35 @@ interface LinkViewerProps {
 
 const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
   const [open, setOpen] = useState(false);
-  if (!items || items.length === 0) return null;
+  const [resolved, setResolved] = useState<LinkedItem[]>(items);
 
-  const grouped = items.reduce<Record<string, LinkedItem[]>>((acc, item) => {
+  useEffect(() => {
+    const resolve = async () => {
+      const updated = await Promise.all(
+        items.map(async (item) => {
+          try {
+            if (item.itemType === 'quest') {
+              const q = await fetchQuestById(item.itemId);
+              return { ...item, title: q.title };
+            }
+            if (item.itemType === 'post') {
+              const p = await fetchPostById(item.itemId);
+              return { ...item, title: p.nodeId || p.content?.slice(0, 30) };
+            }
+          } catch {
+            /* ignore resolution errors */
+          }
+          return item;
+        })
+      );
+      setResolved(updated);
+    };
+    resolve();
+  }, [items]);
+
+  if (!resolved || resolved.length === 0) return null;
+
+  const grouped = resolved.reduce<Record<string, LinkedItem[]>>((acc, item) => {
     const key = item.linkType || 'other';
     acc[key] = acc[key] || [];
     acc[key].push(item);

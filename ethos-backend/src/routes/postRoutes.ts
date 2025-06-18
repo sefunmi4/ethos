@@ -77,27 +77,29 @@ router.patch(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
-    const quests = questsStore.read();
-    const post = posts.find((p) => p.id === req.params.id);
-    if (!post) {
-      res.status(404).json({ error: 'Post not found' });
-      return;
-    }
+  const quests = questsStore.read();
+  const post = posts.find((p) => p.id === req.params.id);
+  if (!post) {
+    res.status(404).json({ error: 'Post not found' });
+    return;
+  }
 
-    const originalQuestId = post.questId;
-    const originalReplyTo = post.replyTo;
+  const originalQuestId = post.questId;
+  const originalReplyTo = post.replyTo;
+  const originalType = post.type;
 
-    Object.assign(post, req.body);
+  Object.assign(post, req.body);
 
-    const questIdChanged =
-      'questId' in req.body && req.body.questId !== originalQuestId;
-    const replyToChanged =
-      'replyTo' in req.body && req.body.replyTo !== originalReplyTo;
+  const questIdChanged =
+    'questId' in req.body && req.body.questId !== originalQuestId;
+  const replyToChanged =
+    'replyTo' in req.body && req.body.replyTo !== originalReplyTo;
+  const typeChanged = 'type' in req.body && req.body.type !== originalType;
 
-    if (questIdChanged || replyToChanged) {
-      const quest = post.questId
-        ? quests.find((q) => q.id === post.questId)
-        : null;
+  if (questIdChanged || replyToChanged || typeChanged) {
+    const quest = post.questId
+      ? quests.find((q) => q.id === post.questId)
+      : null;
       const parent = post.replyTo
         ? posts.find((p) => p.id === post.replyTo) || null
         : null;
