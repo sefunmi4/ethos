@@ -9,7 +9,8 @@
       (function () {
         try {
           const stored = localStorage.getItem('theme');
-          if (stored === 'dark') {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (stored === 'system' && prefersDark)) {
             document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
           }

@@ -1,7 +1,13 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system';
+
+export const getSystemTheme = (): 'light' | 'dark' =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 
 interface ThemeContextType {
   theme: Theme;
@@ -14,18 +20,48 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme');
-      if (stored === 'light' || stored === 'dark') return stored;
+      if (stored === 'light' || stored === 'dark' || stored === 'system') {
+        return stored as Theme;
+      }
     }
     return 'light';
   });
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.body.classList.toggle('dark', theme === 'dark');
+    if (typeof window === 'undefined') return;
+    const apply = (t: 'light' | 'dark') => {
+      document.documentElement.classList.toggle('dark', t === 'dark');
+      document.body.classList.toggle('dark', t === 'dark');
+    };
+
     localStorage.setItem('theme', theme);
+
+    if (theme === 'system') {
+      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      apply(getSystemTheme());
+      const handler = (e: MediaQueryListEvent) => apply(e.matches ? 'dark' : 'light');
+      if (mql.addEventListener) {
+        mql.addEventListener('change', handler);
+      } else {
+        // deprecated but for older browsers/tests
+        // @ts-ignore
+        mql.addListener(handler);
+      }
+      return () => {
+        if (mql.removeEventListener) {
+          mql.removeEventListener('change', handler);
+        } else {
+          // @ts-ignore
+          mql.removeListener(handler);
+        }
+      };
+    }
+
+    apply(theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  const toggleTheme = () =>
+    setTheme((prev) => (prev === 'light' ? 'dark' : prev === 'dark' ? 'system' : 'light'));
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
