@@ -260,4 +260,54 @@ describe('route handlers', () => {
     expect(store).toHaveLength(1);
     expect(store[0].items).toContain('i1');
   });
+
+  it('GET /boards/thread/:postId paginates replies', async () => {
+    const { postsStore } = require('../src/models/stores');
+    postsStore.read.mockReturnValue([
+      {
+        id: 'r1',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+      {
+        id: 'r2',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+      {
+        id: 'r3',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ]);
+
+    const res1 = await request(app).get('/boards/thread/p1?page=1&limit=2');
+    expect(res1.status).toBe(200);
+    expect(res1.body.items).toEqual(['r1', 'r2']);
+
+    const res2 = await request(app).get('/boards/thread/p1?page=2&limit=2');
+    expect(res2.status).toBe(200);
+    expect(res2.body.items).toEqual(['r3']);
+  });
 });

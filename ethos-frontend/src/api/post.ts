@@ -50,11 +50,12 @@ export const updatePost = async (id: string, updates: Partial<Post>): Promise<Po
  */
 export const fetchReplyBoard = async (
   postId: string,
-  options: { enrich?: boolean; page?: number } = {}
+  options: { enrich?: boolean; page?: number; limit?: number } = {}
 ): Promise<BoardData> => {
   const params = new URLSearchParams();
   if (options.enrich) params.set('enrich', 'true');
   if (options.page) params.set('page', options.page.toString());
+  if (options.limit) params.set('limit', options.limit.toString());
 
   const url = `/boards/thread/${postId}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
