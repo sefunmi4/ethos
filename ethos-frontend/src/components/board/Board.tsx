@@ -14,6 +14,7 @@ import GraphLayout from '../layout/GraphLayout';
 import ThreadLayout from '../layout/ThreadLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
+import { useTheme } from '../../contexts/ThemeContext';
 
 import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
 import type { Post } from '../../types/postTypes';
@@ -49,6 +50,7 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const { theme } = useTheme();
 
   // Keep items state in sync with BoardContext updates
   useEffect(() => {
@@ -211,8 +213,11 @@ const Board: React.FC<BoardProps> = ({
     return <div className="text-red-500 p-4">Board not found.</div>;
   }
 
+  const containerBg = theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50';
+  const panelBg = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
+
   return (
-    <div className="space-y-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg max-w-5xl mx-auto">
+    <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>
       {/* Board Header */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -280,7 +285,7 @@ const Board: React.FC<BoardProps> = ({
 
       {/* Create Post Form */}
       {showCreate && showCreateForm && (
-        <div className="border rounded-lg p-4 bg-white dark:bg-gray-800 shadow">
+        <div className={`border rounded-lg p-4 shadow ${panelBg}`}> 
           <CreatePost
             onSave={handleAdd}
             onCancel={() => setShowCreateForm(false)}
@@ -291,7 +296,7 @@ const Board: React.FC<BoardProps> = ({
 
       {/* Edit Board Form */}
       {editMode ? (
-        <div className="border rounded-lg p-4 bg-white dark:bg-gray-800 shadow">
+        <div className={`border rounded-lg p-4 shadow ${panelBg}`}> 
           <EditBoard
             board={board}
             onCancel={() => setEditMode(false)}

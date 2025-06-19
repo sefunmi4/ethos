@@ -14,8 +14,14 @@ const NavBar: React.FC = () => {
   const { user } = useContext(AuthContext as React.Context<AuthContextType>);
   const { theme, toggleTheme } = useTheme();
 
+  const navClasses =
+    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b ' +
+    (theme === 'dark'
+      ? 'bg-gray-800 border-gray-700'
+      : 'bg-white border-gray-200');
+
   return (
-    <nav className="w-full px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 backdrop-blur">
+    <nav className={navClasses}>
       <div className="w-full max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-24 mx-auto flex items-center justify-between flex-wrap gap-4">
 
         {/* Logo or brand name linking to home */}
