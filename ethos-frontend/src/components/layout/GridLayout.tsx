@@ -78,6 +78,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   onScrollEnd,
   loadingMore = false,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handler = (e: any) => {
       const id = e.detail?.taskId;
