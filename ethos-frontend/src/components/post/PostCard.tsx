@@ -10,13 +10,17 @@ import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api
 import { linkPostToQuest } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
-import { PostTypeBadge, StatusBadge, Spinner } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
+import { STATUS_OPTIONS } from '../../constants/options';
+import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
+
+const PREVIEW_LIMIT = 240;
 
 interface PostCardProps {
   post: Post;
@@ -47,11 +51,26 @@ const PostCard: React.FC<PostCardProps> = ({
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
+  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value;
+    try {
+      const updated = await updatePost(post.id, { status: newStatus });
+      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[PostCard] Failed to update status:', err);
+    }
+  };
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const timestamp = post.timestamp
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
+
+  const content = post.renderedContent || post.content;
+  const isLong = content.length > PREVIEW_LIMIT;
 
   useEffect(() => {
     if (!post.replyTo) {
@@ -188,6 +207,15 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
+          {canEdit && post.type === 'task' && (
+            <div className="ml-1 w-28">
+              <Select
+                value={post.status || 'To Do'}
+                onChange={handleStatusChange}
+                options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+              />
+            </div>
+          )}
           <button
             type="button"
             onClick={() =>
@@ -223,18 +251,18 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       <div className="text-sm text-gray-800 dark:text-gray-200">
-        {compact && (post.renderedContent || post.content).length > 240 ? (
+        {isLong ? (
           <>
-            <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
+            <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
             >
-              View more
+              See more
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={post.renderedContent || post.content} />
+          <MarkdownRenderer content={content} />
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
@@ -352,13 +380,13 @@ const PostCard: React.FC<PostCardProps> = ({
         </button>
       )}
 
-      {!compact && (
+      {!isLong && !compact && (
         <div>
           <button
             onClick={() => navigate(ROUTES.POST(post.id))}
             className="text-blue-600 underline text-xs"
           >
-            View details
+            See more
           </button>
         </div>
       )}

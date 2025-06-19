@@ -26,3 +26,4 @@ jest.mock('react-markdown', () => {
   };
 });
 jest.mock('remark-gfm', () => ({}));
+
