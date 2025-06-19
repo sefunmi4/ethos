@@ -3,6 +3,7 @@ const { render, within } = require('@testing-library/react');
 const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 jest.mock('../src/hooks/useGit', () => ({
+  __esModule: true,
   useGitDiff: () => ({ data: null, isLoading: false })
 }));
 

@@ -6,6 +6,7 @@ const GridLayout = require('../src/components/layout/GridLayout').default;
 let dragHandler;
 
 jest.mock('@dnd-kit/core', () => ({
+  __esModule: true,
   DndContext: ({ onDragEnd, children }) => {
     dragHandler = onDragEnd;
     return React.createElement('div', {}, children);
@@ -23,19 +24,22 @@ jest.mock('@dnd-kit/core', () => ({
   }),
 }), { virtual: true });
 
-jest.mock('@dnd-kit/utilities', () => ({ CSS: { Translate: { toString: () => '' } } }), { virtual: true });
+jest.mock('@dnd-kit/utilities', () => ({ __esModule: true, CSS: { Translate: { toString: () => '' } } }), { virtual: true });
 
 jest.mock('../src/api/post', () => ({
-  updatePost: jest.fn(() => Promise.resolve({ id: 't1', status: 'In Progress' }))
+  __esModule: true,
+  updatePost: jest.fn((id, data) => Promise.resolve({ id, ...data })),
+  archivePost: jest.fn(() => Promise.resolve({ success: true }))
 }));
 
 const updateBoardItem = jest.fn();
 
 jest.mock('../src/contexts/BoardContext', () => ({
+  __esModule: true,
   useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem })
 }));
 
-const { updatePost } = require('../src/api/post');
+const { updatePost, archivePost } = require('../src/api/post');
 
 const basePost = {
   id: 't1',
@@ -63,5 +67,19 @@ describe('GridLayout kanban drag', () => {
 
     expect(updatePost).toHaveBeenCalledWith('t1', { status: 'In Progress' });
     expect(updateBoardItem).toHaveBeenCalledWith('b1', { id: 't1', status: 'In Progress' });
+  });
+
+  it('archives post when dropped in Done column', async () => {
+    render(React.createElement(GridLayout, { items: [basePost], questId: 'q1', layout: 'kanban' }));
+
+    await act(async () => {
+      await dragHandler({
+        active: { id: basePost.id, data: { current: { item: basePost } } },
+        over: { id: 'Done' }
+      });
+    });
+
+    expect(updatePost).toHaveBeenCalledWith('t1', { status: 'Done' });
+    expect(archivePost).toHaveBeenCalledWith('t1');
   });
 });
