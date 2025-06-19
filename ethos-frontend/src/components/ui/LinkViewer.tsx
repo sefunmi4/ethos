@@ -16,6 +16,9 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
       const updated = await Promise.all(
         items.map(async (item) => {
           try {
+            if (!item.itemId) {
+              return item;
+            }
             if (item.itemType === 'quest') {
               const q = await fetchQuestById(item.itemId);
               return { ...item, title: q.title };
