@@ -82,7 +82,7 @@ const Login: React.FC = () => {
         socket.emit('user_connected', { userId: user.id });
       
         // 🔁 Sync boards
-        const userBoards = await fetchBoards(user.id);
+        const userBoards = await fetchBoards({ userId: user.id, enrich: true });
         const defaultBoard =
           userBoards.find(b => b.defaultFor === 'home') || userBoards[0];
         if (defaultBoard) {

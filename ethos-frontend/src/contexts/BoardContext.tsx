@@ -53,7 +53,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const loadBoards = async () => {
       setLoading(true);
       try {
-        const boardList = await fetchBoardsAPI(user?.id);
+        const boardList = await fetchBoardsAPI({ userId: user?.id, enrich: true });
         const boardMap: BoardMap = {};
         boardList.forEach((b: BoardData) => {
           boardMap[b.id] = b;
@@ -144,7 +144,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const refreshBoards = async () => {
     if (!user) return;
     try {
-      const boardList = await fetchBoardsAPI(user.id);
+      const boardList = await fetchBoardsAPI({ userId: user.id, enrich: true });
       const boardMap: BoardMap = {};
       boardList.forEach((b: BoardData) => {
         boardMap[b.id] = b;

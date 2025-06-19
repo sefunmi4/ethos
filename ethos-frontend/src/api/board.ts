@@ -12,8 +12,13 @@ const BASE_URL = '/boards';
  * 🧠 fetchBoards → Get all boards (optionally filtered by user)
  * @param userId Optional user ID to fetch personal boards
  */
-export const fetchBoards = async (userId?: string): Promise<BoardData[]> => {
-  const url = userId ? `${BASE_URL}?userId=${userId}` : BASE_URL;
+export const fetchBoards = async (
+  options?: { userId?: string; enrich?: boolean }
+): Promise<BoardData[]> => {
+  const params = new URLSearchParams();
+  if (options?.userId) params.set('userId', options.userId);
+  if (options?.enrich) params.set('enrich', 'true');
+  const url = `${BASE_URL}${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };

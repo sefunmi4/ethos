@@ -74,7 +74,7 @@ export const useBoard = (
 
   const fetchAllBoards = useCallback(async (userId?: string) => {
     try {
-      const list = await fetchBoards(userId); // ⬅ pass to actual API call
+      const list = await fetchBoards({ userId, enrich: true });
       return list;
     } catch (err) {
       console.error('[useBoard] Failed to fetch all boards:', err);
