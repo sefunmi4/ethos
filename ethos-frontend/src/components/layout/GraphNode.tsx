@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import ContributionCard from '../contribution/ContributionCard';
@@ -54,6 +54,28 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   const { setNodeRef: setDropRef, isOver } = useDroppable({ id: node.id });
   const style = transform ? { transform: CSS.Translate.toString(transform) } : undefined;
 
+  const [pulsing, setPulsing] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isOver) {
+      timerRef.current = setTimeout(() => setPulsing(true), 500);
+    } else {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      setPulsing(false);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [isOver]);
+
   if (condensed) {
     const colorKey = node.tags[0] || node.type;
     const color = stringToColor(colorKey);
@@ -108,7 +130,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   }
 
   return (
-    <div ref={setDropRef} className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''}`}>
+    <div ref={setDropRef} className={`relative ${pulsing ? 'animate-pulse ring-2 ring-blue-400' : ''}`}> 
       <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
         <div
           className={`ml-${depth * 4} mb-6 flex items-start space-x-2 cursor-pointer`}
