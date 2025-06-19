@@ -213,14 +213,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
             >
               ◀
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
             >
               ▶
             </button>
@@ -266,14 +266,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
         <button
           type="button"
           onClick={handlePrev}
-          className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+          className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
         >
           ▲
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 bg-white dark:bg-gray-700 rounded-full shadow p-1"
+          className="absolute left-1/2 -translate-x-1/2 bottom-0 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
         >
           ▼
         </button>
