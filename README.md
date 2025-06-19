@@ -4,7 +4,7 @@ A platform for turning real-world problems into collaborative quests and freelan
 
 ## 📖 About
 
-Ethos is a decentralized platform designed for modern adventurers, creators, and freelancers to transform problems into collaborative quests. Whether you're facing personal challenges, freelance gigs, or global issues—Ethos enables you to log, track, and solve them through community-driven effort and layoutd teamwork.
+Ethos is a decentralized platform designed for modern adventurers, creators, and freelancers to transform problems into collaborative quests. Whether you're facing personal challenges, freelance gigs, or global issues—Ethos enables you to log, track, and solve them through community-driven effort and layered teamwork.
 
 The platform evolves traditional problem-posting into a full ecosystem of:
 
