@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useGitDiff } from '../../hooks/useGit';
+import GitDiffViewer from '../git/GitDiffViewer';
 import { Spinner } from '../ui';
 import ContributionCard from '../contribution/ContributionCard';
 import type { User } from '../../types/userTypes';
@@ -10,6 +12,7 @@ interface GraphLayoutProps {
   items: Post[];
   edges?: TaskEdge[];
   user?: User;
+  questId: string;
   compact?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
@@ -28,6 +31,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   items,
   edges,
   user,
+  questId,
   compact = false,
   onScrollEnd,
   loadingMore = false,
@@ -35,6 +39,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [rootNodes, setRootNodes] = useState<(Post & { children?: NodeChild[] })[]>([]);
+  const [selectedNode, setSelectedNode] = useState<Post | null>(null);
+
+  const { data: diffData, isLoading: diffLoading } = useGitDiff({
+    questId,
+    filePath: selectedNode?.gitFilePath,
+    commitId: selectedNode?.gitCommitSha,
+  });
 
   useEffect(() => {
     const nodeMap: NodeMap = {};
@@ -87,6 +98,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     return () => el?.removeEventListener('scroll', handleScroll);
   }, [onScrollEnd]);
 
+  const handleNodeClick = (n: Post) => {
+    setSelectedNode(n);
+    window.dispatchEvent(
+      new CustomEvent('questTaskSelect', { detail: { taskId: n.id } })
+    );
+  };
+
   const renderNode = (
     node: Post & { children?: NodeChild[] },
     depth: number = 0,
@@ -97,7 +115,10 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
 
     return (
       <div key={node.id} className="relative">
-        <div className={`ml-${depth * 4} mb-6 flex items-start space-x-2`}>
+        <div
+          className={`ml-${depth * 4} mb-6 flex items-start space-x-2 cursor-pointer`}
+          onClick={() => handleNodeClick(node)}
+        >
           <span className="text-xl select-none">{icon}</span>
           <ContributionCard contribution={node} user={user} compact={compact} />
           {edge && (
@@ -106,6 +127,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             </span>
           )}
         </div>
+        {selectedNode?.id === node.id && (
+          <div className="ml-8 mb-4">
+            {diffLoading ? <Spinner /> : diffData?.diffMarkdown && (
+              <GitDiffViewer markdown={diffData.diffMarkdown} />
+            )}
+          </div>
+        )}
         {node.children && node.children.length > 0 && (
           <div className="ml-8 border-l border-gray-300 pl-4">
             {node.children.map((child) =>

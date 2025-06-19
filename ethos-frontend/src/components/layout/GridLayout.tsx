@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -24,6 +24,20 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   onEdit,
   onDelete,
 }) => {
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = e.detail?.taskId;
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500'), 2000);
+      }
+    };
+    window.addEventListener('questTaskSelect', handler);
+    return () => window.removeEventListener('questTaskSelect', handler);
+  }, []);
   if (!items || items.length === 0) {
     return (
       <div className="text-center text-gray-400 py-12 text-sm">
