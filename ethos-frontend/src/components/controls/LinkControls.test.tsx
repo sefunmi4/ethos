@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import LinkControls from './LinkControls';
 import type { LinkedItem } from '../../types/postTypes';
 
@@ -26,13 +26,15 @@ jest.mock('../../api/quest', () => ({
 
 describe('LinkControls', () => {
   it('shows free speech posts in options', async () => {
-    render(<LinkControls value={[]} onChange={() => {}} itemTypes={['post']} />);
+    await act(async () => {
+      render(<LinkControls value={[]} onChange={() => {}} itemTypes={['post']} />);
+    });
     await waitFor(() => {
       expect(screen.getByText(/hello world/)).toBeInTheDocument();
     });
   });
 
-  it('includes task_edge link type option', () => {
+  it('includes task_edge link type option', async () => {
     const linked: LinkedItem[] = [
       {
         itemId: 'p1',
@@ -43,7 +45,9 @@ describe('LinkControls', () => {
       },
     ];
 
-    render(<LinkControls value={linked} onChange={() => {}} itemTypes={['post']} />);
+    await act(async () => {
+      render(<LinkControls value={linked} onChange={() => {}} itemTypes={['post']} />);
+    });
 
     expect(
       screen.getByText(/Link to parent \/ mark as sub-problem/)
