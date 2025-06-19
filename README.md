@@ -106,6 +106,21 @@ VITE_API_URL=http://localhost:3001/api
 VITE_SOCKET_URL=http://localhost:3001
 ```
 
+### Theme Tokens
+
+UI colors are centralized in `ethos-frontend/src/theme.ts` and mirrored in the
+Tailwind config. Use these variables instead of hard-coded color strings when
+styling components.
+
+| Token | Hex |
+| ----- | ---- |
+| `primary` | `#111827` |
+| `accent` | `#4F46E5` |
+| `soft` | `#F3F4F6` |
+| `primaryDark` | `#f9fafb` |
+| `softDark` | `#1f2937` |
+| `infoBackground` | `#bfdbfe` |
+
 ### 3. Setup Backend
 
 ```bash
