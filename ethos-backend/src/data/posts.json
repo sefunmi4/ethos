@@ -55,7 +55,7 @@
     "id": "0daf8c76-5646-4100-8251-f119dcfcf66f",
     "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
     "type": "task",
-    "content": "Make poster design's:\n\n- [ ] 1. Instagram poster - IN PROGRESS\n- [ ] 2. Website event poster\n  - [ ] Pre event poster - Free \n   - [ ] Simplest approach would be to have a vendor viewing and pre signing , listen party  or get to meet the judges if they are famous \n  - [ ] Main event poster - Early Admission, Special Deals, & General admission\n    - [ ] 4 - 8 bands tournament style \n  - [ ] Afterparty poster - Early bird, General entry\n    - [ ] closed of venue or spefic club partmenad with to pleay crataors music or have a photographer ready, possible singing\n  - [ ] Get Updates pages\n    - [ ] email subscriptions to stay up to date\n  - [ ] Get Tickets pages\n    - [ ] Posh and architecture of homosapien's \n\n",
+    "content": "Make poster design's:\n\n- [x] 1. Instagram poster - IN PROGRESS\n- [ ] 2. Website event poster\n  - [ ] Pre event poster - Free \n   - [ ] Simplest approach would be to have a vendor viewing and pre signing , listen party  or get to meet the judges if they are famous \n  - [ ] Main event poster - Early Admission, Special Deals, & General admission\n    - [ ] 4 - 8 bands tournament style \n  - [ ] Afterparty poster - Early bird, General entry\n    - [ ] closed of venue or spefic club partmenad with to pleay crataors music or have a photographer ready, possible singing\n  - [ ] Get Updates pages\n    - [ ] email subscriptions to stay up to date\n  - [ ] Get Tickets pages\n    - [ ] Posh and architecture of homosapien's \n\n",
     "visibility": "public",
     "timestamp": "2025-06-12T16:08:03.282Z",
     "tags": [],
@@ -74,7 +74,8 @@
       }
     ],
     "questId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
-    "nodeId": "Q:battleofthebands:T00"
+    "nodeId": "Q:battleofthebands:T00",
+    "status": "To Do"
   },
   {
     "id": "2ccfcc93-65c3-4e6b-a2a1-fd2261d8d33e",

@@ -8,7 +8,13 @@
   {
     "questId": "undefined",
     "path": "/api/quests/undefined/link",
-    "count": 3,
-    "lastOccurred": "2025-06-19T19:54:12.520Z"
+    "count": 9,
+    "lastOccurred": "2025-06-19T21:08:12.146Z"
+  },
+  {
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "path": "/api/quests/3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "count": 6,
+    "lastOccurred": "2025-06-19T21:08:18.942Z"
   }
 ]
