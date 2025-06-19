@@ -121,19 +121,19 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
         <FaEllipsisH />
       </button>
       {showMenu && (
-        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-white shadow text-sm">
+        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-white dark:bg-gray-800 shadow text-sm">
           {canEdit && (
             <>
-              <button onClick={onEdit} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+              <button onClick={onEdit} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
                 <FaEdit className="inline mr-2" /> Edit
               </button>
-              <button onClick={handleDelete} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100">
+              <button onClick={handleDelete} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 focus:bg-red-100 dark:focus:bg-gray-700">
                 <FaTrash className="inline mr-2" /> Delete
               </button>
               <button
                 onClick={handleArchive}
                 disabled={isArchiving}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
               >
                 <FaArchive className="inline mr-2" /> {isArchiving ? 'Archiving…' : 'Archive'}
               </button>
@@ -142,7 +142,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           {content && (
             <button
               onClick={handleCopyQuote}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
             >
               <FaCopy className="inline mr-2" /> Copy Quote
             </button>
@@ -150,12 +150,12 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           {permalink && type === 'post' && (
             <button
               onClick={handleLinkToPost}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
             >
               <FaLink className="inline mr-2" /> Link to This Post
             </button>
           )}
-          <button onClick={handleCopyLink} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+          <button onClick={handleCopyLink} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
             <FaLink className="inline mr-2" /> Copy Link
           </button>
         </div>

@@ -23,10 +23,10 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           value={value}
           onChange={onChange}
           className={clsx(
-            'w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none',
+            'w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100',
             error
               ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-              : 'border-gray-300 focus:ring-accent focus:border-accent',
+              : 'border-gray-300 dark:border-gray-600 focus:ring-accent focus:border-accent',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className
           )}

@@ -30,13 +30,13 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
   const tags = user?.tags || quest?.collaborators || [];
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 sm:p-6 rounded-lg shadow mb-6">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow mb-6">
       {/* Left: Name + Description */}
       <div className="flex flex-col gap-1 text-left max-w-2xl">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
           {user ? displayName : `📜 ${displayName}`}
         </h1>
-        <p className="text-sm text-gray-600">{description}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
       </div>
 
       {/* Right: Tags or Roles */}
@@ -47,7 +47,7 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
               return (
                 <span
                   key={index}
-                  className="text-xs font-medium bg-gray-100 px-3 py-1 rounded-full text-gray-700"
+                  className="text-xs font-medium bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-gray-700 dark:text-gray-200"
                 >
                   #{tag}
                 </span>
@@ -57,7 +57,7 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
               return (
                 <span
                   key={index}
-                  className="text-xs font-medium bg-gray-200 px-3 py-1 rounded-full text-indigo-700"
+                  className="text-xs font-medium bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300"
                 >
                   @{tag.username || tag.userId}
                 </span>
@@ -65,7 +65,7 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
             }
           })
         ) : (
-          <span className="text-xs text-gray-400 italic">
+          <span className="text-xs text-gray-400 dark:text-gray-500 italic">
             {user ? 'No tags' : 'No collaborators'}
           </span>
         )}
