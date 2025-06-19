@@ -44,3 +44,11 @@ a:hover {
 .task-list-item input {
   margin-right: 0.25rem;
 }
+
+.dragging {
+  opacity: 0.5;
+}
+
+.droppable-over {
+  background-color: #bfdbfe;
+}

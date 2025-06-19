@@ -1,5 +1,9 @@
 import React, { useRef, useState } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
+import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import { updatePost } from '../../api/post';
+import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
@@ -14,6 +18,51 @@ type GridLayoutProps = {
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Done'];
+
+const DraggableCard: React.FC<{
+  item: Post;
+  user?: User;
+  compact: boolean;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+}> = ({ item, user, compact, onEdit, onDelete }) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: item.id,
+    data: { item },
+  });
+
+  const style = transform ? { transform: CSS.Translate.toString(transform) } : undefined;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={isDragging ? 'dragging' : ''}
+      {...attributes}
+      {...listeners}
+    >
+      <ContributionCard
+        contribution={item}
+        user={user}
+        compact={compact}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </div>
+  );
+};
+
+const DroppableColumn: React.FC<{ id: string; children: React.ReactNode }> = ({ id, children }) => {
+  const { setNodeRef, isOver } = useDroppable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex flex-col gap-4 ${isOver ? 'droppable-over' : ''}`}
+    >
+      {children}
+    </div>
+  );
+};
 
 const GridLayout: React.FC<GridLayoutProps> = ({
   items,
@@ -35,39 +84,61 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   /** Grouping logic for Kanban */
   const grouped = defaultKanbanColumns.reduce((acc, col) => {
     acc[col] = items.filter(
-      (item) => 'status' in item && (item.status === col)
+      (item) => 'status' in item && item.status === col
     );
     return acc;
   }, {} as Record<string, Post[]>);
 
   /** 📌 Kanban Layout */
+  const { selectedBoard, updateBoardItem } = useBoardContext();
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const dest = over.id as string;
+    const dragged: Post | undefined = active.data.current?.item;
+    if (!dragged || dragged.status === dest) return;
+
+    const optimistic = { ...dragged, status: dest };
+    if (selectedBoard) updateBoardItem(selectedBoard, optimistic);
+
+    try {
+      const updated = await updatePost(dragged.id, { status: dest });
+      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+    } catch (err) {
+      console.error('[GridLayout] Failed to update post status:', err);
+    }
+  };
+
   if (layout === 'kanban') {
     return (
-      <div className="flex overflow-auto space-x-4 pb-4 px-2">
-        {defaultKanbanColumns.map((col) => (
-          <div
-            key={col}
-            className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
-          >
-            <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
-            <div className="flex flex-col gap-4">
-              {grouped[col].map((item) => (
-                <ContributionCard
-                  key={item.id}
-                  contribution={item}
-                  user={user}
-                  compact={compact}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              ))}
+      <DndContext onDragEnd={handleDragEnd}>
+        <div className="flex overflow-auto space-x-4 pb-4 px-2">
+          {defaultKanbanColumns.map((col) => (
+            <div
+              key={col}
+              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
+            >
+              <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
+              <DroppableColumn id={col}>
+                {grouped[col].map((item) => (
+                  <DraggableCard
+                    key={item.id}
+                    item={item}
+                    user={user}
+                    compact={compact}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ))}
+              </DroppableColumn>
             </div>
+          ))}
+          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
+            + Add Column
           </div>
-        ))}
-        <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
-          + Add Column
         </div>
-      </div>
+      </DndContext>
     );
   }
 
