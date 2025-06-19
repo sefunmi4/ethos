@@ -2,40 +2,52 @@ const React = require('react');
 const { render, act } = require('@testing-library/react');
 const GridLayout = require('../src/components/layout/GridLayout').default;
 
+global.updateBoardItemMock = jest.fn();
+global.removeItemFromBoardMock = jest.fn();
+
 // Capture the drag handler to simulate drag end
 let dragHandler;
 
-jest.mock('@dnd-kit/core', () => ({
-  DndContext: ({ onDragEnd, children }) => {
-    dragHandler = onDragEnd;
-    return React.createElement('div', {}, children);
-  },
-  useDraggable: () => ({
-    attributes: {},
-    listeners: {},
-    setNodeRef: jest.fn(),
-    transform: null,
-    isDragging: false,
-  }),
-  useDroppable: () => ({
-    setNodeRef: jest.fn(),
-    isOver: false,
-  }),
-}), { virtual: true });
+jest.mock('@dnd-kit/core', () => {
+  const React = require('react');
+  return {
+    DndContext: ({ onDragEnd, children }) => {
+      dragHandler = onDragEnd;
+      return React.createElement('div', {}, children);
+    },
+    useDraggable: () => ({
+      attributes: {},
+      listeners: {},
+      setNodeRef: jest.fn(),
+      transform: null,
+      isDragging: false,
+    }),
+    useDroppable: () => ({
+      setNodeRef: jest.fn(),
+      isOver: false,
+    }),
+  };
+}, { virtual: true });
 
 jest.mock('@dnd-kit/utilities', () => ({ CSS: { Translate: { toString: () => '' } } }), { virtual: true });
 
 jest.mock('../src/api/post', () => ({
-  updatePost: jest.fn(() => Promise.resolve({ id: 't1', status: 'In Progress' }))
+  updatePost: jest.fn((id, body) => Promise.resolve({ id, ...body })),
+  archivePost: jest.fn(() => Promise.resolve({ success: true }))
 }));
-
-const updateBoardItem = jest.fn();
 
 jest.mock('../src/contexts/BoardContext', () => ({
-  useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem })
+  useBoardContext: () => ({
+    selectedBoard: 'b1',
+    updateBoardItem: global.updateBoardItemMock,
+    removeItemFromBoard: global.removeItemFromBoardMock
+  })
 }));
 
-const { updatePost } = require('../src/api/post');
+const updateBoardItem = global.updateBoardItemMock;
+const removeItemFromBoard = global.removeItemFromBoardMock;
+
+const { updatePost, archivePost } = require('../src/api/post');
 
 const basePost = {
   id: 't1',
@@ -63,5 +75,20 @@ describe('GridLayout kanban drag', () => {
 
     expect(updatePost).toHaveBeenCalledWith('t1', { status: 'In Progress' });
     expect(updateBoardItem).toHaveBeenCalledWith('b1', { id: 't1', status: 'In Progress' });
+  });
+
+  it('archives and removes item when dropped in Done', async () => {
+    render(React.createElement(GridLayout, { items: [basePost], questId: 'q1', layout: 'kanban' }));
+
+    await act(async () => {
+      await dragHandler({
+        active: { id: basePost.id, data: { current: { item: basePost } } },
+        over: { id: 'Done' }
+      });
+    });
+
+    expect(updatePost).toHaveBeenCalledWith('t1', { status: 'Done' });
+    expect(archivePost).toHaveBeenCalledWith('t1');
+    expect(removeItemFromBoard).toHaveBeenCalledWith('b1', 't1');
   });
 });
