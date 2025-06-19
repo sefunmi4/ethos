@@ -171,7 +171,11 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                   key={t}
                   type="button"
                   onClick={() => setPostTypeFilter(t as any)}
-                  className={`text-xs px-2 py-0.5 rounded ${postTypeFilter===t ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}
+                  className={`text-xs px-2 py-0.5 rounded ${
+                    postTypeFilter === t
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 dark:text-gray-200'
+                  }`}
                 >
                   {t}
                 </button>
