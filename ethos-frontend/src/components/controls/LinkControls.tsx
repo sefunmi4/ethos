@@ -190,7 +190,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             className="border rounded px-2 py-1 text-sm w-full"
           />
           <div className="flex items-center gap-2 my-1">
-            <label className="text-xs text-gray-600">Sort by:</label>
+            <label className="text-xs text-gray-600 dark:text-gray-400">Sort by:</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'label' | 'node')}
@@ -255,7 +255,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs">
-                <label className="text-gray-600">Type:</label>
+                <label className="text-gray-600 dark:text-gray-400">Type:</label>
                 <select
                   value={item.linkType || 'related'}
                   onChange={(e) => handleUpdate(idx, 'linkType', e.target.value)}
@@ -268,7 +268,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                   ))}
                 </select>
 
-                <label className="text-gray-600">Status:</label>
+                <label className="text-gray-600 dark:text-gray-400">Status:</label>
                 <select
                   value={item.linkStatus || 'active'}
                   onChange={(e) => handleUpdate(idx, 'linkStatus', e.target.value)}
@@ -279,7 +279,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                   ))}
                 </select>
 
-                <label className="text-gray-600">
+                <label className="text-gray-600 dark:text-gray-400">
                   <input
                     type="checkbox"
                     checked={item.cascadeSolution || false}
@@ -287,7 +287,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                   /> 🔁 Cascade
                 </label>
 
-                <label className="text-gray-600">
+                <label className="text-gray-600 dark:text-gray-400">
                   <input
                     type="checkbox"
                     checked={item.notifyOnChange || false}

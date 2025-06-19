@@ -38,11 +38,16 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {helperText && (
-          <p className={clsx('text-xs', error ? 'text-red-600' : 'text-gray-500')}>
-            {helperText}
-          </p>
-        )}
+          {helperText && (
+            <p
+              className={clsx(
+                'text-xs',
+                error ? 'text-red-600' : 'text-gray-500 dark:text-gray-400'
+              )}
+            >
+              {helperText}
+            </p>
+          )}
       </div>
     );
   }

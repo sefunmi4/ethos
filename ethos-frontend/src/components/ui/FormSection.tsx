@@ -33,7 +33,7 @@ const FormSection: React.FC<FormSectionProps> = ({ title, className, children })
   return (
     <section className={clsx('mb-6', className)}>
       {/* Section Header */}
-      <h2 className="text-lg font-semibold text-gray-800 mb-3">{title}</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">{title}</h2>
 
       {/* Section Body */}
       <div className="space-y-4">{children}</div>
