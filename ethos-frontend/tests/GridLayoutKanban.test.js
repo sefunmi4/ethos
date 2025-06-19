@@ -9,6 +9,27 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn()
 }), { virtual: true });
 
+jest.mock('@dnd-kit/core', () => ({
+  __esModule: true,
+  DndContext: ({ onDragEnd, children }) => {
+    dragHandler = onDragEnd;
+    return React.createElement('div', {}, children);
+  },
+  useDraggable: () => ({
+    attributes: {},
+    listeners: {},
+    setNodeRef: jest.fn(),
+    transform: null,
+    isDragging: false,
+  }),
+  useDroppable: () => ({
+    setNodeRef: jest.fn(),
+    isOver: false,
+  }),
+}), { virtual: true });
+
+jest.mock('@dnd-kit/utilities', () => ({ __esModule: true, CSS: { Translate: { toString: () => '' } } }), { virtual: true });
+
 jest.mock('../src/api/post', () => ({
   updatePost: jest.fn((id, body) => Promise.resolve({ id, ...body })),
   archivePost: jest.fn(() => Promise.resolve({ success: true })),
@@ -57,7 +78,6 @@ const GridLayout = require('../src/components/layout/GridLayout').default;
 
 const updateBoardItem = global.updateBoardItemMock;
 const removeItemFromBoard = global.removeItemFromBoardMock;
-
 const { updatePost, archivePost } = require('../src/api/post');
 
 const basePost = {

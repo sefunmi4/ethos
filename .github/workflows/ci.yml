@@ -21,9 +21,10 @@ jobs:
         run: |
           cd ethos-backend
           npm test -- -w=1
-      - name: Lint & build frontend
+      - name: Lint, test & build frontend
         run: |
           cd ethos-frontend
           npm ci
           npm run lint
+          npm test -- -w=1
           npm run build

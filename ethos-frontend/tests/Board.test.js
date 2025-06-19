@@ -3,19 +3,23 @@ const { render, screen, waitFor } = require('@testing-library/react');
 const Board = require('../src/components/board/Board').default;
 
 jest.mock('../src/api/board', () => ({
+  __esModule: true,
   fetchBoard: jest.fn(),
   fetchBoardItems: jest.fn(),
 }));
 
 jest.mock('../src/hooks/usePermissions', () => ({
+  __esModule: true,
   usePermissions: () => ({ canEditBoard: () => false }),
 }));
 
 jest.mock('../src/hooks/useSocket', () => ({
+  __esModule: true,
   useSocketListener: jest.fn(),
 }));
 
 jest.mock('../src/contexts/BoardContext', () => ({
+  __esModule: true,
   useBoardContext: () => ({
     setSelectedBoard: jest.fn(),
     appendToBoard: jest.fn(),
