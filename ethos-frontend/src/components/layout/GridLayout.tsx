@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -79,6 +79,28 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   loadingMore = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+  const scrollToIndex = useCallback((i: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const card = el.firstElementChild as HTMLElement | null;
+    const width = card?.offsetWidth || 0;
+    el.scrollTo({ left: i * width, behavior: 'smooth' });
+  }, []);
+  const handlePrev = useCallback(
+    () => setIndex((i) => Math.max(0, i - 1)),
+    []
+  );
+  const handleNext = useCallback(
+    () => setIndex((i) => Math.min(items.length - 1, i + 1)),
+    [items.length]
+  );
+
+  useEffect(() => {
+    if (layout === 'horizontal') {
+      scrollToIndex(index);
+    }
+  }, [layout, index, scrollToIndex]);
   useEffect(() => {
     const handler = (e: any) => {
       const id = e.detail?.taskId;
@@ -164,23 +186,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Horizontal Grid Layout */
   if (layout === 'horizontal') {
-    const [index, setIndex] = useState(0);
-
-    const scrollToIndex = (i: number) => {
-      const el = containerRef.current;
-      if (!el) return;
-      const card = el.firstElementChild as HTMLElement | null;
-      const width = card?.offsetWidth || 0;
-      el.scrollTo({ left: i * width, behavior: 'smooth' });
-    };
-
-    const handlePrev = () => setIndex((i) => Math.max(0, i - 1));
-    const handleNext = () => setIndex((i) => Math.min(items.length - 1, i + 1));
-
-    React.useEffect(() => {
-      scrollToIndex(index);
-    }, [index]);
-
     return (
       <div className="relative">
         <div
