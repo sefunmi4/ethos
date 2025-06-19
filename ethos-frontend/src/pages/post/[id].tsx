@@ -6,6 +6,7 @@ import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -41,6 +42,7 @@ const PostPage: React.FC = () => {
       const board = await fetchReplyBoard(id, {
         enrich: true,
         page: 1,
+        limit: DEFAULT_PAGE_SIZE,
       });
       setReplyBoard(board);
 
@@ -60,6 +62,7 @@ const PostPage: React.FC = () => {
       const board = await fetchReplyBoard(id, {
         enrich: true,
         page: nextPage,
+        limit: DEFAULT_PAGE_SIZE,
       });
 
       if (board.items?.length) {
