@@ -32,7 +32,12 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({
-  post, user, onUpdate, onDelete, compact = false
+  post,
+  user,
+  onUpdate,
+  onDelete,
+  compact = false,
+  questId,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
