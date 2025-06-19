@@ -31,7 +31,7 @@ const NotFound: React.FC = () => {
   const hasPosts = user && userPostBoard?.enrichedItems?.length;
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-12">
+    <main className="min-h-screen bg-soft dark:bg-soft-dark px-4 py-12">
       <section className="text-center max-w-2xl mx-auto mb-12">
         <h1 className="text-6xl font-extrabold text-gray-900 mb-4">404</h1>
         <h2 className="text-2xl font-semibold text-gray-700 mb-2">

@@ -46,7 +46,7 @@ const ProfilePage: React.FC = () => {
   const castUser = user as unknown as User;
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl">
+    <main className="container mx-auto px-4 py-8 max-w-6xl bg-soft dark:bg-soft-dark">
       
       <Banner user={castUser} />
 

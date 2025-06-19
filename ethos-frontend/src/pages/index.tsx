@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl space-y-12">
+    <main className="container mx-auto px-4 py-8 max-w-6xl space-y-12 bg-soft dark:bg-soft-dark">
       <header className="mb-4">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
           Welcome to Ethos

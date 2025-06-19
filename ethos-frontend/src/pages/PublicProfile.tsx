@@ -86,7 +86,7 @@ const PublicProfilePage: React.FC = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10">
+    <main className="max-w-6xl mx-auto px-4 py-10 bg-soft dark:bg-soft-dark">
       <Banner user={profile} readOnly />
 
       {/* 📘 Public Quests */}

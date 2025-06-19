@@ -89,7 +89,7 @@ const BoardPage: React.FC = () => {
   const editable = canEditBoard(boardData.id);
 
   return (
-    <main className="max-w-7xl mx-auto p-4 space-y-8">
+    <main className="max-w-7xl mx-auto p-4 space-y-8 bg-soft dark:bg-soft-dark">
       <div className="bg-gray-100 dark:bg-gray-900 rounded-xl shadow-lg p-6 space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">{boardData.title}</h1>

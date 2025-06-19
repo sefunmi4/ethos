@@ -4,7 +4,15 @@ import axios, { type AxiosInstance, AxiosError } from 'axios';
 /**
  * 📡 Base API URL — should be environment-configurable
  */
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const getEnv = () => {
+  try {
+    return Function('return import.meta.env')();
+  } catch {
+    return {};
+  }
+};
+
+const API_BASE = getEnv().VITE_API_URL || process.env.VITE_API_URL || 'http://localhost:3001/api';
 
 /**
  * 🔐 In-memory access token used for Authorization header
