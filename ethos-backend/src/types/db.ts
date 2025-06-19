@@ -194,6 +194,14 @@ export interface DBReview {
   createdAt: string;
 }
 
+export interface DBBoardLog {
+  id: string;
+  boardId: string;
+  action: 'create' | 'update' | 'delete';
+  userId: string;
+  timestamp: string;
+}
+
 /**
  * Represents the in-memory or file-backed layout of your JSON data store.
  * You can expand this to include reaction data, logs, etc.
@@ -205,10 +213,11 @@ export interface DBSchema {
   quests: DBQuest[];
   users: DBUser[];
   reviews: DBReview[];
+  boardLogs: DBBoardLog[];
 }
 
 // Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews'
+export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews' | 'boardLogs'
 
 /**
  * Generic type for file-based mock storage (can be used in utils/loaders.ts)

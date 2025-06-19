@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
@@ -308,6 +309,7 @@ router.post(
 
     boards.push(newBoard);
     boardsStore.write(boards);
+    logBoardAction(newBoard.id, 'create', (req.user as any)?.id || '');
     res.status(201).json(newBoard);
   }
 );
@@ -345,6 +347,7 @@ router.patch(
 
     Object.assign(board, req.body);
     boardsStore.write(boards);
+    logBoardAction(board.id, 'update', (req.user as any)?.id || '');
     res.json(board);
   }
 );
@@ -386,6 +389,7 @@ router.delete(
 
     const [removed] = boards.splice(index, 1);
     boardsStore.write(boards);
+    logBoardAction(removed.id, 'delete', (req.user as any)?.id || '');
     res.json(removed);
   }
 );
