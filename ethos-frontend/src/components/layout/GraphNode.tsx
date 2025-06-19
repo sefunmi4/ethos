@@ -84,6 +84,11 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     };
   }, [isOver]);
 
+  const shouldCondenseChildren =
+    !focusedNodeId &&
+    node.children &&
+    node.children.length > MAX_CHILDREN_BEFORE_CONDENSE;
+
 
   if (condensed) {
     const colorKey = node.tags[0] || node.type;
@@ -152,7 +157,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         setDropRef(el);
         registerNode?.(node.id, el);
       }}
-      className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''}`}
+      className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
     >
       <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
         <div
