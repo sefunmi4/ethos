@@ -20,7 +20,7 @@ type GridLayoutProps = {
   loadingMore?: boolean;
 };
 
-const defaultKanbanColumns = ['To Do', 'In Progress', 'Done'];
+const defaultKanbanColumns = ['To Do', 'In Progress', 'Blocked', 'Done'];
 
 const DraggableCard: React.FC<{
   item: Post;
