@@ -16,6 +16,8 @@ import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 
+const PREVIEW_LIMIT = 240;
+
 interface PostCardProps {
   post: Post;
   user?: User;
@@ -45,6 +47,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const timestamp = post.timestamp
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
+
+  const content = post.renderedContent || post.content;
+  const isLong = content.length > PREVIEW_LIMIT;
 
   useEffect(() => {
     if (!post.replyTo) {
@@ -205,18 +210,18 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       <div className="text-sm text-gray-800 dark:text-gray-200">
-        {compact && (post.renderedContent || post.content).length > 240 ? (
+        {isLong ? (
           <>
-            <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
+            <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
             >
-              View more
+              See more
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={post.renderedContent || post.content} />
+          <MarkdownRenderer content={content} />
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
@@ -291,13 +296,13 @@ const PostCard: React.FC<PostCardProps> = ({
         </button>
       )}
 
-      {!compact && (
+      {!isLong && !compact && (
         <div>
           <button
             onClick={() => navigate(ROUTES.POST(post.id))}
             className="text-blue-600 underline text-xs"
           >
-            View details
+            See more
           </button>
         </div>
       )}
