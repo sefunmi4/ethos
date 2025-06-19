@@ -29,31 +29,20 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   onScrollEnd,
   loadingMore = false,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if (!onScrollEnd) return;
-    const el = containerRef.current;
-    const handleScroll = () => {
-      if (!onScrollEnd) return;
+    const handler = (e: any) => {
+      const id = e.detail?.taskId;
+      if (!id) return;
+      const el = document.getElementById(id);
       if (el) {
-        const { scrollTop, scrollHeight, clientHeight, scrollLeft, scrollWidth, clientWidth } = el;
-        const reachedBottom =
-          layout === 'horizontal' || layout === 'kanban'
-            ? scrollLeft + clientWidth >= scrollWidth - 100
-            : scrollTop + clientHeight >= scrollHeight - 100;
-        if (reachedBottom) onScrollEnd();
-      } else {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-          onScrollEnd();
-        }
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500'), 2000);
       }
     };
-
-    const target = el || window;
-    target.addEventListener('scroll', handleScroll);
-    return () => target.removeEventListener('scroll', handleScroll);
-  }, [onScrollEnd, layout]);
+    window.addEventListener('questTaskSelect', handler);
+    return () => window.removeEventListener('questTaskSelect', handler);
+  }, []);
   if (!items || items.length === 0) {
     return (
       <div className="text-center text-gray-400 py-12 text-sm">
