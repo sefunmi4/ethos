@@ -50,4 +50,28 @@ describe('GraphLayout drag and drop', () => {
     expect(within(root).getByText('Parent')).toBeInTheDocument();
     expect(within(root).getByText('Child')).toBeInTheDocument();
   });
+
+  it('does not duplicate edges on repeated drags', async () => {
+    const posts = [
+      { id: 'p1', type: 'task', content: 'Parent', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p2', type: 'task', content: 'Child', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ];
+
+    const { container } = render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
+    });
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
+    });
+
+    const rootNodes = container.querySelectorAll(':scope > div.relative');
+    expect(rootNodes.length).toBe(1);
+    const root = rootNodes[0];
+    expect(within(root).getByText('Parent')).toBeInTheDocument();
+    const children = within(root).getAllByText('Child');
+    expect(children.length).toBe(1);
+  });
 });

@@ -122,10 +122,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         postId: active.id as string,
         parentId: over.id as string,
       });
-      setEdgeList((prev) => [
-        ...prev,
-        { from: over.id as string, to: active.id as string },
-      ]);
+      setEdgeList((prev) => {
+        const exists = prev.some(
+          (e) => e.from === (over.id as string) && e.to === (active.id as string)
+        );
+        if (exists) return prev;
+        return [...prev, { from: over.id as string, to: active.id as string }];
+      });
     } catch (err) {
       console.error('[GraphLayout] failed to link post:', err);
     }
