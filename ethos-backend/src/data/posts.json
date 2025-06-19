@@ -606,7 +606,8 @@
       }
     ],
     "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
-    "nodeId": "Q:graduateapplications:T00"
+    "nodeId": "Q:graduateapplications:T00",
+    "status": "In Progress"
   },
   {
     "id": "f9db4d56-fb24-41d3-a4e4-9c2aca829c8b",
@@ -1207,5 +1208,120 @@
     ],
     "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
     "nodeId": "Q:ethos:T05"
+  },
+  {
+    "id": "5fc9e807-67f7-4349-9cfc-1763b2c0921d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "main task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:52:08.162Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T00"
+  },
+  {
+    "id": "dd44beb6-7d81-476b-89ab-c080fb140496",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "sub task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:53:03.534Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T01"
+  },
+  {
+    "id": "0c00adbd-1e4c-4109-b739-f74261d03c26",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "test task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:54:01.363Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "dd44beb6-7d81-476b-89ab-c080fb140496",
+        "itemType": "post",
+        "nodeId": "",
+        "linkType": "task_edge",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      },
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T02"
+  },
+  {
+    "id": "8cdafb47-11dc-4cb3-bf9a-b82bc632b3f5",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "test",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:57:57.610Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "7ecdde27-dccd-436c-8c07-dd44c49e0e90",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-19T19:58:38.302Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "201ada28-20d8-4408-bf37-90c321b7635a",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-19T19:58:38.308Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
   }
 ]

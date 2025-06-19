@@ -2,7 +2,13 @@
   {
     "questId": "default-home-board",
     "path": "/api/quests/default-home-board/map",
-    "count": 4,
-    "lastOccurred": "2025-06-19T18:56:00.277Z"
+    "count": 7,
+    "lastOccurred": "2025-06-19T19:57:19.824Z"
+  },
+  {
+    "questId": "undefined",
+    "path": "/api/quests/undefined/link",
+    "count": 3,
+    "lastOccurred": "2025-06-19T19:54:12.520Z"
   }
 ]

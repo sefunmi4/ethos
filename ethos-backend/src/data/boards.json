@@ -16,9 +16,7 @@
     "description": "Personal posts board.",
     "layout": "grid",
     "items": [
-      "60175e71-58b0-4509-ab82-b75055d0f90c",
-      "7de6e351-61c6-4ac5-a9f5-ea62542df40f",
-      "54f01d70-a5e7-4223-8c16-d28d9151d824",
+      "8cdafb47-11dc-4cb3-bf9a-b82bc632b3f5",
       "c882ad20-74f4-4f19-9484-81818ccd5915",
       "acf42bea-ed75-4fd2-a558-ee64aaa66033",
       "0f28dcf4-ba70-46da-b3b2-f39aab56d044",
@@ -78,7 +76,13 @@
       "d6c482f3-aad0-45a9-ab95-f25127f11746",
       "cb71bf0a-7aa5-49f2-ad99-4e36c5b7a559",
       "8e3393b1-a024-4c38-a4ba-9a2c5b8dbbfb",
-      "2256bf9f-6867-4de0-9804-e11bf0313de9"
+      "2256bf9f-6867-4de0-9804-e11bf0313de9",
+      "54f01d70-a5e7-4223-8c16-d28d9151d824",
+      "7de6e351-61c6-4ac5-a9f5-ea62542df40f",
+      "60175e71-58b0-4509-ab82-b75055d0f90c",
+      "5fc9e807-67f7-4349-9cfc-1763b2c0921d",
+      "dd44beb6-7d81-476b-89ab-c080fb140496",
+      "0c00adbd-1e4c-4109-b739-f74261d03c26"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -91,9 +95,9 @@
     "description": "Personal quests board.",
     "layout": "grid",
     "items": [
-      "83d696b7-4220-47dc-adf8-32ace686343d",
-      "70d783ca-0433-441a-bc42-506a8a6522c9",
-      "acb6a9de-6e10-4425-91fa-1e16ba0a95b3"
+      "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+      "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+      "83d696b7-4220-47dc-adf8-32ace686343d"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -106,6 +110,7 @@
     "description": "Highlighted quest",
     "layout": "grid",
     "items": [
+      "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
       "83d696b7-4220-47dc-adf8-32ace686343d",
       "70d783ca-0433-441a-bc42-506a8a6522c9",
       "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
@@ -144,6 +149,8 @@
     "description": "Recent posts and quests",
     "layout": "thread",
     "items": [
+      "8cdafb47-11dc-4cb3-bf9a-b82bc632b3f5",
+      "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
       "83d696b7-4220-47dc-adf8-32ace686343d",
       "70d783ca-0433-441a-bc42-506a8a6522c9",
       "882f0a17-57e3-4945-aa94-775dd46b7d4f",
@@ -311,6 +318,22 @@
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-15T18:24:01.814Z",
+    "userId": "u_4b321776-e3da-482e-b38c-c4451b50aeac"
+  },
+  {
+    "id": "map-3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "title": "Untitled Board",
+    "description": "",
+    "layout": "grid",
+    "items": [
+      "0c00adbd-1e4c-4109-b739-f74261d03c26",
+      "dd44beb6-7d81-476b-89ab-c080fb140496",
+      "5fc9e807-67f7-4349-9cfc-1763b2c0921d"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-19T19:52:08.180Z",
     "userId": "u_4b321776-e3da-482e-b38c-c4451b50aeac"
   }
 ]
