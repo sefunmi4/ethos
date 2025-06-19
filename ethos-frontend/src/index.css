@@ -19,6 +19,7 @@
 html, body {
   background-color: var(--bg-soft);
   color: var(--text-primary);
+  @apply transition-colors duration-300;
   font-family: 'Inter', sans-serif;
   min-height: 100%;
   margin: 0;
