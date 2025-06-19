@@ -14,7 +14,6 @@ import GraphLayout from '../layout/GraphLayout';
 import ThreadLayout from '../layout/ThreadLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
-import { useTheme } from '../../contexts/ThemeContext';
 
 import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
 import type { Post } from '../../types/postTypes';
@@ -50,7 +49,6 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const { theme } = useTheme();
 
   // Keep items state in sync with BoardContext updates
   useEffect(() => {
@@ -213,8 +211,8 @@ const Board: React.FC<BoardProps> = ({
     return <div className="text-red-500 p-4">Board not found.</div>;
   }
 
-  const containerBg = theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50';
-  const panelBg = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
+  const containerBg = 'bg-soft dark:bg-soft-dark';
+  const panelBg = 'bg-soft dark:bg-soft-dark';
 
   return (
     <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>
