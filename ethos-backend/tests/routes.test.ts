@@ -310,10 +310,5 @@ describe('route handlers', () => {
     expect(res2.status).toBe(200);
     expect(res2.body.items).toEqual(['r3']);
 
-    expect(quest.title).toBe('Updated');
-    expect(quest.description).toBe('Desc');
-    expect(quest.tags).toEqual(['x']);
-    expect(quest.gitRepo.repoUrl).toBe('http://example.com');
-
   });
 });

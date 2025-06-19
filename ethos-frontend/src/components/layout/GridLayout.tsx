@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -6,6 +6,7 @@ import { updatePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import { Spinner } from '../ui';
 
 type GridLayoutProps = {
   items: Post[];
@@ -15,6 +16,8 @@ type GridLayoutProps = {
   compact?: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onScrollEnd?: () => void;
+  loadingMore?: boolean;
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Done'];
@@ -72,7 +75,23 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   compact = false,
   onEdit,
   onDelete,
+  onScrollEnd,
+  loadingMore = false,
 }) => {
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = e.detail?.taskId;
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-blue-500');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500'), 2000);
+      }
+    };
+    window.addEventListener('questTaskSelect', handler);
+    return () => window.removeEventListener('questTaskSelect', handler);
+  }, []);
   if (!items || items.length === 0) {
     return (
       <div className="text-center text-gray-400 py-12 text-sm">
@@ -144,7 +163,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Horizontal Grid Layout */
   if (layout === 'horizontal') {
-    const containerRef = useRef<HTMLDivElement>(null);
     const [index, setIndex] = useState(0);
 
     const scrollToIndex = (i: number) => {
@@ -208,6 +226,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             </div>
           </>
         )}
+        {loadingMore && <Spinner />}
       </div>
     );
   }
@@ -217,7 +236,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   const isPair = items.length === 2;
 
   if (layout === 'vertical' && items.length > 6) {
-    const containerRef = useRef<HTMLDivElement>(null);
     const handlePrev = () => containerRef.current?.scrollBy({ top: -200, behavior: 'smooth' });
     const handleNext = () => containerRef.current?.scrollBy({ top: 200, behavior: 'smooth' });
     return (
@@ -233,6 +251,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               onDelete={onDelete}
             />
           ))}
+          {loadingMore && <Spinner />}
         </div>
         <button
           type="button"
@@ -254,6 +273,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   return (
     <div
+      ref={containerRef}
       className={
         isSingle
           ? 'flex justify-center items-start p-2'
@@ -273,6 +293,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
           />
         </div>
       ))}
+      {loadingMore && <Spinner />}
     </div>
   );
 };

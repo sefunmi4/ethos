@@ -8,7 +8,7 @@ import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost } from '../../api/post';
 import ReactionControls from '../controls/ReactionControls';
-import { PostTypeBadge, Spinner } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner } from '../ui';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
@@ -162,10 +162,14 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   return (
-    <div className="relative border rounded bg-white dark:bg-gray-800 shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100 max-w-prose mx-auto">
+    <div
+      id={post.id}
+      className="relative border rounded bg-white dark:bg-gray-800 shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100 max-w-prose mx-auto"
+    >
       <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
+          {post.status && <StatusBadge status={post.status} />}
           <button
             type="button"
             onClick={() =>
