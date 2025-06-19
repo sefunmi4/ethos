@@ -23,8 +23,15 @@ let socket: Socket | null = null;
  */
 export const getSocket = (): Socket => {
   if (!socket) {
-    const SOCKET_URL =
-      import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+    const getEnv = () => {
+      try {
+        return Function('return import.meta.env')();
+      } catch {
+        return {};
+      }
+    };
+
+    const SOCKET_URL = getEnv().VITE_SOCKET_URL || process.env.VITE_SOCKET_URL || 'http://localhost:3001';
     socket = io(SOCKET_URL, {
       autoConnect: false,
       transports: ['websocket'],

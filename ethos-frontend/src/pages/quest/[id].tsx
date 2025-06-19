@@ -88,7 +88,7 @@ const QuestPage: React.FC = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10 space-y-12">
+    <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark">
       {/* 🎯 Quest Summary Card */}
       <Banner quest={quest} />
       <Board

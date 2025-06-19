@@ -119,7 +119,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <main className="min-h-screen flex items-center justify-center bg-soft dark:bg-soft-dark px-4">
       <section className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <header className="mb-6 text-center">
           <h1 className="text-3xl font-bold text-gray-800">
