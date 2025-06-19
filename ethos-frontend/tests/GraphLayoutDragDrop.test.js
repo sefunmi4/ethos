@@ -1,13 +1,27 @@
 const React = require('react');
 const { render, act, within } = require('@testing-library/react');
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+
+let isOverMock = false;
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  useNavigate: () => jest.fn(),
+}));
+
+jest.mock('../src/contexts/BoardContext', () => ({
+  useBoardContext: () => ({
+    selectedBoard: 'b1',
+    updateBoardItem: jest.fn(),
+    removeItemFromBoard: jest.fn(),
+  }),
+}));
 
 let dragHandler;
 
 jest.mock('@dnd-kit/core', () => ({
   DndContext: ({ onDragEnd, children }) => {
     dragHandler = onDragEnd;
-    return React.createElement('div', {}, children);
+    return React.createElement(React.Fragment, {}, children);
   },
   useDraggable: () => ({
     attributes: {},
@@ -16,7 +30,7 @@ jest.mock('@dnd-kit/core', () => ({
     transform: null,
     isDragging: false,
   }),
-  useDroppable: () => ({ setNodeRef: jest.fn(), isOver: false }),
+  useDroppable: () => ({ setNodeRef: jest.fn(), isOver: isOverMock }),
 }), { virtual: true });
 
 jest.mock('../src/hooks/useGit', () => ({
@@ -26,6 +40,8 @@ jest.mock('../src/hooks/useGit', () => ({
 jest.mock('../src/api/quest', () => ({
   linkPostToQuest: jest.fn(() => Promise.resolve({}))
 }));
+
+const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 const { linkPostToQuest } = require('../src/api/quest');
 
@@ -44,7 +60,8 @@ describe('GraphLayout drag and drop', () => {
 
     expect(linkPostToQuest).toHaveBeenCalledWith('q1', { postId: 'p2', parentId: 'p1' });
 
-    const rootNodes = container.querySelectorAll(':scope > div.relative');
+    const rootContainer = container.firstElementChild;
+    const rootNodes = rootContainer.querySelectorAll(':scope > div.relative');
     expect(rootNodes.length).toBe(1);
     const root = rootNodes[0];
     expect(within(root).getByText('Parent')).toBeInTheDocument();
@@ -67,11 +84,35 @@ describe('GraphLayout drag and drop', () => {
       await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
     });
 
-    const rootNodes = container.querySelectorAll(':scope > div.relative');
+    const rootContainer = container.firstElementChild;
+    const rootNodes = rootContainer.querySelectorAll(':scope > div.relative');
     expect(rootNodes.length).toBe(1);
     const root = rootNodes[0];
     expect(within(root).getByText('Parent')).toBeInTheDocument();
     const children = within(root).getAllByText('Child');
     expect(children.length).toBe(1);
+  });
+
+  it('adds pulse class after hovering over node', () => {
+    jest.useFakeTimers();
+    isOverMock = true;
+
+    const posts = [
+      { id: 'p1', type: 'task', content: 'Parent', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ];
+
+    const { container } = render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    const root = container.querySelector('div.relative');
+    expect(root.className).not.toContain('animate-pulse');
+
+    act(() => {
+      jest.advanceTimersByTime(600);
+    });
+
+    expect(root.className).toContain('animate-pulse');
+
+    jest.useRealTimers();
+    isOverMock = false;
   });
 });
