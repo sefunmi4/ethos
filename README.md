@@ -180,6 +180,7 @@ Current build includes:
 - Posting messages, logs and tasks
 - Quests linking posts with Git repo metadata
 - Boards to visualize posts and quests in grid, graph or thread views
+- Thread replies endpoint now supports pagination via `page` and `limit` query options
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
 - Review system for AI apps, quests and creators
