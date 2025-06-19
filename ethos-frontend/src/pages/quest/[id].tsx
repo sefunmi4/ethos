@@ -130,7 +130,10 @@ const QuestPage: React.FC = () => {
             boardId={`log-${id}`}
             board={logBoard}
             layout="grid"
-            editable={true}
+            editable={
+              user?.id === quest.authorId ||
+              quest.collaborators?.some((c) => c.userId === user?.id)
+            }
             quest={quest}
             user={user as User}
             showCreate

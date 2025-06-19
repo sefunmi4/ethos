@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import { Spinner } from '../ui';
 
 interface ThreadLayoutProps {
   contributions: Post[];
@@ -14,6 +15,8 @@ interface ThreadLayoutProps {
   questId?: string;
   /** Expand all posts by default */
   initialExpanded?: boolean;
+  onScrollEnd?: () => void;
+  loadingMore?: boolean;
 }
 
 /**
@@ -30,6 +33,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   depth = 0,
   maxDepth = 10,
   questId,
+  loadingMore = false,
   initialExpanded = false
 }) => {
   const childItems = contributions.filter(
@@ -53,6 +57,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
 
   return (
     <div
+      ref={depth === 0 ? containerRef : undefined}
       className={
         depth === 0
           ? childItems.length === 1
@@ -102,6 +107,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
           </div>
         );
       })}
+      {depth === 0 && loadingMore && <Spinner />}
     </div>
   );
 };
