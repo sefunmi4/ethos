@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import { Spinner } from '../ui';
 
 interface ThreadLayoutProps {
   contributions: Post[];
@@ -12,6 +13,8 @@ interface ThreadLayoutProps {
   depth?: number;
   maxDepth?: number;
   questId?: string;
+  onScrollEnd?: () => void;
+  loadingMore?: boolean;
 }
 
 /**
@@ -27,9 +30,29 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   onDelete,
   depth = 0,
   maxDepth = 10,
-  questId
+  questId,
+  onScrollEnd,
+  loadingMore = false
 }) => {
   const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (depth !== 0 || !onScrollEnd) return;
+    const el = containerRef.current;
+    const handleScroll = () => {
+      if (!onScrollEnd) return;
+      if (el) {
+        const { scrollTop, clientHeight, scrollHeight } = el;
+        if (scrollTop + clientHeight >= scrollHeight - 100) onScrollEnd();
+      } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        onScrollEnd();
+      }
+    };
+    const target = el || window;
+    target.addEventListener('scroll', handleScroll);
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, [onScrollEnd, depth]);
 
   const toggleExpand = (id: string) => {
     setExpandedPosts((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -43,6 +66,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
 
   return (
     <div
+      ref={depth === 0 ? containerRef : undefined}
       className={
         depth === 0
           ? childItems.length === 1
@@ -91,6 +115,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
           </div>
         );
       })}
+      {depth === 0 && loadingMore && <Spinner />}
     </div>
   );
 };
