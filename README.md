@@ -165,11 +165,12 @@ everyone on the board.
 
 ### Setup for drag and drop
 
-The Kanban board relies on the `@dnd-kit` libraries. Install them in the
-frontend directory before running the app:
+The Kanban board relies on the `@dnd-kit` libraries. Install `@dnd-kit/core`
+in the frontend directory before running the app. The `@dnd-kit/sortable`
+package is optional if you want additional sorting utilities:
 
 ```bash
-npm install --prefix ethos-frontend @dnd-kit/core @dnd-kit/sortable
+npm install --prefix ethos-frontend @dnd-kit/core
 ```
 
 
