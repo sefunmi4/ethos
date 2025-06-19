@@ -17,6 +17,7 @@ module.exports = {
           soft: "#F3F4F6",
           "primary-dark": "#f9fafb",
           "soft-dark": "#1f2937",
+          "card-dark": "#374151",
         },
         borderRadius: {
           xl: "1rem",

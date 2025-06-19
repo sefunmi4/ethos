@@ -272,7 +272,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   };
 
   return (
-    <div className="border rounded-lg shadow bg-white dark:bg-gray-800 p-6 text-gray-900 dark:text-gray-100">
+    <div className="border rounded-lg shadow bg-white dark:bg-card-dark p-6 text-gray-900 dark:text-gray-100">
       {renderHeader()}
       <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-2">
         <button

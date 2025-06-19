@@ -8,12 +8,14 @@
   --bg-soft: #f9fafb;
   --text-primary: #1f2937;
   --accent: #4f46e5; /* indigo-600 */
+  --card-dark: #ffffff;
 }
 
 .dark {
   --bg-soft: #1f2937; /* slate-800 */
   --text-primary: #f9fafb; /* light gray */
   --accent: #818cf8; /* indigo-400 */
+  --card-dark: #374151;
 }
 
 html, body {
