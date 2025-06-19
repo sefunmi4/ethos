@@ -24,11 +24,16 @@ const Button: React.FC<ButtonProps> = ({
     'inline-flex items-center justify-center font-medium rounded-md focus:outline-none transition-colors duration-150';
 
   const variantStyles: Record<ButtonVariant, string> = {
-    primary: 'bg-accent text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-2 focus:ring-gray-300',
-    ghost: 'bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500',
-    disabled: 'bg-gray-100 text-gray-400 cursor-not-allowed',
+    primary:
+      'bg-accent text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 dark:bg-indigo-600 dark:hover:bg-indigo-500 dark:focus:ring-indigo-300',
+    secondary:
+      'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600',
+    ghost:
+      'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700',
+    danger:
+      'bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-400 dark:focus:ring-red-300',
+    disabled:
+      'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed',
   };
 
   const sizeStyles: Record<ButtonSize, string> = {
