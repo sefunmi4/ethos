@@ -42,12 +42,19 @@ const Board: React.FC<BoardProps> = ({
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
-  const { setSelectedBoard, appendToBoard } = useBoardContext();
+  const { setSelectedBoard, appendToBoard, updateBoardItem, boards } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  // Keep items state in sync with BoardContext updates
+  useEffect(() => {
+    if (!board?.id) return;
+    const enriched = boards[board.id]?.enrichedItems || [];
+    setItems(enriched as Post[]);
+  }, [board?.id, boards[board?.id]?.enrichedItems]);
 
   useEffect(() => {
     const loadBoard = async () => {

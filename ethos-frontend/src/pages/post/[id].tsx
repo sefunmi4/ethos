@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import { createMockBoard } from '../../utils/boardUtils';
@@ -22,6 +22,16 @@ const PostPage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+
+  const boardWithPost = useMemo<BoardData | null>(() => {
+    if (!post) return null;
+    if (!replyBoard) return createMockBoard(`post-${post.id}`, 'Post', [post]);
+    return {
+      ...replyBoard,
+      items: [post.id, ...(replyBoard.items ?? [])],
+      enrichedItems: [post, ...(replyBoard.enrichedItems ?? [])],
+    };
+  }, [post, replyBoard]);
 
   const fetchPostData = useCallback(async () => {
     if (!id) return;
@@ -101,15 +111,7 @@ const PostPage: React.FC = () => {
         </section>
       )}
 
-      <section>
-        <Board
-          board={createMockBoard(`post-${post.id}`, 'Post', [post])}
-          editable={false}
-          compact={false}
-        />
-      </section>
-
-      {(replyBoard?.items?.length ?? 0) > 0 && (
+      {(boardWithPost?.items?.length ?? 0) > 1 && (
         <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
           <button
             className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -127,19 +129,18 @@ const PostPage: React.FC = () => {
       )}
 
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">💬 Replies</h2>
-        {replyBoard ? (
+        {boardWithPost ? (
           <Board
             boardId={`thread-${id}`}
-            board={replyBoard}
+            board={boardWithPost}
             layout={viewMode}
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}
-            compact={true}
+            compact={false}
           />
         ) : (
-          <p className="text-sm text-gray-500">No replies yet.</p>
+          <Spinner />
         )}
       </section>
     </main>

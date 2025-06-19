@@ -260,7 +260,7 @@ describe('route handlers', () => {
     expect(store).toHaveLength(1);
     expect(store[0].items).toContain('i1');
   });
-
+  
   it('GET /boards/thread/:postId paginates replies', async () => {
     const { postsStore } = require('../src/models/stores');
     postsStore.read.mockReturnValue([
@@ -309,5 +309,11 @@ describe('route handlers', () => {
     const res2 = await request(app).get('/boards/thread/p1?page=2&limit=2');
     expect(res2.status).toBe(200);
     expect(res2.body.items).toEqual(['r3']);
+
+    expect(quest.title).toBe('Updated');
+    expect(quest.description).toBe('Desc');
+    expect(quest.tags).toEqual(['x']);
+    expect(quest.gitRepo.repoUrl).toBe('http://example.com');
+
   });
 });

@@ -25,6 +25,12 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
 
 export const LINK_TYPES = ['solution', 'duplicate', 'citation'];
 
+export const STATUS_OPTIONS = [
+  { value: 'To Do', label: 'To Do' },
+  { value: 'In Progress', label: 'In Progress' },
+  { value: 'Done', label: 'Done' },
+] as const;
+
 /**
  * Defines the shape of each select option.
  */
