@@ -1,9 +1,31 @@
 const React = require('react');
 const { render, act } = require('@testing-library/react');
-const GridLayout = require('../src/components/layout/GridLayout').default;
+
+// Mock ESM-only deps used deep in GridLayout to avoid Jest ESM parsing issues
+jest.mock('react-markdown', () => () => null, { virtual: true });
+jest.mock('remark-gfm', () => () => ({}), { virtual: true });
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => jest.fn()
+}), { virtual: true });
+
+jest.mock('../src/api/post', () => ({
+  updatePost: jest.fn((id, body) => Promise.resolve({ id, ...body })),
+  archivePost: jest.fn(() => Promise.resolve({ success: true })),
+  fetchRepliesByPostId: jest.fn(() => Promise.resolve([]))
+}));
+
 
 global.updateBoardItemMock = jest.fn();
 global.removeItemFromBoardMock = jest.fn();
+
+jest.mock('../src/contexts/BoardContext', () => ({
+  useBoardContext: () => ({
+    selectedBoard: 'b1',
+    updateBoardItem: global.updateBoardItemMock,
+    removeItemFromBoard: global.removeItemFromBoardMock
+  })
+}));
 
 // Capture the drag handler to simulate drag end
 let dragHandler;
@@ -31,18 +53,7 @@ jest.mock('@dnd-kit/core', () => {
 
 jest.mock('@dnd-kit/utilities', () => ({ CSS: { Translate: { toString: () => '' } } }), { virtual: true });
 
-jest.mock('../src/api/post', () => ({
-  updatePost: jest.fn((id, body) => Promise.resolve({ id, ...body })),
-  archivePost: jest.fn(() => Promise.resolve({ success: true }))
-}));
-
-jest.mock('../src/contexts/BoardContext', () => ({
-  useBoardContext: () => ({
-    selectedBoard: 'b1',
-    updateBoardItem: global.updateBoardItemMock,
-    removeItemFromBoard: global.removeItemFromBoardMock
-  })
-}));
+const GridLayout = require('../src/components/layout/GridLayout').default;
 
 const updateBoardItem = global.updateBoardItemMock;
 const removeItemFromBoard = global.removeItemFromBoardMock;
