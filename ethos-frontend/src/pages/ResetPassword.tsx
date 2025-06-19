@@ -101,10 +101,10 @@ const ResetPassword: React.FC = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-soft dark:bg-soft-dark px-4">
-      <section className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+      <section className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
         <header className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Reset Your Password</h1>
-          <p className="text-sm text-gray-500 mt-1">Enter and confirm your new password.</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Reset Your Password</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-100 mt-1">Enter and confirm your new password.</p>
         </header>
 
         {error && (

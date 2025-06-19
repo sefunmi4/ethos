@@ -120,16 +120,16 @@ const Login: React.FC = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-soft dark:bg-soft-dark px-4">
-      <section className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+      <section className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
         <header className="mb-6 text-center">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
             {showReset
               ? 'Reset Password'
               : isRegistering
               ? 'Create an Account'
               : 'Welcome Back'}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-100 mt-1">
             {showReset
               ? 'Enter your email to receive a reset link.'
               : isRegistering
@@ -221,7 +221,7 @@ const Login: React.FC = () => {
           </div>
         )}
 
-        <footer className="mt-6 text-center text-sm text-gray-600">
+        <footer className="mt-6 text-center text-sm text-gray-600 dark:text-gray-100">
           {showReset ? (
             <button
               type="button"
