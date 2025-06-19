@@ -1147,5 +1147,65 @@
     ],
     "questId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
     "nodeId": "Q:publicmedia:T01"
+  },
+  {
+    "id": "54f01d70-a5e7-4223-8c16-d28d9151d824",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "like and heart are not persitantly displaying. thener should als be a way to mark a post as todo, inprogress, complete blocked from the post view similar to being able to link post",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:33:17.297Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I04"
+  },
+  {
+    "id": "7de6e351-61c6-4ac5-a9f5-ea62542df40f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "When a post becomes too long the post coard should dispaly at a fixed length with a ... see more \n\n\nthis ... see more should replace view details",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:34:36.129Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I05"
+  },
+  {
+    "id": "60175e71-58b0-4509-ab82-b75055d0f90c",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "there should be a an exanad collapbe controler in the top of the card when you click it it will by default show map view instad of clicking on view map. then on any view you can collaps it again.\n\nthe drop down list of video options should be \nMap - Graph\nLog -  Log \nStatus - card",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:38:21.523Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T05"
   }
 ]
