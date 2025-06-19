@@ -16,6 +16,7 @@ module.exports = {
           accent: "#4F46E5",
           soft: "#F3F4F6",
           "soft-dark": "#1f2937",
+          "card-dark": "#374151",
         },
         borderRadius: {
           xl: "1rem",
