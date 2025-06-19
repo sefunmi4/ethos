@@ -37,7 +37,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onEdit,
   onCancel,
 }) => {
-  const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('timeline');
+  const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('map');
   const [expanded, setExpanded] = useState(false);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -47,9 +47,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const navigate = useNavigate();
   const viewOptions = [
+    { value: 'map', label: 'Map - Graph' },
     { value: 'timeline', label: 'Log' },
-    { value: 'kanban', label: 'Card' },
-    { value: 'map', label: 'Graph' },
+    { value: 'kanban', label: 'Log Status - Card' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -117,6 +117,20 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
   
       <div className="flex gap-2 mt-2 md:mt-0 items-center flex-wrap">
+        <Button
+          variant="ghost"
+          onClick={() => {
+            if (expanded) {
+              setExpanded(false);
+            } else {
+              setExpanded(true);
+              setView('map');
+            }
+          }}
+        >
+          {expanded ? '▲ Collapse' : '▼ Expand'}
+        </Button>
+
         {!isOwner && (
           <Button onClick={() => onJoinToggle?.(questData)} variant="primary">
             Join Quest
@@ -303,25 +317,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           <LinkViewer items={questData.linkedPosts} />
         )}
       </div>
-      {!expanded && (
-        <button
-          onClick={() => {
-            setExpanded(true);
-            setView('map');
-          }}
-          className="text-blue-600 underline text-sm"
-        >
-          🗺 Map
-        </button>
-      )}
       {renderView()}
-      {expanded && (
-        <div className="text-right mt-2">
-          <button className="text-xs underline" onClick={() => setExpanded(false)}>
-            Collapse
-          </button>
-        </div>
-      )}
     </div>
   );
 };
