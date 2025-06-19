@@ -97,6 +97,24 @@ export const fetchQuestMapData = async (
 };
 
 /**
+ * Link a post to a quest and optionally create a task edge.
+ * @param questId The quest to update
+ * @param data Link payload containing postId and edge info
+ */
+export const linkPostToQuest = async (
+  questId: string,
+  data: {
+    postId: string;
+    parentId?: string;
+    edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
+    edgeLabel?: string;
+  }
+): Promise<Quest> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${questId}/link`, data);
+  return res.data;
+};
+
+/**
  * Fetch quests linked to a board  
  * @function fetchQuestsByBoardId  
  * @param boardId Board ID

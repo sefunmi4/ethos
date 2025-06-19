@@ -186,7 +186,9 @@ const Board: React.FC<BoardProps> = ({
   const baseStructure: BoardLayout =
     (viewMode || forcedStructure || board?.layout || 'grid') as BoardLayout;
   const resolvedStructure: BoardLayout =
-    baseStructure === 'graph' && !graphEligible ? 'grid' : baseStructure;
+    (baseStructure === 'graph' || baseStructure === 'graph-condensed') && !graphEligible
+      ? 'grid'
+      : baseStructure;
 
   const editable = useMemo(() => {
     if (readOnly) return false;
@@ -197,6 +199,7 @@ const Board: React.FC<BoardProps> = ({
   const Layout = {
     grid: GridLayout,
     graph: GraphLayout,
+    'graph-condensed': GraphLayout,
     thread: ThreadLayout,
   }[resolvedStructure] ?? GridLayout;
 
@@ -246,7 +249,12 @@ const Board: React.FC<BoardProps> = ({
                 onChange={(e) => setViewMode(e.target.value as BoardLayout)}
                 options={[
                   { value: 'grid', label: 'Grid' },
-                  ...(graphEligible ? [{ value: 'graph', label: 'Graph' }] : []),
+                  ...(graphEligible
+                    ? [
+                        { value: 'graph', label: 'Graph' },
+                        { value: 'graph-condensed', label: 'Graph (Condensed)' },
+                      ]
+                    : []),
                   { value: 'thread', label: 'Timeline' },
                 ]}
               />
@@ -301,7 +309,11 @@ const Board: React.FC<BoardProps> = ({
         </div>
       ) : (
         <Layout
-          items={resolvedStructure === 'graph' ? graphItems : renderableItems}
+          items={
+            resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed'
+              ? graphItems
+              : renderableItems
+          }
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}
@@ -309,9 +321,10 @@ const Board: React.FC<BoardProps> = ({
           contributions={items}
           questId={quest?.id || ''}
           initialExpanded={initialExpanded}
-          {...(resolvedStructure === 'graph'
+          {...(resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed'
             ? { edges: quest?.taskGraph }
             : {})}
+          {...(resolvedStructure === 'graph-condensed' ? { condensed: true } : {})}
           {...(resolvedStructure === 'grid' ? { layout: gridLayout } : {})}
         />
       )}

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { updatePost } from '../../api/post';
+import { updatePost, archivePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -132,7 +132,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   }, {} as Record<string, Post[]>);
 
   /** 📌 Kanban Layout */
-  const { selectedBoard, updateBoardItem } = useBoardContext();
+  const { selectedBoard, updateBoardItem, removeItemFromBoard } = useBoardContext();
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -147,6 +147,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     try {
       const updated = await updatePost(dragged.id, { status: dest });
       if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      if (dest === 'Done') {
+        await archivePost(dragged.id);
+        if (selectedBoard) removeItemFromBoard(selectedBoard, dragged.id);
+      }
     } catch (err) {
       console.error('[GridLayout] Failed to update post status:', err);
     }

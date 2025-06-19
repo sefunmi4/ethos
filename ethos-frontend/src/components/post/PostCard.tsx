@@ -6,15 +6,21 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
+import { linkPostToQuest } from '../../api/quest';
+import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
-import { PostTypeBadge, StatusBadge, Spinner } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
+import { STATUS_OPTIONS } from '../../constants/options';
+import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
+
+const PREVIEW_LIMIT = 240;
 
 interface PostCardProps {
   post: Post;
@@ -38,13 +44,33 @@ const PostCard: React.FC<PostCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(post.linkedItems || []);
   const [initialReplies, setInitialReplies] = useState<number>(0);
+  const [parentId, setParentId] = useState('');
+  const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
+  const [edgeLabel, setEdgeLabel] = useState('');
+  const [questPosts, setQuestPosts] = useState<Post[]>([]);
+  const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
+  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value;
+    try {
+      const updated = await updatePost(post.id, { status: newStatus });
+      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[PostCard] Failed to update status:', err);
+    }
+  };
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const timestamp = post.timestamp
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
+
+  const content = post.renderedContent || post.content;
+  const isLong = content.length > PREVIEW_LIMIT;
 
   useEffect(() => {
     if (!post.replyTo) {
@@ -53,6 +79,17 @@ const PostCard: React.FC<PostCardProps> = ({
         .catch(() => {});
     }
   }, [post.id, post.replyTo]);
+
+  useEffect(() => {
+    const qid = questId || post.questId;
+    if (showLinkEditor && qid) {
+      fetchPostsByQuestId(qid)
+        .then(setQuestPosts)
+        .catch((err) =>
+          console.error('[PostCard] Failed to fetch quest posts:', err)
+        );
+    }
+  }, [showLinkEditor, questId, post.questId]);
   const toggleReplies = async () => {
     if (!repliesLoaded) {
       setLoadingReplies(true);
@@ -170,6 +207,15 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
+          {canEdit && post.type === 'task' && (
+            <div className="ml-1 w-28">
+              <Select
+                value={post.status || 'To Do'}
+                onChange={handleStatusChange}
+                options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+              />
+            </div>
+          )}
           <button
             type="button"
             onClick={() =>
@@ -205,18 +251,18 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       <div className="text-sm text-gray-800 dark:text-gray-200">
-        {compact && (post.renderedContent || post.content).length > 240 ? (
+        {isLong ? (
           <>
-            <MarkdownRenderer content={(post.renderedContent || post.content).slice(0, 240) + '…'} />
+            <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
             >
-              View more
+              See more
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={post.renderedContent || post.content} />
+          <MarkdownRenderer content={content} />
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
@@ -243,12 +289,55 @@ const PostCard: React.FC<PostCardProps> = ({
                 allowCreateNew={false}
                 itemTypes={['quest', 'post']}
               />
+              {linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId) && (
+                <div className="mt-2 space-y-1">
+                  <label className="text-xs text-gray-600">Parent Post</label>
+                  <select
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={parentId}
+                    onChange={e => setParentId(e.target.value)}
+                  >
+                    <option value="">-- select parent --</option>
+                    {questPosts.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.content.slice(0, 30)}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="text-xs text-gray-600">Edge Type</label>
+                  <select
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={edgeType}
+                    onChange={e => setEdgeType(e.target.value as any)}
+                  >
+                    <option value="sub_problem">sub_problem</option>
+                    <option value="solution_branch">solution_branch</option>
+                    <option value="folder_split">folder_split</option>
+                  </select>
+                  <label className="text-xs text-gray-600">Edge Label</label>
+                  <input
+                    type="text"
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={edgeLabel}
+                    onChange={e => setEdgeLabel(e.target.value)}
+                  />
+                </div>
+              )}
               <div className="flex gap-2 mt-2">
                 <button
                   className="text-xs bg-indigo-600 text-white px-2 py-1 rounded"
                   onClick={async () => {
                     try {
                       const updated = await updatePost(post.id, { linkedItems: linkDraft });
+                      if (linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId)) {
+                        await linkPostToQuest(questId || post.questId!, {
+                          postId: post.id,
+                          parentId: parentId || undefined,
+                          edgeType,
+                          edgeLabel: edgeLabel || undefined,
+                        });
+                        loadGraph(questId || post.questId!);
+                      }
                       setShowLinkEditor(false);
                       onUpdate?.(updated);
                     } catch (err) {
@@ -291,13 +380,13 @@ const PostCard: React.FC<PostCardProps> = ({
         </button>
       )}
 
-      {!compact && (
+      {!isLong && !compact && (
         <div>
           <button
             onClick={() => navigate(ROUTES.POST(post.id))}
             className="text-blue-600 underline text-xs"
           >
-            View details
+            See more
           </button>
         </div>
       )}
