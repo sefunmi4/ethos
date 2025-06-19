@@ -196,6 +196,10 @@ package is optional if you want additional sorting utilities:
 npm install --prefix ethos-frontend @dnd-kit/core
 ```
 
+### Graph View Linking
+
+Drag nodes on top of other nodes in the graph view to create parent/child links. Nodes with a type or tag of `quest` appear as folder icons (📁) so you can visually organize quests. This drag-and-drop behavior uses the same `@dnd-kit/core` dependency as the Kanban board.
+
 
 ---
 
