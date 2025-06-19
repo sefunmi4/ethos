@@ -13,6 +13,8 @@ interface ThreadLayoutProps {
   depth?: number;
   maxDepth?: number;
   questId?: string;
+  /** Expand all posts by default */
+  initialExpanded?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
 }
@@ -31,36 +33,25 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   depth = 0,
   maxDepth = 10,
   questId,
-  onScrollEnd,
-  loadingMore = false
+  loadingMore = false,
+  initialExpanded = false
 }) => {
-  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
+  const childItems = contributions.filter(
+    (item) => item.replyTo === parentId || item.repostedFrom?.originalPostId === parentId
+  );
 
-  useEffect(() => {
-    if (depth !== 0 || !onScrollEnd) return;
-    const el = containerRef.current;
-    const handleScroll = () => {
-      if (!onScrollEnd) return;
-      if (el) {
-        const { scrollTop, clientHeight, scrollHeight } = el;
-        if (scrollTop + clientHeight >= scrollHeight - 100) onScrollEnd();
-      } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-        onScrollEnd();
-      }
-    };
-    const target = el || window;
-    target.addEventListener('scroll', handleScroll);
-    return () => target.removeEventListener('scroll', handleScroll);
-  }, [onScrollEnd, depth]);
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>(() => {
+    if (!initialExpanded) return {};
+    const all: Record<string, boolean> = {};
+    childItems.forEach((it) => {
+      all[it.id] = true;
+    });
+    return all;
+  });
 
   const toggleExpand = (id: string) => {
     setExpandedPosts((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  const childItems = contributions.filter(
-    (item) => item.replyTo === parentId || item.repostedFrom?.originalPostId === parentId
-  );
 
   if (childItems.length === 0 || depth > maxDepth) return null;
 
@@ -110,6 +101,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
                 depth={depth + 1}
                 maxDepth={maxDepth}
                 questId={questId}
+                initialExpanded={initialExpanded}
               />
             )}
           </div>

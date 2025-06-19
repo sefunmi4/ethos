@@ -77,6 +77,8 @@ export interface BoardProps {
   quest?: Quest;
   /** Layout variant for GridLayout */
   gridLayout?: 'vertical' | 'horizontal' | 'kanban';
+  /** Expand all threads when using ThreadLayout */
+  initialExpanded?: boolean;
 }
 
 /** Props for the EditBoard component */

@@ -111,7 +111,16 @@ const PostPage: React.FC = () => {
         </section>
       )}
 
-      {(boardWithPost?.items?.length ?? 0) > 1 && (
+      <section>
+        <Board
+          board={createMockBoard(`post-${post.id}`, 'Post', [post])}
+          editable={false}
+          compact={false}
+          initialExpanded={true}
+        />
+      </section>
+
+      {(replyBoard?.items?.length ?? 0) > 0 && (
         <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
           <button
             className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
@@ -137,7 +146,8 @@ const PostPage: React.FC = () => {
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}
-            compact={false}
+            compact={true}
+            initialExpanded={true}
           />
         ) : (
           <Spinner />
