@@ -8,7 +8,9 @@ import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost } from '../../api/post';
 import ReactionControls from '../controls/ReactionControls';
-import { PostTypeBadge, StatusBadge, Spinner } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
+import { STATUS_OPTIONS } from '../../constants/options';
+import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
@@ -42,6 +44,18 @@ const PostCard: React.FC<PostCardProps> = ({
   const [initialReplies, setInitialReplies] = useState<number>(0);
 
   const navigate = useNavigate();
+  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value;
+    try {
+      const updated = await updatePost(post.id, { status: newStatus });
+      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[PostCard] Failed to update status:', err);
+    }
+  };
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const timestamp = post.timestamp
@@ -175,6 +189,15 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
+          {canEdit && post.type === 'task' && (
+            <div className="ml-1 w-28">
+              <Select
+                value={post.status || 'To Do'}
+                onChange={handleStatusChange}
+                options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+              />
+            </div>
+          )}
           <button
             type="button"
             onClick={() =>
