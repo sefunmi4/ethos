@@ -8,12 +8,23 @@ import type { Post } from '../../types/postTypes';
 
 import type { TaskEdge } from '../../types/questTypes';
 
+const stringToColor = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue},70%,70%)`;
+};
+
 interface GraphLayoutProps {
   items: Post[];
   edges?: TaskEdge[];
   user?: User;
   questId: string;
   compact?: boolean;
+  /** Render a simplified node representation */
+  condensed?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
 }
@@ -33,6 +44,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   user,
   questId,
   compact = false,
+  condensed = false,
   onScrollEnd,
   loadingMore = false,
 }) => {
@@ -112,6 +124,49 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   ) => {
     const isFolder = node.type === 'quest' || node.tags.includes('quest');
     const icon = isFolder ? '📁' : '📄';
+
+    if (condensed) {
+      const colorKey = node.tags[0] || node.type;
+      const color = stringToColor(colorKey);
+      const label = node.nodeId || node.id.slice(0, 6);
+      const snippet = (node.content || '').slice(0, 30);
+      return (
+        <div key={node.id} className="relative">
+          <div
+            className="mb-2 flex items-center cursor-pointer"
+            style={{ marginLeft: depth * 16 }}
+            onClick={() => handleNodeClick(node)}
+            title={snippet}
+          >
+            <div
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white mr-2"
+              style={{ backgroundColor: color }}
+            >
+              {label}
+            </div>
+            {edge && (
+              <span className="text-xs text-gray-500 ml-1">
+                {edge.label || edge.type}
+              </span>
+            )}
+          </div>
+          {selectedNode?.id === node.id && (
+            <div className="ml-8 mb-4">
+              {diffLoading ? <Spinner /> : diffData?.diffMarkdown && (
+                <GitDiffViewer markdown={diffData.diffMarkdown} />
+              )}
+            </div>
+          )}
+          {node.children && node.children.length > 0 && (
+            <div className="ml-8 border-l border-gray-300 pl-4">
+              {node.children.map((child) =>
+                renderNode(child.node, depth + 1, child.edge)
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
 
     return (
       <div key={node.id} className="relative">

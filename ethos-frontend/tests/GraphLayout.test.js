@@ -50,4 +50,32 @@ describe('GraphLayout node interaction', () => {
     expect(listener).toHaveBeenCalled();
     expect(screen.getByText('diff')).toBeInTheDocument();
   });
+
+  it('renders condensed nodes with labels', () => {
+    const posts = [
+      {
+        id: 'p1',
+        nodeId: 'N1',
+        type: 'task',
+        content: 'Some very long task content that should be trimmed',
+        authorId: 'u1',
+        visibility: 'public',
+        timestamp: '',
+        tags: ['task'],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ];
+
+    render(
+      React.createElement(GraphLayout, {
+        items: posts,
+        questId: 'q1',
+        condensed: true,
+      })
+    );
+
+    expect(screen.getByText('N1')).toBeInTheDocument();
+    expect(screen.queryByText('Some very long task content')).toBeNull();
+  });
 });

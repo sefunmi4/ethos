@@ -5,6 +5,7 @@ import type { PostType } from '../types/postTypes';
 export const STRUCTURE_OPTIONS: { value: BoardLayout; label: string }[] = [
   { value: 'grid', label: 'Grid' },
   { value: 'graph', label: 'Graph' },
+  { value: 'graph-condensed', label: 'Graph (Condensed)' },
   { value: 'thread', label: 'Thread' },
 ];
 
