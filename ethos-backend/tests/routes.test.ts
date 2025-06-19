@@ -40,6 +40,7 @@ jest.mock('../src/models/stores', () => ({
   },
   usersStore: { read: jest.fn(() => []), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
+  boardLogsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
 const app = express();
@@ -260,6 +261,41 @@ describe('route handlers', () => {
     expect(store).toHaveLength(1);
     expect(store[0].items).toContain('i1');
   });
+
+  it('POST /boards logs creation', async () => {
+    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    boardsStore.read.mockReturnValue([]);
+    boardLogsStore.read.mockReturnValue([]);
+    boardLogsStore.write.mockClear();
+    await request(app)
+      .post('/boards')
+      .send({ title: 'Board', items: [], layout: 'grid' });
+    expect(boardLogsStore.write).toHaveBeenCalled();
+    const log = boardLogsStore.write.mock.calls[0][0][0];
+    expect(log.action).toBe('create');
+  });
+
+  it('PATCH /boards/:id logs update', async () => {
+    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', layout: 'grid', items: [] }]);
+    boardLogsStore.read.mockReturnValue([]);
+    boardLogsStore.write.mockClear();
+    await request(app).patch('/boards/b1').send({ title: 'New' });
+    expect(boardLogsStore.write).toHaveBeenCalled();
+    const log = boardLogsStore.write.mock.calls[0][0][0];
+    expect(log.action).toBe('update');
+  });
+
+  it('DELETE /boards/:id logs deletion', async () => {
+    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', layout: 'grid', items: [] }]);
+    boardLogsStore.read.mockReturnValue([]);
+    boardLogsStore.write.mockClear();
+    await request(app).delete('/boards/b1');
+    expect(boardLogsStore.write).toHaveBeenCalled();
+    const log = boardLogsStore.write.mock.calls[0][0][0];
+    expect(log.action).toBe('delete');
+  });
   
   it('GET /boards/thread/:postId paginates replies', async () => {
     const { postsStore } = require('../src/models/stores');
@@ -309,11 +345,6 @@ describe('route handlers', () => {
     const res2 = await request(app).get('/boards/thread/p1?page=2&limit=2');
     expect(res2.status).toBe(200);
     expect(res2.body.items).toEqual(['r3']);
-
-    expect(quest.title).toBe('Updated');
-    expect(quest.description).toBe('Desc');
-    expect(quest.tags).toEqual(['x']);
-    expect(quest.gitRepo.repoUrl).toBe('http://example.com');
 
   });
 });

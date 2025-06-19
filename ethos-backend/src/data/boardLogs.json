@@ -1,0 +1,23 @@
+[
+  {
+    "id": "d8c6c9ac-a2e1-4bb3-bd73-e510bf8b463c",
+    "boardId": "bada29a5-ddbf-4397-b9f9-b582f83a10b0",
+    "action": "create",
+    "userId": "u1",
+    "timestamp": "2025-06-19T01:55:02.451Z"
+  },
+  {
+    "id": "b36fabe3-66c5-4662-9309-8bb9ddb87ed4",
+    "boardId": "b1",
+    "action": "update",
+    "userId": "u1",
+    "timestamp": "2025-06-19T01:55:02.464Z"
+  },
+  {
+    "id": "cce6c72e-4eec-4109-9e01-3ed1b58cf96a",
+    "boardId": "b1",
+    "action": "delete",
+    "userId": "u1",
+    "timestamp": "2025-06-19T01:55:02.466Z"
+  }
+]
