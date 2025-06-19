@@ -12,7 +12,10 @@ const getEnv = () => {
   }
 };
 
-const API_BASE = getEnv().VITE_API_URL || process.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE =
+  getEnv().VITE_API_URL ||
+  (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
+  'http://localhost:3001/api';
 
 /**
  * 🔐 In-memory access token used for Authorization header
