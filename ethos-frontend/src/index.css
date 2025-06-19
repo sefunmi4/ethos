@@ -15,6 +15,7 @@
   --bg-soft: #1f2937; /* slate-800 */
   --text-primary: #f9fafb; /* light gray */
   --accent: #818cf8; /* indigo-400 */
+  --card-dark: #374151;
 }
 
 html, body {

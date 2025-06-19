@@ -51,7 +51,7 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
       {/* Add Collaborator */}
       <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Collaborator Username
           </label>
           <input
@@ -72,10 +72,10 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
       </div>
 
       {/* Select Roles */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Roles for this collaborator
-        </label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            Roles for this collaborator
+          </label>
         <div className="flex flex-wrap gap-2">
           {ALL_ROLES.map((role) => (
             <button
@@ -97,7 +97,7 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
       {/* Current Collaborators */}
       {value.length > 0 && (
         <div className="mt-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Assigned Collaborators:</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Assigned Collaborators:</p>
           <ul className="space-y-2 text-sm">
             {value.map((c, index) => (
               <li
@@ -106,8 +106,8 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
               >
                 <div>
                   <strong>@{c.username}</strong>
-                  <div className="text-xs text-gray-600">
-                    Roles: {(c.roles || []).join(', ') || 'None'}
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                      Roles: {(c.roles || []).join(', ') || 'None'}
                   </div>
                 </div>
                 <button

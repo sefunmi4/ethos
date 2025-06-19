@@ -41,11 +41,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {helperText && (
-          <p className={clsx('text-xs', error ? 'text-red-600' : 'text-gray-500')}>
-            {helperText}
-          </p>
-        )}
+          {helperText && (
+            <p
+              className={clsx(
+                'text-xs',
+                error ? 'text-red-600' : 'text-gray-500 dark:text-gray-400'
+              )}
+            >
+              {helperText}
+            </p>
+          )}
       </div>
     );
   }
