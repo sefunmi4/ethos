@@ -36,6 +36,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   loadingMore = false,
   initialExpanded = false
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const childItems = contributions.filter(
     (item) => item.replyTo === parentId || item.repostedFrom?.originalPostId === parentId
   );
