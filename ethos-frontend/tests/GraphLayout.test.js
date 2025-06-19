@@ -3,10 +3,12 @@ const { render, screen, fireEvent, waitFor } = require('@testing-library/react')
 const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 jest.mock('../src/hooks/useGit', () => ({
+  __esModule: true,
   useGitDiff: jest.fn(() => ({ data: { diffMarkdown: 'diff' }, isLoading: false }))
 }));
 
 jest.mock('react-router-dom', () => ({
+  __esModule: true,
   useNavigate: () => jest.fn()
 }));
 

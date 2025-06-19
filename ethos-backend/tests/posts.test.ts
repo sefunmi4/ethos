@@ -17,7 +17,7 @@ jest.mock('../src/models/stores', () => ({
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-const { postsStore, questsStore, usersStore } = require('../src/models/stores');
+const { postsStore, questsStore, usersStore, reactionsStore } = require('../src/models/stores');
 const { generateNodeId } = require('../src/utils/nodeIdUtils');
 
 const app = express();
@@ -206,5 +206,41 @@ describe('post routes', () => {
     expect(res.status).toBe(200);
     expect(posts[0].nodeId).toBe(expected);
     expect(res.body.nodeId).toBe(expected);
+  });
+
+  it('POST /posts/:id/archive adds archived tag', async () => {
+    const posts = [
+      {
+        id: 'p1',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ];
+
+    postsStore.read.mockReturnValue(posts);
+    usersStore.read.mockReturnValue([]);
+
+    const res = await request(app).post('/posts/p1/archive');
+
+    expect(res.status).toBe(200);
+    expect(posts[0].tags).toContain('archived');
+  });
+
+  it('POST and DELETE /posts/:id/reactions/:type toggles reaction', async () => {
+    reactionsStore.read.mockReturnValue([]);
+    const resAdd = await request(app).post('/posts/p1/reactions/like');
+    expect(resAdd.status).toBe(200);
+    expect(reactionsStore.write).toHaveBeenCalledWith(['p1_u1_like']);
+
+    reactionsStore.read.mockReturnValue(['p1_u1_like']);
+    const resDel = await request(app).delete('/posts/p1/reactions/like');
+    expect(resDel.status).toBe(200);
+    expect(reactionsStore.write).toHaveBeenCalledWith([]);
   });
 });
