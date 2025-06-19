@@ -6,7 +6,9 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
+import { linkPostToQuest } from '../../api/quest';
+import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import { PostTypeBadge, StatusBadge, Spinner } from '../ui';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
@@ -38,6 +40,11 @@ const PostCard: React.FC<PostCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(post.linkedItems || []);
   const [initialReplies, setInitialReplies] = useState<number>(0);
+  const [parentId, setParentId] = useState('');
+  const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
+  const [edgeLabel, setEdgeLabel] = useState('');
+  const [questPosts, setQuestPosts] = useState<Post[]>([]);
+  const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
 
@@ -53,6 +60,17 @@ const PostCard: React.FC<PostCardProps> = ({
         .catch(() => {});
     }
   }, [post.id, post.replyTo]);
+
+  useEffect(() => {
+    const qid = questId || post.questId;
+    if (showLinkEditor && qid) {
+      fetchPostsByQuestId(qid)
+        .then(setQuestPosts)
+        .catch((err) =>
+          console.error('[PostCard] Failed to fetch quest posts:', err)
+        );
+    }
+  }, [showLinkEditor, questId, post.questId]);
   const toggleReplies = async () => {
     if (!repliesLoaded) {
       setLoadingReplies(true);
@@ -243,12 +261,55 @@ const PostCard: React.FC<PostCardProps> = ({
                 allowCreateNew={false}
                 itemTypes={['quest', 'post']}
               />
+              {linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId) && (
+                <div className="mt-2 space-y-1">
+                  <label className="text-xs text-gray-600">Parent Post</label>
+                  <select
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={parentId}
+                    onChange={e => setParentId(e.target.value)}
+                  >
+                    <option value="">-- select parent --</option>
+                    {questPosts.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.content.slice(0, 30)}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="text-xs text-gray-600">Edge Type</label>
+                  <select
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={edgeType}
+                    onChange={e => setEdgeType(e.target.value as any)}
+                  >
+                    <option value="sub_problem">sub_problem</option>
+                    <option value="solution_branch">solution_branch</option>
+                    <option value="folder_split">folder_split</option>
+                  </select>
+                  <label className="text-xs text-gray-600">Edge Label</label>
+                  <input
+                    type="text"
+                    className="border rounded px-1 py-0.5 text-xs w-full"
+                    value={edgeLabel}
+                    onChange={e => setEdgeLabel(e.target.value)}
+                  />
+                </div>
+              )}
               <div className="flex gap-2 mt-2">
                 <button
                   className="text-xs bg-indigo-600 text-white px-2 py-1 rounded"
                   onClick={async () => {
                     try {
                       const updated = await updatePost(post.id, { linkedItems: linkDraft });
+                      if (linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId)) {
+                        await linkPostToQuest(questId || post.questId!, {
+                          postId: post.id,
+                          parentId: parentId || undefined,
+                          edgeType,
+                          edgeLabel: edgeLabel || undefined,
+                        });
+                        loadGraph(questId || post.questId!);
+                      }
                       setShowLinkEditor(false);
                       onUpdate?.(updated);
                     } catch (err) {
