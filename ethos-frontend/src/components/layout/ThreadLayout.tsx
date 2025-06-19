@@ -12,6 +12,8 @@ interface ThreadLayoutProps {
   depth?: number;
   maxDepth?: number;
   questId?: string;
+  /** Expand all posts by default */
+  initialExpanded?: boolean;
 }
 
 /**
@@ -27,17 +29,25 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
   onDelete,
   depth = 0,
   maxDepth = 10,
-  questId
+  questId,
+  initialExpanded = false
 }) => {
-  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>({});
+  const childItems = contributions.filter(
+    (item) => item.replyTo === parentId || item.repostedFrom?.originalPostId === parentId
+  );
+
+  const [expandedPosts, setExpandedPosts] = useState<Record<string, boolean>>(() => {
+    if (!initialExpanded) return {};
+    const all: Record<string, boolean> = {};
+    childItems.forEach((it) => {
+      all[it.id] = true;
+    });
+    return all;
+  });
 
   const toggleExpand = (id: string) => {
     setExpandedPosts((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-
-  const childItems = contributions.filter(
-    (item) => item.replyTo === parentId || item.repostedFrom?.originalPostId === parentId
-  );
 
   if (childItems.length === 0 || depth > maxDepth) return null;
 
@@ -86,6 +96,7 @@ const ThreadLayout: React.FC<ThreadLayoutProps> = ({
                 depth={depth + 1}
                 maxDepth={maxDepth}
                 questId={questId}
+                initialExpanded={initialExpanded}
               />
             )}
           </div>

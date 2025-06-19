@@ -103,6 +103,7 @@ const PostPage: React.FC = () => {
           board={createMockBoard(`post-${post.id}`, 'Post', [post])}
           editable={false}
           compact={false}
+          initialExpanded={true}
         />
       </section>
 
@@ -134,6 +135,7 @@ const PostPage: React.FC = () => {
             loading={loadingMore}
             editable={false}
             compact={true}
+            initialExpanded={true}
           />
         ) : (
           <p className="text-sm text-gray-500">No replies yet.</p>

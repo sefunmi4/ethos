@@ -35,6 +35,7 @@ const Board: React.FC<BoardProps> = ({
   loading: loadingMore = false,
   quest,
   gridLayout,
+  initialExpanded = false,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(boardProp ?? null);
   const [loading, setLoading] = useState(true);
@@ -300,6 +301,7 @@ const Board: React.FC<BoardProps> = ({
           loadingMore={loadingMore}
           contributions={items}
           questId={quest?.id || ''}
+          initialExpanded={initialExpanded}
           {...(resolvedStructure === 'graph'
             ? { edges: quest?.taskGraph }
             : {})}
