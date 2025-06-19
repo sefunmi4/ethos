@@ -176,22 +176,3 @@ export const enrichQuestWithData = async (quest: Quest): Promise<EnrichedQuest> 
     isNew: false,
   };
 };
-
-/**
- * Link a post to a quest and optionally specify a parent task
- * @function linkPostToQuest
- * @param questId - Quest ID
- * @param data - Link details { postId, parentId?, edgeType?, edgeLabel? }
- */
-export const linkPostToQuest = async (
-  questId: string,
-  data: {
-    postId: string;
-    parentId?: string;
-    edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
-    edgeLabel?: string;
-  }
-): Promise<Quest> => {
-  const res = await axiosWithAuth.post(`${BASE_URL}/${questId}/link`, data);
-  return res.data;
-};
