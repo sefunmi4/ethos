@@ -67,14 +67,22 @@ router.get(
 //
 router.get(
   '/thread/:postId',
-  (req: Request<{ postId: string }, any, undefined, { enrich?: string }>, res: Response): void => {
+  (
+    req: Request<{ postId: string }, any, undefined, { enrich?: string; page?: string; limit?: string }>,
+    res: Response
+  ): void => {
     const { postId } = req.params;
-    const { enrich } = req.query;
+    const { enrich, page = '1', limit } = req.query;
 
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const replies = posts.filter(p => p.replyTo === postId);
+    const pageNum = parseInt(page as string, 10) || 1;
+    const pageSize = parseInt(limit as string, 10) || DEFAULT_PAGE_SIZE;
+    const start = (pageNum - 1) * pageSize;
+    const end = start + pageSize;
+
+    const replies = posts.filter(p => p.replyTo === postId).slice(start, end);
 
     const board: BoardData = {
       id: `thread-${postId}`,

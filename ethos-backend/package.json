@@ -22,6 +22,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",
+    "simple-git": "^3.28.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

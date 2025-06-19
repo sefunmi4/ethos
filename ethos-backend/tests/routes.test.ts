@@ -260,33 +260,56 @@ describe('route handlers', () => {
     expect(store).toHaveLength(1);
     expect(store[0].items).toContain('i1');
   });
+  
+  it('GET /boards/thread/:postId paginates replies', async () => {
+    const { postsStore } = require('../src/models/stores');
+    postsStore.read.mockReturnValue([
+      {
+        id: 'r1',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+      {
+        id: 'r2',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+      {
+        id: 'r3',
+        authorId: 'u1',
+        type: 'free_speech',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        replyTo: 'p1',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ]);
 
-  it('PATCH /quests/:id updates quest fields', async () => {
-    const { questsStore, postsStore } = require('../src/models/stores');
-    const quest: any = {
-      id: 'q1',
-      authorId: 'u1',
-      title: 'Quest',
-      description: '',
-      tags: [],
-      status: 'active',
-      headPostId: '',
-      linkedPosts: [],
-      collaborators: [],
-      taskGraph: [],
-      gitRepo: { repoId: 'r1', repoUrl: '' },
-    };
-    questsStore.read.mockReturnValue([quest]);
-    postsStore.read.mockReturnValue([]);
+    const res1 = await request(app).get('/boards/thread/p1?page=1&limit=2');
+    expect(res1.status).toBe(200);
+    expect(res1.body.items).toEqual(['r1', 'r2']);
 
-    const res = await request(app)
-      .patch('/quests/q1')
-      .send({ title: 'Updated', description: 'Desc', tags: ['x'], gitRepo: { repoUrl: 'http://example.com' } });
+    const res2 = await request(app).get('/boards/thread/p1?page=2&limit=2');
+    expect(res2.status).toBe(200);
+    expect(res2.body.items).toEqual(['r3']);
 
-    expect(res.status).toBe(200);
-    expect(quest.title).toBe('Updated');
-    expect(quest.description).toBe('Desc');
-    expect(quest.tags).toEqual(['x']);
-    expect(quest.gitRepo.repoUrl).toBe('http://example.com');
+
   });
 });

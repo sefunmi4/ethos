@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import { createMockBoard } from '../../utils/boardUtils';
@@ -6,6 +6,7 @@ import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -22,6 +23,16 @@ const PostPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
+  const boardWithPost = useMemo<BoardData | null>(() => {
+    if (!post) return null;
+    if (!replyBoard) return createMockBoard(`post-${post.id}`, 'Post', [post]);
+    return {
+      ...replyBoard,
+      items: [post.id, ...(replyBoard.items ?? [])],
+      enrichedItems: [post, ...(replyBoard.enrichedItems ?? [])],
+    };
+  }, [post, replyBoard]);
+
   const fetchPostData = useCallback(async () => {
     if (!id) return;
     try {
@@ -31,6 +42,7 @@ const PostPage: React.FC = () => {
       const board = await fetchReplyBoard(id, {
         enrich: true,
         page: 1,
+        limit: DEFAULT_PAGE_SIZE,
       });
       setReplyBoard(board);
 
@@ -50,6 +62,7 @@ const PostPage: React.FC = () => {
       const board = await fetchReplyBoard(id, {
         enrich: true,
         page: nextPage,
+        limit: DEFAULT_PAGE_SIZE,
       });
 
       if (board.items?.length) {
@@ -103,6 +116,7 @@ const PostPage: React.FC = () => {
           board={createMockBoard(`post-${post.id}`, 'Post', [post])}
           editable={false}
           compact={false}
+          initialExpanded={true}
         />
       </section>
 
@@ -124,19 +138,19 @@ const PostPage: React.FC = () => {
       )}
 
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">💬 Replies</h2>
-        {replyBoard ? (
+        {boardWithPost ? (
           <Board
             boardId={`thread-${id}`}
-            board={replyBoard}
+            board={boardWithPost}
             layout={viewMode}
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}
             compact={true}
+            initialExpanded={true}
           />
         ) : (
-          <p className="text-sm text-gray-500">No replies yet.</p>
+          <Spinner />
         )}
       </section>
     </main>
