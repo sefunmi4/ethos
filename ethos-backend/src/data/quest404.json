@@ -1,20 +1,2 @@
 [
-  {
-    "questId": "default-home-board",
-    "path": "/api/quests/default-home-board/map",
-    "count": 7,
-    "lastOccurred": "2025-06-19T19:57:19.824Z"
-  },
-  {
-    "questId": "undefined",
-    "path": "/api/quests/undefined/link",
-    "count": 10,
-    "lastOccurred": "2025-06-19T21:32:35.233Z"
-  },
-  {
-    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
-    "path": "/api/quests/3b37788a-0fa7-4dd4-9430-bee9e7d62964",
-    "count": 6,
-    "lastOccurred": "2025-06-19T21:08:18.942Z"
-  }
 ]

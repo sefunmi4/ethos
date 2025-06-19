@@ -1,0 +1,1328 @@
+[
+  {
+    "id": "c882ad20-74f4-4f19-9484-81818ccd5915",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "Hello World :)",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:58:41.328Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "you can reply which is standard",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:58:58.605Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "c882ad20-74f4-4f19-9484-81818ccd5915",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "0f28dcf4-ba70-46da-b3b2-f39aab56d044",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "request",
+    "content": "I want to put on a battle of the bands.\nAny one down to help out and collaborate?",
+    "visibility": "public",
+    "timestamp": "2025-06-12T15:59:47.676Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": null
+  },
+  {
+    "id": "0daf8c76-5646-4100-8251-f119dcfcf66f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Make poster design's:\n\n- [x] 1. Instagram poster - IN PROGRESS\n- [ ] 2. Website event poster\n  - [ ] Pre event poster - Free \n   - [ ] Simplest approach would be to have a vendor viewing and pre signing , listen party  or get to meet the judges if they are famous \n  - [ ] Main event poster - Early Admission, Special Deals, & General admission\n    - [ ] 4 - 8 bands tournament style \n  - [ ] Afterparty poster - Early bird, General entry\n    - [ ] closed of venue or spefic club partmenad with to pleay crataors music or have a photographer ready, possible singing\n  - [ ] Get Updates pages\n    - [ ] email subscriptions to stay up to date\n  - [ ] Get Tickets pages\n    - [ ] Posh and architecture of homosapien's \n\n",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:08:03.282Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+    "nodeId": "Q:battleofthebands:T00",
+    "status": "To Do"
+  },
+  {
+    "id": "2ccfcc93-65c3-4e6b-a2a1-fd2261d8d33e",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Post and quest I make aren't showing up on my profile page",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:11:15.473Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      },
+      {
+        "itemId": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+        "itemType": "post",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I00"
+  },
+  {
+    "id": "7d619748-99fd-4182-b445-36f064ec5d34",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Post detail page only shows replies in in timeline view.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:12:35.696Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I01"
+  },
+  {
+    "id": "c1fa9e19-08cb-4dca-bc6b-ef39ac2b0d4b",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "Quest detail page should have:\n- quest map board \n- quest log board",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:16:13.046Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "2c93a340-d89f-47bd-a146-530b4b4df5df",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "changes don't instantly happen, also can only edit post in quest from the home page\n\nwhats up with that lol ",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:18:10.697Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "b925004c-ab1c-4893-aeac-ab4ea94eb0ca",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "link names need to be updated dynamically on display when the quest post is  type is updated",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:19:42.446Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I02"
+  },
+  {
+    "id": "6484f88a-1d54-4b42-a68b-901f336497de",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "when post graph get to condense the map view should make the post a node point dots awiht the laloe veing the node like id in the color of its tag type and some content from the post.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:22:28.504Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "c46d9061-03fd-4f41-bbd6-f0b65e282d34",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "tag should be easy to switch but fast to dynamically update all relevent meta data and info",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:23:22.536Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T00"
+  },
+  {
+    "id": "25d83c49-4bcf-46af-96c5-8f0e68decf86",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "work on one shot symbol casting:\nuser clicks an icon in the to right corner (next to other icons, for quick input format updating) to create a new custom symbol or gesture.\n\nthey press start icon that shows next to the cancle icon which replaces the custom symbol icon or tap 3 times in row to start recording a new symbol.\n\nthe user will tap 2 times to end that symbol being recorded.\n\nthis can be stacked for custome gestures and command flow controles.\n\nnoramlly you tap 2 time to stat and once to end a simple rune command\n\nbut here you can tap 3 time to record a new custome catergory of what that command does. for example you can make a symbol that calls a 2 tap command  or sequence of commands\n\nthen the ai makes copyes of the symbols to train a pre trinaed model on as a new catergy of csymbol or geter to recognize\n\n",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:35:11.215Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+    "nodeId": "Q:symbolcast:T00"
+  },
+  {
+    "id": "505a2608-de85-47bf-8783-264c069a6181",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "symbol case syntax\n\ntap is a delimiter between symbols. 2 taps to start recording input for command mapping. 2 pas to end recording\nso 2 taps symbol 2 tap  for one action\n2 tap symbol 1 tap symbol 2 tap for syquence of symbols \n3 tap record a custom symbol. you can map that symbol to a computer compand, current symbol or sqence of symbols with taps inbetween .\n\nthere should be a defoualt way to make a command file that is a squence of symbols orgnaized and stored \nyou do double tap to start then double tap to end and curse emidatly moce to the next line with an assumes or manueal doubl tap. 4 taps to close and save \n\nit should als be aple to handle brialle, and sign palm symbols \n\nif nessay a swap down and a tap are inter changable. so if uses want to create there symbols using brail and the swipe down once or twice , etc then that should work too\n\n1 - deleiiter in squence\n2 start and end a sentance\n3 record a new symbol/ rune category \n4 open up a symbol file / scroll to wrie runes on \n3 taps to record a ",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:46:08.040Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "6e68d1ca-d3e6-419a-85ba-97636ce5301d",
+    "nodeId": "Q:symbolcast:T01"
+  },
+  {
+    "id": "0a2acb7c-2002-4926-88f1-85bc80916bbc",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Poughkeepsie, work on first episode \ncast\nstory beat\nscenes\nmusic",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:46:57.724Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9d58fe6f-0591-4eb0-b03e-54526b8c9650",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9d58fe6f-0591-4eb0-b03e-54526b8c9650",
+    "nodeId": "Q:idkcomics:T00"
+  },
+  {
+    "id": "188cbf3f-5962-48cd-976c-256866cec077",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Weekly Post and videos edits\nPublic TV -  Edited Videos \nPublic Radio - Live or streamed events \nIDK COMICS\nPOD SHOP : Fashion show\nSk Network: battle of the bands\n\nDEV LOG & LAB LOG\nECO\nQ++\nSYMBOL CAST\nETHOS",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:49:40.142Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+    "nodeId": "Q:publicmedia:T00"
+  },
+  {
+    "id": "820d027e-dcdc-4597-b806-cdadfa3832aa",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Start working on spring fall season collection and fashion show",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:51:12.754Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "edb76e77-978a-410e-8f66-0167fc8ff153",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "edb76e77-978a-410e-8f66-0167fc8ff153",
+    "nodeId": "Q:podshop:T00"
+  },
+  {
+    "id": "bc9a97d0-3eef-4c2d-b4fc-18762740a0c3",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "the slide bar side buttons should be easy to use with a single tap moving one quest at a time to the right or left",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:53:35.677Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I03"
+  },
+  {
+    "id": "11b72eda-b1b3-42e4-b7fb-633c757d9f9d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "First time using this with saved memory that I might actually keep back ups of and hoenstly it's pretty nice. using the quest reallly help organize my work and its always nice when I know theres a post that links to it which will help me retrace my steps later. like a mind map for projects thats shared publicly. glad it has its own value out side or project management. :)",
+    "visibility": "public",
+    "timestamp": "2025-06-12T16:56:21.339Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "004b7f85-5d4a-4116-bb73-68090ed09b35",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "request",
+    "content": "add reviews to this application. lets users review expeircnes and products based on quality of product, customer service, and company culture. and lets them crequet request and quest to do something about even systematic change.",
+    "visibility": "public",
+    "timestamp": "2025-06-12T17:00:52.643Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "c5d39daa-736b-40ae-b12b-56bfd284c2f2",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Need do add the ability mark post as TODO, IN-PROGRESS, DONE",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:20:51.075Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T02"
+  },
+  {
+    "id": "dcc26e13-512b-4ab0-940c-8b764cc6e579",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Mark down  needs to get better at displaying formating ",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:29:31.036Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T03"
+  },
+  {
+    "id": "38943b72-45af-476f-8199-f40b792230c7",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "When a post is compeleted and marked as down it showuld be archived. the user should still be able to find the post through searching in links or going to arched postpost page on a quest mini board in the done colum of the kudo board but with an archived tag on the post/ closed ",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:32:13.337Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T04"
+  },
+  {
+    "id": "b2a4129a-9ef8-4ffd-8f93-1fe16823de6f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "- Weekly Post and videos edits\n- Public TV -  Edited Videos \n- Public Radio - Live or streamed events \n- ep 1 - 4\n- ep 5 - 8\n- ep 9 - 12",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:35:27.486Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "188cbf3f-5962-48cd-976c-256866cec077",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "1c5c9b87-0f85-4c52-a618-ab8307d84fac",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "IDK COMICS\n\n- issue 0\n- issue 1\n- issue 3",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:35:45.277Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "188cbf3f-5962-48cd-976c-256866cec077",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "f3d2fd83-3bc2-4fae-a9f3-ba25388ab0d8",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "\n- POD SHOP : Fashion show\n- fall season collection \n- New York Fashion Week Spring/Summer collection September 11-16 \n- New York Fashion Week Fall/Winter collection February 6-11\n\n- POD PRINTS : Fashion show\n- volume #1\n- volume #2\n- volume #3",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:36:04.106Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "188cbf3f-5962-48cd-976c-256866cec077",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "71eb24f5-f3ec-4902-b0af-ef84f9102bbc",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "log",
+    "content": "\nSk Network: battle of the bands\n",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:36:20.868Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "188cbf3f-5962-48cd-976c-256866cec077",
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+        "itemType": "quest",
+        "nodeId": "",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      }
+    ],
+    "questId": null
+  },
+  {
+    "id": "41038ba7-02c3-44c7-9560-cd93a38da7e2",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "\nDEV LOG & LAB LOG\nE-CO\nQ++\nSYMBOL CAST\nETHOS",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:36:38.744Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "188cbf3f-5962-48cd-976c-256866cec077",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "fb9613b9-08e6-4322-8476-9e83afe39560",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "First 12 Episodes of season random fun videos",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:40:24.469Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "b2a4129a-9ef8-4ffd-8f93-1fe16823de6f",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "4bf82d56-a8b0-4bdd-92e2-b4a025123069",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "1st 12 epsiode of edited videos with topics and fun segmen ts focused on the projects I'm going and topics I'd like to talks about. Intro video & then quest, adventures guilds & travel and intrering people in public.",
+    "visibility": "public",
+    "timestamp": "2025-06-14T19:42:47.608Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "b2a4129a-9ef8-4ffd-8f93-1fe16823de6f",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "da2234b8-5204-45d9-bc75-90c47407d497",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "Issue 0 - they looking for a batterly paRT FOR CREW MEMEBER\n\nmeet lcoal communtiy mameebra nmd recucurirng character",
+    "visibility": "public",
+    "timestamp": "2025-06-15T03:58:43.661Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "0a2acb7c-2002-4926-88f1-85bc80916bbc",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "59100d2e-bafa-4dc7-82c4-e59ef3029212",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "Issue 2",
+    "visibility": "public",
+    "timestamp": "2025-06-15T03:59:38.203Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "0a2acb7c-2002-4926-88f1-85bc80916bbc",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "882f0a17-57e3-4945-aa94-775dd46b7d4f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "Issue 1",
+    "visibility": "public",
+    "timestamp": "2025-06-15T03:59:47.048Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "0a2acb7c-2002-4926-88f1-85bc80916bbc",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "f7a46bfb-8a6c-49c2-b461-9e2ac15f5ede",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "    1.\tHoward University\n\t2.\tAlabama A&M University\n\t3.\tUniversity of California, Berkeley\n\t4.\tVirginia Tech – Innovation Campus\n\t5.\tStanford University\n\t6.\tMassachusetts Institute of Technology (MIT)\n\t7.\tUniversity of Waterloo (Canada)\n\t8.\tHarvard University\n\t9.\tFlorida A&M University\n\t10.\tHampton University\n\t11.\tUniversity of Oxford (UK)\n\t12.\tUniversity of Cambridge (UK)\n\t13.\tMorehouse College (Check out School Daze for cultural reference)\n\t14.\tMorgan State University\n\t15.\tNorth Carolina A&T State University\n\t16.\tNew York University (NYU)\n\t17.\tUniversity of Texas at Austin\n\t18.\tNew Jersey Institute of Technology (NJIT)\n\t19.\tRutgers University\n\t20.\tUniversity of Tokyo (Japan)\n\t21.\tKyoto University (Japan)\n\t22.\tTohoku University (Japan)\n\t23.\tTokyo Institute of Technology (Tokyo Tech)\n\t24.\tOsaka University (Japan)\n\t25.\tWaseda University (Japan)",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:24:01.806Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T00",
+    "status": "In Progress"
+  },
+  {
+    "id": "f9db4d56-fb24-41d3-a4e4-9c2aca829c8b",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- UC Berkely \n---\n- Statement of purpose\n- Aptitude and motivations - the area of specification\n- Preparations for the field of study\n- Academic plans & research interest \n- future career goals\n- Breakdown: Research goal (500 -1000)\n- Introduce yourself\n- Summarize your previous experience\n- Share research goal: direction\n- Define fit: university & department\n- Make a connection: faculty interest\n- P1 - Who am I\n- P2 - technical detail or research pursuits \n- P3 - connect to future department goals and perspective professors\n- I would like to work with Dr. X on XYZ\n- P4 - short (5 years after graduation) and long-term goals (10 years after graduation)\n- P5 - conclude and antispary thanks to the school and approcation of City and community \n---\n- Personal history statement : personal background and experince\n- Overcome barriers\n- Barriers faced by others\n- Service to advance equitable access\n- Underserved areas\n- Leadership among such groups \n---\n- 3 letters of recommendations\n---\n- Academic transcripts\n---\n- GRE or other transipts\n---\n- Funding\n",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:30:40.186Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T01"
+  },
+  {
+    "id": "3f677892-1123-4dcd-88dd-332940d537df",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Alabama A&M\n---\n- Completed application for admission to AAMU School Graduate Studies and a non-refundable application fee.\n---\n- Official transcripts from each collegiate institution attended directly mailed to the School of Graduate Studies Office, P. O. Box 998, Normal, AL 35762.\n---\n- Official test scores of the Graduate Record Examination (GRE) are required for many programs. The Graduate Management Admission Test (GMAT) is required for the MBA (University Code: 1003). Test scores over five years old or results brought by the applicant to the Office of Graduate Studies are not accepted.\n---\n- Two letters of recommendation. Recommendations should speak to the applicant’s potential for successful completion of the graduate program to which he/she is applying (usually, letters of recommendation are from the applicant's former professors). Additional recommendations may come from employers or supervisors who are familiar with the applicant's work experience.\n---\n- Letter of Intent that include details on why you have selected the program and professional work experience or related skills.\n---\n- Applicants must demonstrate adequate academic preparation in their proposed area of study. Those with deficiencies in academic preparation may be required to take additional coursework to strengthen their backgrounds.\n---\n- Certain degree programs may have additional requirements.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:41:03.328Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T02"
+  },
+  {
+    "id": "b15cfb9a-09f3-4727-9657-c602d4896bfc",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Howard\n---\n- Online MBA Program Requirements\n---\n- Undergraduate degree from a regionally accredited college or university.\n- A cumulative 3.0 or higher GPA is recommended but not required.\n---\n- If you have under five years of business experience, we generally require the GMAT or GRE (school code 5297). In some cases, we will accept the successful completion of the online Business Fundamentals Course Bundle from the Graduate Management Admissions Council.\n- If you have five or more years, we are more interested in your post-college career, and admissions tests are optional. Please contact your enrollment advisor for more information.\n---\n- Current resume or CV detailing all previous work experience.\n---\n- Applicants should provide a personal statement describing the uniqueness of their character and abilities; their experiences with issues of diversity; and their academic, community service, and career history. Additionally, the statement should discuss the applicant’s interest in the Howard University Online MBA program and how completing the Online MBA will facilitate realizing their dreams and aspirations. The statement should be between 2-3 pages and double-spaced.\n---\n- Two letters of recommendation that address intellectual and personal capabilities.\n\n- Topics should cover personal integrity, ability to work with others, leadership qualities, oral and written communication skills, and community involvement. Recommendations may come from a supervisor, a member of academia, a mentor, and/or someone who can attest to these capabilities.\n\n- Each recommender must sign and upload their letter on official letterhead through the application website or email it as a PDF attachment. We will not accept letters provided by the applicant.\n---\n- Official transcripts are required from all undergraduate and graduate institutions attended, including schools where you did not earn a degree. You can provide unofficial transcripts for the application process, however, official transcripts must be provided if admitted to the program.\n\n- Transcripts may be delivered electronically (preferred). To be considered official, they must be sent through the National Student Clearinghouse or delivered through a secure University Office of the Registrar system. Please do not select Howard from the dropdown and manually enter onlinebusiness@howard.edu.\n\n- Transcripts may also be delivered via U.S. mail to:\n\n- Howard School of Business\n- Office of Graduate Programs\n- Attn: Online MBA\n- 2600 6th Street, NW, Room 236\n- Washington, D.C. 20059\n---\n- Applicants may transfer a maximum of six graduate semester hours from other programs that are accredited by the AACSB-International Association for Management Education provided the courses to be transferred were not used to satisfy requirements for another degree. Note, only those courses in which a grade of B or higher was earned will be considered for transfer credit.\n---\n- The application fee is $93, payable online by debit or credit card through your application.\n---\n- Complete a virtual interview with the program director if requested by the review committee.\n---\n- https://gradcas.liaisoncas.org/apply/\n---\n- https://engineeringcas.liaisoncas.org/apply/",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:41:24.416Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T03"
+  },
+  {
+    "id": "3051ab0d-fe7f-40f5-b4eb-61f9d6f54933",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Virginia tech innovation academy\n---\n- Transcripts\n- Include a scanned copy of your college transcripts with your online application, then arrange for an official copy to be sent to us after you receive an offer of admission.\n---\n- Letters of Recommendation\n- Check to see whether your department requires letters of recommendation from references. If so, you can include the letter writers' email addresses in your online application, or have the people you ask to write those letters send paper copies directly to your program’s department.\n---\n- Graduate School Testing Requirements\nThe Graduate School does not require entrance tests, but check to see whether your department requires you to submit GRE, GMAT, or subject test scores with your application. If so, have the testing agency send official scores to Virginia Tech Graduate School, code 5859. \n- International students may be required to submit TOEFL scores. \n- Visit our testing requirements page for more information.\n---\n- Application Fees\n- Degree-seeking students must include a $75 fee with their application, though check to see if you qualify for a waiver or reduced fee. All application fees are non-refundable.\n---\n- Application Fee Waivers\n- Please visit the application fee waiver information on our website. \n---\n- Refund procedure\n- All application fees are non-refundable.\n---\n- Submission Deadlines\n- Check with your department to see if its submission deadlines fall before the Graduate School's established deadlines, shown in this chart.\n---\n- Applying as an International Student\n- International students seeking F-1 or J-1 status may apply only to the Blacksburg and National Capital Region campuses and may not enroll in executive master's and virtual programs.  For assistance with immigration questions, contact the Cranwell International Center if applying to the Blacksburg Campus,  our our immigration advisors in the Northern Virginia Graduate Center if applying to the Greater Washington DC area campus.  Regardless of your campus location, financial and immigration documents may be submitted after you receive admission into a graduate program. \n---\n- Offers of Admission and Funding\n- The Graduate School sends an official offer of admission to applicants upon the recommendation of the department faculty. Admitted applicants who are offered graduate assistantships at Virginia Tech are not required to make a decision to commit to the assistantship offer until April 15. See the assistantships page for more details.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:41:39.541Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T04"
+  },
+  {
+    "id": "458c9af2-ac50-4399-b0fb-e5a004badc66",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Standford\n---\n- Personal Background \n- Stanford is committed to creating an accessible, diverse, and inclusive university for all of our community members. In this section, we invite you to share information that may provide the admission committee with a more holistic view of your lived experiences.\n---\n- Program Selection\n- In this section, you indicate your intended graduate program and entry term. The following additional options appear in this section if applicable for your program:\n---\n- Specialization\n- Honors Cooperative Program\n- Consideration for the master's program if not admitted to the PhD program\nOut of the graduate degree programs listed on this page, you may apply to only one program per academic year. The only exception is within the Biosciences PhD programs, where you may apply for two programs within a single application.\n---\n- Academic History\n- In this section, you must list and provide your unofficial transcript for every post-secondary institution where you were enrolled — or are currently enrolled — in an undergraduate or graduate degree program.\n\n- Learn more about transcript requirements\n\n- You must also respond to the following questions:\n\n- Have you ever been suspended, dismissed, or placed on enforced leave from any college, university, or post-secondary institution or been the subject of disciplinary action by such an institution?\n- Have you ever been placed on academic probation by any college or university?\n---\n- Test Scores\n- Depending on your selected program and language background, you may be required to submit one or more of the following test scores:\n- GRE General Test\n- GRE Subject Test\n- TOEFL\n- Learn more about test score requirements\n---\n- Experience\n- This section provides you an opportunity to share information about any relevant experience in the following categories:\n---\n- Research experience\n- Publications/presentations/posters\n- Awards & honors\n- Work experience\n- In addition, you have the option to upload your resume/CV. Resume requirements and guidelines vary by program.\n---\n- Recommendations\n- You are required to list three academic or professional references who know you well and are qualified to evaluate your potential for graduate study.\n---\n- Learn more about recommendations\n---\n- Statements\n- In this section, you provide your Statement of Purpose for pursuing graduate study in your field of interest. In addition, you have the opportunity to submit an optional statement in response to the Enriching the Learning Community prompt.\n---\n- Learn more about statements\n---\n- Program Supplemental\n- The questions in this section are tailored to the graduate program you selected. You may be asked to provide your academic interests, faculty interests, writing samples, or supplemental essays. Refer to your graduate program’s website for program-specific requirements.\n---\n- Additional Information\n- In this section, you provide information (if applicable) about your applications to:\n\n- Stanford professional schools\n- Knight-Hennessy Scholars\n- Other graduate institutions\n- Non-Stanford scholarships/fellowships\n- You also disclose whether you have a prior or current affiliation with Stanford, for record-matching purposes.\n---\n- Finally, you have the option to upload a supplemental document if you wish to share additional information that was not covered by the questions in the application.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:42:17.307Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T05"
+  },
+  {
+    "id": "49e65a59-dc1f-4f3d-97f3-43bdddd0ed09",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- MIT\n---\n- Eligibility to apply\n- The only requirement to be admitted as a regular graduate student at MIT is an applicant must have earned a bachelor’s degree or its equivalent from an accredited college, university, or technical school of acceptable standing. Students in their final year of undergraduate study may be admitted on the condition that their bachelor’s degree is awarded before they enroll at MIT.\n\n- The Institute does not require applicants to hold a master’s or other advanced degree in order to apply to a Ph.D program. Any applicant may apply to a doctoral degree program so long as they will have attained a bachelor’s degree or equivalent degree prior to enrolling at MIT. However, some departments may require applicants without a master’s degree to start in a master’s-level program prior to continuing on to the doctoral-level program.\n\n- Departments may have specific eligibility requirements related to the applicant’s major, coursework, degrees, or academic performance. These limitations will be listed on the department or program website.\n\n- The Massachusetts Institute of Technology is committed to the principle of equal opportunity in education and employment. Please review MIT’s Nondiscrimination Policy online for more information.\n---\n- Requirements to apply\n- Online application\n- Applicants must complete, submit, and pay for their application(s) via GradSlate or SloanSlate in order to be considered for admission. All degree program applications on GradSlate have a $90 application fee. Applications to the MIT Sloan School of Management may have application fees between $90 and $250.\n\n- Qualified applicants interested in more than one department must submit separate applications to each department of interest. This will require filling out a completely new application and submitting an additional application fee. Applicants who applied in previous years cannot use their previous application to apply in the current cycle. However you will use your previous login credentials to access your application portal.\n\n- For more details regarding application fee waivers and eligibility, please visit our Application fee waiver page (available in summer 2025).\n---\n- Application materials\n- Each department oversees their own application process. Specific admission requirements vary significantly between departments and degree programs; please visit the Degree programs page for the requirements of individual departments. In general, most departments require significant work in mathematics and the physical sciences in addition to preparation in a specific field of interest; however, some departments admit students with as little as one year each of college-level mathematics and physical science.\n\n- Below are some examples of application materials you may be required to submit:\n---\n- 1. Letters of recommendation\n- Most departments require 3 letters of recommendation.\n\n- Applicants may submit their application prior to receiving all of their letters of recommendation. Most departments grant leniency if recommenders are late turning in their recommendation, but applicants should always check department policy prior to the application deadline.\n\n- Be mindful of the following letter of recommendation policies:\n\n- Applicants cannot change the contact information for any of their recommenders after they have submitted their application.\n- Applicants cannot add new recommenders after they have submitted their application.\n- If you exclude a recommender after you submit your application, you will not be able to add a new recommender or undo your exclusion.\n- Letters of recommendation cannot be shared between multiple applications. Each application will require unique letters of recommendation in order to be considered for admission to MIT.\n- Applicants cannot change their response to the “waiver of rights” question after the request for a recommendation has been sent. Requests for recommendation letters are automatically sent via the application portal, and initiating the request process will automatically lock in your response to the “waiver of rights.”\n- Please note: due to the volume of applications MIT receives, we cannot make any exceptions to the above policies.\n---\n- 2. Statement(s)\n- Most departments will require a statement of objectives and/or a personal statement. Some departments may also require additional written responses, such as a writing sample or essay.\n---\n- 3. CV and/or Resume\n- An updated CV and/or resume will be required for most departments. Some departments may allow for CV/resume updates after submission of your application. Should the department(s) to which you are applying allow these updates, you will see an option to submit an updated CV/Resume on the status page of your application.\n---\n- 4. Unofficial Transcripts\n- Unofficial transcripts are required in order to submit your application for consideration. Some departments may request official transcripts after the application deadline or if you are admitted to the program.\n\n- Applicants will be required to submit unofficial transcripts for all institutions from which they received a letter grade. The exceptions to this rule include travel abroad semesters and any AP/IB credits transferred from high school to your bachelor’s degree.\n\n- Some departments may allow applicants to submit transcripts with updated fall grades. Should the department(s) to which you are applying allow transcript updates, you will see an option to submit an updated transcript on the status page of your application.\n---\n- 5. Publications, awards, experiences\n- In addition to or in lieu of your CV/resume, some departments ask applicants to list out their accomplishments in a designated section of their application for review.\n\n- Our application software has limitations to the length of titles for each item you list. If you find that the title of your accomplishment is too long, please use the most commonly used citation style of your field to shorten the length of your title.\n\n- As part of our anti-fraud measures in our application software, you may find that you have trouble submitting similar items within your list. If you have multiple items within the same category (for instance, being on the Dean’s list for multiple semesters), please indicate the differentiation between the items in the title of each item. Example: Fall 2024 Dean’s List, Spring 2025 Dean’s list recipient, etc.,\n---\n- 6. GRE test scores\n- Some departments require GRE test scores to be submitted in order to submit your application for review. You will need to self-report your test scores and have them verified to complete your application. To see if your program of interest requires the GRE, please visit the Degree programs page and select your program of interest.\n\n- Self-reporting your scores: If you are required to submit GRE scores, your application will prompt you to “self-report” your test scores. This process is used for verification purposes. Please list your test scores in the space provided on your application, and the ETS certification system will verify your scores.\n- Verifying scores: In order to verify your scores, you must send your official GRE score report digitally to the Massachusetts Institute of Technology 3514.\n- Please note: As part of our anti-fraud software, if there is a discrepancy between the scores you self-report in your application and the scores sent to MIT by ETS, your application will be flagged for a discrepancy in test scores.\n---\n- 7. Official English proficiency test scores *International applicants only\nNearly all international applicants will be required to list their English proficiency test scores in order to submit their application for review. Test scores must be valid in order to submit your application.\n\n- Self-reporting your scores: If you are required to submit English proficiency test scores, your application will prompt you to self-report test scores. Self-reported scores must have a testing date within the last 2 years.\n- Please note: As part of our anti-fraud software, our application system will prevent you from submitting your application if you try to list a future test date for your English proficiency test.\n- Verifying scores: Test scores will be verified automatically by the ETS or IELTS system, depending on the test scores you submit.\n- Please note: As part of our anti-fraud software, if there is a discrepancy between the scores you self-report in your application and the scores sent to MIT by the testing organization, your application will be flagged for a discrepancy in test scores.\n---\n- 8. A portfolio of previous work\n- Some departments at MIT require applicants to submit a portfolio of their previous work for consideration. Please note: MIT applications does support Interfolio for sharing portfolios.\n---\n- Expectations and considerations\n- Behavior and language expectations\n- All applicants are expected to behave in a manner in alignment with the MIT Mind and Hand Book. This includes behavior and language used when engaging with faculty, staff, and current MIT students. Please note, all communications associated with your application are logged within your application for review.\n\n- When you apply to a graduate degree program, you will be required to attest to legal considerations prior to submitting. Applicants will be required to attest that the information they provide in their application and all application materials are accurate and truthful.\n---\n- Letters of recommendation\n- Letters of recommendation will be submitted through the online application portal. Letters of recommendation may not be sent by applicants on behalf of their recommenders via email, mail, or other service.\n\n- Applicants will be required to list their recommenders within each application. It is the responsibility of the applicant to assure all contact information is correct for their recommenders prior to submitting your application.\n\n- Letters of recommendation cannot be shared between two different applications. If you plan to use the same recommenders for different applications, we recommend letting them know ahead of time to avoid confusion.\n---\n- Family Educational Rights and Privacy Act (FERPA)\n- Enrolled students are protected by the Family Educational Rights and Privacy Act (FERPA) to view all of their educational records. As such, applications become an educational record if/when an applicant is enrolled as a regular graduate student.\n\n- Waiving your right vs. reserving your right to view your recommendation letter: the question to waive your right to view your letter of recommendation is a personal choice. You should consider this question carefully and in collaboration with your recommenders. Some recommenders will not write a letter of recommendation unless the applicant waives their right to view.\n\n- Note: you will not be able to change your choice to waive/not waive your right once your recommender(s) receive the automated recommendation request email or you submit your application, whichever is sooner. GradAdmissions will not be able to change your answer on your behalf because it is a legally-binding answer. Below is a brief overview of your options.\n\n- By waiving your right to view your letter(s), you waive your FERPA protection to request to see your letter(s) of recommendation even if you are admitted and enrolled in MIT.\n- By reserving your right to view your letter(s), you do not waive your FERPA protection to request to see your letter(s) and can request to see these materials if you are admitted and enrolled in MIT.\n- Requesting application materials after decisions are released: applicants who are not admitted to and enrolled in a graduate program at MIT may not request any application materials after decisions are released. FERPA rights extend only to enrolled students.\n\n- You can find more information about FERPA on the MIT Registrar’s Office website.\n---\n- Changes to applications after submission\n- Application materials cannot be changed after submission. Please thoroughly check all admissions requirements and procedures for each degree program prior to submitting your application. It is the responsibility of the applicant to check that their application has met all requirements necessary.\n\n- Due to the volume of applications we receive, GradAdmissions cannot make any changes to your application once you have hit “Submit Application.”\n---\n- Application review/decisions\n- MIT graduate applications are reviewed by committee. Applicants are evaluated by the individual department to which they applied on the basis of their prior performance and professional promise, as evidenced by their academic records, letters of recommendation from individuals familiar with their capabilities, and any other pertinent information they submit. While high academic achievement does not guarantee admission, MIT expects students to be able to meet the rigorous academic demands of graduate education.\n\n- Admission notifications are communicated through our application system. All admission decisions will show up on the status page of your application.\n\n- All admission decisions released by the MIT departments are final. GradAdmissions, as part of the Office of Graduate Education (OGE), will not consider requests for an appeal to application decisions.\n---\n- Terms of admission\n- Admission to graduate study is contingent upon meeting Institute expectations of appropriate conduct.* Any offer of admission you may receive is based on the premise that you have conducted and will continue to conduct yourself, academically and otherwise, in accordance with MIT’s community values, policies, and standards of behavior.\n\n- By submitting a graduate application, you understand and affirm that all the information you have provided is accurate, complete, and your own work, and you agree that the Institute may verify this information. If there is new information that changes the accuracy of your answers after you submit your application, you are obligated to inform the MIT Graduate Admissions Office immediately. Should we learn of any misrepresentation or omission of the facts on your application––whether at the time of submission or later––we reserve the right to rescind your offer of admission.\n\n- Per Institute policy, you must report any conduct that may result, or has resulted, in any disciplinary or other similar negative action against you, including actions that occur after receiving your admissions offer. MIT Graduate Admissions has the right to rescind or defer your offer of admission if your conduct at any time does not meet the high levels of personal and academic integrity that you demonstrated in your application, or if we learn of information that changes the underlying basis for our admissions decision. Some examples include, but are not limited to, changes in your academic performance; a failure to graduate from your current institution; recent disciplinary action or disciplinary action that was not previously disclosed; or engaging in conduct that indicates a serious lack of judgment or integrity.\n---\n- Readmission\n- If you were previously admitted to and enrolled in a graduate degree program, and you would like to resume pursuing your degree after being interrupted by an absence of one or more terms, please reach out to your home department to begin the process for returning to your program. You will need to obtain written acknowledgement from the department stating they are aware of your return. You will also need to obtain a funding plan from your department.\n\n- Once you have the necessary documentation from your department, please fill out the MIT Readmission Application. Additional information about readmission can be found on the OGE Graduate Policies and Procedures website and in the Admitted Student Resources website.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:43:49.436Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T06"
+  },
+  {
+    "id": "72f9fa71-ebb8-495f-9ab5-1dbbf7bac967",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Waterloo\n---\n- Step 1. Before you start your application\n\n- Please review the information below to help you during this process.\n\n- Understand the types of admission.\n- Understand the admission and English language proficiency requirements.\n- Understand your application document requirements.\n- If a personal statement or letter of intent is required by your program (which you will see once you begin the application), review the writing your personal statement resources for helpful tips and tricks on completion.\n- Learn more about your program. Do you need to find a supervisor in advance?\nContact your referees.\n- The University of Waterloo is committed to ensuring you can access, and meaningfully participate in, your education. At any point in the application process, or when you are a registered student, we encourage you to reach out to AccessAbility Services for advice, information, and support. Request for disability-based graduate admission accommodation (on the AccessAbility website).\n---\n- Step 2. Create an online application account\n- Apply at least two to four weeks ahead of your program's application deadline. This is to ensure that you have time to upload your supporting documents, and that your referees have time to submit their reference forms.\n- Create an online application account. Note that you may have only one graduate online application account.\n- Provide your first name, last name, email address, and date of birth.\n- You will then receive an email with a unique code or PIN to finish setting up your account.\n- Using the link from the email, input the PIN and other required information to verify your identity and create a password.\n- Log in with your email address and password. You can reset your password from the application login page if you forget it.\n- Please direct any online application account process questions to our graduate application team gradapply@uwaterloo.ca.\n---\n- Step 3. Start your online application\n\n- From the Welcome page, choose the START NEW APPLICATION button, or access a saved application by selecting the Graduate Application link.\n- The graduate application has several sections that must be completed before submission. You can begin the application and save at any point, returning to complete it before the application deadline.\n- Enter your personal information and select your program: choose one \"attendance type\" (full-time or part-time) and one \"type of program\" (research paper, coursework, or thesis). If you would like to be considered for more than one option, please contact the program directly after you've applied.\n- Enter the required application information.\n- Academic Background: you may upload a copy of your transcripts as you complete this section.\n- Referees: you may enter your referee information and send the request right away or save it to send later.\n- In the Graduate Studies Applicant Portal, pay the non-refundable application fee of $150 CAD per program via the link in your portal.\n---\n- Step 4. Upload your application documents through your Applicant Portal\n\n- Once you have submitted your application, you will be directed to your Applicant Portal to pay the application fee, upload your application materials, and track the status of your application.\n- Under Application Checklist you will see a list of the application materials you need to upload and complete based on your program.\n- Once you have uploaded all of your required documents, and your referees have completed their reference forms, your application is complete.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:45:07.205Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T07"
+  },
+  {
+    "id": "c692b73f-de0c-4228-837e-6932c6c314dd",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Harvard\n---\nStep 1: Choose a program. \nYou have several options for study at Harvard Griffin GSAS. \n\nDegree Programs \nThe school offers master’s and PhD degrees in programs based in the arts and humanities, social sciences, natural sciences, and engineering and applied sciences. Many programs also allow a student to conduct more focused research by choosing an area of study. Review the programs on offer to decide which program best meets your academic goals. \n\nAre you a Harvard College student looking for information on the AB/AM and AB/SM programs? Visit the Harvard AB/AM and AB/SM programs page.\n\nNon-Degree Programs \nThe Visiting Students Program offers you the opportunity to take classes and conduct research with faculty. \n\nOutreach Programs \nIf you are looking for a short-term research experience, consider a paid summer internship organized by Harvard Griffin GSAS, Harvard departments, and Harvard-affiliated teaching hospitals. The School also offers Research Scholar Initiative, a post-baccalaureate program that enables college graduates to take part in a long-term research experience. \n\nInformation for Exchange Scholars:\nExchange Scholars \n---\nStep 2: Make a note of the application deadline and review admissions policies.\nApplication deadlines vary by program and are noted on the relevant program page. You should also review our admissions policies and Applying to Degree Programs.\n---\nStep 3: Determine whether you need to take standardized tests and register early. \nDegree programs may require Graduate Record Examination (GRE) general test or subject test scores. Applicants who are non-native English speakers may be required to demonstrate English proficiency by submitting scores from an English Language test (TOEFL or IELTS). Review the admissions policy on English proficiency for more information.  \n---\nStep 4: Complete your application by the deadline. \nThe degree program application becomes available in September. You should review Applying to Degree Programs before starting your application. All components of the application to a degree program are due by 5:00 p.m., Eastern Time, on the deadline date.\n\nApplications for the Visiting Students Program are accepted twice a year.\n\nFor application information about our Outreach Programs, visit your program page of interest.  \n\nWho should I contact if I have a question about a specific program? \nIf you still have questions after carefully reviewing your degree program of interest, reach out to the contact noted on the program’s page. \n\nCan I enroll in courses instead of applying to a degree program? \nIf you are interested in taking courses for academic credit outside of a formal degree program, you may apply for Visiting Student status by the appropriate deadline. Please visit the Visiting Students website or contact gsasvisitingstudent@fas.harvard.edu to learn more. \n\n",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:45:21.127Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T08"
+  },
+  {
+    "id": "1a382101-9a66-4c66-8865-2b7ef7197bee",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Florida A&M\n---\n- https://admissions.famu.edu/apply-now.php",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:45:48.410Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T09"
+  },
+  {
+    "id": "8a4ae9ae-813c-4e7f-8687-bc8eb9438f9d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Hampton\n---\n- Contact\n- 757-727-5328\n- 800-624-3328\n- Office of Admission\n- Hampton University\n- Multi-Use Facility Building, 1st Floor\n- Hampton,VA 23668",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:46:06.814Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T10"
+  },
+  {
+    "id": "81fe4150-b189-47da-8030-c022b5ad81df",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Oxford\n---\n1. Starting your application\n- This section covers when to apply, how to start an application, and how to complete - - the first two tabs of the application form.\n\n- Deadlines and when to apply\n- Your application account\n- Choosing an application type\n- The 'Course' tab\n- College preference\n- Open books on a wooden desk\n---\n2. Your details\nThis section covers how to complete the following two tabs of the application form.\n\nContact details\nAbout you\nBooks in the Taylorian\n---\n3. References\nThis section of the Application Guide covers how to provide references as part of your application.  \n\nRegistering a new referee\nChanging a referee\nTracking your references\nView from the Weston Library, part of the Bodleian Libraries\n---\n4. Qualifications, languages and funding\nThis section covers how to complete the 'Qualifications', 'Languages' and 'Funding' tabs of the application form, and our requirements for English language proficiency.\n\nQualifications and experience\nExtenuating circumstances\nEnglish language proficiency\nEnglish language test waivers\nFunding\n- A student working in a library\n---\n5. Supporting documents\n- This section explains how to complete the 'Supporting Documents' tab of the application form, and the requirements for supporting documents.\n\n- Supporting document requirements\n- Official transcript\n- Statement of purpose and research proposal\n- Written work\n- Other supporting documents\n- The Bodleian, Sheldonian and Clarendon buildings at sunset \n---\n6. Declaration and payment\n- This section explains how to complete the 'Declaration' tab of the application form and - pay the application fee.\n\n- Submitting your application\n- The application fee\n- Application fee waivers",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:46:18.076Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T11"
+  },
+  {
+    "id": "3dc7842b-b7a9-4976-81ed-b03f0bb90b0a",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Cambridge\n---\n- References\n- You will be asked to provide details of 2 referees when you apply.\n\n- You'll need to nominate an additional referee if you are applying for Gates Cambridge funding (Gates website).\n\n-Your referees will need to submit your reference by your application deadline. You can submit your application before your references have been uploaded. \n\n- Check the References page for full details.\n---\n- Transcripts\n-A transcript is an official summary of your academic record and the marks you have obtained to date. \n\n-You will need to provide academic transcripts and certificates for each degree you have taken.  \n\n-If you are currently studying, you can provide an interim or unofficial transcript in your application. We will need a copy of the final transcript if we make you an offer. \n\n-How to provide your transcripts \n- Request your transcripts from your previous or current institution before you begin your application so that you have them ready to upload. The process can take a while. Your institution may charge you for this service. \n\n- When you apply, upload scanned originals to the Applicant Portal. \n\n- If you are made an offer, you will be asked to send us your original documents or certified copies so that we can verify their authenticity.  \n\n- We can’t accept any documents that have been written on or defaced in any way.  \n\n- International applicants \n- If your documents are not in English, you must upload a full translation of each document, prepared by a registered translator. Do not translate the documents yourself. \n---\n- Curriculum Vitae (CV) / resume\n- You must upload a CV to the Applicant Portal as part of your application.\n---\n- English language test results\n- If English is not your first language, you may need to show that you meet the English language requirement for your course.\n\n- Check our English language requirement page to see if this applies to you. \n\n- For most courses, you don’t need to provide your language test results until you're made an offer. \n---\n- Personal statement\n- A personal statement or statement of interest should describe your relevant skills, experience, academic achievements and motivation for applying to your chosen course.  \n\n- Check our guidance on writing a personal statement. \n---\n- Research proposal\n- Most research courses will ask you to provide a research proposal. \n\n- If you choose to apply for more than one course, you must upload a research proposal for each application you submit, tailored to the individual requirements of each course. \n\n- Find out more about writing a research proposal. \n---\n- Written work\n- Some courses may ask you to include samples of your written work. This helps departments to assess your knowledge and the level at which you are working. \n---\n- Graduate Record Examination (GRE) and Graduate Management Admission Test (GMAT) scores\n-Some departments may ask you for a Graduate Record Examination (GRE) test score. If this is needed for your course, it will be stated on the course page. \n\n- You should not request a GRE score unless you have been told you need one. There is a charge for taking the GRE test. \n\n- The Graduate Management Admission Test (GMAT) is not accepted by any course. \n---\n- Financial documents\n- If you have already applied for a scholarship and the awarding body has written to you, you can provide details in your application. If you're made an offer to study, you'll need to upload your funding letter to your Self-Service account.\n---",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:46:28.564Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T12"
+  },
+  {
+    "id": "fa234807-543a-4a37-8a3b-36327755d570",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Morehouse - check out school dazes\n---\n- Application Type\n\n- Application Deadline\n\n- Financial Aid Deadline\n\n- Decision Notification\n\n- Deposit Deadline\n\n- Early Decision\n\n- Saturday, November 1, 2025\n\n- Saturday, January 31, 2026\n\n- Friday, December 5, 2025\n\n- Friday, January 16, 2026\n\n- Early Action\n\n- Monday, December 15, 2025\n\n- Saturday, January 31, 2026\n\n- Friday, January 30, 2026\n\n- Friday, May 1, 2026\n\n- Regular Decision\n\n- Sunday, February 1, 2025\n\n- Saturday, January 31, 2026\n\n- Sunday, March 15, 2026\n\n- Friday, May 1, 2026\n\n- Transfer\n\n- Sunday, February 1, 2026\n\n- Saturday, January 31, 2026\n\n- Sunday, March 15, 2026\n\n- Friday, May 1, 2026\n\n- Re-Admit\n\n- Monday, March 30, 2026\n\n- Saturday, January 31, 2026\n\n- Friday, May 15, 2026\n\n \n\n- International\n\n- Sunday, February 1, 2026\n\n- Saturday, January 31, 2026\n\n- Sunday, March 15, 2026\n\n- Friday, May 1, 2026\n\n- Spring 2026 Deadlines\n\n- Application Type\n\n- Application Deadline\n\n- Financial Aid Deadline\n\n- Decision Notification\n\n- Deposit Deadline\n\n- Re-Admit\n\n- Saturday, November 01, 2025\n\n- Friday, January 31, 2025\n\n- Saturday, November 15, 2025\n\n- Sunday, November 30, 2025\n\n- International\n\n- Saturday, November 01, 2025\n\n- Friday, January 31, 2025\n\n- Saturday, November 15, 2025\n\n- Sunday, November 30, 2025",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:46:39.147Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T13"
+  },
+  {
+    "id": "d1cb4ba6-1717-4df4-bbb5-32a711b90b2b",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Morgan state\n---\n- Part 1: Procedures\n- Procedures\n- Prospective students will be unable to submit a new or in-progress online application after SGS deadlines. \n- Review of applications by SGS and academic program will begin mid-late September for the Spring term and mid-late February for the Fall term.\n- All application fees are for the term to which the applicant applies and may not be used to apply to multiple terms. \n- Applications that are incomplete by the close of the application period will not be automatically updated by SGS to a future term. To update to a future term, applicants must submit a second application including fees.  \n- SGS will not retain incomplete application materials for more than one year from the term of the original application.\n- SGS and academic programs reserve the right of refusal to receive applications submitted after published deadlines. \n---\n- Part 2: Application Deadlines\n- Application deadlines for the School of Graduate Studies (SGS) are as follows (unless earlier deadline dates are indicated by the individual programs): All deadlines are determined by the programs, not the School of Graduate Studies.  If you would like to request an extension, you must contact that department, their information is listed here.\n\n- These deadlines apply to every academic year and program unless otherwise indicated by the individual program.\n\n- US Citizen / Permanent Resident, degree-seeking - Spring - December 1\n- International, degree-seeking (All F-1 in and out of USA) Spring - November 1 \n- Non-degree-seeking (US Citizen and Permanent Residents only)- Spring - January 8 / - Fall August 1\n- US Citizen / Permanent Resident, degree-seeking - Fall  - May 1 \n- International, degree-seeking (All F-1 in and out of USA) Fall - April 1 \n\n\n- For detailed information on program-specific deadlines, please visit the Program Deadlines page.\n\n\n\n- The Master of Arts in Economics and Master of Arts in Sociology programs are currently not accepting applications.\n\n- *Application deadlines indicate the date by which all required materials must be received, including transcripts, test scores, recommendations, and any other necessary documents. Applications missing one or more required items will be considered incomplete and subsequently closed.\n---\nPart 3: Admissions Criteria\nAll applicants must meet the admissions criteria for both the School of Graduate Studies and the program to which they are applying.\n\nSchool of Graduate Studies Criteria\n\nApplicants must have earned a bachelor’s degree from a regionally accredited college or university, and Possess an undergraduate cumulative grade point average G.P.A. of 3.0 or higher from all colleges and universities attended to be considered for regular (unconditional) admission. Students who possess a cumulative undergraduate G.P.A. of less than 3.0 but not below 2.5 may be considered for conditional admission. Post-bachelor’s undergraduate credits cannot be used to enhance G.P.A. requirements for admission to graduate study.\n\nProgram Requirements\n\nAll programs require 2-3 letters of recommendation, a personal statement and official transcripts Applicants must meet all additional graduate program requirements which they seek admission. In many cases, graduate programs require applicants to submit additional materials, such as standardized test scores, resumes, or other supplemental information.  All documents are required by the program, not the School of Graduate Studies.  If you have any questions regarding requirements, please contact that Program Director; their information is listed here.\n---\n- Part 4: Submit application and other materials\n- Applications may be submitted for admission throughout the year prior to posted deadlines.  Applications are processed as they are submitted and all supplemental materials are received by the School of Graduate Studies.  Applicants are strongly encouraged to submit applications at least 60 days prior to the term in which they plan to begin graduate study.\n\n- Required Materials\n\n- In addition to the completed application, all applicants must pay an application fee of $50 for the online application.    Please submit all required documents to the School of Graduate Studies.  If you send them to the department to which you are applying, it will delay the processing of your application.   Please refer to the School of Graduate Studies home page for the complete address.\n\n- Transcripts\n\n- Applicants to degree programs must submit one official transcript from each college or university attended whether or not a degree was earned. Non-degree-seeking applicants may submit one official transcript of their highest degree. Official transcripts must be sent directly to the School of Graduate Studies from the issuing institution. \n\n- Your copy of transcripts and/or evaluations must be uploaded to your application portal.   They will not be accepted if sent to the School of Graduate Studies. Applicants must arrange for your copies of all transcripts (anywhere they have earned credit) from all institutions reported on their application.\n\n- Official transcripts must be issued to the School of Graduate Studies, Morgan State University.  They are only needed if you are admitted to the program.  Applicants must arrange for official copies of transcripts that they have earned a degree to be sent from the registrars of those institutions directly to the School of Graduate Studies. Transcripts delivered by any other means (i.e., hand delivered by applicant, mailed in by the applicant, uploaded by the applicant, etc.) are not official.\n\n- If you need to have your official transcripts mailed, please send them to Morgan State University, 1700 East Cold Spring Lane, Baltimore MD 21251,  Attention:  School of Graduate Studies.\n\n- If you wish to submit an electronic transcript, please give the institution the code \"5416G\" in order to ensure it is sent directly to the School of Graduate Studies.   If the company requests an email to send the transcripts, the email address is gradtranscripts@morgan.edu.\n\n- International transcripts, diplomas, certificates, mark sheets, etc., or copies of these documents are not admissible in the graduate admission process and will not be accepted if sent to the School of Graduate Studies.  The School of Graduate Studies will only accept official course-by-course evaluations received directly from World Education Services (WES),  Educational Credential Evaluators (ECE), FIS (Foundation for International Services, International Education Evaluations (IEE) or SpanTran.\n\n- Letters of Recommendation\n\n- The letters of recommendation are to be submitted electronically through the online application. We are not able to upload any recommendations to your application.\n\n- Other Materials\n\n- Depending on the program to which you are seeking admission, you may be required to submit other materials such as GRE or GMAT Test scores must be uploaded directly to the application (if required).  Scores, admission essays, portfolios, and supplemental applications. See Individual Program Listings to see if your program requires any of these additional materials.   The School of Graduate Studies does not have any score requirements for those examinations.  Please contact the academic department to which you are applying for more information.  The code for test scores is 5416.  The School of Graduate Studies does not waive any test requirements.  You will need to contact the department directly to request a waiver, their information can be found here.\n\n- Application Fees \n\n- All application fees are non-refundable.  Only participants in the McNair Scholars and Gates Millennium Scholars Program may request a fee waiver.\n\n- We do not accept checks or money orders, only debit or credit cards.\n\n- Address for the School of Graduate Studies\n\n- All materials for graduate admission must be submitted directly to the School of Graduate Studies at the below address.  Any other variation will result in delays.   \n\n- School of Graduate Studies\n- Morgan State University\n- Earl G. Graves Business Center\n- 4200 Hillen Road, Suite 401\n- Baltimore, Maryland 21218\n\n- Tel: (443) 885-3185\n- FAX: (443) 885-8226\n\n- Checking Your Application Status\n\n- You may log back into your application anytime to check your current application status. Please note that updating the status check records may also take several weeks to reflect documents mailed to the School of Graduate Studies.  We will notify you via e-mail if additional information or materials are needed to complete our evaluation.  All email communication will be sent to the e-mail address listed with your application.\n---\n- Part 5: Initial Application Review\n- The School of Graduate Studies will review applications to verify that all of the materials have been received and that applicants meet the minimum requirements for admission. The office will enter the application into the student information system and create an official file.\n\n- Incomplete Applications\n\n- The office will continue to monitor the file until transcripts, application, supplemental materials, and payment have been received.\n\n- Complete Applications\n\n- The School of Graduate Studies will prepare the file for evaluation by the proposed graduate program. This involves receiving and entering the above materials into the University information system for processing. The file will then be made available to the appropriate graduate program director. The proposed graduate program director will receive the following:\n\n- the application form\n- all transcripts submitted\n- all supplemental materials\n---\n- Part 6: Departmental Evaluation\n- The graduate program director receives the file and oversees the process of making the recommendation whether or not to admit or deny the applicant. The length of time that departments take to make a recommendation will vary based upon the particular department's decision-making process.\n\n- At the end of the review process, the graduate program will issue an admission recommendation: Unconditional Admission, Conditional Admission, or Deny Admission.\n\n- Admission with Conditions\n\n- Graduate programs may choose to accept students who have a GPA between 2.5 and 2.99.  Students admitted with conditions are required to correct any deficiencies as determined by the School of Graduate Studies.  Satisfying the conditions of admission removes this status from a student's record.\n---\n- Part 7: Admission Decision\nThe graduate department will make an admission recommendation to the Dean of the School of Graduate Studies. The Dean will send the applicant a letter either granting or denying admission.\n\n- During the peak admission period, admission processing may take a minimum of several weeks after we receive your complete application.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:46:59.160Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T14"
+  },
+  {
+    "id": "f12eb902-a518-42ac-b40e-3513161a6e2b",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- North Carolina a&T STATE UNIV\n---\n- Graduate Admission Application Instructions\n- Admission to a graduate program at North Carolina A&T requires a departmental evaluation based on an online application, recommendation letters, unofficial copies of transcripts, and other materials, followed by a final review of all your original documents by the Graduate College. The departmental evaluation results in a recommendation to admit or reject the application. The final review concludes with a formal notification of the final decision from the Graduate College to the applicant.\n\n- All programs require the online graduate admission application, application fee, academic transcripts, personal statement, and recommendation letters. Most programs also require a personal statement, and some require graduate test scores. Some programs have additional requirements such as an on-campus interview. See our list of graduate programs for admission requirements specific to each program. Please note that satisfying minimum admission requirements does not guarantee admission; admissions decisions are based on a competitive evaluation and are sometimes limited by capacity constraints.\n\n- Applicants must submit electronic copies of all documents required for admission using the online application portal. If needed, test scores must be transmitted by the testing agency to the Graduate College. The final official transcripts should be the only document mailed to the Graduate College; only transcripts mailed directly from the issuing institution will be accepted.\n\n- ACCESS THE GRADUATE ADMISSIONS APPLICATION\n\n- Additional details about the admissions process can be found below.\n\n- Notice for Online Program Applicants from Outside the State of North Carolina:\nN.C. A&T is committed to ensuring compliance with state authorization requirements that govern the offering of online degree and certificate programs and courses in other states, including complaint processes. We strongly recommend that our prospective distance education students refer to the State Authorization page to determine whether N.C. A&T is authorized to provide postsecondary education in your state. N.C. A&T will continue to monitor developments in the jurisdictions in which it enrolls students, and, if authorization or licensure is or becomes necessary, it will obtain approvals or provide notice here of the jurisdictions in which it is authorized or not authorized to offer courses or programs. If you have questions or concerns, please contact Distance Learning at (888) 498-6752 or distance@ncat.edu.\n \n\n- Application Deadlines\n- Priority Admission Deadline (only applies to Fall Admissions)\n- Fall Admission - January 15\n \n- International Applicant Admission Deadlines\n- Fall Admission - May 15\n- Spring Admission - September 15\n \n- General Admission Deadlines for U.S. Domestic Applicants\n- Fall Admission - July 1\n- Spring Admission - November 1\n \n \n- Priority Application Deadline\n- The priority deadline is the date by which complete applications with all required documents must be submitted to receive priority review for merit-based graduate funding awards and for admission to space-constrained graduate programs. The priority deadline only applies to fall admissions.  Applications received after the priority deadline will be reviewed but will be considered based on availability of funds and/or space in the program. Furthermore, applications received later may not leave sufficient time for review and decision. Therefore, applicants who miss the priority deadline are strongly advised to submit completed applications as soon as possible.\n\n- The priority deadline for all programs is January 15 (for fall admissions).  \n- Note that the MSW and PhD in Social Work programs only accept applications up to January 15.\n\n- General Application Deadline\n- The general deadline is the date by which all application materials must be received by the Graduate College for an admission decision. The general deadlines for domestic and international applicants are listed below. Some academic programs have earlier deadlines, in which case your complete application must be submitted by the posted departmental deadline. Furthermore, some programs admit students only during specified semesters (see below). If a complete application cannot be reviewed in time for the start of the immediate academic term, it will be moved to the next available admission term.\n\n-  Domestic Applicants: July 1 (for fall admissions), November 1 (for spring admissions) and April 1 (for summer admissions).\n-  International Applicants: May 15 (for fall admissions) and September 15 (for spring admissions).International applicants are strongly advised to complete their application as soon as possible, preferably well before these deadlines, to allow time for communicating with the Office of International Affairs (email) regarding the documents required for issuance of I-20, visa processing, and international travel. International applicants are also strongly advised to submit all original documents (transcripts, etc.) as soon as possible after receiving notification from the Graduate College.\n- The following programs only accept applications for fall admission: Ph.D. in Rehabilitation Counseling & Rehabilitation Counselor Education; Ph.D. in Leadership Studies; M.S.W. in Social Work.\n- Post Baccalaureate Studies (PBS): the deadline for non-degree seeking or PBS applications is Aug. 1 for fall admissions, Jan. 1 for spring admissions and May 1 for summer admissions.\n- Re-enrollment: the deadline for readmission applications for those students who have been away for less than one year is Aug. 1 for fall admissions, Jan. 1 for spring admissions and May 1 for summer admissions.\n \n- Application Portal Opening Dates\n- For Fall Admission, the application portal opens on November 16 of the previous year (e.g. Fall 2025 applications are accepted starting November 16, 2024).\n\n- Note that select programs (Leadership Studies, Counseling, Accountancy, and Human Lactation) ONLY accept applications for Fall admission. These programs start accepting applications earlier (September 1 rather than November 16).\n\n- For Spring Admission, the application portal opens on July 16 of the previous year (e.g. Spring 2025 applications are accepted starting July 16, 2024).\n\n- For programs that offer Summer Admission, the application portal opens on January 1. \n\n\n- Application Fee\n- All applicants are required to submit an application fee for admission. The following categories of individuals may seek waiver by ensuring that the listed documents are emailed to the Graduate College at N.C. A&T. Applicants who have paid the fee without requesting a waiver will not be refunded.\n\n- McNair Scholar: Copy of participation letter from your undergraduate McNair Program\n- Gates Millennium Scholar: Copy of letter from Gates Scholar Program\n- GEM Consortium Scholar/Applicant: Inform Graduate College at N.C. A&T at time of application via separate email\n- NACME Scholars: Copy of letter from NACME\n- MARC-USTAR Participants: Copy of participation letter from your undergraduate MARC-USTAR Program\n- LSAMP Participants: Copy of participation letter from your LSAMP director\n- Active-duty U.S. Military: Copy of DD-214 or Active Duty Military ID card\n- N.C. A&T Full-time Permanent Employees: Copy of employee application fee waiver approved by N.C. A&T Human Resources Benefits Representative.\n \n- Online Application and Departmental Evaluation\n- Applicants should submit the following documents via the online application portal as early as possible.\n---\n1. Online application for admission to the Graduate College. The application is also accessible from the Graduate College’s website.\n---\n2. Application fee: Non-refundable application processing fee of $60. Payment can be made in the form of a check, money order or certified check payable to North Carolina A&T State University. Credit card payments are accepted during the application process prior to submission. Cash payments may also be made in person at the Treasurer’s Office located on the 1st Floor, Dowdy Building. If paying through the Treasurer’s Office, please send a copy of the receipt to the Graduate College.\n---\n3. Transcripts: One unofficial copy of transcript(s)/mark sheet(s) from all colleges and universities previously attended must be uploaded on the application portal. An overall GPA of 3.0 in the bachelor's degree, a previously earned graduate degree or a GPA of 3.0 on at least 12 post-baccalaureate graduate credits is necessary (in addition to the other criteria outlined in the Graduate Catalog) for unconditional admission.\n\nApplicants with transcript(s) from U.S. colleges/universities must upload a copy of the transcript(s).\nApplicants with transcript(s) from institutions outside the U.S. will need to have an English translation and course-by-course evaluation of their transcript(s)/mark sheet(s) performed by SpanTran, WES, or ECE and have the agency transmit this document directly to the Graduate College.\n---\n4. Recommendations: Three recommendations are expected. Enter required information (name, email, etc.) for each recommender to allow the recommendation form to be accessible from the application portal. The recommendation form is available online once the recommender signs in to the application portal. Admissions committees prefer to see recommendations from current or former professors and/or supervisors at your place of work.\n---\n5. One unofficial copy of graduate test scores (GRE/GMAT) if required by the program.\n---\n6. Personal statement of interest in the program, as required. The statement should describe career goals, research interests and a list of publications, experience, academic honors and organizations tailored to program of interest for review by the admission committee.\n---\n7. English language proficiency: International applicants are required to provide evidence of English language proficiency. International applicants may satisfy this requirement by one of the following:\n\nSubmit an acceptable score through TOEFL, IELTS, PTE, or Duolingo English Test. The official TOEFL score (at least 80 or higher internet-based score) or IELTS score (6.0 or higher) or PTE Academic score (53 or higher) or Duolingo English Test score (115 or higher) should be submitted directly from the testing agency to the Graduate College. TOEFL, IELTS, PTE, and Duolingo English Test scores are reportable for a period of two years from the date of the exam. If the scores are older than two years, the student must re-take the exam.\nEnroll in an intensive English language training courses prior to seeking admission to a degree program. An applicant successfully completing ALA or Interlink English Level 5 requirement will have met N.C. A&T’s English language proficiency requirement for admission. For information on application and costs, please see http://nc.interlink.edu/ for Interlink Language Center or http://www.ala.edu/ for American Language Academy. These organizations are separate from N.C. A&T, and they provide training in English pronunciation, grammar, writing, etc. The cost of English training is billed separately and will be incurred prior to and in addition to the cost of education at N.C. A&T. For questions not answered by the websites, contact Interlink at 336-334-4700 or American Language Academy at 336-285-7318.\nN.C. A&T Graduate College recognizes recent completers of a CEA-accredited language academies (http://cea-accredit.org/accredited-sites) at a level that satisfies its affiliated graduate institution’s unconditional admission language proficiency requirements.\nThe following applicants are exempt from the English Language Proficiency requirement:\nApplicant submits a transcript with conferred equivalent to U.S. bachelor's, master's, doctorate or professional degree from an accredited college or university located in a country with English as an official language and the language of instruction in higher education (see list of countries here); or\nApplicant submits a transcript from a U.S. college or university that demonstrates successful completion of a program of study; or\nApplicants for whom English is the native language of the applicant’s country of origin; or\nFor the past five (5) years or more, the applicant has been a legal alien, a naturalized citizen or otherwise a legal resident of the United States.\n---\n8. Criminal background verification if requested by the Graduate College. If a background verification is required, your application is not considered complete until the background verification process has been completed.\n---\n9. Additional requirements as indicated for your particular Program.\n\n- Based on the information provided by the applicant and the recommendation of the intended program’s admission committee, the Graduate College will inform the applicant whether or not he/she is recommended for admission. Admission will be contingent on the Graduate College receiving official transcripts, test scores and other documentation by the posted deadline. It is important to note that the admission offer may be withdrawn if the applicant fails to submit official evidence of meeting the minimum admission criteria for the intended program or does not submit the remaining documents in a timely manner. The remaining required documents for admission decision are listed below under \"Final Review.\"\n \n\n- Final Review\n- The departmental evaluation results in a recommendation to admit or reject the application. Before an official admission decision can be rendered, the following documents must be submitted prior to the general deadline.\n\n- Transcripts: All applicants who have been offered admission are required to submit one official transcript(s)/mark sheet(s) of all academic record in a sealed envelope bearing a seal or signature to indicate its authenticity from each college or university attended. The documents must be sent from the issuing institution directly to the Graduate College office. International applicants who were asked to submit external evaluation of their transcripts must have the credential evaluation agency send the transcript evaluation directly to the Graduate College.\n- Official graduate test scores as appropriate for intended program. Please request that the official testing service or agency sends your scores directly to The Graduate College, North Carolina A&T State University (school code GHD-4C-75 for GMAT/MBA, GHD-4C-85 for GMAT/Leadership Studies, and 5003 for GRE). The scores must be current (no more than five years old).\n- English language proficiency: International applicants who are required to provide evidence of English proficiency must have the testing or certifying organization send the test scores or certification of successful program completion directly to the Graduate College. Any remaining documents as noted in our correspondence to you, including pending recommendation letters, certifications, etc. as appropriate for your intended program\n- International applicants are required to provide the University with verification that the required funds are available to support the proposed program of study. The applicant must also provide information regarding current visa status. Special forms to supply this information can be obtained from the Graduate College or by contacting the International Students and Scholars Office at 122 Murphy Hall, North Carolina A&T State University, Greensboro, NC 27411 or 336-334-7551. Please see more information at the Office of International Affairs.\n- For applicants who have received an admission offer, The Graduate College will certify the original transcript(s), test scores and other required documentation. For students admitted based on an incomplete transcript, certification will also include verification of grades and GPA on the final transcript. If required documentation to allow The Graduate College to certify the credentials is not received prior to the start of the semester, the admission decision will be immediately rescinded and enrollment will be immediately cancelled.\n \n\n- Deferral of Admission\n- An admitted student may submit a written request to the Graduate College to defer admission to a future semester (joint programs in Social Work excluded). Admission deferrals may be requested for a maximum of one year beyond the original semester of admission (for instance, if a student is admitted for the Fall semester, they can at most request deferral until the following Fall). The Graduate College must approve this request. A student’s admission may be rescinded if the student does not enroll in the semester in which he/she received admission and does not receive approval of deferral.\n\n- All deferral requests must be submitted via email to grad@ncat.edu. The firm deadline for deferral requests is August 1 for the Fall semester and December 1 for the Spring semester. Requests received after these deadlines will result in the application being deferred to the next available semester. If the next available semester is more than one year beyond the original semester of admission, then the applicant will be required to reapply.. Only newly admitted students are eligible to request deferral, and they should do so as far in advance of the deadline as possible.\n \n\n- Submission of Paper Documents\n- All documents submitted to the Graduate College will be retained and will not be returned to the applicant nor released to a third party.\n\n- Please submit all paper documents in a sealed envelope to (paper documents only - required upon request):\n\n- The Graduate College\n- Attn: Graduate Admissions\n- North Carolina A&T State University\n- 1601 E. Market Street\n- 120 Gibbs Hall\n- Greensboro, NC 27411",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:47:09.034Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T15"
+  },
+  {
+    "id": "eee8d106-38ad-48be-866b-96ceb4fe2840",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- NYU\n---\n- General Requirements\n- To be eligible for consideration to any graduate program at NYU Tandon, you must hold a four-year U.S. Bachelor's degree from a regionally accredited U.S. institution, or its international equivalent. We do not accept undergraduate degrees that are equivalent to three years of study. However, degrees that are completed within the Bologna signatory system that are Bachelor of Engineering (or a related field), and earn 180+ ECTS credits, are eligible for consideration. The minimum GPA requirement is a 3.0 out of a 4.0 scale.\n\n- Attention will be given to programs accredited/approved by ABET and other regional accrediting associations. Please be advised that admission to a program different from your undergraduate field of study may require the completion of prerequisite courses before you will be permitted to begin graduate-level coursework. The NYU Tandon School of Engineering reserves the right to investigate or disqualify educational credentials on a case-by-case basis.\n\n- Application Requirements\n- To ensure the most efficient application processing, submit your application before sending documents or submitting test scores.\n\n- Mailing Address*\n- NYU Tandon School of Engineering\n\n- Graduate Admissions Processing Center\n\n- 458 Pike Road\n\n- Huntingdon Valley, PA 19006\n\n- *For all application documents. Note that this is our document processing center in Pennsylvania.\n\n- The requirements below are for all applicants except Cyber Fellows; Refer to Cyber Fellows application requirements.\n\n- Online Application\n---\n- Application Fee\n---\n- Personal Essay\n---\n- Résumé\n---\n- Official Transcripts and Degree Conferral (Proof of Degree)\n---\n- Academic Records and Proof of Degree from Indian Institutions\n---\n- Transcripts Not Officially Issued in English from Any Country\n---\n- Transcripts in English from Any Other Country\n---\n- Credential Evaluation Services\n---\n- Testing Information\n---\n- English Language Proficiency Testing\n---\n- Recommendation\n---\nDegrees and Fields of Study\nPhysics (Non-Degree)\nM.S. in Physics\nPh.D. in Physics\nPh.D.-J.D. in Physics/Law (Dual Degree)\n---\nApplication Deadlines\nApplications and all supporting materials must be submitted online by 5PM Eastern Time. If a listed deadline falls on a Saturday, Sunday, or U.S. federal holiday, then the next business day will be the actual deadline.\n---\nNon-Degree Program\nApplications accepted on a rolling basis.\nM.S. & Ph.D. Programs\nDecember 30: Fall admission\nPh.D.-J.D. applicants must submit two separate applications — one to GSAS, and another to NYU Law. Please consult NYU Law Admissions for the J.D. application deadline.\nRequirements\nIn addition to the general application requirements, the department specifically requires:\n---\nTest Scores\nGRE\nGRE general test optional. We will consider GRE test scores if they are submitted. Scoring well on the GRE may strengthen your application, especially if you perceive that you have weaknesses in your prior academic record. Not taking the GRE will not adversely affect your application and we will make no assumptions about why you did not take the test. \nTOEFL/IELTS\nApplicants must submit official TOEFL or IELTS scores unless they:\n\nAre a native English speaker; OR\n\nAre a US citizen or permanent resident; OR\n\nHave completed (or will complete) a baccalaureate or master's degree at an institution where the language of instruction is English.\n---\nStatement of Academic Purpose\nIn a concisely written statement, please describe your past and present work as it relates to your intended field of study, your educational objectives, and your career goals. In addition, please include your intellectual and professional reasons for choosing your field of study and why your studies/research can best be done at the Graduate School of Arts and Science at NYU. The statement should not exceed two double-spaced pages.\n---\nWriting Sample\nWriting sample not required.\n---\nSpecial Instructions\nPh.D. in Physics\nThe Ph.D. program in Physics offers the opportunity to conduct research in New York, or at NYU Abu Dhabi or NYU Shanghai. Applicants who are interested in opportunities at Abu Dhabi or Shanghai should indicate their interest in the campus section of the application.\n\nNon-Degree Program\nNon-degree applicants to Physics who are U.S. citizens or permanent residents, or applicants who hold a current H1-B visa, must use the online application to apply. Other non-degree applicants must follow special instructions. Refer to Application Policies for more information. As part of the application, all applicants must provide a final and official academic transcript showing proof that the bachelor’s degree or equivalent was conferred, including all courses with grades received. The statement of purpose should explain why you want to attend the program as a non-degree student and describe the courses that you plan to take, including directed reading and research courses. The GRE, TOEFL, letters of recommendation, and résumé are optional (please leave items blank on the application if you do not provide).\n---\nDegrees and Fields of Study\nMathematics (Non-Degree)\nM.S. in Mathematics\nJoint M.S. in Scientific Computing (with Computer Science)\nPh.D. in Mathematics\nPh.D. in Atmosphere Ocean Science and Mathematics\nPh.D.-J.D. in Mathematics/Law (Dual Degree)\nSee also Mathematics in Finance.\n\nApplication Deadlines\nApplications and all supporting materials must be submitted online by 5PM Eastern Time. If a listed deadline falls on a Saturday, Sunday, or U.S. federal holiday, then the next business day will be the actual deadline.\n\nNon-Degree Program\nNovember 1: Spring admission\nMay 1: Summer admission\nAugust 1: Fall admission\nM.S. Program\nNovember 1: Spring admission\nApril 15: Summer admission\nApril 1: Fall admission\nJoint M.S. Program\nFebruary 15: Fall admission, strongly recommended deadline\nMay 1: Fall admission, final deadline\nAll Ph.D. Programs\nDecember 18: Fall admission, strongly recommended deadline\nJanuary 4: Fall admission, final deadline\nPh.D.-J.D. applicants must submit two separate applications — one to GSAS, and another to NYU Law. Please consult NYU Law Admissions for the J.D. application deadline.\nRequirements\nIn addition to the general application requirements, the department specifically requires:\n\nTest Scores\nGRE Mathematics Subject Test Required\nMathematics (Non-Degree)\nM.S. in Mathematics\nJoint M.S. in Scientific Computing (with Computer Science)\nPh.D. in Mathematics\nPh.D. - J.D. in Mathematics/Law (Dual Degree) \nApplicants are expected to submit their GRE Mathematics Subject Test score. If taking this test is not practical for an applicant, they must attach a short statement to their application explaining why they were not able to take the GRE Mathematics Subject Test. GRE General Test Scores are neither required nor accepted as part of the application.\n\nGRE General Test and Mathematics Subject Test Optional\nPh.D. in Atmosphere Ocean Science and Mathematics\nThe GRE General Test and GRE Mathematics Subject Test is optional.          \n\nTOEFL/IELTS\nApplicants must submit official TOEFL or IELTS scores unless they:\n---\nAre a native English speaker; OR\n---\nAre a US citizen or permanent resident; OR\n---\nHave completed (or will complete) a baccalaureate or master's degree at an institution where the language of instruction is English.\n---\nStatement of Academic Purpose\nIn a concisely written statement, please describe your past and present work as it relates to your intended field of study, your educational objectives, and your career goals. In addition, please include your intellectual and professional reasons for choosing your field of study and why your studies/research can best be done at the Graduate School of Arts and Science at NYU. The statement should not exceed two double-spaced pages.\n---\nWriting Sample\nWriting sample not required.\n---\nSpecial Instructions\nPh.D. in Mathematics\nThe Ph.D. program in Mathematics offers the opportunity to conduct research in New York or at NYU Shanghai. Applicants who are interested in opportunities at Shanghai should indicate their interest in the campus section of the application.\n---\nNon-Degree Program\nNon-degree applicants to Mathematics who are U.S. citizens or permanent residents, or applicants who hold a current H1-B visa, must use the online application to apply. Other non-degree applicants must follow special instructions. Refer to Application Policies for more information. As part of the application, all applicants must provide a final and official academic transcript showing proof that the bachelor’s degree or equivalent was conferred, including all courses with grades received. The TOEFL is required of applicants who are not native English speakers. The GRE, letters of recommendation, and résumé are optional (please leave items blank on the application if you do not provide). The statement of purpose should explain why you want to attend the program as a non-degree student and describe the courses you plan on taking.\n---\nAdvanced Certificate in Archives\nAdvanced Certificate in Public History\nM.A. in Archives and Public History\nM.A. in History\nPh.D. in Africa\nPh.D. in African Diaspora\nPh.D. in Atlantic World\nPh.D. in Medieval European History\nPh.D. in Early Modern European History\nPh.D. in Modern European History\nPh.D. in East Asian History\nPh.D. in South Asian History\nPh.D. in Latin American and Caribbean History\nPh.D. in Topical/Transnational\nPh.D. in United States History\nPh.D. in History with a concentration in Medieval and Renaissance Studies\nJoint Ph.D. in French Studies/History\nJoint Ph.D. in Hebrew and Judaic Studies/History\nJoint Ph.D. in History/Middle Eastern Studies\nApplication Deadlines\nApplications and all supporting materials must be submitted online by 5PM Eastern Time. If a listed deadline falls on a Saturday, Sunday, or U.S. federal holiday, then the next business day will be the actual deadline.\n---\nAdvanced Certificate & M.A. Programs\nMarch 1: Fall admission\nPh.D. Programs\nDecember 15: Fall admission\nJoint Ph.D. applicants should meet the deadline of the French Studies, Hebrew and Judaic Studies, or Middle Eastern Studies department instead.\nRequirements\nIn addition to the general application requirements, the department specifically requires:\n---\nTest Scores\nGRE Optional\nJoint Ph.D. in Hebrew and Judaic Studies/History\nJoint Ph.D. in History/Middle Eastern Studies \nGRE general test optional. We will consider GRE test scores if they are submitted. Scoring well on the GRE may strengthen your application, especially if you perceive that you have weaknesses in your prior academic record. Not taking the GRE will not adversely affect your application and we will make no assumptions about why you did not take the test.\n---\nGRE Not Reviewed\nAll other programs \nPlease do not send GRE test scores — they will not be reviewed by our Admissions Committees.\nTOEFL/IELTS\nApplicants must submit official TOEFL or IELTS scores unless they:\n\nAre a native English speaker; OR\n\nAre a US citizen or permanent resident; OR\n---\nHave completed (or will complete) a baccalaureate or master's degree at an institution where the language of instruction is English.\n---\nStatement of Academic Purpose\nJoint Ph.D. in Hebrew and Judaic Studies/History\nApplicants to any doctoral program in Hebrew and Judaic Studies are required to append to their Statement of Academic Purpose a one-page, double-spaced description of their proficiency in Hebrew and the sources from which it was acquired. Non-native speakers of Hebrew should indicate\n---\nThe institutions at which they studied Hebrew;\nThe textbooks from which they studied;\nThe extent to which their program of study incorporated Biblical, classical, and modern Hebrew; and\nThe highest level achieved.\nNative speakers should indicate the years completed in Israeli schools and universities.\n---\nApplicants may also, at their option, include an autobiographical statement in Hebrew, one page maximum. This statement should be hand-written personally by the applicant and should be saved as a pdf file and uploaded in the online application on one of the pages labeled \"Additional Information.\" If it is not possible to save the autobiographical statement as a pdf, then please mail it to the Hebrew and Judaic Department at the address shown in their section of this document. Be sure to include your name, date of birth and Embark ID.\n---\nAll Other Programs\nIn a concisely written statement, please describe your past and present work as it relates to your intended field of study, your educational objectives, and your career goals. In addition, please include your intellectual and professional reasons for choosing your field of study and why your studies/research can best be done at the Graduate School of Arts and Science at NYU. The statement should not exceed two double-spaced pages.\n---\nWriting Sample\nAn academic writing sample is required and should not exceed 35 pages double-spaced. Works cited are not included in the page limit. Choose a sample that shows writing skills relevant to the study of history, for example, the ability to draw on primary historical evidence to form and support an argument, or the ability to assess and connect with the interpretations of other historians. If you do not have training in history, choose a writing sample that demonstrates an ability to formulate arguments and mobilize evidence to support them.\n---\nSpecial Instructions\nTo enroll in the Advanced Certificate program, students must have completed a master’s or doctoral degree or be enrolled concurrently in a master’s or doctoral program in the humanities, social sciences or sciences.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:47:16.663Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T16"
+  },
+  {
+    "id": "39a2b6df-0673-4759-aeac-52951570bae6",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- University of Texas\n---\n- Online Application\nApplications are for specific programs and specific semesters. Applicants to any graduate program must submit an online application. Once in the system, you must select the preferred term of enrollment to view the available programs admitting during this term.\n\n  Not all programs admit for every term. Please review the admission terms, deadlines, and requirements for your program of study.\n\nInformation about deadlines can be found on our policy page.\n\nExpandFAQ List\nFormer Applicants/Students to Texas State\nChanging the Online Application\nApplying to Multiple Programs\nDenied Applications\n---\nApplication Fees\nYou can submit the required, nonrefundable application fee with credit/debit card information during the online application process. Applications will not be reviewed until all of the applicable fees are paid.\n\nPlease note that a $30 returned item fee will be charged if the payment is returned for Insufficient Funds, Account Closed, or a Stop Pay has been put on the payment.\n\nFor immediate questions regarding the payment process, please see our Submitting Graduate Application Fee Payments Overview.\n\n  If you wish to change your application or submit applications for multiple programs, you must pay the fee(s) associated with the new application(s).\n\nExpandFAQ List\nPost-baccalaureate Programs (Certificate, Certification, Non-degree, & Visiting)\nDegree Programs (Doctoral & Master's)\nInternational Credential Fee\nProgram-specific Fees\nApplication Fee Waivers\nTranscripts\n---\nApplication Requirements\nYou must hold a baccalaureate degree from a regionally accredited university by the time you enroll in your graduate courses. Some programs may require other accreditations as well. You must provide one copy of an up-to-date transcript from each institution from which credit was received. You can submit copies of your official transcripts in order to meet your application requirements; however, if you are admitted, you will need to contact your institution(s) to have them send your official transcripts to Graduate Admissions. If we do not receive your official transcripts before you begin registration for your second semester, a hold will be placed on your account, preventing you from registering, until your official transcripts are received.\n\nTIP: If you are applying to multiple schools, we recommend uploading copies of your up-to-date official transcripts; however, if you are applying to Texas State only, we encourage you to bypass this step and have your official transcripts sent directly to Graduate Admissions.\n---\n  Transcripts submitted without the online application will not be retained.\n---\nExpandFAQ List\nSubmitting Copies of Official Transcripts\nFormer or Current Texas State Students\nApplicants Who Have Study Abroad Course Work\nApplicants Currently Enrolled in Undergraduate Studies\nApplicants Who Have International Transcripts/Mark Sheets\nInternational Graduate/Degree Certificate requirements (Degree Completion Documents)\n---\nEnrollment Requirements\nIf you are admitted, you will need to contact your previous institution(s) to send your official up-to-date transcripts to Graduate Admissions. Transcripts must be sent directly from your institution electronically* or submitted in a university envelope sealed with the university’s registrar’s signature. If Graduate Admissions does not receive your official transcripts before you begin registration for your second-semester courses, a hold will be placed on your account, preventing you from registering, until your official transcripts are received.\n\n*Graduate Admissions does not accept electronically submitted transcripts from international institutions (educational institutions outside of the U.S.).\n\nOnce you have requested your official transcripts from your previous institutions, you will need to check your online application to see if your transcripts have been received by Graduate Admissions. Your official transcripts will be compared to the documents you uploaded with your application.\n\nTexas State University reserves the right to require official transcripts at any time during the admissions process and rescind any offer of admission made if discrepancies between uploaded and official transcript(s) are found. \n---\nExpandFAQ List\nSubmitting Official Transcripts\nSubmitting Official Electronic Transcripts\nSubmitting Official International Transcripts/Marks Sheets\nOfficial Test Scores\nSome programs require official Graduate Record Exam (GRE) or Graduate Management Admission Test (GMAT) scores. When selecting a test date, make sure your scores will be reported in time for your application deadlines. Score reports for computer-delivered tests are sent to your designated score recipients approximately 10–15 days after your test date. \n\n  GRE and GMAT tests must have been taken within five years of the date you submit your online application to be used for admission consideration.\n---\nExpandFAQ List\nGraduate Record Exam (GRE) Scores\nGraduate Management Admission Test (GMAT) Scores\nLaw School Admission Test (LSAT)\nTest of English as a Foreign Language (TOEFL), PTE, International English Language Testing System (IELTS), or Duolingo Scores\nDocuments\nOnce you submit your online application by paying the application fee, you will be able to upload documents (such as resumes, essays, statements of purpose, etc.). Please review the specific documents required by your program of study.\n\nOnly documents required by the program should be submitted for admission consideration. Non-required documents mailed or emailed to Graduate Admissions will not be retained, nor will documents submitted without the online application.\n---\nExpandFAQ List\nRecommendations\nMentor Communications",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:47:22.996Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T17"
+  },
+  {
+    "id": "593f1d91-7db2-40b8-a5b6-36212166c4d9",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "- Njit\n---\n- Starting A New Application\nTo apply to any graduate program at NJIT, you will complete an online application. You will be asked to create a user ID and password. Don't worry about completing the application at once. You may start it, save it, and return to it at a later time using your user ID and password. Also, remember to visit your program's information page and complete all additional requirements.\n \n---\n- Finishing a Previously Started Application\nIf you have already started an application and have not submitted it, you can use your self-created username and password and log in to finish your application. Click here to continue, finish, or submit your previously started application.",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:47:29.243Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T18"
+  },
+  {
+    "id": "9ef2ea7e-9581-4f4b-b495-836de2da0bc6",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "Rugers\n---\nApplication Guidelines\nYou have gathered materials and reviewed what you need in Before You Apply. You have identified your program requirements and deadlines. Let’s apply!\n---\nApply Online\nOur secure, online application uses high-grade encryption to protect your information and requires an updated browser with cookies and JavaScript enabled.\n---\nFind out what questions are on the application by previewing our application. (PDF)\nApplication Requirements\nWhile programs may require additional materials, here are the basic application requirements:\n---\nOnline application\n$70 nonrefundable application fee\nOne official transcript from each post-secondary institution attended\nLetters of recommendation, as required by the program\n---\nA personal statement\nCurrent test results, as required by the program\nSupporting materials, as required by the program\nDuring the online application, you will:\n---\nCreate a Community ID and Password\nFill in biographical data and residency information\nSelf report any test scores (if required)\nProvide information on each institution you obtained a degree from\nEnter the email address for each of your recommenders\nType your personal statement (if required)\n---\nSubmit the application\nPay the application fee\nWhile applying, you can always save what you have entered and come back later to finish your application.\n---\nSubmitting Your Application\nOnce completed, read over your application carefully. Then hit Submit Application to submit your online application. If you have left any information out that is required or is incorrectly entered, you will get a message at the top of page telling you what is missing.\n---\nChanging Your Application\nOnce submitted, online applications may not be altered.  If you need to make a change or correction to your application, send it in writing to the appropriate graduate admissions office.\n---\nApply Now\n---\nPay the Application Fee\nAfter you submit your application, you will be requested to pay the nonrefundable application fee. We recommend you pay online by credit card or e-Check using our secure, encrypted website.\n---\nMaking a Payment Later\nYou can pay the application fee at a later date by logging back into your application portal. Your application will not be reviewed until we have processed your fee payment.\n---\nScholars\nIf you are a McNair, Project 1000, GEM, or other scholar, you may be eligible for an application fee waiver. Select your scholar program name from the list under the field labeled Scholarship Program or Consortium in the Financial Information section of the application to confirm your scholar status.\n---\nVeterans\nApplicants who are currently serving in the U.S. Military or are Military Veterans who plan to apply for educational benefits under the GI Bill, receive a waiver of the application fee.\n---\nLogin to Pay the Application Fee\n---\nApplying to More Than One Program\nAfter you have submitted an application, you may apply to another program by logging into your application portal using your Community ID and clicking My Applications in the upper right. You will then see a Create New Application button.\n---\nYou will need to pay a separate fee and may need to provide supporting credentials for the new program you are applying to. If you have sealed recommendations or other paper credentials that you cannot submit electronically, you may send them in one envelope, but clearly mark each set of credentials with the program name.\n---\nApply to Another Program",
+    "visibility": "public",
+    "timestamp": "2025-06-15T18:47:35.763Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T19"
+  },
+  {
+    "id": "926a4bcb-1203-44d9-854f-b829df7f5666",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "20.\tUniversity of Tokyo (Japan)\n---\nAt a Graduate School, students may enroll either as a regular student or an international research student. For degree programs offered in Japanese, please note that a high level of Japanese proficiency is required. The University also offers a variety of graduate degree programs taught in English, some of which do not require Japanese proficiency. A list of these programs can be viewed here: Degree Programs Offered in English for Graduate Students.\n---\nFor procedures necessary when applying for admission via a Japanese government (MEXT) scholarship, please visit the following page: Japanese Government (Monbukagakusho: MEXT) Scholarship and Other Programs.\n ---\n(1) Admission Requirements (Master's or Doctoral program)\nThose who wish to enroll in a Master's or Doctoral program are required to take an entrance examination conducted by The University of Tokyo.\n---\nFor Master's programs, a Master's degree will be granted to those who have attended the school for at least 2 years, studied the subjects and earned the credits specified by each Graduate School, and passed the thesis review and final examinations after the requisite academic guidance. For Doctoral programs, a Doctoral degree will be granted to those who have attended the school for at least 3 years, studied the subjects and earned the credits specified by each Graduate School, and passed the thesis review and final examinations after the requisite academic guidance. The Graduate School of Medicine (excluding Health Sciences, Nursing Science, and International Health courses), the Department of Veterinary Medical Sciences, and the Graduate School of Agricultural and Life Sciences consist of Doctoral programs that require a minimum of 4 years of attendance. For further information, please contact the Graduate School you wish to attend.\n ---\n(2) Enrollment as Postgraduate International Research Students\nInternational research students belong to a special category for those who wish to engage in research activities in specialized fields at a University of Tokyo Graduate School. No degrees or qualifications are awarded to postgraduate research students after the completion of a research term.\n ---\nQualifications for Applying\n---\nQualified applicants are non-Japanese nationals who have academic abilities equal to those of qualified applicants for regular Master's programs or Doctoral programs at University of Tokyo Graduate Schools. However, qualifications may vary depending on the Graduate School. For details, please contact the Graduate School you wish to attend.",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:55:21.682Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T20"
+  },
+  {
+    "id": "4beb7969-38f6-4ab3-91b8-a6e8840ec282",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "21.\tKyoto University (Japan)\n---\nEligibility requirements\nEach Graduate School has its own admission requirements. The following is a general overview for master's, doctoral, and professional degree programs. A preliminary eligibility selection may take place in some cases prior to the submission of application forms.\n\nFor full details, please contact the Graduate School concerned.\n---\nGraduate School administrative offices\n---\nApplicants from overseas universities\n---\nGraduates of overseas universities wishing to enroll in a Kyoto University Graduate School as a research student or regular graduate student may be required to contact the Admissions Assistance Office (AAO) for a preliminary review before submitting application documents to the school.\n---\nPlease refer to the following for details:\nFor graduates of overseas universities\n---\n1. Master's, professional, and five-year doctoral programs at the Graduate Schools of Asian and African Area Studies (ASAFAS), Advanced Integrated Studies in Human Survivability (GSAIS), and Pharmaceutical Sciences\nCandidates must have:\n---\nGraduated from a Japanese university,\nCompleted 16 years' schooling abroad, or\nReached or passed 22 years of age, and been awarded a bachelor's degree or higher, or equivalent as recognized by the Graduate School concerned\n---\n2. Doctoral programs\nCandidates must have:\n---\nBeen awarded a master's or professional degree from a university in Japan,\nCompleted an academic program overseas that is equivalent to Kyoto University's master's or professional degree program, or\nReached or passed 24 years of age, and been awarded a master's, professional, or Juris Doctor degree (or higher), or equivalent as recognized by the Graduate School concerned\n---\n3. Four-year doctoral programs at the Graduate Schools of Medicine and Pharmaceutical Sciences\nCandidates must have:\n---\nGraduated from a six-year course in medicine, dentistry, veterinary medicine, or pharmacy at a Japanese university,\nCompleted 18 years' schooling abroad, or\nReached or passed 24 years of age, and been deemed by the Graduate School concerned to have academic ability equivalent or superior to that of a graduate of a six-year course in medicine, dentistry, veterinary medicine, or pharmacy at a Japanese university\n\n---\nSelection\nThe application deadline and test schedule vary by School. The screening consists of written and oral examinations to assess language proficiency and knowledge of the chosen field. Preliminary screening may be required in some cases prior to the submission of application documents.\n---\nThe academic year begins in April, with the exception of some Schools that accept students in October as well.\n---\nFor more details, please call or email the administrative office of the Graduate School concerned , or visit the following links:\n---\nGraduate Schools\nEnglish-taught degree programs",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:55:30.483Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T21"
+  },
+  {
+    "id": "79e5dc33-24ac-4d7e-b8f8-b0035d8f4cb8",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "22.\tTohoku University (Japan)\n---\nAdmission\nIf you wish to enter a graduate school, you should first look for a course that interests you and an instructor in your preferred field. The enrollment process differs depending on the course and instructor.\n---\nStep1. Confirmation to prospective advisor.\nYou should first find a prospective advisor. Find faculty members in the field of your interest and contact them.\n\nTo search by name, school, field, or keyword:\nLink: Academic Research Staff at Tohoku University\nTo search by department and/or school:\nLink: Academics > Graduate Schools\nTo search courses in English:\nLink: Academics > Courses taught in English\n---\nStep2. Check application eligibility/procedure.\nThe following items differ depending on the graduate school. Contact the academic affairs section, or office in charge of admission directly or through your prospective supervisor for details.\n\napplication eligibility, documents, and schedule\nentrance examination\nwhen and how to pay application fee\nscholarship availability\naccommodation\n---\nStep3. Submit Application Documents\n---\nStep4. Take an Examination\n",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:55:38.285Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T22"
+  },
+  {
+    "id": "125efc2a-e98f-4590-ab6c-e0f33bfd18e5",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "23.\tTokyo Institute of Technology (Tokyo Tech)\n---\nhttps://www.titech.ac.jp/english/admissions/prospective-students/graduate-programs/igp-a\n---",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:55:48.493Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T23"
+  },
+  {
+    "id": "d6c482f3-aad0-45a9-ab95-f25127f11746",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "24.\tOsaka University (Japan)\n---\nApplication Guidelines\nIn order to apply for one of the programs, please download the application form from the webpage and fill it in.\n---\n<Approval of Application>\n ・Applicants have to get approval from their prospective academic advisor and the head of the Division/Department for which they will be applying before they submit the application materials.\n・Admissions Assistance Desk supports prospective international graduate students from overseas during the initial stage of application by working as a liaison between students and their prospective supervisors.\n＿Admissions Assistance Desk\n---\n<Notes on the Application Form>\n The application form can be edited on the PDF data, including course selection and text input.\nPlease save the PDF data on your PC and edit it on PDF viewing software.\n*Please note that editing the application form on an Internet browser may cause problems.>\n _\n---\n■Enrollment in April 2026　\n---\nCurriculum\tCourse\tGuideline\tApplication Form\nMaster’s\t\nMaster’s Course for International Students                      【Mar.2025 updated】　　　　　　　　　\n---\nGuideline\tApplication Form\nMaster’s Degree Program Conducted in English              【Mar.2025 updated】\n---\nGuideline\tApplication Form\nDoctoral\t\nDoctoral Course for International Students                      【Mar.2025 updated】　　　　　　　　　　\n---\nGuideline\tApplication Form\nDoctoral Degree Program Conducted in English             【Mar.2025 updated】　　　　　　　　　　　　　　　\n---\nGuideline\tApplication Form\nDoctoral Degree Program Conducted in English             【Mar.2025 updated】\n---\n*Internal Application\n (For students who are expected to complete Master’s Degree Programs Conducted in English of Graduate School of Engineering, Osaka University)\n---\nGuideline\tApplication Form\n---\n■Enrollment in October 2025\n---\nCurriculum\tCourse\tGuideline\tApplication Form\nMaster’s\n---\nMaster’s Degree Program Conducted in English  【CLOSED】\n---\nGuideline\tApplication Form\nDoctoral\n---\nDoctoral Course for International Students　\n【Mar.2025 updated】　　　　　　　　　　　　　　　\n---\nGuideline\tApplication Form\nDoctoral Degree Program Conducted in English 【CLOSED】\tGuideline\tApplication Form\nDoctoral Degree Program Conducted in English\n---\n*Internal Application 【CLOSED】\n (For students who are expected to complete Master’s Degree Programs Conducted in English of Graduate School of Engineering, Osaka University)\n---\nGuideline\tApplication Form\n---\n■Enrollment in October 2025【MEXT】\n * For Japanese Government (MEXT) Scholarship Students (Special Programs)\n   (Only eligible for those who do NOT apply for another MEXT scholarship in 2024 fiscal year)\n※Please read before submitting your application.\nFAQ\nExample of filling out the form\n---\nCurriculum\t\nCourse\n---\nGuideline\tApplication Form\nMaster’s and Doctoral\t\nMaster’s Degree and Doctoral Degree Programs Conducted in English　\n*For MEXT Scholarship Students(Special Programs)\n\n---\nIndustrial Biotechnology Global Leadership Program Based on Advanced Science and Technology\n---\nGuideline\tApplication Form\n・Chemical Science Course / International Priority Graduate Program on “Applied and Engineering Physics”\n (Human Resources Development Program for Design and Experimental Verification of Innovative Materials and Devices)\n---\nGuideline\nMaster’s Degree and Doctoral Degree Programs Conducted in English　\n*For MEXT Scholarship Students(Special Programs)\n---\nInternational Program of Maritime and Urban Engineering by Promoting Interdisciplinary Innovation at Inter-Asia Co-creation Fields for Solving Global Problems\n---\nGuideline\tApplication Form",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:55:58.791Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T24"
+  },
+  {
+    "id": "cb71bf0a-7aa5-49f2-ad99-4e36c5b7a559",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "\n25.\tWaseda University (Japan)\n\n---\nGraduate School of International Culture and Communication Studies\n---\nStep 3 Prepare Application Documents\nYour application should be completed on the designated online application system (TAO). While the application\nprocess will be mostly conducted through TAO, there are a number of documents that you must prepare in advance.\nRead the application guidelines carefully and prepare all the necessary documents before the application period starts.\nIMPORTANT\nOn TAO, you will first upload digital/scanned copies of original/certified documents and certificates to follow our\nonline application process. However, later as part of our enrollment procedures, successful applicants will be required\nto prove its originality either by submitting their physical copies by post, having their official versions sent by e-mail\nfrom the issuing organization, or using digital credential services. If you are unable to do so by the designated\ndeadline, you will be considered to have failed to meet our enrollment qualifications. Discrepancies may be considered\nas falsification/fabrication of application documents, and your admission may be revoked. For more details, refer to\n“STEP 9 Enrollment Procedures”.\n All documents should be issued in English unless the original documents can only be issued in Japanese.\n For documents in other languages, upload an official translation in English together with the documents issued in\nthe original language. Documents must be translated either by the issuing institution, translation agency or other\nappropriate office officially approved by the government.\n All documents must be issued under your legal name written in English alphabet on your passport. If the name\nused on the application documents differs from the name on your passport, provide a document to prove that all\nnames belong to the same person.\n If any documents are to be sent directly from your university, use the contact information on the cover page.\nThe e-mail must be sent through an official school/institutional domain or through digital credential services.\n Your Research Plan, Statement of Purpose, and Other Evidence of Research are a chance to explain yourself to the\nschool and should be completed by yourself. Using generative AI to create these documents and presenting them\nas your own work may be considered as cheating and could affect the evaluation of your application.\n Follow the instructions on TAO regarding the types of files (extensions) which can be uploaded.\n Please be reminded that we may request additional documents if necessary.\nNO Documents ○: Required\n*: if applicable\nPrescribed\nForm Ref\n⓪ Application Form ○ TAO\n① Copy of Passport ○ P.9\n② Copies of both sides of Residence Card * P.9\n③ Photo ○ P.9\n④ English Proficiency Test Scores ○ P.9-10\n⑤ Research Plan ○ ○ P.10\n⑥ Statement of Purpose ○ ○ P.10\n⑦ Other Evidence of Research * ○ P.10\n⑧ Certificate of (Expected) Graduation/Degree Certificate ○ （○） P.11\n⑨ Certificate of GPA (Academic Transcript) and Grading Scale ○ P.12\n⑩ Copy of Payment Receipt ○ P.12\n⑪ Recommendation Letter(s) ○ ○ P.13-14\n9\n Prepare photocopies of the pages bearing your photograph, name, and passport number. If you do not have a\npassport at the time of application, contact the GSICCS office.\n Non-passport holders are recommended to apply for a passport soon in order to apply for a student visa.\n If you hold multiple passports, upload the copies of all of the passports.\n② Copies of both sides of Residence Card\n If you are a domestic applicant with non-Japanese nationality, prepare copies of both sides of your Residence Card.\n If you do not have the above card, upload a photocopy of the passport page with your photo and all pages with\npersonal information including your visa status.\n③ Photo\n Please upload a color photo taken within 3 months before the time of application. The requirements for the photo\nare as follows: A vertical to horizontal ratio of 4:3; borderless, must capture the upper body; must provide a front\nview with no hats; and must be taken against a plain background. As will be detailed later, as part of the enrollment\nprocedure, you will be required to upload the same photo you submitted with your application. Therefore, please\nkeep the file of the submitted photo until you complete the enrollment procedure.\n Photos taken wearing scarves and sunglasses will not be accepted. A head piece will not be permitted except for\nmedical or religious reasons.\n We do not accept unclear photos such as snapshots or photos that make it difficult to identify the pictured individual\nor verify their identity owing to differences in hairstyle, etc.\n Please do not post-process or retouch the face portrait photo.\n Photographs taken and printed by individuals themselves using smartphones, etc., will not be accepted. Be sure to\ntake an ID-quality photo (photo taken at an instant photo booth is acceptable).\n During the enrollment procedure, you will be required to upload a photo for your student ID card separately. Please\nuse the same photo you submitted with your application. Please note that the photo uploaded during the\nenrollment procedure will be used as personal information in various student web portal services, and for identity\nverification in various on-campus procedures.\n④ English Proficiency Test Scores\n Test scores received before the online application system opening period will be accepted, but any scores received\nafter the application period will NOT be accepted. Make your arrangement well in advance of the application\ndeadline.\n Applicants are required to submit at least one of the test scores listed below regardless of their native language.\nNote that the submission is NOT waived even if you are a native English speaker or an English-taught degree\nholder.\n There are no minimum scores/requirements for the tests below. However, the reference scores are disclosed.\nEnglish-Proficiency-Test-Scores.pdf (waseda.jp)\n If you are unable to take any of the designated tests due to unavoidable circumstances, contact the GSICCS office\nBEFORE the start of application period (Screening Fee Payment Period).\n Examinations taken on or after May 1, 2023 are deemed valid.\n< If you have NOT completed an undergraduate or graduate program conducted in English>\nTOEFL iBT, or IELTS (Academic)\n< If you have completed/are expected to complete an undergraduate or graduate program conducted in English>\nTOEFL iBT, IELTS (Academic), or Duolingo English Test\n① Copy of Passport\n10\n・ Submission method differs depending on the test you submit. Please refer to the chart below for details;\nTOEFL iBT\nScores must be sent directly from the ETS. Use the following institution code: 4232\nFor the department, select \"Others\" or one related to your research plan.\n*TOEFL iBT Home Edition, TOEFL Paper Edition, and TOEFL ITP (Institutional Testing\nProgram) are NOT accepted\n*In general, tests taken at other than testing center are not accepted\n*TOEFL MyBest Scores and are NOT accepted\nIELTS (Academic)\nScores must be sent directly from the test board electronically using the following\ninformation.\nInstitution: Waseda University\nDepartment: Admissions Center\nAddress: 1-6-1, Nishi-waseda, Shinjuku-ku, Tokyo, 169-8050 Japan, Admissions Center,\nWaseda University\nDelivery Method: Electronic Score Delivery\n*IELTS Indicator and IELTS Online are NOT accepted\n*In general, tests taken at other than testing center are not accepted\n*IELTS One Skill Retake is NOT acceptable\nDuolingo English\nTest\nScores must be sent directly from Duolingo.\nChoose \"Waseda University – Graduate School of International Culture and\nCommunication Studies\"\n⑤ Research Plan\n Describe in detail your research plan which you wish to pursue at GSICCS, including the theme, approach, and\nmethods, etc. which you intend to use.\n Your Research Plan should be written in English in around 800 words. Refer to the prescribed form for details and\nattach the form as a cover page.\n⑥ Statement of Purpose\n Your statement should describe\n- why you are interested in pursuing a graduate degree\n- how you have been preparing for graduate study\n- why GSICCS would be a good place for you to study\n- what plans and goals you have for your career after completing the GSICCS program\n- any other points that may assist in evaluating your aptitude and motivation to study at GSICCS\n Your Statement of Purpose should be written in English in around 800 words. Refer to the prescribed form for details\nand attach the form as a cover page.\n⑦ Other Evidence of Research\n Submission is optional. You may provide a detailed description of your graduation thesis (or other research outputs\nrelating to your intended research theme).\n Description should be written in English in around 200 words. Refer to the prescribed form for details and attach\nthe form as a cover page.\n11\n⑧ Certificate of (Expected) Graduation / Degree Certificate\n The certificate of (expected) graduation must clearly specify the year, month, and day of graduation.\n Those who submit a certificate of expected graduation and become a successful applicant must submit an official\ngraduation certificate at the time of enrollment procedures.\n If the graduation date is specified on the Academic Transcript, you may upload the Academic Transcript as a\nCertificate of Graduation.\n As for “Certificate of Expected Graduation”, if there is no prescribed form available in your university, you may use\nthe “TEMPLATE: Certificate of Expected Graduation” provided on the GSICCS website. The document must include\nthe official seal (stamp) of your university.\n<If you are expected to complete/ have completed a graduate program>\nSubmit a certificate of (expected) graduation from a graduate school.\n<If you are expected to graduate from Waseda University>\n Submit a certificate of expected graduation. If you are not able to prepare the certificate by the deadline due to the\ndocument issuing system, upload a note prepared by applicants, mentioning this matter.\n<If you are expected to graduate/have graduated from a university in MAINLAND China>\nRefer to the following instructions. Note that only the reports sent directly from CHSI will be considered valid.\nCertificatesissued by your school are not accepted. All verification reportsmust reach our office before the deadline\nof the application period. Visit CSSD (CHESICC) website (https://www.chsi.com.cn/en/pvr/) for more information.\nCertificates required for applicants who are expected to graduate from Chinese Institutions\nArrange an official English version of the \" Online Verification Report of Student Record \" to be sent directly to our\noffice (gsiccs-chsi@list.waseda.jp) from CHSI via e-mail and upload a copy on TAO as well.\nCertificates required for applicants who graduated from Chinese Institutions\nArrange an official English version of the \"Online Verification Report of Higher Education Qualification Certificate\"\nto be sent directly to our office (gsiccs-chsi@list.waseda.jp) from CHSI via e-mail, and upload a copy on TAO as well.\n12\n Prepare an academic transcript issued by your university.\n Upload a document which includes the information of the grading scale/system of the program in your university.\nIf the transcript(s) bears the information of grading scale, you do not need to prepare additional documents. If not,\nprepare a photocopy of website, school profile, or any other official document issued by your university which\ncertifies the grading scale/system.\n Make sure that the document shows the highest and lowest achievable GPA (e.g. 4.0 scale, 100 scale, etc.,).\n All courses taken at the undergraduate level up to the most recent semester must be included in the academic\ntranscript. If you are applicable to any of the conditions stated below, follow the instructions.\nCondition Instructions\nI have completed/am enrolled in a\ngraduate program after an\nundergraduate program\nSubmit academic transcripts for both undergraduate and graduate\nprograms.\nI have studied abroad in my\nundergraduate and/or graduate\nprograms\nSubmit the academic transcript issued by the host institution.\nI am a transfer student Submit both previous and current undergraduate academic\ntranscripts.\nI took a leave of absence/leave for\nmilitary service\nInclude a certificate issued by your home university/another public\ninstitution which confirms that the school granted the leave.\n There is no minimum GPA requirement for AO admission.\n In the case of graduating from the undergraduate school in less than/more than the standard length of curriculum\nand the reasons are not stated in your academic transcripts, describe the reason in the designated space of the\napplication form (2_Educational Background).\n If you have graduated from universities in China, you may arrange an English version of “Verification Report of\nHigher Education Student’s Academic Transcript” issued by CHSI to be sent directly to the GSICCS office as a\nsubstitute for the academic transcript issued by the university you were enrolled in.\nIntramural Selection by Recommendation\n Applicants must submit the “Transcript of Academic Record/GPA” (GPA 証明書) in English, which confirms their\nGPA as 3.0 or higher.\n DO NOT submit the “Transcript of Academic Record” (成績証明書).\n⑩ Copy of Payment Receipt\n Prepare a photo or screenshot of the screening fee payment receipt.\n Refer to “Step 4 Complete the Payment of Screening Fee” for more details.\n⑨ Certificate of GPA (Academic Transcript) and Grading Scale\n13\n⑪ Recommendation Letter(s)\n The required number of letters differs depending on your application category;\nSubmission Period 10:00 am, March 1– 5:00 pm, April 8, 2025\n*The timeline indicates Japan Standard Time (JST)\n Make sure to work closely with your evaluator(s) well in advance.\n Submissions can be completed during the “Online Application Period” ONLY.\n When you start the online application (TAO), you will be given an Application ID.\nSend the following instruction to your recommender(s) with your Application ID.\n Ask your recommender(s) to complete by the application deadline.\n In some cases, the GSICCS office will contact the recommenders to verify the information on the form.\n Any falsification of documents/information will lead to the rejection of the application and otherserious measures\n---\n Application Documents\n・You need to download some formats from the website of the Faculty of Science and Engineering, Waseda\nUniversity. https://www.waseda.jp/fsci/en/admissions_gs/#anc_8\n・They must be printed on one-sided A4 size (210mm×297mm) paper. If A4 size paper is not available,\nletter size is also acceptable.\n---\n1.Application Form (Only in English)\n・Download the specified format.\n・Must write in English and must be within TWO pages. Do not change the specified format.\n・Please fill in this Application Form using your PC. Avoid handwriting.\n・You don’t have to fill in Katakana name or Chinese character name if you don’t have them.\n・Paste TWO (2) ID photos on the application form (paste the same photo).\nPHOTO REQUIREMENTS\n・The size of the photograph in printed form must be 30x40mm\n-Color photos taken within three months from the first day of the submission period for application\ndocuments. Color copy of your photo data is not acceptable. Please paste ID photos (Shomei\nShashin “証明写真”) taken at photo booth.\n-Nothing should obscure the face. Do not wear sunglasses or hats.\n-White background is preferable. Plain background such as gray or pale blue are also acceptable but\nshould not include the shadow.\n-No Headwear and hair accessories, except for religious or medical reasons.\n-Unclear photos such as snapshots or photos that are difficult to identify individuals are NOT\nacceptable.\n・Write your name on the back of the photos and paste the photos with glue on the designated place of\nthe form.\n・This photo may be used for your Student ID card after entrance. Waseda University will register photos\nas personal information for identification in various procedures, such as our online service.\nHow to fill out the bottom part of the application form\nApplicants who reside in Japan Cut off the receipt part of the Certificate of payment along with the\nline and paste it to the designated space.\nApplicants who reside\noutside Japan\nWrite down \"I have paid (or will pay) my screening fee by credit card”\nwith a red ball point pen in the blank space below.\nApplicants who are exempted\nfrom the screening fee\nWrite down \" Exemption from screening fee “with a red ball point pen\nin the blank space below.\n・If you fall into one of the screening fee waiver programs Page 15 1), 2), 3), 4), or 5), enclose a note\nmentioning that you are qualified with your application documents.\n・If you fall into screening fee waiver program 6) of page 15, enclose the designated document with your\napplication documents.\n10\n---\n2. Certificate of Graduation/ Certificate of Expected Graduation or Certificate of Enrollment (in English)\nExcept for applicants who obtained or are expected to obtain a degree from a university or college\nin mainland China (excluding Hong Kong, Taiwan, and Macau). Refer to the No.3-5 for details.\nYour Status Necessary Certificate\nGraduated Certificate of Graduation in English\nCurrent Student\nCertificate of Expected Graduation\nor\nCertificate of Enrollment\nApply for\nYour\nuniversity\nstatus\nMaster’s program Doctoral program\nGraduated applicant 1 certificate below\n・ Bachelor’s Certificate of\nGraduation\n2 certificates below\n・Bachelor’s Certificate of Graduation\n・Master’s Certificate of Graduation\nCurrent student 1 certificate below\n・ Bachelor’s Certificate of\nExpected Graduation Or\nCertificate of Enrollment\n2 certificates below\n・Bachelor’s Certificate of Graduation\n・Master’s Certificate of Expected Graduation or\nCertificate of Enrollment\n*Applicants who graduated from both Bachelor and Master’s program need to submit the certificates of both\nBachelor and Master’s program.\n・Must be officially issued from your university. Photocopies are not accepted.\n・We will NOT give back your Certificates which can be reissued by your university.\nPlease do not submit diploma (学位記) which cannot be reissued.\n・If your academic transcript shows degree awarded date, you do not need to submit your Certificate of\nGraduation.\n・Please submit the document written in Japanese or English. If the applicant cannot obtain the\ndocument written in Japanese or English, you must also provide officially certified translation. Get the\ntranslation from your institution or have it verified by the notary office to prove that the translation is\naccurate. Please submit the translation TOGETHER WITH the original verification documents by the\nnotary office.\n・If there are any changes in the Certificate of Graduation or Academic Transcripts, enclose a document\nto prove the facts. ex) Changing of Surname.\n・If you have obtained (or are expected to obtain) a Degree in English from a university in Japan (except\nfor Waseda University), submit an official document to prove that the medium of instruction is English in\nyour university.\n---\n3. Online Verification Report of Higher Education Qualification Certificate (in English)\n---\n4. Online Verification Report of Higher Education Degree Certificate (in English)\n---\n5. Online Verification Report of Student Record (in English)\nOnly applicants who obtained or are expected to obtain a degree from a university or college in\nmainland China (excluding Hong Kong, Taiwan and Macau).\nYour Status Necessary Certificate\nUniversity or College\nin mainland China\n(Excluding Hong Kong,\nTaiwan and Macau)\nGraduated\n・Online Verification Report of Higher Education Qualification\nCertificate (in English)\n・ Online Verification Report of Higher Education Degree\nCertificate (in English)\nCurrent\nStudent ・Online Verification Report of Student Record (in English)\n・The certificates must be sent directly to our office (fsegraduate@list.waseda.jp) from CSSD via email\nby the deadline of the application period. Even if the certificate is sent to our office prior to the\napplication period, it is accepted.\n・Visit CSSD website (https://www.chsi.com.cn/en/) and contact them directly for more information.\n・Only ENGLISH version of the certificates sent directly from CSSD is considered valid.\n11\n・We don’t send an acknowledgement of receipt.\n・Applicants who have NOT YET graduated from a university in mainland China when applying for our\nadmission, you must submit the necessary certificates after your graduation. We need to check your\ngraduation status and academic results before your enrollment.\n・If you have graduated (completed), or are expected to graduate (complete) from multiple Degree\nPrograms, submit the Certificates of (Expected) Graduation/ Enrollment / Degree and Academic\nTranscripts from “ALL” the programs.\n---\n6. Academic Transcripts (in English)\n・Must be officially issued from your university. Photocopies are not accepted.\n・We will NOT give back your academic transcripts which can be reissued by your university.\n・If you cannot submit your original academic transcripts, please submit the certified true copy issued by\nyour university with an original seal or a stamp.\n・The document should include the date of issue.\n・It should provide full details of the grades you received in each unit or module, and all information of the\ncourses taken.\n・If you haven’t completed your program in your university, please provide the latest transcript at the time\nof application. After you graduate, you must submit the final version of your academic transcripts to our\noffice during the enrollment procedures.\n・You must submit official certificates for all undergraduate and graduate schools attended. Applicants for\nDoctoral program need to submit academic transcripts of both Bachelor and Master program.\n・For those who have transferred, a transcript from the previous institution must also be submitted.\n・If the transcript does not include an explanation of the grading system, you must provide an official\ndocument which explains the grading system at your university.\n・If you cannot obtain the official academic transcripts written in Japanese or English from your\nuniversity, you must also provide officially certified translation. Get the translation from your institution\nor have it verified by the notary office to prove that the translation is accurate. Please submit the\ntranslation TOGETHER WITH the original verification documents by the notary office.\n---\n7. English Test Score Report (Must be an official report)\nYOUR STATUS ENGLISH TEST SCORE\nREQUIREMENT\nNative English Speaker Submit a document stating that\nyou are a native speaker\nNonNative\nEnglish\nSpeaker\nYou have graduated or are expected to graduate from an\nEnglish Degree Program at Waseda University (except\nfor research student).\nNot required\nYou have graduated or are expected to graduate from a\nuniversity in a country where the first official language is\nEnglish.\nNot required\nYou have graduated or are expected to graduate from a\nuniversity outside Japan which provides medium of\ninstruction in English.\nSubmit an official verification\ndocument instead\nYou have graduated or are expected to graduate from a\nuniversity in Japan (even if the instruction media of your\nprogram is English)\nRequired\nNot applicable to the above Required\n[Native English Speaker]\nNative English speakers are exempt from submitting English language test score reports. Enclose a note\n(free format) with your application documents, stating that you are a native English speaker.\n[Non-Native English Speaker]\nSubmit an official English test score report to prove your English language ability or submit an official\ndocument to prove that the medium of instruction is English in your home university. If your status is\ncategorized as a \"Not required\" in the table above, there is no need to submit it.\n12\nIf you fall into the case below, enclose an official verification document issued by your university to prove\nthat.\nYou have graduated or are expected to graduate from a university outside Japan which provides medium\nof instruction in English.\n[Proof of English Language Ability. What you need to submit]\nApplicants are required to submit one of the test scores listed below. If you have taken multiple English\ntests below, choose ONE of them yourself. We do not return your Score sheet once submitted.\nWe do NOT ask for a minimum score but obtaining ONE of the following scores or higher is recommended.\nMust have been taken no more than 2 years prior to the start date of the application.\nTOEIC Listening &Reading of\n800 Official Score Certificate\n“Official Score Certificate” paper document must be submitted with\nother application documents.\nTOEFL iBT of 79\n(Steps 1. to 3. All necessary)\n“My Best” score is not taken into\nconsideration for screening.\n1. Download Test Taker Score Report from ETS site and print it out to\nsubmit as your application documents. Or you can submit the original\nscore sheet which was posted to your address.\n2. Arrange an Institutional Score Report to be sent to us directly. The\nDI code (Institution Code) is “2874” (Any department code is\nacceptable. If you cannot find suitable department code, please select\n“99”).\n3. Enclose a printed screenshot of the request form of TOEFL iBT\nInstitutional Score Report.\nIELTS Academic of\nOverall Band Score 6.5\n(Steps 1. to 2. All necessary)\n*IELTS One Skill Retake is not\nacceptable.\n1. Submit your Test Report Form as your application documents.\n *A Photocopy is also acceptable.\n2. Arrange your electronic score to be sent directly from the testing\norganization using the following information.\nInstitution Faculty of Science and Engineering, Waseda\nUniversity\nDepartment Graduate Admissions Office\nAddress Graduate Admissions Office, Center for\nScience and Engineering, Waseda University\nFirst Floor, Building No.51, Nishiwaseda\nCampus, 3-4-1 Okubo,\nShinjuku-ku, Tokyo 169-8555\nDelivery Method Electronic Score Delivery\n*TOEIC IP, TOEIC S&W, TOEIC Bridge, TOEFL iBT Home Edition, TOEFL ITP, TOEFL PBT, TOEFL\nCBT, IELTS General Training, IELTS Online are NOT acceptable.\n*The tests taken at home (TOEFL iBT Home Edition, TOEFL iBT paper Edition, ILETS Online, etc.)\nare not acceptable.\n---\n8. Recommendation Letter (Must be Original)\n・2 Recommendation letters prepared by two different recommenders are required to submit.\nCurrent Waseda University students who belong to the English-based degree programs of the School (or\nGraduate School) of Fundamental / Creative / Advanced Science and Engineering do not need to submit\nthese letters.\n・Please have each recommender to enclose the letter in an envelope. It must be sealed, which\nmeans private and confidential, so that you (applicant) will not be able to see it.\n・Must be written by your university professor or your superior at your current workplace, or an appropriate\nperson who has supervised your study or work. A person who can evaluate your study or work and knows\nyour personality well.\n・Any format is acceptable.\n・Both typewriting (original sign necessary) and handwriting letters are acceptable.\n・Only letters issued for this application are valid. Do not submit old letters used for a different purpose in\nthe past.\n・The issue date must be stated in the letters. Prepare the letters in English or Japanese. We will not accept\nletters in other languages.\n---\n9. Master’s Thesis or Summary of Master’s Thesis (Photocopy)\nOnly Applicants for Doctoral Program\n・The summary of the Master’s thesis should be within 2,000 words.\n13\n・If a thesis or a summary is not written in English, attach a translation in English. Notarizations are not\nrequired.\n・If a Master’s thesis is not required for completion of your current program, enclose a document proving\nyou are exempt from Master’s thesis instead.\n---\n10.Permission Form for Application (Must be original)\nOnly Applicants for Criterion d) on page 6\n・Only for current Waseda university’s students who satisfy criterion d) on page 6.\n・Any format is acceptable.\n・Make a request to your prospective department and supervisor to issue the form.\n---\n11.Passport (Photocopy)\nAll foreign Nationals\n・Submit a clear color photocopy (print on a A4-size paper) of the face photo page.\n---\n12.Statement of Source of Funds (Must be original)\nAll foreign nationals\n・Download the specified format from https://www.waseda.jp/fsci/en/admissions_gs/#anc_8.\n・If you have been selected as a scholarship student, submit the original paper document of scholarship\naward letter that shows the amount and duration of the scholarship along with this statement. If the\ncertificate is not written in English or Japanese, attach a translation in English or Japanese. Notarizations\nare not required.\n・If you are in the middle of applying for a scholarship at the time of application, you are considered to be\na privately financed student at the time of application.\n・If you and your father are going to pay your tuition and living expenses in Japan for example, you need\nto put the amount of your savings and your father’s. Note that you have to submit the Certificates of\nDeposit Balance of both yours and your father’s if you need COE application (document 14). Also please\nsubmit Written Oath for Defraying Expenses (document 15) signed by your father for COE application.\n・Please fill in the amount necessary for your total study period. (A year (or half year) for Research student,\n2 years for Master’s Degree student and 3 years for Doctoral students).\n---\n13.Residence Card (Photocopy of both sides)\nForeign applicants who reside IN Japan or who have residence status in Japan\n・Please enclose a copy of both sides of your Residence Card.\n・Extending or changing your visa status depends on each individual even if you possess a valid residence\ncard for enrollment. For more details, please contact the Immigration Bureau before application. It is\npossible to extend or change your visa status after your enrollment, but please make sure that you always\npossess a valid residence card.\n・For details: http://www.cie-waseda.jp/visastatus/en/index.html\n---\n14.Application for Certificate of Eligibility (COE) (Must be original)\nForeign applicants who reside OUTSIDE Japan and need COE application\n・Download the specified format from https://www.waseda.jp/fsci/en/admissions_gs/#anc_8.\n・Refer to our Sample while you filling the form.\n・Please typewrite and do not handwrite.\n・You must use only black color. No other colors. In our Sample, we use red circles just to emphasize.\n---\n15. Written Oath for Defraying Expenses (Must be original）\nForeign applicants who reside OUTSIDE Japan and need COE application\n・Download the specified format from https://www.waseda.jp/fsci/en/admissions_gs/#anc_8.\n・Both typewriting and handwriting are acceptable, but the signature must be handwritten. Do not change\nthe specified format.\n・Please make sure that the defrayer’s name in the Written Oath and the account holder’s name in the\nCertificate of Deposit Balance (document 16) is the same.\n・If you defray all your expenses by yourself, you don’t need this. Submit only your Certificate of Deposit\nBalance (document 16) with your name clearly stated as an account holder.\n---\n16. Certificate of Deposit Balance (Must be original/ Need to Request to the BANK）\nForeign applicants who reside OUTSIDE Japan and need COE application\n・Only a certificate officially issued by a bank is acceptable. This is not just transaction records.\n14\n・Around 3,000,000 JPY/per year will be required totally including your tuition, living expenses, others,\netc.\n・If your family or relatives defray your expenses, submit both the Written Oath (document 15) signed by\nthe person and this Certificate of the defrayer’s own account. For example, if your father covers your\nexpenses, you need to submit your father’s Certificate of Deposit Balance as an account holder.\n・If it is not written in English or Japanese, attach a translation in English or Japanese. Notarizations are\nnot required.\n・If you have been selected as a scholarship student (if you are certain that you will receive your\nscholarship), document 15 and 16 are not required. Instead, you need to submit your original\nScholarship award letter. You must submit an official document issued by the institution which you will\nreceive your scholarship. The scholarship amount and your name must be clearly indicated in the letter.\n・This is not just a transaction record, a piece of paper certificate issued from a bank or a financial\ninstitution.\n---\n17.GRE Graduate Institution Score Report (Official / Optional to submit）\nOptional to submit\n・Only a report taken within five years from the first day of the application period is acceptable.\n・The DI code (Institution Code) is 4978 when sent directly from ETS. This must arrive by the application\ndeadline. Write down on a note that you have requested your GRE Report and enclose it with your\napplication documents.\n・GRE General Test at home is also acceptable.\n---\n18. Checklist\n・Download the specified format from https://www.waseda.jp/fsci/en/admissions_gs/#anc_8.\n・Make sure that you enclose all the required application documents before you post them. ",
+    "visibility": "public",
+    "timestamp": "2025-06-16T15:56:03.354Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "83d696b7-4220-47dc-adf8-32ace686343d",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "83d696b7-4220-47dc-adf8-32ace686343d",
+    "nodeId": "Q:graduateapplications:T25"
+  },
+  {
+    "id": "8e3393b1-a024-4c38-a4ba-9a2c5b8dbbfb",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "1. posters & videos \n2. venue\n3. Light, sound & effects crew\n4. bouncer \n5. DJ\n6. performers|\n7. MC\n8. compatible performance & DJ equipment\n---\n- venders, desk, table decorations and poster sign\n- red carpet photo area, back drop for event photography\n- guest Star Judges or voting app",
+    "visibility": "public",
+    "timestamp": "2025-06-16T16:03:00.897Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "acb6a9de-6e10-4425-91fa-1e16ba0a95b3",
+    "nodeId": "Q:battleofthebands:T01"
+  },
+  {
+    "id": "2256bf9f-6867-4de0-9804-e11bf0313de9",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "\nMonth 1\n\n- 🔹 Ep 1: Welcome to Public Media\n\t•\tMeta-introduction: who you are, what you’re building (Ethos, SK Network, Guild Quest), why this channel exists.\n\t•\tTone: documentary-style vlog mixed with humor/skits.\n\t•\tBlog Post: “Why I’m Building In Public: An Invite to the Journey”\n\n- 🔹 Ep 2: Economics of a World with Magic\n\t•\tTopic episode: post-labor society, AI and automation, SK Network’s guild model, quest economy, adventurer jobs.\n\t•\tTie-in: How Ethos organizes requests & SK events fuel new value chains.\n\t•\tBlog Post: “Magic, Labor, and the Future of Work: A Guild-Based Vision”\n---\n🔹 Ep 3: Dev Log 001\n\t•\tProgress update on Ethos, Guild Quest, or SymbolCast.\n\t•\tBTS footage of coding sessions, UI sketches, or backend architecture.\n\t•\tMaybe include an “IDK Comics” interlude.\n---\n🔹 Ep 4: Skit, Short, or Concept Drop\n\t•\tA fun, creative wildcard (TV skit pilot, absurd thought piece, visual poem, comedy sketch).\n\t•\tExample: “What if landlords were wizards?” or “AI therapy sessions in 2099.”\n\n---\n\nMonth 2\n---\n🔹 Ep 5: State of the Guild\n\t•\tA look into community-building through SK Network, how events fuel creator ecosystems.\n\t•\tHow to join or launch a guild in your world.\n\t•\tBlog Post: “The Future is Guilded: From Freelancers to Adventurers”\n---\n🔹 Ep 6: Lab Log 001\n\t•\tResearch breakdown (e.g., quantum ripple paper, wavefunction sieve, Book of Magic).\n\t•\t“Spell of the month” from your fiction project.\n\t•\tBlog Post: “What if Physics Had Magic?”\n---\n🔹 Ep 7: Dev Log 002\n\t•\tProgress update. Focus on quests, XP, profile design, or security/auth backend.\n\t•\tTease upcoming features or UI demo.\n\t•\tMaybe test “quest links” or moderation tools.\n---\n🔹 Ep 8: Special Event Focus\n\t•\tHighlight an SK creator event (live performance, collab, or behind-the-scenes).\n\t•\tCould also spotlight a merch drop or mini Battle of the Bands teaser.\n\t•\tBlog Post: “Building Culture, Not Just Content”\n\n---\nMonth 3\n---\n🔹 Ep 9: The Right to Work (Magic Version)\n\t•\tDeep dive into what “right to work” means in a magical or AI-driven world.\n\t•\tDiscuss government regulation of magic, gig workers as spellcrafters.\n\t•\tTie to Ethos as a space to define your own labor rights.\n\t•\tBlog Post: “Steampunk Meal Tickets and Adventurer Freedom”\n\n🔹 Ep 10: Dev Log 003\n\t•\tShow progress with live data or users if possible.\n\t•\tIntroduce quest log linking or skill XP/ranking system.\n---\n🔹 Ep 11: Print Drop / Creator Capsule\n\t•\tAnnounce new POD merch, highlight designs or artist collabs.\n\t•\tCould include mini-interview with artist or process sketch.\n\t•\tBlog Post: “Designing for Meaning, Not Just Merch”\n---\n🔹 Ep 12: Season Reflection + State of the Culture\n\t•\tRecap what was learned, what changed, what’s next.\n\t•\tFuture plans for Public TV, live events, SK seasons, and creator invites.\n\t•\tBlog Post: “Season One: What We Built, and What’s Next”",
+    "visibility": "public",
+    "timestamp": "2025-06-16T16:11:16.276Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "e3b1fc20-17f0-49e1-8adf-f86225cca4a3",
+    "nodeId": "Q:publicmedia:T01"
+  },
+  {
+    "id": "54f01d70-a5e7-4223-8c16-d28d9151d824",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "like and heart are not persitantly displaying. thener should als be a way to mark a post as todo, inprogress, complete blocked from the post view similar to being able to link post",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:33:17.297Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I04"
+  },
+  {
+    "id": "7de6e351-61c6-4ac5-a9f5-ea62542df40f",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "issue",
+    "content": "When a post becomes too long the post coard should dispaly at a fixed length with a ... see more \n\n\nthis ... see more should replace view details",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:34:36.129Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:I05"
+  },
+  {
+    "id": "60175e71-58b0-4509-ab82-b75055d0f90c",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "there should be a an exanad collapbe controler in the top of the card when you click it it will by default show map view instad of clicking on view map. then on any view you can collaps it again.\n\nthe drop down list of video options should be \nMap - Graph\nLog -  Log \nStatus - card",
+    "visibility": "public",
+    "timestamp": "2025-06-19T14:38:21.523Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "9ceefa61-464d-47c9-b325-db19041e1990",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "9ceefa61-464d-47c9-b325-db19041e1990",
+    "nodeId": "Q:ethos:T05"
+  },
+  {
+    "id": "5fc9e807-67f7-4349-9cfc-1763b2c0921d",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "main task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:52:08.162Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T00"
+  },
+  {
+    "id": "dd44beb6-7d81-476b-89ab-c080fb140496",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "sub task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:53:03.534Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T01"
+  },
+  {
+    "id": "0c00adbd-1e4c-4109-b739-f74261d03c26",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "task",
+    "content": "test task",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:54:01.363Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "dd44beb6-7d81-476b-89ab-c080fb140496",
+        "itemType": "post",
+        "nodeId": "",
+        "linkType": "task_edge",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
+      },
+      {
+        "itemId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "3b37788a-0fa7-4dd4-9430-bee9e7d62964",
+    "nodeId": "Q:testquest:T02"
+  },
+  {
+    "id": "8cdafb47-11dc-4cb3-bf9a-b82bc632b3f5",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "free_speech",
+    "content": "test",
+    "visibility": "public",
+    "timestamp": "2025-06-19T19:57:57.610Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "acf42bea-ed75-4fd2-a558-ee64aaa66033",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "7ecdde27-dccd-436c-8c07-dd44c49e0e90",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-19T19:58:38.302Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  },
+  {
+    "id": "201ada28-20d8-4408-bf37-90c321b7635a",
+    "authorId": "u_4b321776-e3da-482e-b38c-c4451b50aeac",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-19T19:58:38.308Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null
+  }
+]
