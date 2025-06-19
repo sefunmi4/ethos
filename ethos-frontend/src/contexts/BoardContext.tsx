@@ -37,7 +37,7 @@ export interface BoardContextType {
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
 export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [boards, setBoards] = useState<BoardMap>({});
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
@@ -49,6 +49,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   useEffect(() => {
+    if (authLoading) return;
     const loadBoards = async () => {
       setLoading(true);
       try {
@@ -68,7 +69,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     };
 
     loadBoards();
-  }, [user]);
+  }, [user, authLoading]);
 
   const appendToBoard = (boardId: string, newItem: BoardItem) => {
     setBoards((prev) => {
