@@ -106,7 +106,7 @@ export type ReactionCountMap = Record<ReactionType, number>;
  */
 export interface ReactionSet {
   like?: Record<string, string>;
-  love?: Record<string, string>;
+  heart?: Record<string, string>;
   repost?: Record<string, string>;
 }
 
