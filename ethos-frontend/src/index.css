@@ -8,6 +8,7 @@
   --bg-soft: #f9fafb;
   --text-primary: #1f2937;
   --accent: #4f46e5; /* indigo-600 */
+  --info-background: #bfdbfe;
 }
 
 .dark {
@@ -51,5 +52,5 @@ a:hover {
 }
 
 .droppable-over {
-  background-color: #bfdbfe;
+  background-color: var(--info-background);
 }
