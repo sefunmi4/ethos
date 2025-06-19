@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { useGitDiff } from '../../hooks/useGit';
 import { Spinner } from '../ui';
@@ -41,6 +41,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   loadingMore = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [paths, setPaths] = useState<{ key: string; d: string }[]>([]);
 
   const [rootNodes, setRootNodes] = useState<(Post & { children?: NodeChild[] })[]>([]);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges || []);
@@ -52,6 +54,39 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     filePath: selectedNode?.gitFilePath,
     commitId: selectedNode?.gitCommitSha,
   });
+
+  const computePaths = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+    const newPaths: { key: string; d: string }[] = [];
+    edgeList.forEach((edge) => {
+      const fromEl = nodeRefs.current[edge.from];
+      const toEl = nodeRefs.current[edge.to];
+      if (fromEl && toEl) {
+        const fromRect = fromEl.getBoundingClientRect();
+        const toRect = toEl.getBoundingClientRect();
+        const startX =
+          fromRect.left + fromRect.width / 2 - containerRect.left + container.scrollLeft;
+        const startY =
+          fromRect.bottom - containerRect.top + container.scrollTop;
+        const endX =
+          toRect.left + toRect.width / 2 - containerRect.left + container.scrollLeft;
+        const endY = toRect.top - containerRect.top + container.scrollTop;
+        newPaths.push({ key: `${edge.from}-${edge.to}`, d: `M ${startX} ${startY} L ${endX} ${endY}` });
+      }
+    });
+    setPaths(newPaths);
+  };
+
+  useLayoutEffect(() => {
+    computePaths();
+  }, [rootNodes, edgeList]);
+
+  useEffect(() => {
+    window.addEventListener('resize', computePaths);
+    return () => window.removeEventListener('resize', computePaths);
+  }, [edgeList]);
 
   useEffect(() => {
     const nodeMap: NodeMap = {};
@@ -148,8 +183,29 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           'overflow-auto w-full h-full p-4 max-w-7xl mx-auto ' +
           (rootNodes.length === 1 ? 'flex justify-center' : '')
         }
-        style={{ minHeight: '50vh' }}
+        style={{ minHeight: '50vh', position: 'relative' }}
       >
+        <svg
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <marker
+              id="arrow"
+              viewBox="0 0 10 10"
+              refX="10"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#aaa" />
+            </marker>
+          </defs>
+          {paths.map((p) => (
+            <path key={p.key} d={p.d} stroke="#aaa" fill="none" markerEnd="url(#arrow)" />
+          ))}
+        </svg>
         {rootNodes.map((node) => (
           <GraphNode
             key={node.id}
@@ -164,6 +220,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             onSelect={handleNodeClick}
             diffData={diffData}
             diffLoading={diffLoading}
+            registerNode={(id, el) => {
+              nodeRefs.current[id] = el;
+            }}
           />
         ))}
         {loadingMore && (

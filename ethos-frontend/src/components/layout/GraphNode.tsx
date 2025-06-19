@@ -37,6 +37,7 @@ interface GraphNodeProps {
   onSelect: (n: Post) => void;
   diffData?: { diffMarkdown?: string } | null;
   diffLoading: boolean;
+  registerNode?: (id: string, el: HTMLDivElement | null) => void;
 }
 
 const GraphNode: React.FC<GraphNodeProps> = ({
@@ -52,6 +53,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   onSelect,
   diffData,
   diffLoading,
+  registerNode,
 }) => {
   const isFolder = node.type === 'quest' || node.tags.includes('quest');
   const icon = isFolder ? '📁' : '📄';
@@ -89,7 +91,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     const label = node.nodeId || node.id.slice(0, 6);
     const snippet = (node.content || '').slice(0, 30);
     return (
-      <div className="relative">
+      <div className="relative" ref={(el) => registerNode?.(node.id, el)}>
         <div
           className="mb-2 flex items-center cursor-pointer"
           style={{ marginLeft: depth * 16 }}
@@ -145,7 +147,13 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   }
 
   return (
-    <div ref={setDropRef} className={`relative ${pulsing ? 'animate-pulse ring-2 ring-blue-400' : ''}`}> 
+    <div
+      ref={(el) => {
+        setDropRef(el);
+        registerNode?.(node.id, el);
+      }}
+      className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''}`}
+    >
       <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
         <div
           className={`ml-${depth * 4} mb-6 flex items-start space-x-2 cursor-pointer`}
