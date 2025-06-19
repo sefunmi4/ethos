@@ -200,6 +200,8 @@ npm install --prefix ethos-frontend @dnd-kit/core
 
 Drag nodes on top of other nodes in the graph view to create parent/child links. Nodes with a type or tag of `quest` appear as folder icons (📁) so you can visually organize quests. This drag-and-drop behavior uses the same `@dnd-kit/core` dependency as the Kanban board.
 
+When a node has more than five children, the graph condenses those children into small circle icons. Clicking a condensed node sets it as the focus and expands its subtree while siblings stay collapsed.
+
 
 ---
 

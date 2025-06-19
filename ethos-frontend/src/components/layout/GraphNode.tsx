@@ -8,6 +8,8 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 
+export const MAX_CHILDREN_BEFORE_CONDENSE = 5;
+
 const stringToColor = (str: string) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -29,6 +31,8 @@ interface GraphNodeProps {
   user?: User;
   compact?: boolean;
   condensed?: boolean;
+  focusedNodeId?: string | null;
+  onFocus?: (id: string) => void;
   selectedNode: Post | null;
   onSelect: (n: Post) => void;
   diffData?: { diffMarkdown?: string } | null;
@@ -42,6 +46,8 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   user,
   compact = false,
   condensed = false,
+  focusedNodeId,
+  onFocus,
   selectedNode,
   onSelect,
   diffData,
@@ -54,6 +60,10 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   const { setNodeRef: setDropRef, isOver } = useDroppable({ id: node.id });
   const style = transform ? { transform: CSS.Translate.toString(transform) } : undefined;
 
+  const isFocused = focusedNodeId === node.id;
+  const shouldCondenseChildren =
+    !isFocused && node.children && node.children.length > MAX_CHILDREN_BEFORE_CONDENSE;
+
   if (condensed) {
     const colorKey = node.tags[0] || node.type;
     const color = stringToColor(colorKey);
@@ -64,7 +74,10 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         <div
           className="mb-2 flex items-center cursor-pointer"
           style={{ marginLeft: depth * 16 }}
-          onClick={() => onSelect(node)}
+          onClick={() => {
+            onSelect(node);
+            onFocus?.(node.id);
+          }}
           title={snippet}
         >
           <div
@@ -86,7 +99,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         )}
         {node.children && node.children.length > 0 && (
           <div className="ml-8 border-l border-gray-300 pl-4">
-            {node.children.map(child => (
+            {node.children.map((child) => (
               <GraphNode
                 key={child.node.id}
                 node={child.node}
@@ -94,7 +107,12 @@ const GraphNode: React.FC<GraphNodeProps> = ({
                 edge={child.edge}
                 user={user}
                 compact={compact}
-                condensed={condensed}
+                condensed={
+                  condensed ||
+                  (shouldCondenseChildren && child.node.id !== focusedNodeId)
+                }
+                focusedNodeId={focusedNodeId}
+                onFocus={onFocus}
                 selectedNode={selectedNode}
                 onSelect={onSelect}
                 diffData={diffData}
@@ -131,7 +149,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         )}
         {node.children && node.children.length > 0 && (
           <div className="ml-8 border-l border-gray-300 pl-4">
-            {node.children.map(child => (
+            {node.children.map((child) => (
               <GraphNode
                 key={child.node.id}
                 node={child.node}
@@ -139,7 +157,12 @@ const GraphNode: React.FC<GraphNodeProps> = ({
                 edge={child.edge}
                 user={user}
                 compact={compact}
-                condensed={condensed}
+                condensed={
+                  condensed ||
+                  (shouldCondenseChildren && child.node.id !== focusedNodeId)
+                }
+                focusedNodeId={focusedNodeId}
+                onFocus={onFocus}
                 selectedNode={selectedNode}
                 onSelect={onSelect}
                 diffData={diffData}

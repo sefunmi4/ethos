@@ -45,6 +45,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const [rootNodes, setRootNodes] = useState<(Post & { children?: NodeChild[] })[]>([]);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges || []);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
+  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
 
   const { data: diffData, isLoading: diffLoading } = useGitDiff({
     questId,
@@ -114,6 +115,10 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     );
   };
 
+  const handleNodeFocus = (id: string) => {
+    setFocusedNodeId(id);
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -153,6 +158,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             user={user}
             compact={compact}
             condensed={condensed}
+            focusedNodeId={focusedNodeId}
+            onFocus={handleNodeFocus}
             selectedNode={selectedNode}
             onSelect={handleNodeClick}
             diffData={diffData}
