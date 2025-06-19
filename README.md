@@ -126,6 +126,14 @@ npm test --prefix ethos-backend
 
 This runs the Jest tests under `ethos-backend/tests`.
 
+To run the frontend test suite:
+
+```bash
+npm test --prefix ethos-frontend
+```
+
+This runs the frontend Jest tests in `ethos-frontend/tests`.
+
 `.env` for backend:
 
 ```env
