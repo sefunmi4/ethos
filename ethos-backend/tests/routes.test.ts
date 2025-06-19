@@ -310,6 +310,5 @@ describe('route handlers', () => {
     expect(res2.status).toBe(200);
     expect(res2.body.items).toEqual(['r3']);
 
-
   });
 });
