@@ -31,7 +31,10 @@ export const getSocket = (): Socket => {
       }
     };
 
-    const SOCKET_URL = getEnv().VITE_SOCKET_URL || process.env.VITE_SOCKET_URL || 'http://localhost:3001';
+    const SOCKET_URL =
+      getEnv().VITE_SOCKET_URL ||
+      (typeof process !== 'undefined' ? process.env.VITE_SOCKET_URL : undefined) ||
+      'http://localhost:3001';
     socket = io(SOCKET_URL, {
       autoConnect: false,
       transports: ['websocket'],
