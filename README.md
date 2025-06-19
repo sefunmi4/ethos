@@ -149,6 +149,30 @@ console output. Each log line includes a timestamp for easier tracing.
 4. Quests are mapped visually and tracked via quest logs.
 5. Boards show all active or completed items in grid, list, or timeline views.
 
+## Task Status & Kanban Boards
+
+Boards include a Kanban layout for tracking tasks as they move through
+different stages. Each card can be in one of four statuses:
+
+- **To Do** – waiting to be picked up
+- **In Progress** – actively being worked on
+- **Blocked** – something is preventing progress
+- **Done** – completed and ready for review
+
+Click and hold a card to drag it to another column. Dropping the card updates
+its status immediately and the overall quest progress reflects the change for
+everyone on the board.
+
+### Setup for drag and drop
+
+The Kanban board relies on the `@dnd-kit` libraries. Install them in the
+frontend directory before running the app:
+
+```bash
+npm install --prefix ethos-frontend @dnd-kit/core @dnd-kit/sortable
+```
+
+
 ---
 
 ## 🌱 Roadmap
