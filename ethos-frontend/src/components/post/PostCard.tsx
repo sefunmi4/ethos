@@ -19,7 +19,6 @@ import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
-import CreatePost from './CreatePost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 
@@ -61,6 +60,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
+  const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
+  const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const { loadGraph } = useGraph();
 
