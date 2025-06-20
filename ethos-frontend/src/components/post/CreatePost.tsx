@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { addPost } from '../../api/post';
-import { Button, TextArea, Select, Label, FormSection } from '../ui';
+import { Button, TextArea, Select, Label, FormSection, Input } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
 import CreateQuest from '../quest/CreateQuest';
@@ -51,6 +51,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
   const [content, setContent] = useState<string>('');
+  const [details, setDetails] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,6 +102,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       const payload: Partial<Post> = {
         type,
         content,
+        ...(type === 'task' && details ? { details } : {}),
         visibility: 'public',
         linkedItems: autoLinkItems,
         helpRequest: type === 'request' || helpRequest || undefined,
@@ -208,20 +210,42 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           </>
         )}
 
-        <Label htmlFor="content">Content</Label>
-        <TextArea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={
-            replyTo
-              ? 'Reply to this post...'
-              : repostSource
-              ? 'Add a comment to your repost...'
-              : 'Share your thoughts or progress...'
-          }
-          required
-        />
+        {type === 'task' ? (
+          <>
+            <Label htmlFor="content">Task Title</Label>
+            <Input
+              id="content"
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              placeholder="Short task summary"
+              required
+            />
+            <Label htmlFor="details">Details</Label>
+            <TextArea
+              id="details"
+              value={details}
+              onChange={e => setDetails(e.target.value)}
+              placeholder="Additional information (optional)"
+            />
+          </>
+        ) : (
+          <>
+            <Label htmlFor="content">Content</Label>
+            <TextArea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder={
+                replyTo
+                  ? 'Reply to this post...'
+                  : repostSource
+                  ? 'Add a comment to your repost...'
+                  : 'Share your thoughts or progress...'
+              }
+              required
+            />
+          </>
+        )}
       </FormSection>
 
       {showLinkControls(type) && !replyTo && (
