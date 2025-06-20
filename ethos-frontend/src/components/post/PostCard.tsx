@@ -19,7 +19,6 @@ import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
-import CreatePost from './CreatePost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 
