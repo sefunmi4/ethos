@@ -225,3 +225,15 @@ export const getPropagationStatus = async (
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/propagation-status`);
   return res.data;
 };
+
+export const fetchRecentPosts = async (
+  userId?: string,
+  hops = 1
+): Promise<Post[]> => {
+  const params = new URLSearchParams();
+  if (userId) params.set('userId', userId);
+  if (hops) params.set('hops', hops.toString());
+  const url = `${BASE_URL}/recent${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await axiosWithAuth.get(url);
+  return res.data;
+};

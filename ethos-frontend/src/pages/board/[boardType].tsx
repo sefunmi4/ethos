@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchAllQuests } from '../../api/quest';
+import { fetchAllQuests, fetchActiveQuests } from '../../api/quest';
 import { fetchAllPosts } from '../../api/post';
 import ContributionCard from '../../components/contribution/ContributionCard';
 import { Spinner, Button } from '../../components/ui';
@@ -24,12 +24,13 @@ const BoardTypePage: React.FC = () => {
       setLoading(true);
       try {
         if (boardType === 'quests' || boardType === 'active') {
-          const quests = await fetchAllQuests();
-          const filtered =
-            boardType === 'active'
-              ? quests.filter(q => q.status === 'active')
-              : quests;
-          setItems(filtered);
+          if (boardType === 'active') {
+            const active = await fetchActiveQuests();
+            setItems(active);
+          } else {
+            const quests = await fetchAllQuests();
+            setItems(quests);
+          }
         } else if (boardType === 'requests') {
           const posts = await fetchAllPosts();
           setItems(posts.filter(p => p.type === 'request' || p.helpRequest));
