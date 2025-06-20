@@ -26,6 +26,10 @@ jest.mock('@dnd-kit/core', () => ({
     setNodeRef: jest.fn(),
     isOver: false,
   }),
+  useSensor: jest.fn(),
+  useSensors: (...s) => s,
+  PointerSensor: jest.fn(),
+  closestCenter: jest.fn(),
 }), { virtual: true });
 
 jest.mock('@dnd-kit/utilities', () => ({ __esModule: true, CSS: { Translate: { toString: () => '' } } }), { virtual: true });
@@ -69,6 +73,10 @@ jest.mock('@dnd-kit/core', () => {
       setNodeRef: jest.fn(),
       isOver: false,
     }),
+    useSensor: jest.fn(),
+    useSensors: (...s) => s,
+    PointerSensor: jest.fn(),
+    closestCenter: jest.fn(),
   };
 }, { virtual: true });
 
