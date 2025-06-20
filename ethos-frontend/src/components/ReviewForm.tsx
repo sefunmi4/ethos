@@ -105,7 +105,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       </FormSection>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex justify-end">
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        {/* Use contrast styling so the button is dark in light mode and light in dark mode */}
+        <Button type="submit" variant="contrast" disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit Review'}
         </Button>
       </div>

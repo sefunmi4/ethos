@@ -130,8 +130,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {expanded ? '▲ Collapse' : '▼ Expand'}
         </Button>
 
-        {!isOwner && (
-          <Button onClick={() => onJoinToggle?.(questData)} variant="primary">
+          {!isOwner && (
+          {/* Use contrast styling so the button is dark in light mode and light in dark mode */}
+          <Button onClick={() => onJoinToggle?.(questData)} variant="contrast">
             Join Quest
           </Button>
         )}
