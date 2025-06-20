@@ -33,6 +33,28 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
+  it("POST /posts defaults task status to 'To Do'", async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    const res = await request(app).post('/posts').send({ type: 'task' });
+    expect(res.status).toBe(201);
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('To Do');
+    expect(res.body.status).toBe('To Do');
+  });
+
+  it('POST /posts uses provided task status', async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', status: 'Blocked' });
+    expect(res.status).toBe(201);
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('Blocked');
+    expect(res.body.status).toBe('Blocked');
+  });
+
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
     const posts = [
       {

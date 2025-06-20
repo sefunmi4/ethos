@@ -39,7 +39,10 @@ router.post(
       replyTo = null,
       linkedItems = [],
       collaborators = [],
+      status,
     } = req.body;
+
+    const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
 
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -59,6 +62,7 @@ router.post(
       repostedFrom: null,
       linkedItems,
       questId,
+      status: finalStatus,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
