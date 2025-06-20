@@ -60,7 +60,8 @@ export type BoardLayout =
   | 'horizontal'
   | 'kanban'
   | 'graph'
-  | 'graph-condensed';
+  | 'graph-condensed'
+  | 'map-graph';
 
 
 /** Props passed to the Board component */
