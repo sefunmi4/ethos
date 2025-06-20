@@ -133,5 +133,51 @@
     "linkedItems": [],
     "questId": null,
     "helpRequest": false
+  },
+  {
+    "id": "6d6c39ae-dc73-43b5-a3d8-7d5c59006b22",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "task",
+    "content": "update quest",
+    "visibility": "public",
+    "timestamp": "2025-06-20T19:47:36.578Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T03",
+    "questNodeTitle": "update quest"
+  },
+  {
+    "id": "59687208-c91b-4562-9d39-5d7181c4623b",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "task",
+    "content": "forat quest to when expanded to show left = file/folder map & right = log / kanband / file view  ",
+    "visibility": "public",
+    "timestamp": "2025-06-20T19:49:32.417Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T04",
+    "questNodeTitle": "forat quest to when expanded to show left = file/f…"
   }
 ]
