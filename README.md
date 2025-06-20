@@ -86,6 +86,8 @@ git clone https://github.com/yourusername/ethos.git
 cd ethos
 ```
 
+Make sure you have **Node.js 16 or later** installed before proceeding.
+
 ### 2. Setup Frontend
 
 ```bash
@@ -138,7 +140,8 @@ For production builds, run `npm run build` and then start with `node dist/server
 
 ### Running Tests
 
-Execute the backend test suite after installing dependencies:
+Run `./setup.sh` first to install all dependencies before running tests.
+Execute the backend test suite after installing dependencies (tests require `supertest` to be installed):
 
 ```bash
 npm test --prefix ethos-backend
@@ -147,6 +150,7 @@ npm test --prefix ethos-backend
 This runs the Jest tests under `ethos-backend/tests`.
 
 To run the frontend test suite:
+Ensure `jest-environment-jsdom` is installed for the frontend tests.
 
 ```bash
 npm test --prefix ethos-frontend
