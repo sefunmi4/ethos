@@ -181,10 +181,14 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           style={{ marginLeft: depth * 16 }}
           className="mb-6 flex items-start space-x-2 cursor-pointer"
           onClick={() => onSelect(node)}
-          {...attributes}
-          {...listeners}
         >
-          <span className="text-xl select-none">{icon}</span>
+          <span
+            className="text-xl select-none cursor-grab"
+            {...attributes}
+            {...listeners}
+          >
+            {icon}
+          </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
           {edge && (
             <span className="text-xs text-gray-500 ml-1 flex items-center">
