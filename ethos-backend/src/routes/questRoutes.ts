@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { questsStore, postsStore, usersStore } from '../models/stores';
+import { boardsStore, questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
@@ -102,6 +102,22 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
   } as DBQuest;
   quests.push(dbQuest);
   questsStore.write(quests);
+
+  // Create default map board for quest
+  const boards = boardsStore.read();
+  boards.push({
+    id: `map-${newQuest.id}`,
+    title: `${newQuest.title} Map`,
+    description: '',
+    layout: 'graph',
+    items: newQuest.headPostId ? [newQuest.headPostId] : [],
+    filters: {},
+    featured: false,
+    createdAt: new Date().toISOString(),
+    userId: authorId,
+    questId: newQuest.id,
+  });
+  boardsStore.write(boards);
 
   res.status(201).json(newQuest);
 });
