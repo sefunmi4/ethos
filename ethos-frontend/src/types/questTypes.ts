@@ -25,6 +25,9 @@ export interface Quest {
   tags?: string[];
   defaultBoardId?: string;
   taskGraph?: TaskEdge[];
+
+  /** Marks this quest as a request for help */
+  helpRequest?: boolean;
 }
 
 

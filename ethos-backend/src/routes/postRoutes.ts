@@ -46,6 +46,8 @@ router.post(
       linkedItems = [],
       collaborators = [],
       status,
+      boardId,
+      helpRequest = false,
     } = req.body;
 
     const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
@@ -54,6 +56,12 @@ router.post(
     const quests = questsStore.read();
     const quest = questId ? quests.find(q => q.id === questId) : null;
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
+
+    if (boardId === 'request-board' &&
+        !(type === 'request' || (type === 'quest' && helpRequest))) {
+      res.status(400).json({ error: 'Only help requests allowed on this board' });
+      return;
+    }
 
     const newPost: DBPost = {
       id: uuidv4(),
@@ -69,6 +77,7 @@ router.post(
       linkedItems,
       questId,
       status: finalStatus,
+      helpRequest: type === 'request' || helpRequest,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
@@ -351,6 +360,7 @@ router.post(
         { itemId: task.id, itemType: 'post', linkType: 'reference' },
       ],
       questId: task.questId || null,
+      helpRequest: true,
     };
 
     posts.push(requestPost);

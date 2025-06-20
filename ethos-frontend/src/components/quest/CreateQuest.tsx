@@ -17,6 +17,7 @@ type CreateQuestPayload = {
   repoUrl?: string;
   collaberatorRoles: CollaberatorRoles[];
   fromPostId?: string;
+  helpRequest?: boolean;
 };
 
 type CreateQuestProps = {
@@ -24,6 +25,7 @@ type CreateQuestProps = {
   onCancel: () => void;
   mode?: 'inline' | 'modal';
   fromPost?: Post | null;
+  boardId?: string;
 };
 
 const CreateQuest: React.FC<CreateQuestProps> = ({
@@ -31,6 +33,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   onCancel,
   mode = 'inline',
   fromPost = null,
+  boardId,
 }) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState(fromPost?.content?.slice(0, 80) || '');
@@ -40,6 +43,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [syncRepo, setSyncRepo] = useState(true); // default checked
+  const [helpRequest] = useState(boardId === 'request-board');
 
   const syncGit = useSyncGitRepo();
   const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
@@ -56,6 +60,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
       repoUrl: repoUrl.trim() || undefined,
       collaberatorRoles,
       fromPostId: fromPost?.id,
+      helpRequest: helpRequest || undefined,
     };
 
     try {

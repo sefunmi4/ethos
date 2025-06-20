@@ -54,6 +54,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [helpRequest] = useState(boardId === 'request-board');
 
 const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
@@ -61,8 +62,8 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
   const allowedPostTypes: PostType[] =
-    boardId === 'timeline-board'
-      ? ['quest', 'free_speech', 'request', 'review']
+    boardId === 'request-board'
+      ? ['request', 'quest']
       : boardType === 'quest'
       ? ['quest', 'task', 'log']
       : boardType === 'post'
@@ -102,6 +103,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         content,
         visibility: 'public',
         linkedItems: autoLinkItems,
+        helpRequest: type === 'request' || helpRequest || undefined,
         ...(type === 'task' ? { status } : {}),
         ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
         ...(targetBoard ? { boardId: targetBoard } : {}),
@@ -167,7 +169,11 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             })}
           />
         </FormSection>
-        <CreateQuest onSave={(q) => onSave?.(q as any)} onCancel={onCancel} />
+        <CreateQuest
+          onSave={(q) => onSave?.(q as any)}
+          onCancel={onCancel}
+          boardId={boardId || selectedBoard}
+        />
       </div>
     );
   }

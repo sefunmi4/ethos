@@ -42,6 +42,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     tags = [],
     fromPostId = '',
     headType = 'log',
+    helpRequest = false,
   } = req.body;
 
   const authorId = req.user?.id;
@@ -63,6 +64,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     status: 'active',
     headPostId: '',
     taskGraph: [],
+    helpRequest,
   };
 
   const posts = postsStore.read();
@@ -99,6 +101,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
           defaultBranch: newQuest.gitRepo.defaultBranch,
         }
       : undefined,
+    helpRequest,
   } as DBQuest;
   quests.push(dbQuest);
   questsStore.write(quests);
