@@ -23,6 +23,7 @@ type GridLayoutProps = {
   user?: User;
   layout?: 'vertical' | 'horizontal' | 'kanban';
   compact?: boolean;
+  editable?: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onScrollEnd?: () => void;
@@ -82,6 +83,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   user,
   layout = 'vertical',
   compact = false,
+  editable = false,
   onEdit,
   onDelete,
   onScrollEnd,
@@ -196,9 +198,11 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               </DroppableColumn>
             </div>
           ))}
-          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-accent hover:text-accent font-medium border border-secondary rounded-lg shadow-sm bg-surface cursor-pointer">
-            + Add Column
-          </div>
+          {editable && (
+            <div className="min-w-[280px] w-[320px] flex items-center justify-center text-accent hover:text-accent font-medium border border-secondary rounded-lg shadow-sm bg-surface cursor-pointer">
+              + Add Column
+            </div>
+          )}
         </div>
       </DndContext>
     );
