@@ -44,6 +44,7 @@
     "description": "Personal quests board.",
     "layout": "grid",
     "items": [
+      "49765216-fe00-4217-93f4-e54049cb7dab",
       "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "defaultFor": null,
@@ -57,6 +58,7 @@
     "description": "Highlighted quest",
     "layout": "grid",
     "items": [
+      "49765216-fe00-4217-93f4-e54049cb7dab",
       "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "featured": true,
@@ -134,5 +136,19 @@
     "defaultFor": null,
     "createdAt": "2025-06-19T23:00:51.314Z",
     "userId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9"
+  },
+  {
+    "id": "map-49765216-fe00-4217-93f4-e54049cb7dab",
+    "title": "Ethos pt 2 Map",
+    "description": "",
+    "layout": "graph",
+    "items": [
+      "e252b137-f7be-43d5-9861-91d397840d2d"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-20T13:23:33.231Z",
+    "userId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "questId": "49765216-fe00-4217-93f4-e54049cb7dab"
   }
 ]
