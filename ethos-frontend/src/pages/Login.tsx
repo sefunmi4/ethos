@@ -88,13 +88,22 @@ const Login: React.FC = () => {
         if (defaultBoard) {
           setSelectedBoard(defaultBoard.id);
           
-          await Promise.all([
+          const questMapId = defaultBoard.id.startsWith('map-')
+            ? defaultBoard.id.replace('map-', '')
+            : null;
+
+          const promises = [
             loadPermissions(defaultBoard.id),
-              fetchPostsForBoard(defaultBoard.id, user.id),
-              fetchQuestsForBoard(defaultBoard.id, user.id),
-              loadTimeline(defaultBoard.id, user.id),
-            loadGraph(defaultBoard.id),
-          ]);
+            fetchPostsForBoard(defaultBoard.id, user.id),
+            fetchQuestsForBoard(defaultBoard.id, user.id),
+            loadTimeline(defaultBoard.id, user.id),
+          ];
+
+          if (questMapId) {
+            promises.push(loadGraph(questMapId));
+          }
+
+          await Promise.all(promises);
         }
       
         navigate('/');
