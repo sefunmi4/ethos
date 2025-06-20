@@ -15,8 +15,8 @@ const NavBar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const navClasses =
-    // Use a valid dark mode color token instead of the removed `card-dark` variant
-    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700';
+    // Use the surface color in dark mode so the navbar contrasts the page background
+    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-white dark:bg-surface border-gray-200 dark:border-gray-700';
 
   return (
     <nav className={navClasses}>
