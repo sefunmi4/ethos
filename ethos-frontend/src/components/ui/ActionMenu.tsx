@@ -6,6 +6,7 @@ import {
   FaArchive,
   FaLink,
   FaCopy,
+  FaUserPlus,
 } from 'react-icons/fa';
 import { removePost, archivePost } from '../../api/post';
 import { removeQuestById, archiveQuestById } from '../../api/quest';
@@ -23,6 +24,8 @@ interface ActionMenuProps {
   content?: string;
   boardId?: string;
   className?: string;
+  onJoin?: () => void;
+  joinLabel?: string;
 }
 
 /**
@@ -42,6 +45,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   content,
   boardId,
   className = '',
+  onJoin,
+  joinLabel = 'Join Quest',
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
@@ -166,6 +171,17 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
               className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
             >
               <FaLink className="inline mr-2" /> Link to This Post
+            </button>
+          )}
+          {onJoin && (
+            <button
+              onClick={() => {
+                onJoin();
+                setShowMenu(false);
+              }}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+            >
+              <FaUserPlus className="inline mr-2" /> {joinLabel}
             </button>
           )}
           <button onClick={handleCopyLink} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
