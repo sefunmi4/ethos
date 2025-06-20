@@ -55,7 +55,13 @@ export interface RenderableItem {
 
 export type BoardItem = RenderableItem | Post | Quest | Board ;
 
-export type BoardLayout = 'grid' | 'graph' | 'graph-condensed' | 'thread';
+export type BoardLayout =
+  | 'grid'
+  | 'horizontal'
+  | 'kanban'
+  | 'graph'
+  | 'graph-condensed'
+  | 'thread';
 
 
 /** Props passed to the Board component */
