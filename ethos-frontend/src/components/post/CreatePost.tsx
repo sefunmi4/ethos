@@ -29,6 +29,11 @@ type CreatePostProps = {
   boardId?: string;
   initialGitFilePath?: string;
   initialLinkedNodeId?: string;
+  /**
+   * Optional active board view. When provided and the board is a quest board
+   * this limits the available post types to those relevant for the view.
+   */
+  currentView?: 'map' | 'log' | 'file-change';
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -41,6 +46,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
   initialGitFilePath,
   initialLinkedNodeId,
+  currentView,
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
@@ -54,12 +60,23 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  const allowedPostTypes: PostType[] =
-    boardType === 'quest'
-      ? ['quest', 'task', 'log']
-      : boardType === 'post'
-      ? ['free_speech', 'request', 'commit', 'issue']
-      : POST_TYPES.map(p => p.value as PostType);
+  let allowedPostTypes: PostType[];
+  if (boardType === 'quest') {
+    if (currentView === 'map') {
+      allowedPostTypes = ['task'];
+    } else if (currentView === 'log') {
+      allowedPostTypes = POST_TYPES.map(p => p.value as PostType).filter(t => t.includes('log')) as PostType[];
+    } else if (currentView === 'file-change') {
+      const logTypes = POST_TYPES.map(p => p.value as PostType).filter(t => t.includes('log')) as PostType[];
+      allowedPostTypes = ['commit', ...logTypes];
+    } else {
+      allowedPostTypes = ['quest', 'task', 'log'];
+    }
+  } else if (boardType === 'post') {
+    allowedPostTypes = ['free_speech', 'request', 'commit', 'issue'];
+  } else {
+    allowedPostTypes = POST_TYPES.map(p => p.value as PostType);
+  }
 
   const renderQuestForm = type === 'quest';
 
