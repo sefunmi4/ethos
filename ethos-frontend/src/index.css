@@ -17,7 +17,7 @@
   --color-surface: #ffffff;
   --info-background: #bfdbfe;
   --bg-soft: var(--color-soft);
-  --bg-soft-dark: #1a1814;
+  --bg-soft-dark: #1f2937;
   --text-primary: var(--color-primary);
   --success-bg: #ecfdf5;
   --success-text: #047857;
@@ -32,14 +32,14 @@
 .dark {
   --color-primary: #f9fafb;
   --color-secondary: #d1d5db;
-  --color-accent: #b0b91a;
-  --color-success: #ef467e;
-  --color-warning: #0a61f4;
-  --color-error: #10bbbb;
-  --color-soft-dark: #1a1814;
-  --color-background: #060504;
-  --color-surface: #000000;
-  --info-background: #402401;
+  --color-accent: #818cf8;
+  --color-success: #6ee7b7;
+  --color-warning: #fde68a;
+  --color-error: #fca5a5;
+  --color-soft-dark: #1f2937;
+  --color-background: #1f2937;
+  --color-surface: #374151;
+  --info-background: #1e40af;
   --bg-soft: var(--color-soft-dark);
   --bg-soft-dark: var(--color-soft-dark);
   --text-primary: var(--color-primary);
