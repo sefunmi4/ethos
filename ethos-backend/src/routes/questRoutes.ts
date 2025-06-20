@@ -26,7 +26,8 @@ interface AuthRequest<
 const router = express.Router();
 
 // GET top 10 featured quests
-router.get('/featured', (req: Request, res: Response) => {
+router.get('/featured', authOptional, (req: AuthRequest, res: Response) => {
+  const { userId } = req.query as { userId?: string };
   const quests = questsStore.read();
   const posts = postsStore.read();
 
@@ -37,6 +38,14 @@ router.get('/featured', (req: Request, res: Response) => {
     .filter(
       (q) => q.visibility === 'public' && q.approvalStatus === 'approved'
     )
+    .filter((q) => {
+      if (!userId) return true;
+      const involved =
+        q.authorId === userId ||
+        (q.collaborators || []).some((c) => c.userId === userId) ||
+        posts.some((p) => p.questId === q.id && p.authorId === userId);
+      return !involved;
+    })
     .sort((a, b) => popularity(b) - popularity(a))
     .slice(0, 10)
     .map((q) => ({
@@ -46,6 +55,30 @@ router.get('/featured', (req: Request, res: Response) => {
     }));
 
   res.json(featured);
+});
+
+// GET active quests (optionally excluding a user)
+router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
+  const { userId } = req.query as { userId?: string };
+  const quests = questsStore.read();
+  const posts = postsStore.read();
+
+  const active = quests
+    .filter((q) => q.status === 'active' && q.visibility === 'public')
+    .filter((q) => {
+      if (!userId) return true;
+      const involved =
+        q.authorId === userId ||
+        (q.collaborators || []).some((c) => c.userId === userId) ||
+        posts.some((p) => p.questId === q.id && p.authorId === userId);
+      return !involved;
+    })
+    .map((q) => ({
+      ...q,
+      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+    }));
+
+  res.json(active);
 });
 
 // GET all quests
