@@ -6,6 +6,7 @@ import { boardsStore, postsStore, questsStore, usersStore } from '../models/stor
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import type { BoardData } from '../types/api';
+import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
@@ -245,14 +246,27 @@ router.get(
     }
 
     if (enrich === 'true') {
-      const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests });
+      const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
       res.json(enriched.enrichedItems);
       return;
     }
 
     const items = boardItems
       .map((itemId) => posts.find((p) => p.id === itemId) || quests.find((q) => q.id === itemId))
-      .filter(Boolean);
+      .filter((i): i is DBPost | DBQuest => Boolean(i))
+      .filter((item) => {
+        if ('type' in item) {
+          const p = item as DBPost;
+          return p.type !== 'request' || p.visibility === 'public' || p.visibility === 'request_board' || p.needsHelp === true;
+        }
+        const q = item as DBQuest;
+        if (q.displayOnBoard === false) return false;
+        if (q.status === 'active' && userId) {
+          const participant = q.authorId === userId || (q.collaborators || []).some((c: { userId?: string }) => c.userId === userId);
+          if (!participant) return false;
+        }
+        return true;
+      });
 
   res.json(items);
   }
@@ -291,11 +305,19 @@ router.get(
 
     const boardQuests = boardItems
       .map((itemId) => quests.find((q) => q.id === itemId))
-      .filter((q): q is NonNullable<typeof q> => Boolean(q));
+      .filter((q): q is NonNullable<typeof q> => Boolean(q))
+      .filter((q) => {
+        if (q.displayOnBoard === false) return false;
+        if (q.status === 'active' && userId) {
+          const participant = q.authorId === userId || (q.collaborators || []).some((c: { userId?: string }) => c.userId === userId);
+          if (!participant) return false;
+        }
+        return true;
+      });
 
     if (enrich === 'true') {
       const enriched = boardQuests.map((q) =>
-        enrichQuest(q, { posts, users })
+        enrichQuest(q, { posts, users, currentUserId: userId || null })
       );
       res.json(enriched);
       return;

@@ -13,6 +13,8 @@ export interface Quest {
   approvalStatus: 'approved' | 'flagged' | 'banned';
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
+  /** Whether this quest should appear on boards */
+  displayOnBoard?: boolean;
   headPostId: string;
   createdAt?: string;
 

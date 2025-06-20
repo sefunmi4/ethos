@@ -49,6 +49,7 @@ router.post(
       status,
       boardId,
       helpRequest = false,
+      needsHelp = undefined,
     } = req.body;
 
     const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
@@ -80,6 +81,7 @@ router.post(
       questId,
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
+      needsHelp: type === 'request' ? needsHelp ?? true : undefined,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
@@ -363,6 +365,7 @@ router.post(
       ],
       questId: task.questId || null,
       helpRequest: true,
+      needsHelp: true,
     };
 
     posts.push(requestPost);
