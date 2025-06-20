@@ -48,7 +48,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
   }, {});
 
   return (
-    <div className="text-xs text-gray-900 dark:text-gray-100">
+    <div className="text-xs text-primary dark:text-primary">
       <button
         onClick={() => setOpen((o) => !o)}
         className="text-blue-600 underline"
@@ -56,7 +56,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
         {open ? 'Hide Links' : `Links (${items.length})`}
       </button>
       {open && (
-        <div className="mt-2 border rounded bg-gray-50 dark:bg-gray-700 p-2 space-y-1">
+        <div className="mt-2 border rounded bg-background dark:bg-surface p-2 space-y-1">
           {Object.entries(grouped).map(([type, list]) => (
             <div key={type}>
               <div className="font-semibold capitalize mb-1">{type}</div>

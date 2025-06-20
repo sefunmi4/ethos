@@ -123,7 +123,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
         <FaEllipsisH />
       </button>
       {showMenu && (
-        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-white dark:bg-gray-800 shadow text-sm">
+        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-surface dark:bg-background shadow text-sm">
           {canEdit && (
             <>
               <button onClick={onEdit} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">

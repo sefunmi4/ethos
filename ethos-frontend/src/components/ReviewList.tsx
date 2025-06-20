@@ -63,7 +63,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
       ) : (
         <ul className="space-y-3">
           {reviews.map(review => (
-            <li key={review.id} className="border rounded bg-white dark:bg-gray-800 p-3">
+            <li key={review.id} className="border rounded bg-surface dark:bg-background p-3">
               <div className="flex justify-between items-center">
                 {renderStars(review.rating)}
                 <span className="text-xs text-gray-500 dark:text-gray-400">

@@ -43,7 +43,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         readOnly={readOnly}
         onChange={onChange}
         className={clsx(
-          'w-full p-3 rounded-md border shadow-sm resize-y text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none',
+          'w-full p-3 rounded-md border shadow-sm resize-y text-sm text-primary dark:text-primary bg-surface dark:bg-surface focus:outline-none',
           error
             ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
             : 'border-gray-300 dark:border-gray-600 focus:ring-accent focus:border-accent',
