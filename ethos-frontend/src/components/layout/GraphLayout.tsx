@@ -22,6 +22,8 @@ interface GraphLayoutProps {
   compact?: boolean;
   /** Render a simplified node representation */
   condensed?: boolean;
+  /** Show status dropdowns for tasks */
+  showStatus?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
 }
@@ -52,6 +54,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   questId,
   compact = false,
   condensed = false,
+  showStatus = true,
   onScrollEnd,
   loadingMore = false,
 }) => {
@@ -293,6 +296,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             user={user}
             compact={compact}
             condensed={condensed}
+            showStatus={showStatus}
             focusedNodeId={focusedNodeId}
             onFocus={handleNodeFocus}
             selectedNode={selectedNode}

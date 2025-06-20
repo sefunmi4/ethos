@@ -6,6 +6,7 @@ import type { User } from '../../types/userTypes';
 import { Button, PostTypeBadge, Select } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import GraphLayout from '../layout/GraphLayout';
+import MapGraphLayout from '../layout/MapGraphLayout';
 import GridLayout from '../layout/GridLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById } from '../../api/quest';
@@ -36,7 +37,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onEdit,
   onCancel,
 }) => {
-  const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('map');
+  const [mapMode, setMapMode] = useState<'folder' | 'graph'>('folder');
+  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'kanban'>('status');
   const [expanded, setExpanded] = useState(false);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -60,10 +62,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
     setJoinRequested(true);
     alert('Join request sent.');
   };
-  const viewOptions = [
-    { value: 'map', label: 'Map - Graph' },
-    { value: 'timeline', label: 'Log' },
-    { value: 'kanban', label: 'Log Status - Card' },
+  const mapOptions = [
+    { value: 'folder', label: 'Folder Map' },
+    { value: 'graph', label: 'Task Graph' },
+  ];
+  const tabOptions = [
+    { value: 'status', label: 'Status' },
+    { value: 'logs', label: 'Logs' },
+    { value: 'kanban', label: 'Kanban' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -131,7 +137,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               setExpanded(false);
             } else {
               setExpanded(true);
-              setView('map');
+              setActiveTab('status');
+              setMapMode('folder');
             }
           }}
         >
@@ -154,11 +161,20 @@ const QuestCard: React.FC<QuestCardProps> = ({
         />
   
         {expanded && (
-          <Select
-            value={view}
-            onChange={(e) => setView(e.target.value as 'timeline' | 'kanban' | 'map')}
-            options={viewOptions}
-          />
+          <>
+            <Select
+              value={mapMode}
+              onChange={(e) => setMapMode(e.target.value as 'folder' | 'graph')}
+              options={mapOptions}
+            />
+            <Select
+              value={activeTab}
+              onChange={(e) =>
+                setActiveTab(e.target.value as 'status' | 'logs' | 'kanban')
+              }
+              options={tabOptions}
+            />
+          </>
         )}
   
         {onCancel && (
@@ -170,10 +186,64 @@ const QuestCard: React.FC<QuestCardProps> = ({
     </div>
   );
 
-  const renderView = () => {
+  const renderMap = () => {
     if (!expanded) return null;
-    switch (view) {
-      case 'timeline':
+    if (mapMode === 'graph') {
+      return (
+        <MapGraphLayout items={logs as any} edges={questData.taskGraph} />
+      );
+    }
+    return (
+      <>
+        {showTaskForm && (
+          <div className="mb-4">
+            <CreatePost
+              initialType="task"
+              questId={quest.id}
+              boardId={`map-${quest.id}`}
+              onSave={(p) => {
+                setLogs((prev) => [...prev, p]);
+                setShowTaskForm(false);
+              }}
+              onCancel={() => setShowTaskForm(false)}
+            />
+          </div>
+        )}
+        <div className="text-right mb-2">
+          {canEdit ? (
+            <Button
+              size="sm"
+              variant="contrast"
+              onClick={() => setShowTaskForm(true)}
+            >
+              + Add Item
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              variant="contrast"
+              onClick={handleJoinRequest}
+            >
+              Request to Join
+            </Button>
+          )}
+        </div>
+        <GraphLayout
+          items={logs as any}
+          user={user}
+          edges={questData.taskGraph}
+          condensed
+          questId={quest.id}
+          showStatus={false}
+        />
+      </>
+    );
+  };
+
+  const renderRightPanel = () => {
+    if (!expanded) return null;
+    switch (activeTab) {
+      case 'logs':
         return (
           <>
             {showLogForm && (
@@ -264,49 +334,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </div>
           </>
         );
-      case 'map':
+      case 'status':
         return (
-          <>
-            {showTaskForm && (
-              <div className="mb-4">
-                <CreatePost
-                  initialType="task"
-                  questId={quest.id}
-                  boardId={`map-${quest.id}`}
-                  onSave={(p) => {
-                    setLogs((prev) => [...prev, p]);
-                    setShowTaskForm(false);
-                  }}
-                  onCancel={() => setShowTaskForm(false)}
-                />
-              </div>
+          <div className="space-y-1 text-sm p-2">
+            <div>Tasks: {questData.taskCount ?? logs.length}</div>
+            <div>Completed: {questData.completedTasks ?? 0}</div>
+            {questData.percentComplete !== undefined && (
+              <div>Progress: {questData.percentComplete}%</div>
             )}
-            <div className="text-right mb-2">
-              {canEdit ? (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={() => setShowTaskForm(true)}
-                >
-                  + Add Item
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={handleJoinRequest}
-                >
-                  Request to Join
-                </Button>
-              )}
-            </div>
-            <GraphLayout
-              items={logs as any}
-              user={user}
-              edges={questData.taskGraph}
-              condensed
-            />
-          </>
+          </div>
         );
       default:
         return null;
@@ -350,7 +386,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
           <LinkViewer items={questData.linkedPosts} />
         )}
       </div>
-      {renderView()}
+      {expanded && (
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="md:w-1/2 lg:w-1/3">{renderMap()}</div>
+          <div className="flex-1">{renderRightPanel()}</div>
+        </div>
+      )}
     </div>
   );
 };
