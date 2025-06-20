@@ -75,7 +75,7 @@
     "id": "timeline-board",
     "title": "Timeline",
     "description": "Recent posts and quests",
-    "layout": "thread",
+    "layout": "grid",
     "items": [
       "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],

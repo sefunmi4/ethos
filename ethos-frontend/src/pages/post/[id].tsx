@@ -17,7 +17,6 @@ const PostPage: React.FC = () => {
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
-  const [viewMode, setViewMode] = useState<'thread' | 'grid'>('thread');
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -120,29 +119,13 @@ const PostPage: React.FC = () => {
         />
       </section>
 
-      {(replyBoard?.items?.length ?? 0) > 0 && (
-        <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
-          <button
-            className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('thread')}
-          >
-            Thread View
-          </button>
-          <button
-            className={`px-3 py-1 rounded ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('grid')}
-          >
-            Timeline View
-          </button>
-        </div>
-      )}
 
       <section>
         {boardWithPost ? (
           <Board
             boardId={`thread-${id}`}
             board={boardWithPost}
-            layout={viewMode}
+            layout="grid"
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}

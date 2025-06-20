@@ -8,7 +8,6 @@ export const STRUCTURE_OPTIONS: { value: BoardLayout; label: string }[] = [
   { value: 'kanban', label: 'Kanban' },
   { value: 'graph', label: 'Graph' },
   { value: 'graph-condensed', label: 'Graph (Condensed)' },
-  { value: 'thread', label: 'Thread' },
 ];
 
 export const VISIBILITY_OPTIONS = [

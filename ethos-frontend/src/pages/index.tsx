@@ -68,7 +68,7 @@ const HomePage: React.FC = () => {
         <Board
           boardId="timeline-board"
           title="⏳ Recent Activity"
-          layout="thread"
+          layout="grid"
           user={user as User}
           hideControls
         />

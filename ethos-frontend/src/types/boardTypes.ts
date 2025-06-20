@@ -60,8 +60,7 @@ export type BoardLayout =
   | 'horizontal'
   | 'kanban'
   | 'graph'
-  | 'graph-condensed'
-  | 'thread';
+  | 'graph-condensed';
 
 
 /** Props passed to the Board component */
@@ -83,7 +82,7 @@ export interface BoardProps {
   quest?: Quest;
   /** Layout variant for GridLayout */
   gridLayout?: 'vertical' | 'horizontal' | 'kanban';
-  /** Expand all threads when using ThreadLayout */
+  /** Expand all posts when rendering nested replies */
   initialExpanded?: boolean;
 }
 
