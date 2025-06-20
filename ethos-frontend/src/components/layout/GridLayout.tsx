@@ -163,7 +163,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
           {defaultKanbanColumns.map((col) => (
             <div
               key={col}
-              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
+              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow-sm"
             >
               <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
               <DroppableColumn id={col}>
@@ -180,7 +180,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               </DroppableColumn>
             </div>
           ))}
-          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
+          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white dark:bg-gray-700 cursor-pointer">
             + Add Column
           </div>
         </div>
