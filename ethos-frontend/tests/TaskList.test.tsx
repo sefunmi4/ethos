@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import PostCard from '../src/components/post/PostCard';
 
 jest.mock('../src/api/post', () => ({
@@ -7,6 +8,11 @@ jest.mock('../src/api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   updatePost: jest.fn((id, data) => Promise.resolve({ id, ...data })),
   fetchPostsByQuestId: jest.fn(() => Promise.resolve([])),
+  fetchReactions: jest.fn(() => Promise.resolve([])),
+  fetchRepostCount: jest.fn(() => Promise.resolve({ count: 0 })),
+  fetchUserRepost: jest.fn(() => Promise.resolve(null)),
+  addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
+  removeRepost: jest.fn(() => Promise.resolve()),
 }));
 
 jest.mock('../src/api/quest', () => ({
@@ -24,10 +30,14 @@ jest.mock('../src/contexts/BoardContext', () => ({
   useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem: jest.fn() }),
 }));
 
-jest.mock('react-router-dom', () => ({
-  __esModule: true,
-  useNavigate: () => jest.fn(),
-}));
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...actual,
+    useNavigate: () => jest.fn(),
+  };
+});
 
 jest.mock(
   'react-markdown',
@@ -79,7 +89,11 @@ describe('task list checkbox', () => {
       return <PostCard post={p} user={{ id: 'u1' }} onUpdate={setP} />;
     }
 
-    render(<Wrapper />);
+    render(
+      <BrowserRouter>
+        <Wrapper />
+      </BrowserRouter>
+    );
     const boxes = screen.getAllByRole('checkbox');
     expect(boxes[0]).not.toBeChecked();
 

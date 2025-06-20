@@ -3,10 +3,14 @@ const { render, act, within } = require('@testing-library/react');
 
 let isOverMock = false;
 
-jest.mock('react-router-dom', () => ({
-  __esModule: true,
-  useNavigate: () => jest.fn(),
-}));
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...actual,
+    useNavigate: () => jest.fn(),
+  };
+});
 
 jest.mock('../src/contexts/BoardContext', () => ({
   useBoardContext: () => ({
@@ -19,6 +23,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
 let dragHandler;
 
 jest.mock('@dnd-kit/core', () => ({
+  __esModule: true,
   DndContext: ({ onDragEnd, children }) => {
     dragHandler = onDragEnd;
     return React.createElement(React.Fragment, {}, children);

@@ -1,9 +1,11 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
 import { requestHelpForTask } from '../../api/post';
 
 jest.mock('../../api/post', () => ({
+  __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   requestHelpForTask: jest.fn(() =>
     Promise.resolve({
@@ -22,13 +24,18 @@ jest.mock('../../api/post', () => ({
 
 const appendMock = jest.fn();
 jest.mock('../../contexts/BoardContext', () => ({
+  __esModule: true,
   useBoardContext: () => ({ appendToBoard: appendMock }),
 }));
 
-jest.mock('react-router-dom', () => ({
-  __esModule: true,
-  useNavigate: () => jest.fn(),
-}));
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...actual,
+    useNavigate: () => jest.fn(),
+  };
+});
 
 describe('PostCard request help', () => {
   const post: Post = {
@@ -44,7 +51,11 @@ describe('PostCard request help', () => {
   } as any;
 
   it('calls endpoint and appends to board', async () => {
-    render(<PostCard post={post} user={{ id: 'u1' }} />);
+    render(
+      <BrowserRouter>
+        <PostCard post={post} user={{ id: 'u1' }} />
+      </BrowserRouter>
+    );
 
     fireEvent.click(screen.getByText(/Request Help/i));
 

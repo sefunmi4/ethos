@@ -1,5 +1,6 @@
 const React = require('react');
 const { render, screen, waitFor } = require('@testing-library/react');
+const { BrowserRouter } = require('react-router-dom');
 const Board = require('../src/components/board/Board').default;
 
 jest.mock('../src/api/board', () => ({
@@ -23,6 +24,8 @@ jest.mock('../src/contexts/BoardContext', () => ({
   useBoardContext: () => ({
     setSelectedBoard: jest.fn(),
     appendToBoard: jest.fn(),
+    updateBoardItem: jest.fn(),
+    boards: {},
   }),
 }));
 
@@ -57,7 +60,11 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
 
     fetchBoardItems.mockResolvedValue(items);
 
-    render(React.createElement(Board, { boardId: 'b1', user: { id: 'u1' }, showCreate: false }));
+    render(
+      React.createElement(BrowserRouter, null,
+        React.createElement(Board, { boardId: 'b1', user: { id: 'u1' }, showCreate: false })
+      )
+    );
 
     await waitFor(() => {
       expect(screen.queryByText('Loading board...')).not.toBeInTheDocument();
@@ -110,7 +117,9 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
       fetchBoardItems.mockResolvedValue(items);
 
       render(
-        React.createElement(Board, { boardId: 'b1', user: { id: 'u1' }, showCreate: false })
+        React.createElement(BrowserRouter, null,
+          React.createElement(Board, { boardId: 'b1', user: { id: 'u1' }, showCreate: false })
+        )
       );
 
       await waitFor(() => {

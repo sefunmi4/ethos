@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import QuestPage from '../quest/[id]';
 
 jest.mock('../../contexts/AuthContext', () => ({
@@ -38,7 +39,8 @@ jest.mock('../../hooks/useBoard', () => ({
 }));
 
 jest.mock('../../contexts/BoardContext', () => ({
-  useBoardContext: () => ({ refreshBoards: jest.fn() })
+  __esModule: true,
+  useBoardContext: () => ({ refreshBoards: jest.fn(), boards: {} })
 }));
 
 jest.mock('../../hooks/useSocket', () => ({
@@ -51,7 +53,11 @@ jest.mock('../../api/board', () => ({
 
 describe('QuestLog permissions', () => {
   it('hides editing controls for unauthorized users', async () => {
-    render(<QuestPage />);
+    render(
+      <BrowserRouter>
+        <QuestPage />
+      </BrowserRouter>
+    );
     await waitFor(() =>
       expect(screen.getByText('📜 Quest Log')).toBeInTheDocument()
     );

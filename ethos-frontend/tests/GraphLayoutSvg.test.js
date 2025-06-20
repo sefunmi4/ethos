@@ -1,16 +1,19 @@
 const React = require('react');
 const { render } = require('@testing-library/react');
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 jest.mock('../src/hooks/useGit', () => ({
   __esModule: true,
   useGitDiff: () => ({ data: null, isLoading: false })
 }));
 
-jest.mock('react-router-dom', () => ({
-  __esModule: true,
-  useNavigate: () => jest.fn(),
-}), { virtual: true });
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...actual,
+    useNavigate: () => jest.fn(),
+  };
+}, { virtual: true });
 
 jest.mock('../src/components/layout/GraphNode', () => ({
   __esModule: true,
@@ -20,6 +23,8 @@ jest.mock('../src/components/layout/GraphNode', () => ({
       ref: (el) => registerNode(node.id, el),
     }),
 }), { virtual: true });
+
+const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 describe('GraphLayout edges svg', () => {
   it('renders a svg path when an edge exists', () => {
