@@ -118,6 +118,9 @@ export interface Post {
   commitSummary?: string;
 
   enriched?: boolean;
+
+  /** Flag indicating this post is requesting help */
+  helpRequest?: boolean;
 }
 
 
@@ -164,6 +167,9 @@ export interface Quest {
   defaultBoardId?: string;
   /** Graph edges between tasks/logs */
   taskGraph?: TaskEdge[];
+
+  /** Marks this quest as a request for help */
+  helpRequest?: boolean;
 }
 /**
  * Users associated with a post.

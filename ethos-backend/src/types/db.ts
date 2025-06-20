@@ -44,6 +44,9 @@ export interface DBPost {
 
   enriched?: boolean;
 
+  /** Flag indicating this post is requesting help */
+  helpRequest?: boolean;
+
   questId?: string | null;
   questNodeTitle?: string;
   nodeId?: string;
@@ -73,6 +76,9 @@ export interface DBQuest {
   tags?: string[];
   defaultBoardId?: string;
   taskGraph?: TaskEdge[];
+
+  /** Marks this quest as a request for help */
+  helpRequest?: boolean;
 }
 
 export interface TaskEdge {

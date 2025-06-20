@@ -45,6 +45,9 @@ export interface Post {
   gitDiff?: string;                // Optional: diff in unified format
   commitSummary?: string;         // short description for commit-type post
   linkedNodeId?: string;          // optional file/folder node reference
+
+  /** Flag indicating this post is requesting help */
+  helpRequest?: boolean;
 }
 
 /**
