@@ -10,6 +10,7 @@ export * from './postTypes';
 export * from './userTypes';
 export * from './gitTypes';
 export * from './common';
+export * from './reviewTypes';
 
 export type UUID = string;
 export type Timestamp = string;

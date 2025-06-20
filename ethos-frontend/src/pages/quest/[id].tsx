@@ -11,6 +11,7 @@ import { useSocketListener } from '../../hooks/useSocket';
 import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
 import { Button, Spinner } from '../../components/ui';
+import ReviewList from '../../components/ReviewList';
 import { createMockBoard } from '../../utils/boardUtils';
 
 import type { User } from '../../types/userTypes';
@@ -143,6 +144,12 @@ const QuestPage: React.FC = () => {
             No quest logs yet. Start journaling progress.
           </p>
         )}
+      </section>
+
+      {/* ⭐ Reviews Section */}
+      <section>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">⭐ Reviews</h2>
+        <ReviewList type="quest" questId={quest.id} />
       </section>
     </main>
   );
