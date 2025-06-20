@@ -340,7 +340,6 @@ router.patch(
         defaultFor: req.body.defaultFor ?? null,
         createdAt: new Date().toISOString(),
         userId: (req.user as any)?.id || '',
-        category: req.body.category,
         questId: req.body.questId,
       } as BoardData;
       boards.push(board);
