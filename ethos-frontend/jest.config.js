@@ -1,9 +1,11 @@
 export default {
-  preset: 'ts-jest',
   testEnvironment: 'jest-environment-jsdom',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json', useESM: true, diagnostics: false }],
+  },
   moduleNameMapper: {
     'react-markdown': '<rootDir>/tests/__mocks__/react-markdown.tsx',
     'remark-gfm': '<rootDir>/tests/__mocks__/remark-gfm.ts',
