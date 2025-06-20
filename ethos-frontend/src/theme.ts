@@ -1,20 +1,28 @@
+import { hexComplement } from './colorUtils';
 
 export interface Palette {
   light: string;
   dark: string;
 }
 
-export const colors: Record<string, Palette> = {
-  primary: { light: '#111827', dark: '#f9fafb' },
-  secondary: { light: '#4B5563', dark: '#D1D5DB' },
-  accent: { light: '#4F46E5', dark: '#818cf8' },
-  soft: { light: '#E5E7EB', dark: '#1f2937' },
-  success: { light: '#10B981', dark: '#6EE7B7' },
-  warning: { light: '#F59E0B', dark: '#FDE68A' },
-  error: { light: '#EF4444', dark: '#FCA5A5' },
-  background: { light: '#f9fafb', dark: '#1f2937' },
-  surface: { light: '#ffffff', dark: '#374151' },
-  infoBackground: { light: '#bfdbfe', dark: '#1e40af' },
+export const lightColors: Record<string, string> = {
+  primary: '#111827',
+  secondary: '#4B5563',
+  accent: '#4F46E5',
+  soft: '#E5E7EB',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  background: '#f9fafb',
+  surface: '#ffffff',
+  infoBackground: '#bfdbfe',
 };
+
+export const colors: Record<string, Palette> = Object.fromEntries(
+  Object.entries(lightColors).map(([name, light]) => [
+    name,
+    { light, dark: hexComplement(light) },
+  ])
+) as Record<string, Palette>;
 
 export default colors;
