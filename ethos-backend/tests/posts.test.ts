@@ -265,4 +265,30 @@ describe('post routes', () => {
     expect(resDel.status).toBe(200);
     expect(reactionsStore.write).toHaveBeenCalledWith([]);
   });
+
+  it('POST /tasks/:id/request-help creates request post', async () => {
+    const task = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: 'task content',
+      visibility: 'public',
+      timestamp: '',
+      tags: [],
+      collaborators: [],
+      linkedItems: [],
+      questId: null,
+    };
+
+    const store = [task];
+    postsStore.read.mockReturnValue(store);
+    usersStore.read.mockReturnValue([]);
+
+    const res = await request(app).post('/posts/tasks/t1/request-help');
+
+    expect(res.status).toBe(201);
+    expect(store).toHaveLength(2);
+    expect(store[1].type).toBe('request');
+    expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
+  });
 });

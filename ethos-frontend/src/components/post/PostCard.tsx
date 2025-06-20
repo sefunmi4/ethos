@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTask } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -61,7 +61,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
-  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+  const { selectedBoard, updateBoardItem, appendToBoard } = useBoardContext() || {};
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -74,6 +74,15 @@ const PostCard: React.FC<PostCardProps> = ({
       onUpdate?.(updated);
     } catch (err) {
       console.error('[PostCard] Failed to update status:', err);
+    }
+  };
+
+  const handleRequestHelp = async () => {
+    try {
+      const reqPost = await requestHelpForTask(post.id);
+      appendToBoard?.('request-board', reqPost);
+    } catch (err) {
+      console.error('[PostCard] Failed to request help:', err);
     }
   };
 
@@ -398,6 +407,15 @@ const PostCard: React.FC<PostCardProps> = ({
         user={user}
         onUpdate={onUpdate}
       />
+
+      {post.type === 'task' && (
+        <button
+          onClick={handleRequestHelp}
+          className="text-blue-600 underline text-xs mt-1"
+        >
+          Request Help
+        </button>
+      )}
 
       {(initialReplies > 0 || replies.length > 0) && (
         <button
