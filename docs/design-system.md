@@ -6,14 +6,14 @@ This guide documents the color tokens used throughout the Ethos application and 
 
 The palette is defined in `ethos-frontend/src/theme.ts` and mirrored in Tailwind and CSS variables. Each token represents a color that can be referenced in Tailwind classes or via `var(--token-name)`.
 
-| Token | Hex | Description |
-| ----- | --- | ----------- |
-| `primary` | `#111827` | Default text and interface color |
-| `accent` | `#4F46E5` | Primary brand accent |
-| `soft` | `#F3F4F6` | Light background or borders |
-| `primaryDark` | `#f9fafb` | Text color when dark mode is active |
-| `softDark` | `#1f2937` | Dark mode background |
-| `infoBackground` | `#bfdbfe` | Highlight color for drag/drop or info blocks |
+| Token | Light | Dark | Description |
+| ----- | ----- | ---- | ----------- |
+| `primary` | `#111827` | `#f9fafb` | Default text color |
+| `secondary` | `#4B5563` | `#D1D5DB` | Subtle text elements |
+| `accent` | `#4F46E5` | `#818cf8` | Brand accent and buttons |
+| `soft` | `#F3F4F6` | `#1f2937` | Application background |
+| `surface` | `#ffffff` | `#374151` | Cards and panels |
+| `infoBackground` | `#bfdbfe` | `#1e40af` | Highlight color for drag/drop or info blocks |
 
 ## Using Tokens in Components
 

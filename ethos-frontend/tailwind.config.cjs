@@ -18,6 +18,8 @@ module.exports = {
           success: 'var(--color-success)',
           warning: 'var(--color-warning)',
           error: 'var(--color-error)',
+          soft: 'var(--color-soft)',
+          'soft-dark': 'var(--color-soft-dark)',
           background: 'var(--color-background)',
           surface: 'var(--color-surface)',
           'info-background': 'var(--info-background)',
