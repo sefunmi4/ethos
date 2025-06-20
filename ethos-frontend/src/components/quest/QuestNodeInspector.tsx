@@ -1,21 +1,21 @@
 import React from 'react';
-import type { Post } from '../../types/postTypes';
 import PostCard from '../post/PostCard';
-import StatusBoardPanel from './StatusBoardPanel';
+import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
+import LogThreadPanel from './LogThreadPanel';
 
 interface QuestNodeInspectorProps {
-  node: Post | null;
   questId: string;
+  node: Post | null;
+  user?: User;
 }
 
-const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ node, questId }) => {
-  if (!node) {
-    return <div className="p-2 text-sm text-secondary">Select a node</div>;
-  }
+const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ questId, node, user }) => {
+  if (!node) return <div className="p-2 text-sm">Select a task</div>;
   return (
     <div className="space-y-4">
-      <PostCard post={node} questId={questId} />
-      <StatusBoardPanel questId={questId} linkedNodeId={node.id} />
+      <PostCard post={node} user={user} questId={questId} />
+      <LogThreadPanel questId={questId} node={node} user={user} />
     </div>
   );
 };
