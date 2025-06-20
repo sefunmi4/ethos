@@ -143,6 +143,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             id={quest.id}
             canEdit={true}
             onEdit={() => onEdit?.(questData)}
+            onEditLinks={() => setShowLinkEditor(true)}
             onDelete={() => onDelete?.(questData)}
             onArchived={() => {
               console.log(`[QuestCard] Quest ${quest.id} archived`);
@@ -275,15 +276,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     <div className="border rounded-lg shadow bg-white dark:bg-card-dark p-6 text-gray-900 dark:text-gray-100">
       {renderHeader()}
       <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-2">
-        <button
-          type="button"
-          onClick={() => setShowLinkEditor((v) => !v)}
-          className="text-blue-600 underline"
-        >
-          {questData.linkedPosts && questData.linkedPosts.length > 0
-            ? `🔗 Linked to ${questData.linkedPosts.length} items`
-            : 'Link to item'}
-        </button>
         {showLinkEditor && (
           <div className="mt-2">
             <LinkControls

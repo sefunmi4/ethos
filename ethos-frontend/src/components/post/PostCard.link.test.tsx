@@ -23,6 +23,11 @@ jest.mock('../../hooks/useGraph', () => ({
   useGraph: () => ({ loadGraph: loadGraphMock })
 }));
 
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  useNavigate: () => jest.fn(),
+}));
+
 describe('PostCard task_edge linking', () => {
   const post: Post = {
     id: 'c1',
@@ -37,8 +42,9 @@ describe('PostCard task_edge linking', () => {
   } as any;
 
   it('calls linkPostToQuest and refreshes graph on save', async () => {
-    render(<PostCard post={post} questId="q1" />);
-    fireEvent.click(screen.getByText(/linked to/i));
+    render(<PostCard post={post} questId="q1" user={{ id: 'u1' }} />);
+    fireEvent.click(screen.getByLabelText('More options'));
+    fireEvent.click(screen.getByText(/Edit Links/i));
 
     await waitFor(() => expect(fetchPostsByQuestId).toHaveBeenCalled());
 
