@@ -12,9 +12,13 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
+  --color-soft: #f3f4f6;
   --color-background: #f9fafb;
   --color-surface: #ffffff;
   --info-background: #bfdbfe;
+  --bg-soft: var(--color-soft);
+  --bg-soft-dark: #1f2937;
+  --text-primary: var(--color-primary);
   --success-bg: #ecfdf5;
   --success-text: #047857;
   --error-bg: #fef2f2;
@@ -32,9 +36,13 @@
   --color-success: #6ee7b7;
   --color-warning: #fde68a;
   --color-error: #fca5a5;
+  --color-soft-dark: #1f2937;
   --color-background: #1f2937;
   --color-surface: #374151;
   --info-background: #1e40af;
+  --bg-soft: var(--color-soft-dark);
+  --bg-soft-dark: var(--color-soft-dark);
+  --text-primary: var(--color-primary);
 }
 
 html, body {
