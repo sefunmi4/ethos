@@ -17,6 +17,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
     selectedBoard: 'b1',
     updateBoardItem: jest.fn(),
     removeItemFromBoard: jest.fn(),
+    boards: { b1: { boardType: 'post' } },
   }),
 }));
 

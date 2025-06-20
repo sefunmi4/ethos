@@ -24,6 +24,15 @@ jest.mock('../src/components/layout/GraphNode', () => ({
     }),
 }), { virtual: true });
 
+jest.mock('../src/contexts/BoardContext', () => ({
+  useBoardContext: () => ({
+    selectedBoard: 'b1',
+    appendToBoard: jest.fn(),
+    updateBoardItem: jest.fn(),
+    boards: { b1: { boardType: 'post' } },
+  }),
+}));
+
 const GraphLayout = require('../src/components/layout/GraphLayout').default;
 
 describe('GraphLayout scroll alignment', () => {

@@ -1,5 +1,5 @@
 // options.ts
-import type { BoardLayout } from '../types/boardTypes';
+import type { BoardLayout, BoardType } from '../types/boardTypes';
 import type { PostType } from '../types/postTypes';
 
 export const STRUCTURE_OPTIONS: { value: BoardLayout; label: string }[] = [
@@ -15,6 +15,14 @@ export const VISIBILITY_OPTIONS = [
   { value: 'public', label: 'Public' },
   { value: 'private', label: 'Private' },
 ] as const;
+
+export const BOARD_TYPE_OPTIONS: { value: BoardType; label: string }[] = [
+  { value: 'post', label: 'Post' },
+  { value: 'quest', label: 'Quest' },
+  { value: 'map', label: 'Map' },
+  { value: 'log', label: 'Log' },
+  { value: 'custom', label: 'Custom' },
+];
 
 export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
