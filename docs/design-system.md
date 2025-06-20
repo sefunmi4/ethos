@@ -11,9 +11,11 @@ The palette is defined in `ethos-frontend/src/theme.ts` and mirrored in Tailwind
 | `primary` | `#111827` | `#f9fafb` | Default text color |
 | `secondary` | `#4B5563` | `#D1D5DB` | Subtle text elements |
 | `accent` | `#4F46E5` | `#818cf8` | Brand accent and buttons |
-| `soft` | `#F3F4F6` | `#1f2937` | Application background |
+| `soft` | `#E5E7EB` | `#1f2937` | Application background |
 | `surface` | `#ffffff` | `#374151` | Cards and panels |
 | `infoBackground` | `#bfdbfe` | `#1e40af` | Highlight color for drag/drop or info blocks |
+
+`soft` now has a slightly darker light mode value. Use `surface` for most card backgrounds and reserve `soft` for overall page backgrounds.
 
 ## Using Tokens in Components
 
@@ -25,7 +27,7 @@ Color tokens are registered as Tailwind colors so you can use them directly in c
 <button className="bg-accent text-white hover:bg-accent/80">Click me</button>
 ```
 
-The class `bg-accent` maps to the `accent` token defined above. The same applies to `text-primary`, `bg-soft`, and other tokens.
+The class `bg-accent` maps to the `accent` token defined above. The same applies to `text-primary`, `bg-soft`, `bg-surface`, and other tokens.
 
 ### CSS Variables
 
