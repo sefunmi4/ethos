@@ -152,6 +152,7 @@ export type PostType =
   | 'meta_announcement'
   | 'commit'
   | 'issue'
+  | 'review'
   | 'solved';
   
 /**

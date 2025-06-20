@@ -54,6 +54,16 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   const icon = isFolder ? '📁' : '📄';
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
+  const {
+    attributes: anchorAttributes,
+    listeners: anchorListeners,
+    setNodeRef: setAnchorRef,
+  } = useDraggable({ id: `anchor-${node.id}` });
+  const {
+    attributes: subtreeAttributes,
+    listeners: subtreeListeners,
+    setNodeRef: setSubtreeRef,
+  } = useDraggable({ id: `move-${node.id}` });
   const { setNodeRef: setDropRef, isOver } = useDroppable({ id: node.id });
   const style = transform ? { transform: CSS.Translate.toString(transform) } : undefined;
 
@@ -230,6 +240,24 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
+          <span
+            data-testid={`move-${node.id}`}
+            ref={setSubtreeRef}
+            {...subtreeAttributes}
+            {...subtreeListeners}
+            className="cursor-move text-xs ml-1"
+            title="Move subtree"
+          >
+            ↕
+          </span>
+          <span
+            data-testid={`anchor-${node.id}`}
+            ref={setAnchorRef}
+            {...anchorAttributes}
+            {...anchorListeners}
+            className="ml-1 w-3 h-3 bg-blue-400 rounded-full inline-block cursor-grab"
+            title="Create child"
+          />
           {expanded && !editing && (
             <button
               className="text-xs underline ml-1"

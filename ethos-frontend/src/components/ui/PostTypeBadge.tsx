@@ -49,6 +49,10 @@ const typeStyles: Record<PostType, { label: string; color: string }> = {
     label: 'Issue',
     color: 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-200',
   },
+  review: {
+    label: 'Review',
+    color: 'bg-teal-100 text-teal-800 dark:bg-teal-800 dark:text-teal-200',
+  },
   solved: {
     label: 'Solved',
     color: 'bg-lime-100 text-lime-800 dark:bg-lime-800 dark:text-lime-200',

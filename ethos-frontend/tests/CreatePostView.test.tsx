@@ -18,7 +18,6 @@ jest.mock('../src/contexts/BoardContext', () => ({
     selectedBoard: 'b1',
     boards: {
       b1: { id: 'b1', title: 'Board', boardType: 'quest', layout: 'grid', items: [], createdAt: '' },
-      'request-board': { id: 'request-board', title: 'Request', boardType: 'post', layout: 'grid', items: [], createdAt: '' },
     },
     appendToBoard: jest.fn(),
   }),
@@ -26,26 +25,36 @@ jest.mock('../src/contexts/BoardContext', () => ({
 
 const CreatePost = require('../src/components/post/CreatePost').default;
 
-describe('CreatePost board type filtering', () => {
-  it('limits post type options for quest board', () => {
+describe('CreatePost view filtering', () => {
+  const getOptions = () => {
+    const select = screen.getByLabelText('Item Type');
+    return Array.from(select.querySelectorAll('option')).map(o => o.textContent);
+  };
+
+  it('allows only task posts in map view', () => {
     render(
       <BrowserRouter>
-        <CreatePost onCancel={() => {}} />
+        <CreatePost onCancel={() => {}} currentView="map" />
       </BrowserRouter>
     );
-    const select = screen.getByLabelText('Item Type');
-    const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Quest']);
+    expect(getOptions()).toEqual(['Quest Task']);
   });
 
-  it('limits post type options for request board', () => {
+  it('allows log posts in log view', () => {
     render(
       <BrowserRouter>
-        <CreatePost onCancel={() => {}} boardId="request-board" />
+        <CreatePost onCancel={() => {}} currentView="log" />
       </BrowserRouter>
     );
-    const select = screen.getByLabelText('Item Type');
-    const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Request', 'Quest']);
+    expect(getOptions()).toEqual(['Quest Log']);
+  });
+
+  it('allows commit and log posts in file-change view', () => {
+    render(
+      <BrowserRouter>
+        <CreatePost onCancel={() => {}} currentView="file-change" />
+      </BrowserRouter>
+    );
+    expect(getOptions()).toEqual(['Commit', 'Quest Log']);
   });
 });
