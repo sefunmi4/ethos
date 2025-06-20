@@ -130,7 +130,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
             })}
           </ul>
         ) : (
-          <p className="text-gray-500">No items to reorder.</p>
+          <p className="text-gray-500 dark:text-gray-400">No items to reorder.</p>
         )}
       </FormSection>
 

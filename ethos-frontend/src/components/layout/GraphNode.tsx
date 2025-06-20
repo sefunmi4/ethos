@@ -115,7 +115,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {label}
           </div>
           {edge && (
-            <span className="text-xs text-gray-500 ml-1 flex items-center">
+            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
               {edge.label || edge.type}
               {onRemoveEdge && (
                 <button
@@ -140,7 +140,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           </div>
         )}
         {node.children && node.children.length > 0 && (
-          <div className="ml-8 border-l border-gray-300 pl-4">
+          <div className="ml-8 border-l border-gray-300 dark:border-gray-600 pl-4">
             {node.children.map((child) => (
               <GraphNode
                 key={child.node.id}
@@ -176,22 +176,24 @@ const GraphNode: React.FC<GraphNodeProps> = ({
       }}
       className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
     >
-      <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={isDragging ? 'opacity-50' : ''}
+        {...attributes}
+        {...listeners}
+      >
         <div
           style={{ marginLeft: depth * 16 }}
           className="mb-6 flex items-start space-x-2 cursor-pointer"
           onClick={() => onSelect(node)}
         >
-          <span
-            className="text-xl select-none cursor-grab"
-            {...attributes}
-            {...listeners}
-          >
+          <span className="text-xl select-none cursor-grab">
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
           {edge && (
-            <span className="text-xs text-gray-500 ml-1 flex items-center">
+            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
               {edge.label || edge.type}
               {onRemoveEdge && (
                 <button
@@ -216,7 +218,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           </div>
         )}
         {node.children && node.children.length > 0 && (
-          <div className="ml-8 border-l border-gray-300 pl-4">
+          <div className="ml-8 border-l border-gray-300 dark:border-gray-600 pl-4">
             {node.children.map((child) => (
               <GraphNode
                 key={child.node.id}

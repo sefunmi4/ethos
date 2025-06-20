@@ -208,7 +208,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
 
       {repostSource && (
         <FormSection title="Repost Info">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 dark:text-gray-400">
             Reposting from <strong>@{repostSource.author?.username || 'anonymous'}</strong>
           </p>
         </FormSection>
@@ -216,7 +216,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
 
       {replyTo && (
         <FormSection title="Replying To">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 dark:text-gray-400">
             Replying to <strong>{replyTo.content?.slice(0, 80) || replyTo.id}</strong>
           </p>
         </FormSection>

@@ -1,3 +1,4 @@
+
 export interface Palette {
   light: string;
   dark: string;

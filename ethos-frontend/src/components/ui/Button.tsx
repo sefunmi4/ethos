@@ -20,8 +20,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-md focus:outline-none transition-colors duration-150';
+  const baseStyles = 'btn';
 
   const variantStyles: Record<ButtonVariant, string> = {
     primary:

@@ -111,7 +111,8 @@ VITE_SOCKET_URL=http://localhost:3001
 
 UI colors are centralized in `ethos-frontend/src/theme.ts` and mirrored in the
 Tailwind config. Use these variables instead of hard-coded color strings when
-styling components.
+styling components. See [docs/design-system.md](docs/design-system.md) for the
+full palette and usage examples.
 
 | Token | Hex |
 | ----- | ---- |
