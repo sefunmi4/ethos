@@ -55,31 +55,6 @@ jest.mock('../src/contexts/BoardContext', () => ({
 // Capture the drag handler to simulate drag end
 let dragHandler;
 
-jest.mock('@dnd-kit/core', () => {
-  const React = require('react');
-  return {
-    DndContext: ({ onDragEnd, children }) => {
-      dragHandler = onDragEnd;
-      return React.createElement('div', {}, children);
-    },
-    useDraggable: () => ({
-      attributes: {},
-      listeners: {},
-      setNodeRef: jest.fn(),
-      transform: null,
-      isDragging: false,
-    }),
-    useDroppable: () => ({
-      setNodeRef: jest.fn(),
-      isOver: false,
-    }),
-    useSensor: jest.fn(),
-    useSensors: (...s) => s,
-    PointerSensor: jest.fn(),
-    closestCenter: jest.fn(),
-  };
-}, { virtual: true });
-
 jest.mock('@dnd-kit/utilities', () => ({ CSS: { Translate: { toString: () => '' } } }), { virtual: true });
 
 const GridLayout = require('../src/components/layout/GridLayout').default;

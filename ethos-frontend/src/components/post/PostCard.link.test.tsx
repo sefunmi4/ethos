@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 
 jest.mock('../../api/post', () => ({
+  __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   updatePost: jest.fn((id, data) => Promise.resolve({ id, ...data })),
   fetchPostsByQuestId: jest.fn(() =>
@@ -15,6 +17,7 @@ jest.mock('../../api/post', () => ({
 }));
 
 jest.mock('../../api/quest', () => ({
+  __esModule: true,
   linkPostToQuest: jest.fn(() => Promise.resolve({}))
 }));
 
@@ -27,10 +30,19 @@ jest.mock('../../hooks/useGraph', () => ({
   useGraph: () => ({ loadGraph: loadGraphMock })
 }));
 
-jest.mock('react-router-dom', () => ({
+jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
-  useNavigate: () => jest.fn(),
+  useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem: jest.fn(), appendToBoard: jest.fn() })
 }));
+
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...actual,
+    useNavigate: () => jest.fn(),
+  };
+});
 
 describe('PostCard task_edge linking', () => {
   const post: Post = {
@@ -46,7 +58,11 @@ describe('PostCard task_edge linking', () => {
   } as any;
 
   it('calls linkPostToQuest and refreshes graph on save', async () => {
-    render(<PostCard post={post} questId="q1" user={{ id: 'u1' }} />);
+    render(
+      <BrowserRouter>
+        <PostCard post={post} questId="q1" user={{ id: 'u1' }} />
+      </BrowserRouter>
+    );
     fireEvent.click(screen.getByLabelText('More options'));
     fireEvent.click(screen.getByText(/Edit Links/i));
 
