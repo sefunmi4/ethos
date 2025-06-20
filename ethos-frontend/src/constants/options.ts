@@ -32,6 +32,7 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'log', label: 'Quest Log' },
   { value: 'commit', label: 'Commit' },
   { value: 'issue', label: 'Issue' },
+  { value: 'review', label: 'Review' },
 ];
 
 export const LINK_TYPES = ['solution', 'duplicate', 'citation'];

@@ -60,23 +60,14 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  let allowedPostTypes: PostType[];
-  if (boardType === 'quest') {
-    if (currentView === 'map') {
-      allowedPostTypes = ['task'];
-    } else if (currentView === 'log') {
-      allowedPostTypes = POST_TYPES.map(p => p.value as PostType).filter(t => t.includes('log')) as PostType[];
-    } else if (currentView === 'file-change') {
-      const logTypes = POST_TYPES.map(p => p.value as PostType).filter(t => t.includes('log')) as PostType[];
-      allowedPostTypes = ['commit', ...logTypes];
-    } else {
-      allowedPostTypes = ['quest', 'task', 'log'];
-    }
-  } else if (boardType === 'post') {
-    allowedPostTypes = ['free_speech', 'request', 'commit', 'issue'];
-  } else {
-    allowedPostTypes = POST_TYPES.map(p => p.value as PostType);
-  }
+  const allowedPostTypes: PostType[] =
+    boardId === 'timeline-board'
+      ? ['quest', 'free_speech', 'request', 'review']
+      : boardType === 'quest'
+      ? ['quest', 'task', 'log']
+      : boardType === 'post'
+      ? ['free_speech', 'request', 'commit', 'issue']
+      : POST_TYPES.map((p) => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
 
