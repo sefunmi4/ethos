@@ -8,6 +8,7 @@ import { useBoardContext } from '../../contexts/BoardContext';
 
 import EditBoard from './EditBoard';
 import CreatePost from '../post/CreatePost';
+import CreateQuest from '../quest/CreateQuest';
 
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
@@ -375,15 +376,23 @@ const Board: React.FC<BoardProps> = ({
         </div>
       </div>
 
-      {/* Create Post Form */}
+      {/* Create Item Form */}
       {showCreate && showCreateForm && (
-        <div className={`border rounded-lg p-4 shadow ${panelBg}`}> 
-          <CreatePost
-            onSave={handleAdd}
-            onCancel={() => setShowCreateForm(false)}
-            boardId={board.id}
-            currentView={activeView}
-          />
+        <div className={`border rounded-lg p-4 shadow ${panelBg}`}>
+          {board.boardType === 'quest' ? (
+            <CreateQuest
+              onSave={handleAdd}
+              onCancel={() => setShowCreateForm(false)}
+              boardId={board.id}
+            />
+          ) : (
+            <CreatePost
+              onSave={handleAdd}
+              onCancel={() => setShowCreateForm(false)}
+              boardId={board.id}
+              currentView={activeView}
+            />
+          )}
         </div>
       )}
 
