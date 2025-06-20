@@ -7,6 +7,7 @@ import { Button, PostTypeBadge, Select } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
+import MapGraphLayout from '../layout/MapGraphLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
