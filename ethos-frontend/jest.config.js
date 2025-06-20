@@ -9,6 +9,7 @@ export default {
   moduleNameMapper: {
     'react-markdown': '<rootDir>/tests/__mocks__/react-markdown.tsx',
     'remark-gfm': '<rootDir>/tests/__mocks__/remark-gfm.ts',
+    'react-force-graph': '<rootDir>/tests/__mocks__/react-force-graph.tsx',
     '.*/hooks/usePermissions$': '<rootDir>/tests/__mocks__/usePermissions.ts',
     '.*/hooks/useGit$': '<rootDir>/tests/__mocks__/useGit.ts'
   },
