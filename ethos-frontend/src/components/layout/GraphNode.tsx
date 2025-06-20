@@ -3,6 +3,7 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import ContributionCard from '../contribution/ContributionCard';
 import GitDiffViewer from '../git/GitDiffViewer';
+import EditPost from '../post/EditPost';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -67,6 +68,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   const [pulsing, setPulsing] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (isOver) {
@@ -91,6 +93,42 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     !focusedNodeId &&
     node.children &&
     node.children.length > MAX_CHILDREN_BEFORE_CONDENSE;
+
+  if (editing) {
+    return (
+      <div
+        ref={(el) => {
+          setDropRef(el);
+          registerNode?.(node.id, el);
+        }}
+        className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
+      >
+        <div
+          ref={setNodeRef}
+          style={style}
+          className={isDragging ? 'opacity-50' : ''}
+          {...attributes}
+          {...listeners}
+        >
+          <div style={{ marginLeft: depth * 16 }} className="mb-6">
+            <EditPost
+              post={node}
+              onCancel={() => {
+                setEditing(false);
+                setExpanded(false);
+                onSelect(node);
+              }}
+              onUpdated={(p) => {
+                setEditing(false);
+                setExpanded(false);
+                onSelect(p);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
 
   if (condensed && !expanded) {
@@ -208,6 +246,17 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
+          {expanded && !editing && (
+            <button
+              className="text-xs underline ml-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditing(true);
+              }}
+            >
+              Edit
+            </button>
+          )}
           {condensed && (
             <button
               className="text-xs underline ml-1"
