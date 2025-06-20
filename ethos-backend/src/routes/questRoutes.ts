@@ -79,6 +79,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     authorId,
     title,
     description,
+    displayOnBoard: req.body.displayOnBoard ?? true,
     visibility: 'public',
     approvalStatus: 'approved',
     flagCount: 0,
@@ -124,10 +125,11 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
           repoId: newQuest.gitRepo.repoId,
           repoUrl: newQuest.gitRepo.repoUrl,
           headCommitId: newQuest.gitRepo.headCommitId,
-          defaultBranch: newQuest.gitRepo.defaultBranch,
-        }
+        defaultBranch: newQuest.gitRepo.defaultBranch,
+      }
       : undefined,
     helpRequest,
+    displayOnBoard: newQuest.displayOnBoard,
   } as DBQuest;
   quests.push(dbQuest);
   questsStore.write(quests);
@@ -164,7 +166,7 @@ router.patch(
     res: Response
   ): void => {
     const { id } = req.params;
-    const { itemId, gitRepo, title, description, tags } = req.body;
+    const { itemId, gitRepo, title, description, tags, displayOnBoard } = req.body;
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
@@ -201,6 +203,7 @@ router.patch(
   if (title !== undefined) quest.title = title;
   if (description !== undefined) quest.description = description;
   if (tags !== undefined) quest.tags = tags;
+  if (displayOnBoard !== undefined) quest.displayOnBoard = displayOnBoard;
   if (gitRepo && typeof gitRepo.repoUrl === 'string') {
     quest.gitRepo = { ...(quest.gitRepo || { repoId: '' }), ...quest.gitRepo, repoUrl: gitRepo.repoUrl } as any;
   }

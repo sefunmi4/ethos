@@ -263,7 +263,25 @@ export const enrichBoard = (
 
       return null;
     })
-    .filter((i): i is Post | Quest => i !== null);
+    .filter((i): i is Post | Quest => i !== null)
+    .filter((item) => {
+      if ('type' in item) {
+        const p = item as DBPost;
+        return p.type !== 'request' ||
+          p.visibility === 'public' ||
+          p.visibility === 'request_board' ||
+          p.needsHelp === true;
+      }
+      const q = item as DBQuest;
+      if (q.displayOnBoard === false) return false;
+      if (q.status === 'active' && currentUserId) {
+        const participant =
+          q.authorId === currentUserId ||
+          (q.collaborators || []).some((c) => c.userId === currentUserId);
+        if (!participant) return false;
+      }
+      return true;
+    });
 
   const enrichedItems = board.items
     .map((id) => {
@@ -279,7 +297,25 @@ export const enrichBoard = (
 
       return null;
     })
-    .filter((i): i is EnrichedPost | EnrichedQuest => i !== null);
+    .filter((i): i is EnrichedPost | EnrichedQuest => i !== null)
+    .filter((item) => {
+      if ('type' in item) {
+        const p = item as EnrichedPost;
+        return p.type !== 'request' ||
+          p.visibility === 'public' ||
+          p.visibility === 'request_board' ||
+          p.needsHelp === true;
+      }
+      const q = item as EnrichedQuest;
+      if (q.displayOnBoard === false) return false;
+      if (q.status === 'active' && currentUserId) {
+        const participant =
+          q.authorId === currentUserId ||
+          (q.collaborators || []).some((c) => c.userId === currentUserId);
+        if (!participant) return false;
+      }
+      return true;
+    });
 
   return {
     ...board,

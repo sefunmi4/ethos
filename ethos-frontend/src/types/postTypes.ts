@@ -50,6 +50,9 @@ export interface Post {
 
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
+
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
 }
 
 /**

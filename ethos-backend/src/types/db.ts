@@ -50,6 +50,9 @@ export interface DBPost {
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
 
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
+
   questId?: string | null;
   questNodeTitle?: string;
   nodeId?: string;
@@ -67,6 +70,9 @@ export interface DBQuest {
   approvalStatus: ApprovalStatus;
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
+
+  /** Whether this quest should appear on boards */
+  displayOnBoard?: boolean;
 
   headPostId: string;
   linkedPosts: LinkedItem[];

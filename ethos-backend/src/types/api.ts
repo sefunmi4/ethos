@@ -5,7 +5,7 @@ export type UUID = string;
 export type Timestamp = string;
 
 // 🔒 Access Control
-export type Visibility = 'public' | 'private' | 'hidden' | 'system';
+export type Visibility = 'public' | 'private' | 'hidden' | 'system' | 'request_board';
 
 export type UserRole = 'user' | 'admin' | 'moderator';
 
@@ -125,6 +125,9 @@ export interface Post {
 
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
+
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
 }
 
 
@@ -158,6 +161,9 @@ export interface Quest {
   approvalStatus: ApprovalStatus;
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
+
+  /** Whether this quest should appear on boards */
+  displayOnBoard?: boolean;
   headPostId: string;
   createdAt?: string;
 
