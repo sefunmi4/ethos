@@ -55,6 +55,30 @@ describe('post routes', () => {
     expect(res.body.status).toBe('Blocked');
   });
 
+  it('POST /posts links task to quest taskGraph', async () => {
+    const quest: any = {
+      id: 'q1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    postsStore.read.mockReturnValue([]);
+    questsStore.read.mockReturnValue([quest]);
+    postsStore.write.mockClear();
+    questsStore.write.mockClear();
+
+    const res = await request(app).post('/posts').send({ type: 'task', questId: 'q1' });
+
+    expect(res.status).toBe(201);
+    const newPost = postsStore.write.mock.calls[0][0][0];
+    expect(quest.taskGraph).toHaveLength(1);
+    expect(quest.taskGraph[0]).toEqual({ from: '', to: newPost.id });
+    expect(questsStore.write).toHaveBeenCalled();
+  });
+
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
     const posts = [
       {

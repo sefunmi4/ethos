@@ -78,6 +78,22 @@ router.post(
 
     posts.push(newPost);
     postsStore.write(posts);
+
+    if (questId && type === 'task') {
+      const quest = quests.find((q) => q.id === questId);
+      if (quest) {
+        quest.taskGraph = quest.taskGraph || [];
+        const from = quest.headPostId || '';
+        const exists = quest.taskGraph.some(
+          (e) => e.from === from && e.to === newPost.id
+        );
+        if (!exists) {
+          quest.taskGraph.push({ from, to: newPost.id });
+        }
+        questsStore.write(quests);
+      }
+    }
+
     const users = usersStore.read();
     res.status(201).json(enrichPost(newPost, { users }));
   }
