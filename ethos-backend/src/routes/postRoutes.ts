@@ -439,10 +439,25 @@ router.delete(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
+    const quests = questsStore.read();
     const index = posts.findIndex((p) => p.id === req.params.id);
     if (index === -1) {
       res.status(404).json({ error: 'Post not found' });
       return;
+    }
+
+    const post = posts[index];
+    if (post.questId) {
+      const questIndex = quests.findIndex(
+        (q) => q.id === post.questId && q.headPostId === post.id
+      );
+      if (questIndex !== -1) {
+        // Deleting the head post deletes the entire quest instead
+        const [removedQuest] = quests.splice(questIndex, 1);
+        questsStore.write(quests);
+        res.json({ success: true, questDeleted: removedQuest.id });
+        return;
+      }
     }
 
     posts.splice(index, 1);
