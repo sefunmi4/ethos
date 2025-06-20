@@ -4,8 +4,11 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json', useESM: true, diagnostics: false }],
+    '^.+\\.[tj]sx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json', useESM: true, diagnostics: false }],
   },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(react-force-graph-2d|react-force-graph|three|force-graph)(/|$))'
+  ],
   moduleNameMapper: {
     'react-markdown': '<rootDir>/tests/__mocks__/react-markdown.tsx',
     'remark-gfm': '<rootDir>/tests/__mocks__/remark-gfm.ts',
