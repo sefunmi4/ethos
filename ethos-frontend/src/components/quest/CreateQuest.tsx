@@ -148,7 +148,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        <Button type="submit" variant="contrast" disabled={isSubmitting}>
           {isSubmitting ? 'Creating...' : 'Create Quest'}
         </Button>
       </div>

@@ -114,7 +114,7 @@ const BoardPage: React.FC = () => {
     <main className="max-w-7xl mx-auto p-4 space-y-8 bg-soft dark:bg-soft-dark">
       <div className="bg-soft dark:bg-soft-dark rounded-xl shadow-lg p-6 space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">{boardData.title}</h1>
+          <h1 className="text-3xl font-bold text-primary dark:text-primary">{boardData.title}</h1>
           {editable && (
             <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
               Edit Board
