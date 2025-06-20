@@ -60,6 +60,9 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
+    const optimistic = { ...post, status: newStatus };
+    if (selectedBoard) updateBoardItem(selectedBoard, optimistic);
+    onUpdate?.(optimistic);
     try {
       const updated = await updatePost(post.id, { status: newStatus });
       if (selectedBoard) updateBoardItem(selectedBoard, updated);
