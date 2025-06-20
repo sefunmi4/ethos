@@ -85,22 +85,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-primary">{questData.title}</h2>
+        <h2
+          className="text-xl font-bold text-primary cursor-pointer underline"
+          onClick={() => navigate(ROUTES.QUEST(quest.id))}
+        >
+          {questData.title}
+        </h2>
         <div className="flex items-center gap-2 text-sm text-secondary">
           <PostTypeBadge type="quest" />
-          <button
-            type="button"
-            onClick={() =>
-              navigate(
-                questData.authorId === user?.id
-                  ? ROUTES.PROFILE
-                  : ROUTES.PUBLIC_PROFILE(questData.authorId)
-              )
-            }
-            className="text-blue-600 underline"
-          >
-            @{questData.headPost?.author?.username || questData.authorId}
-          </button>
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.gitRepo?.repoUrl && (
             <a

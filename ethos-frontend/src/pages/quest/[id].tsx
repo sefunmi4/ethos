@@ -12,6 +12,7 @@ import Board from '../../components/board/Board';
 import { Spinner } from '../../components/ui';
 import ReviewForm from '../../components/ReviewForm';
 import { createMockBoard } from '../../utils/boardUtils';
+import { fetchUserById } from '../../api/auth';
 
 import type { User } from '../../types/userTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -29,6 +30,7 @@ const QuestPage: React.FC = () => {
 
   const [mapBoard, setMapBoard] = useState<BoardData | null>(null);
   const [logBoard, setLogBoard] = useState<BoardData | null>(null);
+  const [creatorName, setCreatorName] = useState<string>('');
 
   // 🧩 Load quest info
   const {
@@ -36,6 +38,14 @@ const QuestPage: React.FC = () => {
     error: questError,
     isLoading: isQuestLoading,
   } = useQuest(id ?? '');
+
+  // Fetch quest creator name once quest is loaded
+  useEffect(() => {
+    if (!quest) return;
+    fetchUserById(quest.authorId)
+      .then((u) => setCreatorName(u.username || u.id))
+      .catch(() => setCreatorName(quest.authorId));
+  }, [quest]);
 
   // ✅ Use simple string ID pattern to load boards
   const {
@@ -82,7 +92,7 @@ const QuestPage: React.FC = () => {
   return (
     <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
       {/* 🎯 Quest Summary Card */}
-      <Banner quest={quest} />
+      <Banner quest={quest} creatorName={creatorName} />
 
       {/* 🗺 Quest Map Section */}
       <section>

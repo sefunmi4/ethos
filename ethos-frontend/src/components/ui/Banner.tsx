@@ -5,6 +5,8 @@ import type { Quest } from '../../types/questTypes';
 interface BannerProps {
   user?: User;
   quest?: Quest;
+  /** Optional quest creator display name */
+  creatorName?: string;
   readOnly?: boolean;
 }
 
@@ -16,7 +18,7 @@ interface BannerProps {
  * - If `quest` is passed, displays quest overview.
  * - `readOnly` disables interactive options if true.
  */
-const Banner: React.FC<BannerProps> = ({ user, quest }) => {
+const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
   if (!user && !quest) return null;
 
   const displayName = user
@@ -29,6 +31,11 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
 
   const tags = user?.tags || quest?.collaborators || [];
 
+  const creatorDisplay =
+    quest && (creatorName || quest.authorId)
+      ? `Created by @${creatorName || quest.authorId}`
+      : null;
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface dark:bg-background p-4 sm:p-6 rounded-lg shadow mb-6">
       {/* Left: Name + Description */}
@@ -37,6 +44,9 @@ const Banner: React.FC<BannerProps> = ({ user, quest }) => {
           {user ? displayName : `📜 ${displayName}`}
         </h1>
         <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
+        {creatorDisplay && (
+          <p className="text-xs text-secondary mt-1">{creatorDisplay}</p>
+        )}
       </div>
 
       {/* Right: Tags or Roles */}
