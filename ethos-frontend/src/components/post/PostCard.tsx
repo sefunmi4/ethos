@@ -10,6 +10,7 @@ import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTa
 import { linkPostToQuest } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
+import CreatePost from './CreatePost';
 import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -58,6 +59,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
+  const [showSubTaskForm, setShowSubTaskForm] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -409,12 +411,45 @@ const PostCard: React.FC<PostCardProps> = ({
       />
 
       {post.type === 'task' && (
-        <button
-          onClick={handleRequestHelp}
-          className="text-accent underline text-xs mt-1"
-        >
-          Request Help
-        </button>
+        <>
+          <button
+            onClick={() => setShowSubTaskForm((prev) => !prev)}
+            className="text-accent underline text-xs mt-1 mr-2"
+          >
+            {showSubTaskForm ? 'Cancel' : 'Add Sub Task'}
+          </button>
+          <button
+            onClick={handleRequestHelp}
+            className="text-accent underline text-xs mt-1"
+          >
+            Request Help
+          </button>
+          {showSubTaskForm && (
+            <div className="mt-2">
+              <CreatePost
+                initialType="task"
+                questId={questId || post.questId}
+                onSave={async (p) => {
+                  setShowSubTaskForm(false);
+                  if (questId || post.questId) {
+                    try {
+                      await linkPostToQuest(questId || post.questId!, {
+                        postId: p.id,
+                        parentId: post.id,
+                        edgeType: 'sub_problem',
+                        title: p.questNodeTitle || makeHeader(p.content),
+                      });
+                      loadGraph(questId || post.questId!);
+                    } catch (err) {
+                      console.error('[PostCard] Failed to link new task:', err);
+                    }
+                  }
+                }}
+                onCancel={() => setShowSubTaskForm(false)}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {(initialReplies > 0 || replies.length > 0) && (
