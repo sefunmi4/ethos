@@ -9,6 +9,9 @@ export interface Quest {
   authorId: string;
   title: string;
   description?: string;
+  visibility: 'public' | 'private' | 'hidden' | 'system';
+  approvalStatus: 'approved' | 'flagged' | 'banned';
+  flagCount?: number;
   status: 'active' | 'completed' | 'archived';
   headPostId: string;
   createdAt?: string;
