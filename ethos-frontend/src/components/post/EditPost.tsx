@@ -110,11 +110,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
             {showPreview ? 'Hide Markdown Preview' : 'Show Markdown Preview'}
           </button>
 
-          {showPreview && (
-            <div className="mt-2 border rounded p-3 bg-gray-50 text-sm prose max-w-none">
-              <MarkdownRenderer content={content} />
-            </div>
-          )}
+            {showPreview && (
+              <div className="mt-2 border rounded p-3 bg-gray-50 dark:bg-gray-800 text-sm prose max-w-none">
+                <MarkdownRenderer content={content} />
+              </div>
+            )}
         </div>
       </FormSection>
 
