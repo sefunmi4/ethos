@@ -13,7 +13,8 @@ import type {
   BoardType,
   ReactionSet,
   ReactionCountMap,
-  ReviewTargetType
+  ReviewTargetType,
+  ApprovalStatus
 } from './api';
 
 // types/db.ts
@@ -62,6 +63,9 @@ export interface DBQuest {
   authorId: string;
   title: string;
   description?: string;
+  visibility: Visibility;
+  approvalStatus: ApprovalStatus;
+  flagCount?: number;
   status: 'active' | 'completed' | 'archived';
 
   headPostId: string;

@@ -29,21 +29,31 @@
       {
         "from": "f6619e30-bb1c-4dd4-83b1-e701faa1ebad",
         "to": "59687208-c91b-4562-9d39-5d7181c4623b"
+      },
+      {
+        "from": "f6619e30-bb1c-4dd4-83b1-e701faa1ebad",
+        "to": "755d3dc2-cba4-4414-8391-16c4327019a5"
       }
     ],
-    "helpRequest": false
+    "helpRequest": false,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0
   },
   {
-    "id": "41f1e562-2389-4717-a9c4-15abb17ded27",
+    "id": "8dcab4d0-207c-4bfe-b84f-155688f46be0",
     "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "title": "Graduate Applications",
+    "title": "another test",
     "description": "",
     "tags": [],
     "linkedPosts": [],
     "collaborators": [],
     "status": "active",
-    "headPostId": "5cfed02e-9695-4ccc-83a9-c57f06999e19",
+    "headPostId": "f116d807-dd25-447e-b965-1abd3969676d",
     "taskGraph": [],
-    "helpRequest": false
+    "helpRequest": false,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0
   }
 ]
