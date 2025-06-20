@@ -329,13 +329,48 @@ const QuestCard: React.FC<QuestCardProps> = ({
         return renderFileView();
       case "status":
         return (
-          <div className="space-y-1 text-sm p-2">
-            <div>Tasks: {questData.taskCount ?? logs.length}</div>
-            <div>Completed: {questData.completedTasks ?? 0}</div>
-            {questData.percentComplete !== undefined && (
-              <div>Progress: {questData.percentComplete}%</div>
+          <>
+            {showTaskForm && (
+              <div className="mb-4">
+                <CreatePost
+                  initialType="task"
+                  questId={quest.id}
+                  boardId={`map-${quest.id}`}
+                  onSave={(p) => {
+                    setLogs((prev) => [...prev, p]);
+                    setShowTaskForm(false);
+                  }}
+                  onCancel={() => setShowTaskForm(false)}
+                />
+              </div>
             )}
-          </div>
+            <GridLayout
+              questId={quest.id}
+              items={logs}
+              user={user}
+              layout="kanban"
+              editable={canEdit}
+            />
+            <div className="text-right mt-2">
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowTaskForm(true)}
+                >
+                  + Add Item
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={handleJoinRequest}
+                >
+                  Request to Join
+                </Button>
+              )}
+            </div>
+          </>
         );
       default:
         return null;
