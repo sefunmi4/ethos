@@ -45,7 +45,7 @@ const App: React.FC = () => {
         <TimelineProvider>
           <BoardProvider>
             <ThemeProvider>
-            <div className="min-h-screen flex flex-col bg-soft dark:bg-soft-dark text-gray-900 dark:text-gray-100">
+            <div className="min-h-screen flex flex-col bg-soft dark:bg-soft-dark text-primary">
               {/* Top-level navigation */}
               <NavBar />
 

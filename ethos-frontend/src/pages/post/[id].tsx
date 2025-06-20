@@ -103,9 +103,9 @@ const PostPage: React.FC = () => {
   if (!post) return <Spinner />;
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12">
+    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12 text-primary">
       {post.repostedFrom && (
-        <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-gray-500 dark:text-gray-400">
+        <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-secondary">
           ♻️ Reposted from @{post.repostedFrom.username}
         </section>
       )}
