@@ -161,7 +161,8 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     >
       <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
         <div
-          className={`ml-${depth * 4} mb-6 flex items-start space-x-2 cursor-pointer`}
+          style={{ marginLeft: depth * 16 }}
+          className="mb-6 flex items-start space-x-2 cursor-pointer"
           onClick={() => onSelect(node)}
           {...attributes}
           {...listeners}
