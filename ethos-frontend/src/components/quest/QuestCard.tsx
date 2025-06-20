@@ -123,29 +123,20 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {expanded ? '▲ Collapse' : '▼ Expand'}
         </Button>
 
-        {!isOwner && (
-          <>
-            {/* Use contrast styling so the button is dark in light mode and light in dark mode */}
-            <Button onClick={() => onJoinToggle?.(questData)} variant="contrast">
-              Join Quest
-            </Button>
-          </>
-        )}
-        
-        {isOwner && (
-          <ActionMenu
-            type="quest"
-            id={quest.id}
-            canEdit={true}
-            onEdit={() => onEdit?.(questData)}
-            onEditLinks={() => setShowLinkEditor(true)}
-            onDelete={() => onDelete?.(questData)}
-            onArchived={() => {
-              console.log(`[QuestCard] Quest ${quest.id} archived`);
-            }}
-            permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
-          />
-        )}
+        <ActionMenu
+          type="quest"
+          id={quest.id}
+          canEdit={isOwner}
+          onEdit={isOwner ? () => onEdit?.(questData) : undefined}
+          onEditLinks={isOwner ? () => setShowLinkEditor(true) : undefined}
+          onDelete={isOwner ? () => onDelete?.(questData) : undefined}
+          onArchived={isOwner ? () => {
+            console.log(`[QuestCard] Quest ${quest.id} archived`);
+          } : undefined}
+          onJoin={!isOwner ? () => onJoinToggle?.(questData) : undefined}
+          joinLabel="Join Quest"
+          permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
+        />
   
         {expanded && (
           <Select
@@ -192,6 +183,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               editable={canEdit}
             />
             <div className="text-right mt-2">
+
               {canEdit ? (
                 <Button
                   size="sm"
