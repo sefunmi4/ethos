@@ -335,6 +335,61 @@ router.get(
   res.json(nodes);
 });
 
+// POST /quests/:id/complete – mark quest as completed
+router.post(
+  '/:id/complete',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const quests = questsStore.read();
+    const posts = postsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    const visited = new Set<string>();
+    const notify = (msg: string) => {
+      // Placeholder for notification logic
+      console.log(msg);
+    };
+
+    const completeQuest = (questId: string) => {
+      if (visited.has(questId)) return;
+      visited.add(questId);
+      const q = quests.find(x => x.id === questId);
+      if (!q) return;
+      q.status = 'completed';
+      q.linkedPosts?.forEach(link => {
+        if (link.itemType === 'post') {
+          if (link.cascadeSolution) {
+            const post = posts.find(p => p.id === link.itemId);
+            if (post) {
+              post.tags = [...(post.tags || []), 'solved'];
+            }
+          }
+          if (link.notifyOnChange) {
+            notify(`Notify post ${link.itemId} of quest ${questId} completion`);
+          }
+        } else if (link.itemType === 'quest') {
+          if (link.cascadeSolution) {
+            completeQuest(link.itemId);
+          } else if (link.notifyOnChange) {
+            notify(`Notify quest ${link.itemId} of quest ${questId} completion`);
+          }
+        }
+      });
+    };
+
+    completeQuest(id);
+    questsStore.write(quests);
+    postsStore.write(posts);
+    res.json({ success: true });
+  }
+);
+
 // DELETE quest
 router.delete(
   '/:id',

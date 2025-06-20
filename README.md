@@ -162,6 +162,12 @@ The backend logger supports a `LOG_LEVEL` environment variable. Set it to
 `error`, `warn`, `info` (default), or `debug` to control the verbosity of
 console output. Each log line includes a timestamp for easier tracing.
 
+## API Routes
+
+- `POST /api/quests/:id/complete` – mark a quest as completed. Linked posts with
+  `cascadeSolution` are tagged as `solved` and links with `notifyOnChange`
+  trigger a placeholder notification.
+
 ---
 
 ## 🧠 Core Flow

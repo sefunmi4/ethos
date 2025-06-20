@@ -203,6 +203,53 @@ describe('route handlers', () => {
     expect(quest.linkedPosts[0].title).toBe('Task t2');
   });
 
+  it('POST /quests/:id/complete cascades solution', async () => {
+    const { questsStore, postsStore } = require('../src/models/stores');
+    const quest: any = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [
+        { itemId: 'p1', itemType: 'post', cascadeSolution: true },
+        { itemId: 'qParent', itemType: 'quest', cascadeSolution: true },
+      ],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    const parent: any = {
+      id: 'qParent',
+      authorId: 'u1',
+      title: 'Parent',
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    questsStore.read.mockReturnValue([quest, parent]);
+    postsStore.read.mockReturnValue([
+      {
+        id: 'p1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        tags: [],
+      },
+    ]);
+    postsStore.write.mockClear();
+
+    const res = await request(app).post('/quests/q1/complete');
+
+    expect(res.status).toBe(200);
+    expect(quest.status).toBe('completed');
+    expect(parent.status).toBe('completed');
+    expect(postsStore.write).toHaveBeenCalled();
+  });
+
   it('GET /boards/:id/quests returns quests from board', async () => {
     const { boardsStore, questsStore } = require('../src/models/stores');
     boardsStore.read.mockReturnValue([
