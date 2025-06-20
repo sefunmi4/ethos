@@ -28,7 +28,7 @@
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T00",
-    "status": "In Progress",
+    "status": "Blocked",
     "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
   },
   {
@@ -60,7 +60,7 @@
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T01",
-    "status": "To Do",
+    "status": "In Progress",
     "questNodeTitle": "Link Controls Updates\n---\nwhen the card is in view…"
   },
   {
