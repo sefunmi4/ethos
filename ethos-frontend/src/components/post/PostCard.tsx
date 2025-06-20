@@ -18,6 +18,7 @@ import MediaPreview from '../ui/MediaPreview';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
+import CreatePost from './CreatePost';
 import ActionMenu from '../ui/ActionMenu';
 
 const PREVIEW_LIMIT = 240;
@@ -58,6 +59,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
+  const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
+  const [asCommit, setAsCommit] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -407,6 +410,64 @@ const PostCard: React.FC<PostCardProps> = ({
         user={user}
         onUpdate={onUpdate}
       />
+
+      {post.type === 'task' && (
+        <div className="flex gap-2 mt-1">
+          <button
+            className="text-accent underline text-xs"
+            onClick={() => setCreateType('log')}
+          >
+            Add Log
+          </button>
+          <button
+            className="text-accent underline text-xs"
+            onClick={() => setCreateType('issue')}
+          >
+            Add Issue
+          </button>
+        </div>
+      )}
+
+      {createType && (
+        <div className="mt-2 space-y-1">
+          <label className="text-xs flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={asCommit}
+              onChange={(e) => setAsCommit(e.target.checked)}
+            />
+            Create commit entry
+          </label>
+          <CreatePost
+            initialType={asCommit ? 'commit' : createType}
+            questId={post.questId}
+            boardId={post.questId ? `log-${post.questId}` : undefined}
+            initialGitFilePath={asCommit ? post.gitFilePath : undefined}
+            initialLinkedNodeId={asCommit ? post.nodeId : undefined}
+            onSave={async (newPost) => {
+              if (post.questId) {
+                try {
+                  await linkPostToQuest(post.questId, {
+                    postId: newPost.id,
+                    parentId: post.id,
+                    title: newPost.questNodeTitle || makeHeader(newPost.content),
+                  });
+                  appendToBoard?.(`log-${post.questId}`, newPost);
+                  loadGraph(post.questId);
+                } catch (err) {
+                  console.error('[PostCard] Failed to link new post:', err);
+                }
+              }
+              setCreateType(null);
+              setAsCommit(false);
+            }}
+            onCancel={() => {
+              setCreateType(null);
+              setAsCommit(false);
+            }}
+          />
+        </div>
+      )}
 
       {post.type === 'task' && (
         <button
