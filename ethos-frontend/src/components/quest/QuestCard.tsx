@@ -153,9 +153,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
             options={viewOptions}
           />
         )}
-        <Button onClick={() => navigate(ROUTES.QUEST(quest.id))} variant="ghost">
-          View details
-        </Button>
   
         {onCancel && (
           <Button onClick={onCancel} variant="secondary">
