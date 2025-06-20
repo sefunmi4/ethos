@@ -46,7 +46,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   boardId,
   className = '',
   onJoin,
-  joinLabel = 'Join Quest',
+  joinLabel = 'Request to Join',
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
