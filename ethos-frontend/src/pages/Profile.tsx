@@ -52,7 +52,7 @@ const ProfilePage: React.FC = () => {
 
       {/* 📘 Your Quests */}
       <section className="mt-10 mb-12">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">📘 Your Quests</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">📘 Your Quests</h2>
         {loadingQuests ? (
           <Spinner />
         ) : (
@@ -65,7 +65,7 @@ const ProfilePage: React.FC = () => {
               showCreate
             />
             {userQuestBoard?.enrichedItems?.length === 0 && (
-              <div className="text-gray-500 text-center py-8">
+              <div className="text-gray-500 dark:text-gray-400 text-center py-8">
                 You haven't created any quests yet.
               </div>
             )}
@@ -75,7 +75,7 @@ const ProfilePage: React.FC = () => {
 
       {/* 📝 Post History */}
       <section>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">📝 Your Post History</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">📝 Your Post History</h2>
         {loadingPosts ? (
           <Spinner />
         ) : (
@@ -88,7 +88,7 @@ const ProfilePage: React.FC = () => {
               showCreate
             />
             {userPostBoard?.enrichedItems?.length === 0 && (
-              <div className="text-gray-500 text-center py-8">
+              <div className="text-gray-500 dark:text-gray-400 text-center py-8">
                 You haven't posted anything yet.
               </div>
             )}

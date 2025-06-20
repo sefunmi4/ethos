@@ -154,7 +154,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 
       {repostedFrom && (
         <FormSection title="Reposted From">
-          <div className="text-sm text-gray-600 italic">
+          <div className="text-sm text-gray-600 dark:text-gray-400 italic">
             Originally posted by <strong>@{repostedFrom.username}</strong>
           </div>
         </FormSection>
