@@ -8,14 +8,15 @@ interface StatusBadgeProps {
 }
 
 const statusStyles: Record<string, string> = {
-  'To Do': 'badge-info',
-  'In Progress': 'badge-warning',
-  Blocked: 'badge-error',
-  Done: 'badge-success',
+  'To Do': 'bg-background text-secondary',
+  'In Progress': 'bg-warning text-warning',
+  Blocked: 'bg-error text-error',
+  Done: 'bg-success text-success',
 };
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
-  const style = statusStyles[status] || 'badge-info';
+  const style =
+    statusStyles[status] || 'bg-background text-secondary';
   return (
     <span
       className={clsx(

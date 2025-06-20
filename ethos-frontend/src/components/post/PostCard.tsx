@@ -153,9 +153,9 @@ const PostCard: React.FC<PostCardProps> = ({
     const quote = post.repostedFrom;
     if (!quote?.originalContent) return null;
     return (
-      <blockquote className="border-l-4 pl-4 text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700 rounded">
+      <blockquote className="border-l-4 pl-4 text-secondary italic bg-background rounded">
         “{quote.originalContent.length > 180 ? quote.originalContent.slice(0, 180) + '…' : quote.originalContent}”
-        <div className="text-xs mt-1 text-gray-400 dark:text-gray-500">
+        <div className="text-xs mt-1 text-secondary">
           — @{quote.username || 'unknown'}
         </div>
       </blockquote>
@@ -192,13 +192,13 @@ const PostCard: React.FC<PostCardProps> = ({
     }
 
     return (
-      <div className="text-sm bg-gray-50 dark:bg-gray-900 rounded p-2 font-mono border">
+      <div className="text-sm bg-background rounded p-2 font-mono border border-secondary">
         {post.commitSummary && (
-          <div className="mb-1 text-gray-700 dark:text-gray-300 italic">{post.commitSummary}</div>
+          <div className="mb-1 text-primary italic">{post.commitSummary}</div>
         )}
         {!showFullDiff && (
           <div className="mb-2">
-            <button onClick={() => setShowFullDiff(true)} className="text-blue-600 text-xs underline">
+            <button onClick={() => setShowFullDiff(true)} className="text-accent text-xs underline">
               View full diff
             </button>
           </div>
@@ -206,8 +206,8 @@ const PostCard: React.FC<PostCardProps> = ({
         <pre className="overflow-x-auto whitespace-pre-wrap">
           {visibleLines.map((line, idx) => (
             <div key={idx} className={
-              line.startsWith('+') ? 'text-green-600' :
-              line.startsWith('-') ? 'text-red-600' : 'text-gray-800 dark:text-gray-200'}>
+              line.startsWith('+') ? 'text-success' :
+              line.startsWith('-') ? 'text-error' : 'text-primary'}>
               {line}
             </div>
           ))}
@@ -216,7 +216,7 @@ const PostCard: React.FC<PostCardProps> = ({
           <div className="mt-1">
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
-              className="text-blue-600 text-xs underline"
+              className="text-accent text-xs underline"
             >
               View full file with replies
             </button>
@@ -242,9 +242,9 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <div
       id={post.id}
-      className="relative border rounded bg-white dark:bg-card-dark shadow-sm p-4 space-y-3 text-gray-900 dark:text-gray-100 max-w-prose mx-auto"
+      className="relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose mx-auto"
     >
-      <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex justify-between text-sm text-secondary">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
@@ -266,7 +266,7 @@ const PostCard: React.FC<PostCardProps> = ({
                   : ROUTES.PUBLIC_PROFILE(post.authorId)
               )
             }
-            className="text-blue-600 underline"
+            className="text-accent underline"
           >
             @{post.author?.username || post.authorId}
           </button>
@@ -285,14 +285,14 @@ const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {post.linkedNodeId && post.author?.username && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 italic">
+        <div className="text-xs text-secondary italic">
           @{post.author.username} committed changes to <strong>{post.linkedNodeId}</strong> {timestamp}
         </div>
       )}
 
       {renderRepostInfo()}
 
-      <div className="text-sm text-gray-800 dark:text-gray-200">
+      <div className="text-sm text-primary">
         {isLong ? (
           <>
             <MarkdownRenderer
@@ -301,7 +301,7 @@ const PostCard: React.FC<PostCardProps> = ({
             />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
-              className="text-blue-600 underline text-xs ml-1"
+              className="text-accent underline text-xs ml-1"
             >
               See more
             </button>
@@ -316,7 +316,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderLinkSummary()}
 
       {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+        <div className="text-xs text-secondary space-y-1">
           {showLinkEditor && (
             <div className="mt-2">
               <LinkControls
@@ -327,7 +327,7 @@ const PostCard: React.FC<PostCardProps> = ({
               />
               {linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId) && (
                 <div className="mt-2 space-y-1">
-                  <label className="text-xs text-gray-600 dark:text-gray-400">Parent Post</label>
+                  <label className="text-xs text-secondary">Parent Post</label>
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={parentId}
@@ -340,7 +340,7 @@ const PostCard: React.FC<PostCardProps> = ({
                       </option>
                     ))}
                   </select>
-                  <label className="text-xs text-gray-600 dark:text-gray-400">Edge Type</label>
+                  <label className="text-xs text-secondary">Edge Type</label>
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={edgeType}
@@ -350,7 +350,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     <option value="solution_branch">solution_branch</option>
                     <option value="folder_split">folder_split</option>
                   </select>
-                  <label className="text-xs text-gray-600 dark:text-gray-400">Edge Label</label>
+                  <label className="text-xs text-secondary">Edge Label</label>
                   <input
                     type="text"
                     className="border rounded px-1 py-0.5 text-xs w-full"
@@ -411,7 +411,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {post.type === 'task' && (
         <button
           onClick={handleRequestHelp}
-          className="text-blue-600 underline text-xs mt-1"
+          className="text-accent underline text-xs mt-1"
         >
           Request Help
         </button>
@@ -420,7 +420,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {(initialReplies > 0 || replies.length > 0) && (
         <button
           onClick={toggleReplies}
-          className="text-blue-600 underline text-xs"
+          className="text-accent underline text-xs"
         >
           {showReplies ? 'Hide Replies' : `\u{1F4AC} See Replies (${initialReplies || replies.length})`}
         </button>
@@ -430,7 +430,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <div>
           <button
             onClick={() => navigate(ROUTES.POST(post.id))}
-            className="text-blue-600 underline text-xs"
+            className="text-accent underline text-xs"
           >
             See more
           </button>
@@ -438,13 +438,13 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       {replies.length > 0 && showReplies && (
-        <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
+        <div className="mt-2 space-y-2 border-l-2 border-accent pl-4">
           {loadingReplies && (
             <div className="flex justify-center">
               <Spinner />
             </div>
           )}
-          {replyError && <p className="text-xs text-red-500">{replyError}</p>}
+          {replyError && <p className="text-xs text-error">{replyError}</p>}
           {replies.map((r) => (
             <PostCard
               key={r.id}

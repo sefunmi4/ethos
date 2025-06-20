@@ -4,10 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
-  --bg-soft: #f9fafb;
-  --text-primary: #1f2937;
-  --accent: #4f46e5; /* indigo-600 */
+  --color-primary: #111827;
+  --color-secondary: #4b5563;
+  --color-accent: #4f46e5;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
   --info-background: #bfdbfe;
   --success-bg: #ecfdf5;
   --success-text: #047857;
@@ -20,23 +26,20 @@
 }
 
 .dark {
-  --bg-soft: #1f2937; /* slate-800 */
-  --text-primary: #f9fafb; /* light gray */
-  --accent: #818cf8; /* indigo-400 */
-  --card-dark: #374151;
-  --success-bg: #064e3b;
-  --success-text: #ecfdf5;
-  --error-bg: #7f1d1d;
-  --error-text: #fef2f2;
-  --warning-bg: #78350f;
-  --warning-text: #fef3c7;
-  --info-bg: #1e40af;
-  --info-text: #dbeafe;
+  --color-primary: #f9fafb;
+  --color-secondary: #d1d5db;
+  --color-accent: #818cf8;
+  --color-success: #6ee7b7;
+  --color-warning: #fde68a;
+  --color-error: #fca5a5;
+  --color-background: #1f2937;
+  --color-surface: #374151;
+  --info-background: #1e40af;
 }
 
 html, body {
-  background-color: var(--bg-soft);
-  color: var(--text-primary);
+  background-color: var(--color-background);
+  color: var(--color-primary);
   @apply transition-colors duration-300;
   font-family: 'Inter', sans-serif;
   min-height: 100%;
@@ -45,7 +48,7 @@ html, body {
 }
 
 a {
-  color: var(--accent);
+  color: var(--color-accent);
 }
 
 a:hover {

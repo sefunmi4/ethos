@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const Footer: React.FC = () => {
   const year = new Date().getFullYear();
   return (
-    <footer className="w-full border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-card-dark text-sm text-gray-600 dark:text-gray-300">
+    <footer className="w-full border-t border-background bg-surface text-sm text-secondary">
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-24 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <nav className="flex gap-4">
           <Link to="/about" className="hover:text-accent transition-colors">

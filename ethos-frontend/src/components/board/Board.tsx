@@ -208,11 +208,11 @@ const Board: React.FC<BoardProps> = ({
   }
 
   if (!board) {
-    return <div className="text-red-500 p-4">Board not found.</div>;
+    return <div className="text-error p-4">Board not found.</div>;
   }
 
-  const containerBg = 'bg-white dark:bg-card-dark';
-  const panelBg = 'bg-white dark:bg-card-dark';
+  const containerBg = 'bg-surface';
+  const panelBg = 'bg-surface';
 
   return (
     <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>

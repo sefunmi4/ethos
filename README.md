@@ -117,10 +117,13 @@ full palette and usage examples.
 | Token | Hex |
 | ----- | ---- |
 | `primary` | `#111827` |
+| `secondary` | `#4B5563` |
 | `accent` | `#4F46E5` |
-| `soft` | `#F3F4F6` |
-| `primaryDark` | `#f9fafb` |
-| `softDark` | `#1f2937` |
+| `success` | `#10B981` |
+| `warning` | `#F59E0B` |
+| `error` | `#EF4444` |
+| `background` | `#f9fafb` |
+| `surface` | `#ffffff` |
 | `infoBackground` | `#bfdbfe` |
 
 ### 3. Setup Backend

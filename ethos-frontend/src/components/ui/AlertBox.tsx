@@ -26,10 +26,10 @@ const AlertBox: React.FC<AlertBoxProps> = ({
   const baseStyles =
     'rounded px-4 py-3 text-sm font-medium shadow-sm border-l-4';
   const typeStyles: Record<AlertType, string> = {
-    success: 'alert-success',
-    error: 'alert-error',
-    warning: 'alert-warning',
-    info: 'alert-info',
+    success: 'bg-success text-success border-success',
+    error: 'bg-error text-error border-error',
+    warning: 'bg-warning text-warning border-warning',
+    info: 'bg-accent/10 text-accent border-accent',
   };
 
   return (
