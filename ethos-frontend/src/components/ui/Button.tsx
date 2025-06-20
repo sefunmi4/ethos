@@ -1,7 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'disabled';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'danger'
+  | 'disabled'
+  | 'contrast';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'; // optional: 'md' is default
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,6 +33,8 @@ const Button: React.FC<ButtonProps> = ({
       'bg-accent text-white hover:bg-accent focus:ring-2 focus:ring-accent',
     secondary:
       'bg-soft text-primary hover:bg-surface focus:ring-2 focus:ring-secondary',
+    contrast:
+      'bg-primary text-surface dark:text-background hover:bg-primary focus:ring-2 focus:ring-primary',
     ghost:
       'bg-transparent text-secondary hover:bg-soft focus:ring-2 focus:ring-background',
     danger:
