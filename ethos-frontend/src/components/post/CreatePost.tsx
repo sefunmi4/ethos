@@ -55,7 +55,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [helpRequest] = useState(boardId === 'request-board');
+  const [helpRequest] = useState(boardId === 'quest-board');
 
 const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
@@ -63,7 +63,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
   const allowedPostTypes: PostType[] =
-    boardId === 'request-board'
+    boardId === 'quest-board'
       ? ['request', 'quest']
       : boardType === 'quest'
       ? ['quest', 'task', 'log']

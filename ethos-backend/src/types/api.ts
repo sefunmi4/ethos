@@ -5,7 +5,12 @@ export type UUID = string;
 export type Timestamp = string;
 
 // 🔒 Access Control
-export type Visibility = 'public' | 'private' | 'hidden' | 'system';
+export type Visibility =
+  | 'public'
+  | 'private'
+  | 'hidden'
+  | 'system'
+  | 'request_board';
 
 export type UserRole = 'user' | 'admin' | 'moderator';
 
@@ -171,6 +176,8 @@ export interface Quest {
   };
 
   tags?: string[];
+  /** When true this quest appears on the Quest Board */
+  displayOnBoard?: boolean;
   defaultBoardId?: string;
   /** Graph edges between tasks/logs */
   taskGraph?: TaskEdge[];

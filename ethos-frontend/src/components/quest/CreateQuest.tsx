@@ -43,7 +43,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [syncRepo, setSyncRepo] = useState(true); // default checked
-  const [helpRequest] = useState(boardId === 'request-board');
+  const [helpRequest] = useState(boardId === 'quest-board');
 
   const syncGit = useSyncGitRepo();
   const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};

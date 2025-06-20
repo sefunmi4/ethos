@@ -316,35 +316,35 @@ describe('post routes', () => {
     expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
   });
 
-  it('rejects non-help posts on request board', async () => {
+  it('rejects non-help posts on quest board', async () => {
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'free_speech', boardId: 'request-board' });
+      .send({ type: 'free_speech', boardId: 'quest-board' });
     expect(res.status).toBe(400);
   });
 
-  it('allows request post on request board', async () => {
+  it('allows request post on quest board', async () => {
     postsStore.read.mockReturnValue([]);
     postsStore.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'request', boardId: 'request-board' });
+      .send({ type: 'request', boardId: 'quest-board' });
     expect(res.status).toBe(201);
     const written = postsStore.write.mock.calls[0][0][0];
     expect(written.helpRequest).toBe(true);
   });
 
-  it('requires help flag for quest on request board', async () => {
+  it('requires help flag for quest on quest board', async () => {
     postsStore.read.mockReturnValue([]);
     let res = await request(app)
       .post('/posts')
-      .send({ type: 'quest', boardId: 'request-board' });
+      .send({ type: 'quest', boardId: 'quest-board' });
     expect(res.status).toBe(400);
 
     postsStore.write.mockClear();
     res = await request(app)
       .post('/posts')
-      .send({ type: 'quest', boardId: 'request-board', helpRequest: true });
+      .send({ type: 'quest', boardId: 'quest-board', helpRequest: true });
     expect(res.status).toBe(201);
     const writtenQuest = postsStore.write.mock.calls[0][0][0];
     expect(writtenQuest.helpRequest).toBe(true);

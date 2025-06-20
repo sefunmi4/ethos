@@ -74,8 +74,8 @@
     "category": "quest"
   },
   {
-    "id": "request-board",
-    "title": "Request Board",
+    "id": "quest-board",
+    "title": "Quest Board",
     "description": "Posts seeking help",
     "boardType": "post",
     "layout": "grid",

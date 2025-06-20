@@ -88,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const handleRequestHelp = async () => {
     try {
       const reqPost = await requestHelpForTask(post.id);
-      appendToBoard?.('request-board', reqPost);
+      appendToBoard?.('quest-board', reqPost);
     } catch (err) {
       console.error('[PostCard] Failed to request help:', err);
     }

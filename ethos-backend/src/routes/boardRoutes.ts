@@ -9,6 +9,25 @@ import type { BoardData } from '../types/api';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
+const getQuestBoardItems = (
+  posts: ReturnType<typeof postsStore.read>,
+  quests: ReturnType<typeof questsStore.read>
+) => {
+  const questIds = quests
+    .filter((q) => (q as any).displayOnBoard)
+    .map((q) => q.id);
+  const requestIds = posts
+    .filter(
+      (p) =>
+        p.type === 'request' &&
+        (p.visibility === 'public' ||
+          p.visibility === 'request_board' ||
+          p.helpRequest)
+    )
+    .map((p) => p.id);
+  return [...questIds, ...requestIds];
+};
+
 const router = express.Router();
 
 //
@@ -38,6 +57,11 @@ router.get(
           .filter(q => q.authorId === userId)
           .map(q => q.id);
         return { ...board, items: filtered };
+      }
+
+      if (board.id === 'quest-board') {
+        const items = getQuestBoardItems(posts, quests);
+        return { ...board, items };
       }
 
       return board;
@@ -167,7 +191,9 @@ router.get(
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
     let boardItems = board.items;
-    if (userId && board.id === 'my-posts') {
+    if (board.id === 'quest-board') {
+      boardItems = getQuestBoardItems(posts, quests);
+    } else if (userId && board.id === 'my-posts') {
       boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
@@ -210,7 +236,9 @@ router.get(
     }
 
     let boardItems = board.items;
-    if (userId && board.id === 'my-posts') {
+    if (board.id === 'quest-board') {
+      boardItems = getQuestBoardItems(posts, quests);
+    } else if (userId && board.id === 'my-posts') {
       boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
@@ -253,7 +281,11 @@ router.get(
     }
 
     let boardItems = board.items;
-    if (userId && board.id === 'my-quests') {
+    if (board.id === 'quest-board') {
+      boardItems = getQuestBoardItems(posts, quests).filter(id =>
+        quests.find(q => q.id === id)
+      );
+    } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
     }
 
