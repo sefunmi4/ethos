@@ -16,6 +16,16 @@
     "description": "Personal posts board.",
     "layout": "grid",
     "items": [
+      "8932c168-376d-4a33-be41-579bb5342d55",
+      "bef8267f-7a56-4bac-a593-980a9240d6c2",
+      "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+      "7e56ebb4-8c65-43b2-a180-176063f77c5b",
+      "440dcb99-e34b-468a-ae9b-4a955336f068",
+      "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
+      "816e795e-1a3a-4714-a901-01e92c052ce5",
+      "3b51737f-ae60-43be-9b7e-f16f8e2a9906",
+      "362ec530-af34-4e0d-b0f3-0d34f03029ab",
+      "ecfe3cb6-c4e1-4ee1-a93b-01ba41c726ad"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -28,6 +38,7 @@
     "description": "Personal quests board.",
     "layout": "grid",
     "items": [
+      "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -40,6 +51,7 @@
     "description": "Highlighted quest",
     "layout": "grid",
     "items": [
+      "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "featured": true,
     "defaultFor": null,
@@ -52,8 +64,7 @@
     "title": "Request Board",
     "description": "Posts seeking help",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -66,11 +77,48 @@
     "description": "Recent posts and quests",
     "layout": "thread",
     "items": [
+      "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
+  },
+  {
+    "id": "map-99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "title": "Untitled Board",
+    "description": "",
+    "layout": "grid",
+    "items": [
+      "bef8267f-7a56-4bac-a593-980a9240d6c2",
+      "ecfe3cb6-c4e1-4ee1-a93b-01ba41c726ad",
+      "362ec530-af34-4e0d-b0f3-0d34f03029ab",
+      "3b51737f-ae60-43be-9b7e-f16f8e2a9906",
+      "816e795e-1a3a-4714-a901-01e92c052ce5",
+      "440dcb99-e34b-468a-ae9b-4a955336f068",
+      "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-19T22:33:59.726Z",
+    "userId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9"
+  },
+  {
+    "id": "log-99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "title": "Untitled Board",
+    "description": "",
+    "layout": "grid",
+    "items": [
+      "8932c168-376d-4a33-be41-579bb5342d55",
+      "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
+      "7e56ebb4-8c65-43b2-a180-176063f77c5b"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-19T23:00:51.314Z",
+    "userId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9"
   }
 ]

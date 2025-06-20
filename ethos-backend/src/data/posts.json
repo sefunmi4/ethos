@@ -1,3 +1,220 @@
 [
-  
+  {
+    "id": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
+    "visibility": "public",
+    "timestamp": "2025-06-19T22:33:59.716Z",
+    "tags": [],
+    "collaborators": [
+      {
+        "userId": "277f3e48-e987-41ac-bf06-e6afa5faab4e",
+        "username": "testerbot1",
+        "roles": [
+          "Developer",
+          "Caster",
+          "Designer"
+        ]
+      }
+    ],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T00",
+    "status": "To Do"
+  },
+  {
+    "id": "7e56ebb4-8c65-43b2-a180-176063f77c5b",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "Link Controls Updates\n---\nwhen the card is in view mode there should only be one meta data link to view links and when it is show it is read only. if you want to add a link from one post to another post with a  post from another post you can either:\n\n1. [ ]  replying to a post will create a link between the to post based on their post type. (free spreech - regular reply, review & request get added to the review pipeline and request board with a displaied quote or link to the post it s replying to, quest post do the same but dispaly insige the quest insted of public review and request feeds if the quest is pupiclis it might be found there as well as in the reeply chain of that post. mulitple links or hcnaging a link requires you to know the nodi link id of the post you want to link. if you want to linki t quicky as a child node then just reply with that nodi id on the post card . if you want to make a post the partent of another post then repost that post i or add that bost as a quot using the link id and the quote mark down . this will otomatically make one the parent of the other . finally you can link to poist as related this will place them in a folder/ categroy type . you are basically sayig yo soem way the to post relat to each other and there is not parent or child or at least not well understood right now. this is done by entangling tngling the 2 post. you reply with a link pot that speficed that seifces there is no parent vchiled just rekated and can let you pick. a post to place as a reply / link. the post displayed might just saying user linkee this post to this post.\n",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:00:51.302Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T01",
+    "status": "To Do"
+  },
+  {
+    "id": "440dcb99-e34b-468a-ae9b-4a955336f068",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "When I change from TODO to inprogress the chnage doesnt show immediately ",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:02:01.975Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T02",
+    "status": "To Do"
+  },
+  {
+    "id": "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "dark theme baord and nav bard need more color contrast",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:03:42.319Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T03",
+    "status": "To Do"
+  },
+  {
+    "id": "816e795e-1a3a-4714-a901-01e92c052ce5",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "the kanban should have a magnetic drag and drop feel when moving between columns ",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:04:52.445Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T04",
+    "status": "To Do"
+  },
+  {
+    "id": "3b51737f-ae60-43be-9b7e-f16f8e2a9906",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "markdown check box should be click able to set and trigger",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:06:33.029Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T05",
+    "status": "To Do"
+  },
+  {
+    "id": "362ec530-af34-4e0d-b0f3-0d34f03029ab",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "when I create a new post in a quest it is not automatically set to TODO tag on the kanban",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:07:20.827Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T06",
+    "status": "To Do"
+  },
+  {
+    "id": "ecfe3cb6-c4e1-4ee1-a93b-01ba41c726ad",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "User should be able to request post from task that they want help with ",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:08:07.810Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T07",
+    "status": "To Do"
+  },
+  {
+    "id": "bef8267f-7a56-4bac-a593-980a9240d6c2",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "When a post node is expandedin a graph I should be able to clik the reply and other buttons ",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:09:46.633Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T08"
+  },
+  {
+    "id": "8932c168-376d-4a33-be41-579bb5342d55",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "Instead of a reply button for task it should say quest log / file change view and a expand view ",
+    "visibility": "public",
+    "timestamp": "2025-06-19T23:12:23.097Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "nodeId": "Q:ethos:T09"
+  }
 ]
