@@ -11,6 +11,7 @@ export * from './userTypes';
 export * from './gitTypes';
 export * from './reviewTypes';
 export * from './common';
+export * from './reviewTypes';
 
 export type UUID = string;
 export type Timestamp = string;

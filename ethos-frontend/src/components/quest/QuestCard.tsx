@@ -5,7 +5,6 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, PostTypeBadge, Select } from '../ui';
 import { ROUTES } from '../../constants/routes';
-import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
 import CreatePost from '../post/CreatePost';
@@ -143,6 +142,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             id={quest.id}
             canEdit={true}
             onEdit={() => onEdit?.(questData)}
+            onEditLinks={() => setShowLinkEditor(true)}
             onDelete={() => onDelete?.(questData)}
             onArchived={() => {
               console.log(`[QuestCard] Quest ${quest.id} archived`);
@@ -191,7 +191,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 />
               </div>
             )}
-            <ThreadLayout contributions={logs} user={user} questId={quest.id} />
+            <GridLayout
+              questId={quest.id}
+              items={logs}
+              user={user}
+              layout="vertical"
+            />
             <div className="text-right mt-2">
               <Button
                 size="sm"
@@ -275,15 +280,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     <div className="border rounded-lg shadow bg-white dark:bg-card-dark p-6 text-gray-900 dark:text-gray-100">
       {renderHeader()}
       <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-2">
-        <button
-          type="button"
-          onClick={() => setShowLinkEditor((v) => !v)}
-          className="text-blue-600 underline"
-        >
-          {questData.linkedPosts && questData.linkedPosts.length > 0
-            ? `🔗 Linked to ${questData.linkedPosts.length} items`
-            : 'Link to item'}
-        </button>
         {showLinkEditor && (
           <div className="mt-2">
             <LinkControls

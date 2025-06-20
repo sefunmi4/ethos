@@ -21,8 +21,8 @@ It’s a new operating system for solving problems together.
 ## 🎯 Key Features
 
 * **Post Problems** – Share life struggles, project needs, or global ideas.
-* **Turn Posts Into Quests** – Structure solutions into sub-tasks or threads.
-* **Boards & Threads** – Navigate via visual boards, timelines, or threaded views.
+* **Turn Posts Into Quests** – Structure solutions into sub-tasks or timelines.
+* **Boards & Timelines** – Navigate via visual boards and chronological views.
 * **Adventure Guilds** – Collaborate through guilds with defined roles and ranks.
 * **Quest Logs** – Track the history, updates, and team discussions around any quest.
 * **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
@@ -168,7 +168,7 @@ console output. Each log line includes a timestamp for easier tracing.
 
 1. Users log in and gain access to their profile and quests.
 2. Users post a request, idea, or problem → becomes a board item.
-3. Posts evolve into quests or threads based on collaboration.
+3. Posts evolve into quests or timelines based on collaboration.
 4. Quests are mapped visually and tracked via quest logs.
 5. Boards show all active or completed items in grid, list, or timeline views.
 
@@ -233,7 +233,7 @@ Current build includes:
 - User sign up and login via API
 - Posting messages, logs and tasks
 - Quests linking posts with Git repo metadata
-- Boards to visualize posts and quests in grid, graph or thread views
+- Boards to visualize posts and quests in grid, graph or timeline views
 - Thread replies endpoint now supports pagination via `page` and `limit` query options
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting

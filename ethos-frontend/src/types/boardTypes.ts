@@ -55,7 +55,12 @@ export interface RenderableItem {
 
 export type BoardItem = RenderableItem | Post | Quest | Board ;
 
-export type BoardLayout = 'grid' | 'graph' | 'graph-condensed' | 'thread';
+export type BoardLayout =
+  | 'grid'
+  | 'horizontal'
+  | 'kanban'
+  | 'graph'
+  | 'graph-condensed';
 
 
 /** Props passed to the Board component */
@@ -77,7 +82,7 @@ export interface BoardProps {
   quest?: Quest;
   /** Layout variant for GridLayout */
   gridLayout?: 'vertical' | 'horizontal' | 'kanban';
-  /** Expand all threads when using ThreadLayout */
+  /** Expand all posts when rendering nested replies */
   initialExpanded?: boolean;
 }
 

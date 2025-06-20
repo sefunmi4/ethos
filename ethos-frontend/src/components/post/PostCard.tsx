@@ -60,6 +60,9 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
+    const optimistic = { ...post, status: newStatus };
+    if (selectedBoard) updateBoardItem(selectedBoard, optimistic);
+    onUpdate?.(optimistic);
     try {
       const updated = await updatePost(post.id, { status: newStatus });
       if (selectedBoard) updateBoardItem(selectedBoard, updated);
@@ -241,6 +244,7 @@ const PostCard: React.FC<PostCardProps> = ({
           type="post"
           canEdit={canEdit}
           onEdit={() => setEditMode(true)}
+          onEditLinks={() => setShowLinkEditor(true)}
           onDelete={() => onDelete?.(post.id)}
           content={post.content}
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
@@ -277,15 +281,6 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-          <button
-            type="button"
-            onClick={() => setShowLinkEditor((v) => !v)}
-            className="text-blue-600 underline"
-          >
-            {post.linkedItems && post.linkedItems.length > 0
-              ? `🔗 Linked to ${post.linkedItems.length} items`
-              : 'Link to item'}
-          </button>
           {showLinkEditor && (
             <div className="mt-2">
               <LinkControls

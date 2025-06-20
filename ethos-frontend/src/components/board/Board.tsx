@@ -11,7 +11,6 @@ import CreatePost from '../post/CreatePost';
 
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
-import ThreadLayout from '../layout/ThreadLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
 
@@ -198,9 +197,10 @@ const Board: React.FC<BoardProps> = ({
 
   const Layout = {
     grid: GridLayout,
+    horizontal: GridLayout,
+    kanban: GridLayout,
     graph: GraphLayout,
     'graph-condensed': GraphLayout,
-    thread: ThreadLayout,
   }[resolvedStructure] ?? GridLayout;
 
   if (loading) {
@@ -252,13 +252,14 @@ const Board: React.FC<BoardProps> = ({
                 onChange={(e) => setViewMode(e.target.value as BoardLayout)}
                 options={[
                   { value: 'grid', label: 'Grid' },
+                  { value: 'horizontal', label: 'Horizontal' },
+                  { value: 'kanban', label: 'Kanban' },
                   ...(graphEligible
                     ? [
                         { value: 'graph', label: 'Graph' },
                         { value: 'graph-condensed', label: 'Graph (Condensed)' },
                       ]
                     : []),
-                  { value: 'thread', label: 'Timeline' },
                 ]}
               />
             </>
@@ -328,7 +329,9 @@ const Board: React.FC<BoardProps> = ({
             ? { edges: quest?.taskGraph }
             : {})}
           {...(resolvedStructure === 'graph-condensed' ? { condensed: true } : {})}
-          {...(resolvedStructure === 'grid' ? { layout: gridLayout } : {})}
+          {...(['grid', 'horizontal', 'kanban'].includes(resolvedStructure)
+            ? { layout: resolvedStructure === 'grid' ? gridLayout : resolvedStructure }
+            : {})}
         />
       )}
     </div>
