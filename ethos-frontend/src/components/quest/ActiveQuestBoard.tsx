@@ -26,8 +26,13 @@ const ActiveQuestBoard: React.FC = () => {
       setLoading(true);
       try {
         const [quests, recent] = await Promise.all([
-          fetchActiveQuests(user.id),
-          fetchRecentPosts(user.id, 1),
+          // Fetch all active quests. Passing a userId would exclude
+          // quests the current user participates in, which leads to
+          // an empty board when all quests belong to this user.
+          fetchActiveQuests(),
+          // Recent posts from any user help identify the latest log
+          // entry for each quest.
+          fetchRecentPosts(undefined, 1),
         ]);
         const questMap: Record<string, QuestWithLog> = {};
         quests.forEach(q => {
