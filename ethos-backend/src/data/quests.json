@@ -41,19 +41,6 @@
     "flagCount": 0
   },
   {
-    "id": "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
-    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "title": "test quest",
-    "description": "",
-    "tags": [],
-    "linkedPosts": [],
-    "collaborators": [],
-    "status": "active",
-    "headPostId": "69c94051-37d6-42b6-81a1-f560dbedb8f8",
-    "taskGraph": [],
-    "helpRequest": false
-  },
-  {
     "id": "8dcab4d0-207c-4bfe-b84f-155688f46be0",
     "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
     "title": "another test",
@@ -63,19 +50,6 @@
     "collaborators": [],
     "status": "active",
     "headPostId": "f116d807-dd25-447e-b965-1abd3969676d",
-    "taskGraph": [],
-    "helpRequest": false
-  },
-  {
-    "id": "d78fd6e3-3357-4009-a15b-dfa47022840c",
-    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "title": "one more test",
-    "description": "",
-    "tags": [],
-    "linkedPosts": [],
-    "collaborators": [],
-    "status": "active",
-    "headPostId": "63657925-62c9-4f69-aeae-ccf17a01071f",
     "taskGraph": [],
     "helpRequest": false,
     "visibility": "public",
