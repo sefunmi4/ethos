@@ -13,16 +13,15 @@ import type { AuthenticatedRequest } from '../types/express';
 const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>
 ) => {
-  const requestIds = posts
+  const ids = posts
     .filter(
       (p) =>
-        p.type === 'request' &&
-        (p.visibility === 'public' ||
-          p.visibility === 'request_board' ||
-          p.helpRequest)
+        p.helpRequest === true ||
+        (p.type === 'request' &&
+          (p.visibility === 'public' || p.visibility === 'request_board'))
     )
     .map((p) => p.id);
-  return requestIds;
+  return ids;
 };
 
 const router = express.Router();
