@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Spinner } from './components/ui';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
@@ -66,6 +66,7 @@ const App: React.FC = () => {
                     <Route path={ROUTES.PROFILE} element={<Profile />} />
                     <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
+                    <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
                     <Route path={ROUTES.FLAGGED_QUESTS} element={<FlaggedQuests />} />
                     <Route path={ROUTES.BANNED_QUESTS} element={<BannedQuests />} />
