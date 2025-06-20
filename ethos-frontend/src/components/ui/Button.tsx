@@ -26,13 +26,13 @@ const Button: React.FC<ButtonProps> = ({
     primary:
       'bg-accent text-white hover:bg-accent focus:ring-2 focus:ring-accent',
     secondary:
-      'bg-background text-primary hover:bg-surface focus:ring-2 focus:ring-secondary',
+      'bg-soft text-primary hover:bg-surface focus:ring-2 focus:ring-secondary',
     ghost:
-      'bg-transparent text-secondary hover:bg-background focus:ring-2 focus:ring-background',
+      'bg-transparent text-secondary hover:bg-soft focus:ring-2 focus:ring-background',
     danger:
       'bg-error text-white hover:bg-error focus:ring-2 focus:ring-error',
     disabled:
-      'bg-background text-secondary cursor-not-allowed',
+      'bg-soft text-secondary cursor-not-allowed',
   };
 
   const sizeStyles: Record<ButtonSize, string> = {
