@@ -7,6 +7,7 @@ import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
+import ActivityFeed from '../components/feed/ActivityFeed';
 import { getRenderableBoardItems } from '../utils/boardUtils';
 
 import type { User } from '../types/userTypes';
@@ -71,13 +72,8 @@ const HomePage: React.FC = () => {
       </section>
 
       <section>
-        <Board
-          boardId="timeline-board"
-          title="⏳ Recent Activity"
-          layout="grid"
-          user={user as User}
-          hideControls
-        />
+        <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
+        <ActivityFeed />
       </section>
 
     </main>

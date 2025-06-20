@@ -179,5 +179,77 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T04",
     "questNodeTitle": "forat quest to when expanded to show left = file/f…"
+  },
+  {
+    "id": "755d3dc2-cba4-4414-8391-16c4327019a5",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "task",
+    "content": "testing headers",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-20T20:05:48.863Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "91544b2a-a2c0-408f-b21b-15845869a23b",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T05",
+    "questNodeTitle": "testing headers"
+  },
+  {
+    "id": "69c94051-37d6-42b6-81a1-f560dbedb8f8",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "log",
+    "content": "test quest",
+    "visibility": "public",
+    "timestamp": "2025-06-20T20:13:38.884Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
+    "nodeId": "Q:testquest:L00",
+    "questNodeTitle": "test quest"
+  },
+  {
+    "id": "f116d807-dd25-447e-b965-1abd3969676d",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "log",
+    "content": "another test",
+    "visibility": "public",
+    "timestamp": "2025-06-20T20:13:46.972Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "8dcab4d0-207c-4bfe-b84f-155688f46be0",
+    "nodeId": "Q:anothertest:L00",
+    "questNodeTitle": "another test"
+  },
+  {
+    "id": "63657925-62c9-4f69-aeae-ccf17a01071f",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "log",
+    "content": "one more test",
+    "visibility": "public",
+    "timestamp": "2025-06-20T20:13:53.565Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "d78fd6e3-3357-4009-a15b-dfa47022840c",
+    "nodeId": "Q:onemoretest:L00",
+    "questNodeTitle": "one more test"
   }
 ]
