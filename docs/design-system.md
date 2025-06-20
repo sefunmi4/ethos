@@ -15,7 +15,7 @@ The palette is defined in `ethos-frontend/src/theme.ts` and mirrored in Tailwind
 | `surface` | `#ffffff` | Cards and panels |
 | `infoBackground` | `#bfdbfe` | Highlight color for drag/drop or info blocks |
 
-Dark mode colors are automatically calculated as the complementary hex values of the light palette.
+Dark mode colors are automatically calculated as the complementary hex values of the light palette, except for the text colors `primary` and `secondary`, which retain their original light values for readability.
 
 `soft` now has a slightly darker light mode value. Use `surface` for most card backgrounds and reserve `soft` for overall page backgrounds.
 

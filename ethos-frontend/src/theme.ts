@@ -18,10 +18,15 @@ export const lightColors: Record<string, string> = {
   infoBackground: '#bfdbfe',
 };
 
+const darkOverrides: Record<string, string> = {
+  primary: '#f9fafb',
+  secondary: '#d1d5db',
+};
+
 export const colors: Record<string, Palette> = Object.fromEntries(
   Object.entries(lightColors).map(([name, light]) => [
     name,
-    { light, dark: hexComplement(light) },
+    { light, dark: darkOverrides[name] ?? hexComplement(light) },
   ])
 ) as Record<string, Palette>;
 
