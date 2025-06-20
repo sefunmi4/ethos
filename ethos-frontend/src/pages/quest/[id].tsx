@@ -83,11 +83,6 @@ const QuestPage: React.FC = () => {
     <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
       {/* 🎯 Quest Summary Card */}
       <Banner quest={quest} />
-      <Board
-        board={createMockBoard(`quest-${quest.id}`, 'Quest Overview', [quest])}
-        editable={false}
-        compact={false}
-      />
 
       {/* 🗺 Quest Map Section */}
       <section>
@@ -106,6 +101,12 @@ const QuestPage: React.FC = () => {
           <Spinner />
         )}
       </section>
+
+      <Board
+        board={createMockBoard(`quest-${quest.id}`, 'Quest Overview', [quest])}
+        editable={false}
+        compact={false}
+      />
 
       {/* 📜 Quest Log Section */}
       <section>
