@@ -31,6 +31,10 @@ jest.mock('@dnd-kit/core', () => ({
     isDragging: false,
   }),
   useDroppable: () => ({ setNodeRef: jest.fn(), isOver: isOverMock }),
+  useSensor: jest.fn(),
+  useSensors: (...s) => s,
+  PointerSensor: jest.fn(),
+  closestCenter: jest.fn(),
 }), { virtual: true });
 
 jest.mock('../src/hooks/useGit', () => ({

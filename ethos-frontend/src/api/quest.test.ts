@@ -7,12 +7,13 @@ jest.mock('../utils/authUtils', () => ({
 
 describe('linkPostToQuest', () => {
   it('POSTs to /quests/:id/link', async () => {
-    await linkPostToQuest('q1', { postId: 'p2', parentId: 'p1', edgeType: 'sub_problem', edgeLabel: 'child' });
+    await linkPostToQuest('q1', { postId: 'p2', parentId: 'p1', edgeType: 'sub_problem', edgeLabel: 'child', title: 'Header' });
     expect(axiosWithAuth.post).toHaveBeenCalledWith('/quests/q1/link', {
       postId: 'p2',
       parentId: 'p1',
       edgeType: 'sub_problem',
-      edgeLabel: 'child'
+      edgeLabel: 'child',
+      title: 'Header'
     });
   });
 });

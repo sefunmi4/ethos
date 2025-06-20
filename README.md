@@ -28,6 +28,7 @@ It’s a new operating system for solving problems together.
 * **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
 * **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
+* **Interactive Task Lists** – Check off markdown tasks directly within posts.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
 
@@ -161,6 +162,12 @@ DATABASE_URL=your_postgresql_uri
 The backend logger supports a `LOG_LEVEL` environment variable. Set it to
 `error`, `warn`, `info` (default), or `debug` to control the verbosity of
 console output. Each log line includes a timestamp for easier tracing.
+
+## API Routes
+
+- `POST /api/quests/:id/complete` – mark a quest as completed. Linked posts with
+  `cascadeSolution` are tagged as `solved` and links with `notifyOnChange`
+  trigger a placeholder notification.
 
 ---
 

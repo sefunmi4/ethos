@@ -1,25 +1,9 @@
 import { axiosWithAuth } from '../utils/authUtils';
-import type { Review, ReviewTargetType } from '../types/reviewTypes';
+import type { Review } from '../types/reviewTypes';
 
-export interface FetchReviewsOptions {
-  type?: ReviewTargetType;
-  questId?: string;
-  postId?: string;
-  sort?: 'highest' | 'recent';
-  search?: string;
-}
+const BASE_URL = '/reviews';
 
-export const fetchReviews = async (
-  options: FetchReviewsOptions = {}
-): Promise<Review[]> => {
-  const params = new URLSearchParams();
-  if (options.type) params.set('type', options.type);
-  if (options.questId) params.set('questId', options.questId);
-  if (options.postId) params.set('postId', options.postId);
-  if (options.sort) params.set('sort', options.sort);
-  if (options.search) params.set('search', options.search);
-
-  const url = `/reviews${params.toString() ? `?${params.toString()}` : ''}`;
-  const res = await axiosWithAuth.get(url);
+export const addReview = async (data: Partial<Review>): Promise<Review> => {
+  const res = await axiosWithAuth.post(BASE_URL, data);
   return res.data;
 };

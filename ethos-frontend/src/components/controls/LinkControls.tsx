@@ -74,12 +74,20 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     const [type, id] = e.target.value.split(':');
     const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === (type as any));
     if (!alreadyLinked) {
+      let header = '';
+      if (type === 'post') {
+        const p = posts.find((x) => x.id === id);
+        const text = p?.content.trim() || '';
+        // TODO: replace simple truncation with AI-generated summaries
+        header = text.length <= 50 ? text : text.slice(0, 50) + '…';
+      }
       onChange([
         ...value,
         {
           itemId: id,
           itemType: type as 'quest' | 'post',
           nodeId: '',
+          title: header,
           linkType: 'related',
           linkStatus: 'active',
           cascadeSolution: false,
@@ -294,6 +302,15 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                     onChange={() => handleToggle(idx, 'notifyOnChange')}
                   /> 🔔 Notify
                 </label>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Header</label>
+                <input
+                  type="text"
+                  className="border rounded px-1 py-0.5 text-xs w-full"
+                  value={item.title || ''}
+                  onChange={(e) => handleUpdate(idx, 'title', e.target.value)}
+                />
               </div>
             </div>
           ))}

@@ -221,12 +221,13 @@ router.post(
         parentId?: string;
         edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
         edgeLabel?: string;
+        title?: string;
       }
     >,
     res: Response
   ) => {
   const { id } = req.params;
-  const { postId, parentId, edgeType, edgeLabel } = req.body;
+  const { postId, parentId, edgeType, edgeLabel, title } = req.body;
   if (!postId) {
     res.status(400).json({ error: 'Missing postId' });
     return;
@@ -252,7 +253,7 @@ router.post(
   quest.linkedPosts = quest.linkedPosts || [];
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
   if (!alreadyLinked) {
-    quest.linkedPosts.push({ itemId: postId, itemType: 'post' });
+    quest.linkedPosts.push({ itemId: postId, itemType: 'post', title });
     if (post && post.type === 'task') {
       quest.taskGraph = quest.taskGraph || [];
       const from = parentId || quest.headPostId;
@@ -333,6 +334,61 @@ router.get(
   recurse(id);
   res.json(nodes);
 });
+
+// POST /quests/:id/complete – mark quest as completed
+router.post(
+  '/:id/complete',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const quests = questsStore.read();
+    const posts = postsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    const visited = new Set<string>();
+    const notify = (msg: string) => {
+      // Placeholder for notification logic
+      console.log(msg);
+    };
+
+    const completeQuest = (questId: string) => {
+      if (visited.has(questId)) return;
+      visited.add(questId);
+      const q = quests.find(x => x.id === questId);
+      if (!q) return;
+      q.status = 'completed';
+      q.linkedPosts?.forEach(link => {
+        if (link.itemType === 'post') {
+          if (link.cascadeSolution) {
+            const post = posts.find(p => p.id === link.itemId);
+            if (post) {
+              post.tags = [...(post.tags || []), 'solved'];
+            }
+          }
+          if (link.notifyOnChange) {
+            notify(`Notify post ${link.itemId} of quest ${questId} completion`);
+          }
+        } else if (link.itemType === 'quest') {
+          if (link.cascadeSolution) {
+            completeQuest(link.itemId);
+          } else if (link.notifyOnChange) {
+            notify(`Notify quest ${link.itemId} of quest ${questId} completion`);
+          }
+        }
+      });
+    };
+
+    completeQuest(id);
+    questsStore.write(quests);
+    postsStore.write(posts);
+    res.json({ success: true });
+  }
+);
 
 // DELETE quest
 router.delete(
