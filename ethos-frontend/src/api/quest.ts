@@ -43,10 +43,14 @@ export const fetchAllQuests = async (): Promise<Quest[]> => {
   return res.data;
 };
 
-export const fetchFeaturedQuests = async (userId?: string): Promise<Quest[]> => {
+export const fetchFeaturedQuests = async (
+  userId?: string
+): Promise<Quest[]> => {
   const params = new URLSearchParams();
   if (userId) params.set('userId', userId);
-  const url = `${BASE_URL}/featured${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `${BASE_URL}/featured${
+    params.toString() ? `?${params.toString()}` : ''
+  }`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
@@ -54,7 +58,9 @@ export const fetchFeaturedQuests = async (userId?: string): Promise<Quest[]> => 
 export const fetchActiveQuests = async (userId?: string): Promise<Quest[]> => {
   const params = new URLSearchParams();
   if (userId) params.set('userId', userId);
-  const url = `${BASE_URL}/active${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `${BASE_URL}/active${
+    params.toString() ? `?${params.toString()}` : ''
+  }`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
