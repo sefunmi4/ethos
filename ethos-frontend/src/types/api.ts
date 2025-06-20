@@ -9,6 +9,7 @@ export * from './questTypes';
 export * from './postTypes';
 export * from './userTypes';
 export * from './gitTypes';
+export * from './reviewTypes';
 export * from './common';
 export * from './reviewTypes';
 
