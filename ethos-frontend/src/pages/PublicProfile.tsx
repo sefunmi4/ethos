@@ -9,6 +9,7 @@ import { usePost } from '../hooks/usePost';
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 import { Spinner } from '../components/ui';
+import ReviewForm from '../components/ReviewForm';
 
 import type { EnrichedQuest, Quest } from '../types/questTypes';
 import type { EnrichedPost, Post } from '../types/postTypes';
@@ -125,6 +126,12 @@ const PublicProfilePage: React.FC = () => {
         ) : (
           <Spinner />
         )}
+      </section>
+
+      {/* ⭐ Review Section */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">⭐ Leave a Review</h2>
+        <ReviewForm targetType="creator" modelId={profile.id} />
       </section>
     </main>
   );
