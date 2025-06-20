@@ -84,7 +84,7 @@ const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' 
   return (
     <div
       onScroll={handleScroll}
-      className="grid gap-4 overflow-auto max-h-[80vh] snap-y snap-mandatory p-2"
+      className="grid gap-4 overflow-auto max-h-[65vh] snap-y snap-mandatory p-2"
     >
       <Suspense fallback={<Spinner />}>
         {items.map(item =>
