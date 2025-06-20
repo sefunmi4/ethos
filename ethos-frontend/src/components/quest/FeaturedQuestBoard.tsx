@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { fetchFeaturedQuests } from '../../api/quest';
+import { useAuth } from '../../contexts/AuthContext';
 import type { Quest } from '../../types/questTypes';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -13,6 +14,7 @@ const CARD_WIDTH = 240; // px
 const GAP = 16; // px gap between cards
 
 const FeaturedQuestBoard: React.FC = () => {
+  const { user } = useAuth();
   const [quests, setQuests] = useState<QuestWithScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
@@ -21,7 +23,7 @@ const FeaturedQuestBoard: React.FC = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchFeaturedQuests();
+        const data = await fetchFeaturedQuests(user?.id);
         setQuests(data || []);
       } catch (err) {
         console.error('[FeaturedQuestBoard] Failed to load quests', err);
@@ -30,7 +32,7 @@ const FeaturedQuestBoard: React.FC = () => {
       }
     };
     load();
-  }, []);
+  }, [user?.id]);
 
   const maxDots = 5;
   const visibleIndices = useMemo(() => {
