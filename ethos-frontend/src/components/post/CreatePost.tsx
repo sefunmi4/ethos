@@ -26,6 +26,8 @@ type CreatePostProps = {
    * When provided this overrides the currently selected board context.
    */
   boardId?: string;
+  initialGitFilePath?: string;
+  initialLinkedNodeId?: string;
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -36,6 +38,8 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialType = 'free_speech',
   questId,
   boardId,
+  initialGitFilePath,
+  initialLinkedNodeId,
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
@@ -82,21 +86,23 @@ const CreatePost: React.FC<CreatePostProps> = ({
         ...(type === 'task' ? { status } : {}),
         ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
         ...(targetBoard ? { boardId: targetBoard } : {}),
-      ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
-      ...(repostSource
-        ? {
-            parentPostId: repostSource.id,
-            linkType: 'repost',
-            repostedFrom: {
-              originalPostId: repostSource.id,
-              username: repostSource.author?.username,
-              originalContent: repostSource.content,
-              originalTimestamp: repostSource.timestamp,
-            },
-          }
-        : {}),
-      ...(requiresQuestRoles(type) && { collaborators }),
-    };
+        ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
+        ...(repostSource
+          ? {
+              parentPostId: repostSource.id,
+              linkType: 'repost',
+              repostedFrom: {
+                originalPostId: repostSource.id,
+                username: repostSource.author?.username,
+                originalContent: repostSource.content,
+                originalTimestamp: repostSource.timestamp,
+              },
+            }
+          : {}),
+        ...(requiresQuestRoles(type) && { collaborators }),
+        ...(type === 'commit' && initialGitFilePath ? { gitFilePath: initialGitFilePath } : {}),
+        ...(type === 'commit' && initialLinkedNodeId ? { linkedNodeId: initialLinkedNodeId } : {}),
+      };
 
     try {
       const newPost = await addPost(payload);

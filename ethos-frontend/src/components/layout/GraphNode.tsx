@@ -2,22 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import ContributionCard from '../contribution/ContributionCard';
+import CompactNodeCard from './CompactNodeCard';
 import GitDiffViewer from '../git/GitDiffViewer';
+import EditPost from '../post/EditPost';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 
 export const MAX_CHILDREN_BEFORE_CONDENSE = 5;
-
-const stringToColor = (str: string) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue},70%,70%)`;
-};
 
 interface NodeChild {
   node: Post;
@@ -67,6 +60,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   const [pulsing, setPulsing] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (isOver) {
@@ -92,11 +86,44 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     node.children &&
     node.children.length > MAX_CHILDREN_BEFORE_CONDENSE;
 
+  if (editing) {
+    return (
+      <div
+        ref={(el) => {
+          setDropRef(el);
+          registerNode?.(node.id, el);
+        }}
+        className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
+      >
+        <div
+          ref={setNodeRef}
+          style={style}
+          className={isDragging ? 'opacity-50' : ''}
+          {...attributes}
+          {...listeners}
+        >
+          <div style={{ marginLeft: depth * 16 }} className="mb-6">
+            <EditPost
+              post={node}
+              onCancel={() => {
+                setEditing(false);
+                setExpanded(false);
+                onSelect(node);
+              }}
+              onUpdated={(p) => {
+                setEditing(false);
+                setExpanded(false);
+                onSelect(p);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   if (condensed && !expanded) {
-    const colorKey = node.tags[0] || node.type;
-    const color = stringToColor(colorKey);
-    const label = node.nodeId || node.id.slice(0, 6);
     const snippet = (node.content || '').slice(0, 30);
     return (
       <div
@@ -123,12 +150,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             }}
             title={snippet}
           >
-            <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white mr-2"
-              style={{ backgroundColor: color }}
-            >
-              {label}
-            </div>
+            <CompactNodeCard post={node} />
             {edge && (
               <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
                 {edge.label || edge.type}
@@ -208,6 +230,17 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
+          {expanded && !editing && (
+            <button
+              className="text-xs underline ml-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditing(true);
+              }}
+            >
+              Edit
+            </button>
+          )}
           {condensed && (
             <button
               className="text-xs underline ml-1"
