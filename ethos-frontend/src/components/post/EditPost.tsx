@@ -9,7 +9,7 @@ import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
-import { TextArea, Select, Button, Label, FormSection } from '../ui';
+import { TextArea, Select, Button, Label, FormSection, Input } from '../ui';
 import LinkControls from '../controls/LinkControls';
 import CollaberatorControls from '../controls/CollaberatorControls';
 
@@ -23,6 +23,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [type, setType] = useState<PostType>(post.type);
   const [status, setStatus] = useState<string>(post.status || 'To Do');
   const [content, setContent] = useState<string>(post.content || '');
+  const [details, setDetails] = useState<string>(post.details || '');
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>(post.collaborators || []);
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>(post.linkedItems || []);
   const [repostedFrom] = useState(post.repostedFrom || null);
@@ -46,6 +47,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
     const payload: Partial<Post> = {
       type,
       content,
+      ...(type === 'task' && details ? { details } : {}),
       ...(type === 'quest' && { collaborators }),
       ...(type === 'task' ? { status } : {}),
       linkedItems,
@@ -91,15 +93,38 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           </>
         )}
 
-        <Label htmlFor="content">Content (Markdown supported)</Label>
-        <TextArea
-          id="content"
-          rows={8}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Write your post..."
-          required
-        />
+        {type === 'task' ? (
+          <>
+            <Label htmlFor="content">Task Title</Label>
+            <Input
+              id="content"
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              placeholder="Short task summary"
+              required
+            />
+            <Label htmlFor="details">Details (Markdown supported)</Label>
+            <TextArea
+              id="details"
+              rows={8}
+              value={details}
+              onChange={e => setDetails(e.target.value)}
+              placeholder="Additional information"
+            />
+          </>
+        ) : (
+          <>
+            <Label htmlFor="content">Content (Markdown supported)</Label>
+            <TextArea
+              id="content"
+              rows={8}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write your post..."
+              required
+            />
+          </>
+        )}
 
         <div className="mt-4">
           <button

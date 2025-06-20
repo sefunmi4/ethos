@@ -39,6 +39,7 @@ router.post(
     const {
       type = 'free_speech',
       content = '',
+      details = '',
       visibility = 'public',
       tags = [],
       questId = null,
@@ -68,6 +69,7 @@ router.post(
       authorId: req.user!.id,
       type,
       content,
+      details,
       visibility,
       timestamp: new Date().toISOString(),
       tags,

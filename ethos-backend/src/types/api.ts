@@ -91,6 +91,8 @@ export interface Post {
   type: PostType;
   subtype?: string;
   content: string;
+  /** Optional extra details for task posts */
+  details?: string;
   visibility: Visibility;
   timestamp: string;
   createdAt?: string;

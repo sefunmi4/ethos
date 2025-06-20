@@ -96,8 +96,10 @@ const PostCard: React.FC<PostCardProps> = ({
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
 
-  const content = post.renderedContent || post.content;
-  const isLong = content.length > PREVIEW_LIMIT;
+  const content = post.renderedContent || post.details || post.content;
+  const isLong = (post.type === 'task'
+    ? (post.details || '').length
+    : content.length) > PREVIEW_LIMIT;
 
   useEffect(() => {
     if (!post.replyTo) {
@@ -298,7 +300,32 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       <div className="text-sm text-primary">
-        {isLong ? (
+        {post.type === 'task' ? (
+          <>
+            <div className="font-semibold">{post.content}</div>
+            {post.details && (
+              isLong ? (
+                <>
+                  <MarkdownRenderer
+                    content={post.details.slice(0, PREVIEW_LIMIT) + '…'}
+                    onToggleTask={handleToggleTask}
+                  />
+                  <button
+                    onClick={() => navigate(ROUTES.POST(post.id))}
+                    className="text-accent underline text-xs ml-1"
+                  >
+                    See more
+                  </button>
+                </>
+              ) : (
+                <MarkdownRenderer
+                  content={post.details}
+                  onToggleTask={handleToggleTask}
+                />
+              )
+            )}
+          </>
+        ) : isLong ? (
           <>
             <MarkdownRenderer
               content={content.slice(0, PREVIEW_LIMIT) + '…'}
