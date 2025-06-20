@@ -176,17 +176,19 @@ const GraphNode: React.FC<GraphNodeProps> = ({
       }}
       className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
     >
-      <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={isDragging ? 'opacity-50' : ''}
+        {...attributes}
+        {...listeners}
+      >
         <div
           style={{ marginLeft: depth * 16 }}
           className="mb-6 flex items-start space-x-2 cursor-pointer"
           onClick={() => onSelect(node)}
         >
-          <span
-            className="text-xl select-none cursor-grab"
-            {...attributes}
-            {...listeners}
-          >
+          <span className="text-xl select-none cursor-grab">
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
