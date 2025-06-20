@@ -21,13 +21,14 @@ It’s a new operating system for solving problems together.
 ## 🎯 Key Features
 
 * **Post Problems** – Share life struggles, project needs, or global ideas.
-* **Turn Posts Into Quests** – Structure solutions into sub-tasks or threads.
-* **Boards & Threads** – Navigate via visual boards, timelines, or threaded views.
+* **Turn Posts Into Quests** – Structure solutions into sub-tasks or timelines.
+* **Boards & Timelines** – Navigate via visual boards and chronological views.
 * **Adventure Guilds** – Collaborate through guilds with defined roles and ranks.
 * **Quest Logs** – Track the history, updates, and team discussions around any quest.
 * **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
 * **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
+* **Interactive Task Lists** – Check off markdown tasks directly within posts.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
 
@@ -85,6 +86,8 @@ git clone https://github.com/yourusername/ethos.git
 cd ethos
 ```
 
+Make sure you have **Node.js 16 or later** installed before proceeding.
+
 ### 2. Setup Frontend
 
 ```bash
@@ -110,15 +113,19 @@ VITE_SOCKET_URL=http://localhost:3001
 
 UI colors are centralized in `ethos-frontend/src/theme.ts` and mirrored in the
 Tailwind config. Use these variables instead of hard-coded color strings when
-styling components.
+styling components. See [docs/design-system.md](docs/design-system.md) for the
+full palette and usage examples.
 
 | Token | Hex |
 | ----- | ---- |
 | `primary` | `#111827` |
+| `secondary` | `#4B5563` |
 | `accent` | `#4F46E5` |
-| `soft` | `#F3F4F6` |
-| `primaryDark` | `#f9fafb` |
-| `softDark` | `#1f2937` |
+| `success` | `#10B981` |
+| `warning` | `#F59E0B` |
+| `error` | `#EF4444` |
+| `background` | `#f9fafb` |
+| `surface` | `#ffffff` |
 | `infoBackground` | `#bfdbfe` |
 
 ### 3. Setup Backend
@@ -133,7 +140,8 @@ For production builds, run `npm run build` and then start with `node dist/server
 
 ### Running Tests
 
-Execute the backend test suite after installing dependencies:
+Run `./setup.sh` first to install all dependencies before running tests.
+Execute the backend test suite after installing dependencies (tests require `supertest` to be installed):
 
 ```bash
 npm test --prefix ethos-backend
@@ -142,6 +150,7 @@ npm test --prefix ethos-backend
 This runs the Jest tests under `ethos-backend/tests`.
 
 To run the frontend test suite:
+Ensure `jest-environment-jsdom` is installed for the frontend tests.
 
 ```bash
 npm test --prefix ethos-frontend
@@ -162,13 +171,17 @@ The backend logger supports a `LOG_LEVEL` environment variable. Set it to
 `error`, `warn`, `info` (default), or `debug` to control the verbosity of
 console output. Each log line includes a timestamp for easier tracing.
 
+### API Routes
+
+- `POST /quests/:id/complete` – mark a quest as completed. Cascades the `solved` tag to linked posts when `cascadeSolution` is set and logs notifications for links with `notifyOnChange`.
+
 ---
 
 ## 🧠 Core Flow
 
 1. Users log in and gain access to their profile and quests.
 2. Users post a request, idea, or problem → becomes a board item.
-3. Posts evolve into quests or threads based on collaboration.
+3. Posts evolve into quests or timelines based on collaboration.
 4. Quests are mapped visually and tracked via quest logs.
 5. Boards show all active or completed items in grid, list, or timeline views.
 
@@ -233,8 +246,10 @@ Current build includes:
 - User sign up and login via API
 - Posting messages, logs and tasks
 - Quests linking posts with Git repo metadata
-- Boards to visualize posts and quests in grid, graph or thread views
+- Boards to visualize posts and quests in grid, graph or timeline views
 - Thread replies endpoint now supports pagination via `page` and `limit` query options
+- Tasks now include a **Request Help** action using `/api/posts/tasks/:id/request-help`,
+  automatically adding the new request to the `request-board`
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
 - Review system for AI apps, quests and creators

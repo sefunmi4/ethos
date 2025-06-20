@@ -65,7 +65,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   // 🛑 Fallback for unknown types
   console.warn("[ContributionCard] Unknown contribution type:", contribution);
   return (
-    <div className="p-4 border rounded text-sm text-gray-600 bg-gray-50">
+    <div className="p-4 border border-secondary rounded text-sm text-secondary bg-background">
       Unknown contribution type
     </div>
   );

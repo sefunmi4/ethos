@@ -5,7 +5,6 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, PostTypeBadge, Select } from '../ui';
 import { ROUTES } from '../../constants/routes';
-import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
 import CreatePost from '../post/CreatePost';
@@ -86,8 +85,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{questData.title}</h2>
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <h2 className="text-xl font-bold text-primary">{questData.title}</h2>
+        <div className="flex items-center gap-2 text-sm text-secondary">
           <PostTypeBadge type="quest" />
           <button
             type="button"
@@ -192,7 +191,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 />
               </div>
             )}
-            <ThreadLayout contributions={logs} user={user} questId={quest.id} />
+            <GridLayout
+              questId={quest.id}
+              items={logs}
+              user={user}
+              layout="vertical"
+            />
             <div className="text-right mt-2">
               <Button
                 size="sm"
@@ -264,7 +268,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 + Add Item
               </Button>
             </div>
-            <GraphLayout items={logs as any} user={user} edges={questData.taskGraph} />
+            <GraphLayout
+              items={logs as any}
+              user={user}
+              edges={questData.taskGraph}
+              condensed
+            />
           </>
         );
       default:
@@ -273,9 +282,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
   };
 
   return (
-    <div className="border rounded-lg shadow bg-white dark:bg-card-dark p-6 text-gray-900 dark:text-gray-100">
+    <div className="border border-secondary rounded-lg shadow bg-surface p-6 text-primary">
       {renderHeader()}
-      <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-2">
+      <div className="text-xs text-secondary space-y-1 mb-2">
         {showLinkEditor && (
           <div className="mt-2">
             <LinkControls

@@ -17,7 +17,6 @@ const PostPage: React.FC = () => {
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
-  const [viewMode, setViewMode] = useState<'thread' | 'grid'>('thread');
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -104,9 +103,9 @@ const PostPage: React.FC = () => {
   if (!post) return <Spinner />;
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12">
+    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12 text-primary">
       {post.repostedFrom && (
-        <section className="border-l-4 border-gray-300 pl-4 mb-4 text-sm text-gray-500">
+        <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-secondary">
           ♻️ Reposted from @{post.repostedFrom.username}
         </section>
       )}
@@ -120,29 +119,13 @@ const PostPage: React.FC = () => {
         />
       </section>
 
-      {(replyBoard?.items?.length ?? 0) > 0 && (
-        <div className="flex justify-end mb-4 text-sm text-gray-600 gap-2">
-          <button
-            className={`px-3 py-1 rounded ${viewMode === 'thread' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('thread')}
-          >
-            Thread View
-          </button>
-          <button
-            className={`px-3 py-1 rounded ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-            onClick={() => setViewMode('grid')}
-          >
-            Timeline View
-          </button>
-        </div>
-      )}
 
       <section>
         {boardWithPost ? (
           <Board
             boardId={`thread-${id}`}
             board={boardWithPost}
-            layout={viewMode}
+            layout="grid"
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}
             editable={false}

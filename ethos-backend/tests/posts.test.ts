@@ -33,6 +33,52 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
+  it("POST /posts defaults task status to 'To Do'", async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    const res = await request(app).post('/posts').send({ type: 'task' });
+    expect(res.status).toBe(201);
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('To Do');
+    expect(res.body.status).toBe('To Do');
+  });
+
+  it('POST /posts uses provided task status', async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', status: 'Blocked' });
+    expect(res.status).toBe(201);
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('Blocked');
+    expect(res.body.status).toBe('Blocked');
+  });
+
+  it('POST /posts links task to quest taskGraph', async () => {
+    const quest: any = {
+      id: 'q1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    postsStore.read.mockReturnValue([]);
+    questsStore.read.mockReturnValue([quest]);
+    postsStore.write.mockClear();
+    questsStore.write.mockClear();
+
+    const res = await request(app).post('/posts').send({ type: 'task', questId: 'q1' });
+
+    expect(res.status).toBe(201);
+    const newPost = postsStore.write.mock.calls[0][0][0];
+    expect(quest.taskGraph).toHaveLength(1);
+    expect(quest.taskGraph[0]).toEqual({ from: '', to: newPost.id });
+    expect(questsStore.write).toHaveBeenCalled();
+  });
+
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
     const posts = [
       {
@@ -242,5 +288,31 @@ describe('post routes', () => {
     const resDel = await request(app).delete('/posts/p1/reactions/like');
     expect(resDel.status).toBe(200);
     expect(reactionsStore.write).toHaveBeenCalledWith([]);
+  });
+
+  it('POST /tasks/:id/request-help creates request post', async () => {
+    const task = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: 'task content',
+      visibility: 'public',
+      timestamp: '',
+      tags: [],
+      collaborators: [],
+      linkedItems: [],
+      questId: null,
+    };
+
+    const store = [task];
+    postsStore.read.mockReturnValue(store);
+    usersStore.read.mockReturnValue([]);
+
+    const res = await request(app).post('/posts/tasks/t1/request-help');
+
+    expect(res.status).toBe(201);
+    expect(store).toHaveLength(2);
+    expect(store[1].type).toBe('request');
+    expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
   });
 });

@@ -9,8 +9,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
 import { Spinner } from '../../components/ui';
+import { fetchQuestById } from '../../api/quest';
 
 import type { BoardData } from '../../types/boardTypes';
+import type { Quest } from '../../types/questTypes';
 
 const BoardPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,14 +22,29 @@ const BoardPage: React.FC = () => {
   const { setBoardMeta } = useBoardContext();
   const { board: boardData, setBoard, isLoading, refresh: refetch } = useBoard(id);
 
+  const [quest, setQuest] = useState<Quest | null>(null);
+
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
+  const loadQuest = useCallback(async (questId: string) => {
+    try {
+      const q = await fetchQuestById(questId);
+      setQuest(q);
+    } catch (err) {
+      console.warn('[BoardPage] Failed to load quest:', err);
+    }
+  }, []);
+
   // Join board socket room and refetch on update
   const handleBoardUpdate = useCallback(() => {
-    refetch();
-  }, [refetch]);
+    refetch().then((updated) => {
+      if (updated?.questId) {
+        loadQuest(updated.questId);
+      }
+    });
+  }, [refetch, loadQuest]);
 
   useEffect(() => {
     if (!socket || !id) return;
@@ -46,8 +63,13 @@ const BoardPage: React.FC = () => {
         title: boardData.title,
         layout: boardData.layout,
       });
+      if (boardData.questId) {
+        loadQuest(boardData.questId);
+      } else {
+        setQuest(null);
+      }
     }
-  }, [boardData, setBoardMeta]);
+  }, [boardData, setBoardMeta, loadQuest]);
 
   const loadMore = async () => {
     if (!id || loadingMore || !hasMore) return;
@@ -104,6 +126,7 @@ const BoardPage: React.FC = () => {
           boardId={id}
           board={boardData}
           layout={boardData.layout}
+          quest={quest || undefined}
           editable={editable}
           showCreate={editable}
           onScrollEnd={loadMore}

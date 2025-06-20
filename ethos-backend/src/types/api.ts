@@ -29,8 +29,7 @@ export type BoardLayout =
   | 'horizontal'
   | 'kanban'
   | 'graph'
-  | 'graph-condensed'
-  | 'thread';
+  | 'graph-condensed';
   
 /**
  * Supported tags for labeling and filtering posts.

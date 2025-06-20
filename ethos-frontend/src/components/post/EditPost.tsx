@@ -105,16 +105,16 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           <button
             type="button"
             onClick={() => setShowPreview((prev) => !prev)}
-            className="text-blue-600 text-sm underline"
+            className="text-accent text-sm underline"
           >
             {showPreview ? 'Hide Markdown Preview' : 'Show Markdown Preview'}
           </button>
 
-          {showPreview && (
-            <div className="mt-2 border rounded p-3 bg-gray-50 text-sm prose max-w-none">
-              <MarkdownRenderer content={content} />
-            </div>
-          )}
+            {showPreview && (
+              <div className="mt-2 border rounded p-3 bg-background text-sm prose max-w-none">
+                <MarkdownRenderer content={content} />
+              </div>
+            )}
         </div>
       </FormSection>
 
@@ -133,13 +133,13 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           itemTypes={['quest', 'post']}
         />
         {linkedItems.length > 0 && (
-          <ul className="list-disc pl-6 mt-2 text-sm text-blue-700">
+          <ul className="list-disc pl-6 mt-2 text-sm text-accent">
             {linkedItems.map((l, idx) => (
               <li key={idx}>
                 {l.itemType}: {l.title || l.nodeId}
                 <button
                   type="button"
-                  className="text-red-500 ml-2 text-xs hover:underline"
+                  className="text-error ml-2 text-xs hover:underline"
                   onClick={() =>
                     setLinkedItems(linkedItems.filter((_, i) => i !== idx))
                   }
@@ -154,7 +154,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 
       {repostedFrom && (
         <FormSection title="Reposted From">
-          <div className="text-sm text-gray-600 italic">
+          <div className="text-sm text-secondary italic">
             Originally posted by <strong>@{repostedFrom.username}</strong>
           </div>
         </FormSection>

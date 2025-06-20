@@ -21,12 +21,12 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl space-y-12 bg-soft dark:bg-soft-dark">
+    <main className="container mx-auto px-4 py-8 max-w-6xl space-y-12 bg-soft dark:bg-soft-dark text-primary">
       <header className="mb-4">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
+        <h1 className="text-4xl font-bold tracking-tight text-primary mb-2">
           Welcome to Ethos
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-secondary">
           A place to explore ideas, share quests, and collaborate.
         </p>
       </header>
@@ -68,7 +68,7 @@ const HomePage: React.FC = () => {
         <Board
           boardId="timeline-board"
           title="⏳ Recent Activity"
-          layout="thread"
+          layout="grid"
           user={user as User}
           hideControls
         />

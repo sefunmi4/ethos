@@ -23,7 +23,7 @@ export const getQuestLinkLabel = (post: Post): string => {
     return `${quest}:L${suffix}`;
   }
 
-  // 📌 Log reply in timeline thread view
+  // 📌 Log reply in timeline view
   if (isLog && isReply && node) {
     return `${quest}:${node}:L${suffix}`;
   }

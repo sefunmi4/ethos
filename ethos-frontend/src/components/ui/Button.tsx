@@ -20,20 +20,19 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-md focus:outline-none transition-colors duration-150';
+  const baseStyles = 'btn';
 
   const variantStyles: Record<ButtonVariant, string> = {
     primary:
-      'bg-accent text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 dark:bg-indigo-600 dark:hover:bg-indigo-500 dark:focus:ring-indigo-300',
+      'bg-accent text-white hover:bg-accent focus:ring-2 focus:ring-accent',
     secondary:
-      'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600',
+      'bg-soft text-primary hover:bg-surface focus:ring-2 focus:ring-secondary',
     ghost:
-      'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700',
+      'bg-transparent text-secondary hover:bg-soft focus:ring-2 focus:ring-background',
     danger:
-      'bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-400 dark:focus:ring-red-300',
+      'bg-error text-white hover:bg-error focus:ring-2 focus:ring-error',
     disabled:
-      'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed',
+      'bg-soft text-secondary cursor-not-allowed',
   };
 
   const sizeStyles: Record<ButtonSize, string> = {

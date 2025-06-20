@@ -9,6 +9,7 @@ import { usePost } from '../hooks/usePost';
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 import { Spinner } from '../components/ui';
+import ReviewForm from '../components/ReviewForm';
 
 import type { EnrichedQuest, Quest } from '../types/questTypes';
 import type { EnrichedPost, Post } from '../types/postTypes';
@@ -86,12 +87,12 @@ const PublicProfilePage: React.FC = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10 bg-soft dark:bg-soft-dark">
+    <main className="max-w-6xl mx-auto px-4 py-10 bg-soft dark:bg-soft-dark text-primary">
       <Banner user={profile} readOnly />
 
       {/* 📘 Public Quests */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">📘 Public Quests</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-primary">📘 Public Quests</h2>
         {questBoard ? (
           questBoard.enrichedItems?.length ? (
             <Board
@@ -101,7 +102,7 @@ const PublicProfilePage: React.FC = () => {
               readOnly
             />
           ) : (
-            <div className="text-gray-500 text-center py-8">No public quests available.</div>
+            <div className="text-secondary text-center py-8">No public quests available.</div>
           )
         ) : (
           <Spinner />
@@ -110,7 +111,7 @@ const PublicProfilePage: React.FC = () => {
 
       {/* 🧭 Public Posts */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">🧭 Public Posts</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-primary">🧭 Public Posts</h2>
         {postBoard ? (
           postBoard.enrichedItems?.length ? (
             <Board
@@ -120,11 +121,17 @@ const PublicProfilePage: React.FC = () => {
               readOnly
             />
           ) : (
-            <div className="text-gray-500 text-center py-8">No public posts found.</div>
+            <div className="text-secondary text-center py-8">No public posts found.</div>
           )
         ) : (
           <Spinner />
         )}
+      </section>
+
+      {/* ⭐ Review Section */}
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold mb-4 text-primary">⭐ Leave a Review</h2>
+        <ReviewForm targetType="creator" modelId={profile.id} />
       </section>
     </main>
   );

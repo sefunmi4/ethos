@@ -2,11 +2,17 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { questsStore, postsStore, usersStore } from '../models/stores';
+import { boardsStore, questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
+import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, LinkedItem } from '../types/api';
-import type { DBQuest } from '../types/db';
+import type { DBQuest, DBPost } from '../types/db';
+
+const makeQuestNodeTitle = (content: string): string => {
+  const text = content.trim();
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
 
 interface AuthRequest<
   P = any,
@@ -35,6 +41,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     description = '',
     tags = [],
     fromPostId = '',
+    headType = 'log',
   } = req.body;
 
   const authorId = req.user?.id;
@@ -54,9 +61,32 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
       : [],
     collaborators: [],
     status: 'active',
-    headPostId: fromPostId || '',
+    headPostId: '',
     taskGraph: [],
   };
+
+  const posts = postsStore.read();
+  const rootContent = `${title}${description ? `\n\n${description}` : ''}`.trim();
+  const headPost: DBPost = {
+    id: uuidv4(),
+    authorId,
+    type: headType === 'task' ? 'task' : 'log',
+    content: rootContent,
+    visibility: 'public',
+    timestamp: new Date().toISOString(),
+    tags: [],
+    collaborators: [],
+    replyTo: null,
+    repostedFrom: null,
+    linkedItems: [],
+    questId: newQuest.id,
+    nodeId: generateNodeId({ quest: newQuest, posts, postType: headType === 'task' ? 'task' : 'log', parentPost: null }),
+    questNodeTitle: makeQuestNodeTitle(rootContent),
+  };
+  posts.push(headPost);
+  postsStore.write(posts);
+
+  newQuest.headPostId = headPost.id;
 
   const quests = questsStore.read();
   const dbQuest = {
@@ -72,6 +102,22 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
   } as DBQuest;
   quests.push(dbQuest);
   questsStore.write(quests);
+
+  // Create default map board for quest
+  const boards = boardsStore.read();
+  boards.push({
+    id: `map-${newQuest.id}`,
+    title: `${newQuest.title} Map`,
+    description: '',
+    layout: 'graph',
+    items: newQuest.headPostId ? [newQuest.headPostId] : [],
+    filters: {},
+    featured: false,
+    createdAt: new Date().toISOString(),
+    userId: authorId,
+    questId: newQuest.id,
+  });
+  boardsStore.write(boards);
 
   res.status(201).json(newQuest);
 });
@@ -221,12 +267,13 @@ router.post(
         parentId?: string;
         edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
         edgeLabel?: string;
+        title?: string;
       }
     >,
     res: Response
   ) => {
   const { id } = req.params;
-  const { postId, parentId, edgeType, edgeLabel } = req.body;
+  const { postId, parentId, edgeType, edgeLabel, title } = req.body;
   if (!postId) {
     res.status(400).json({ error: 'Missing postId' });
     return;
@@ -252,7 +299,7 @@ router.post(
   quest.linkedPosts = quest.linkedPosts || [];
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
   if (!alreadyLinked) {
-    quest.linkedPosts.push({ itemId: postId, itemType: 'post' });
+    quest.linkedPosts.push({ itemId: postId, itemType: 'post', title });
     if (post && post.type === 'task') {
       quest.taskGraph = quest.taskGraph || [];
       const from = parentId || quest.headPostId;
@@ -333,6 +380,66 @@ router.get(
   recurse(id);
   res.json(nodes);
 });
+
+// POST mark quest complete and cascade solution
+router.post(
+  '/:id/complete',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+
+    const quests = questsStore.read();
+    const posts = postsStore.read();
+
+    const visited = new Set<string>();
+
+    const markCompleted = (questId: string): void => {
+      if (visited.has(questId)) return;
+      visited.add(questId);
+
+      const quest = quests.find((q) => q.id === questId);
+      if (!quest) return;
+
+      quest.status = 'completed';
+
+      (quest.linkedPosts || []).forEach((link) => {
+        if (link.itemType === 'post') {
+          const post = posts.find((p) => p.id === link.itemId);
+          if (post && link.cascadeSolution) {
+            post.tags = Array.from(new Set([...(post.tags || []), 'solved']));
+          }
+          if (link.notifyOnChange) {
+            console.log(
+              `Notify link change for post ${link.itemId} from quest ${questId}`
+            );
+          }
+        } else if (link.itemType === 'quest') {
+          if (link.cascadeSolution) {
+            markCompleted(link.itemId);
+          } else if (link.notifyOnChange) {
+            console.log(
+              `Notify link change for quest ${link.itemId} from quest ${questId}`
+            );
+          }
+        }
+      });
+    };
+
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    markCompleted(id);
+
+    questsStore.write(quests);
+    postsStore.write(posts);
+
+    res.json(quest);
+  }
+);
 
 // DELETE quest
 router.delete(

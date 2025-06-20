@@ -1,6 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
-import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+} from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { updatePost, archivePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -80,6 +89,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
   const scrollToIndex = useCallback((i: number) => {
     const el = containerRef.current;
     if (!el) return;
@@ -108,8 +120,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('ring-2', 'ring-blue-500');
-        setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500'), 2000);
+        el.classList.add('ring-2', 'ring-accent');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-accent'), 2000);
       }
     };
     window.addEventListener('questTaskSelect', handler);
@@ -117,7 +129,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   }, []);
   if (!items || items.length === 0) {
     return (
-      <div className="text-center text-gray-400 py-12 text-sm">
+      <div className="text-center text-secondary py-12 text-sm">
         No contributions found.
       </div>
     );
@@ -158,14 +170,18 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   if (layout === 'kanban') {
     return (
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+      >
         <div className="flex overflow-auto space-x-4 pb-4 px-2">
           {defaultKanbanColumns.map((col) => (
             <div
               key={col}
-              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
+              className="min-w-[280px] w-[320px] flex-shrink-0 bg-surface border border-secondary rounded-lg p-4 shadow-sm"
             >
-              <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
+              <h3 className="text-sm font-bold text-secondary mb-4">{col}</h3>
               <DroppableColumn id={col}>
                 {grouped[col].map((item) => (
                   <DraggableCard
@@ -180,7 +196,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               </DroppableColumn>
             </div>
           ))}
-          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
+          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-accent hover:text-accent font-medium border border-secondary rounded-lg shadow-sm bg-surface cursor-pointer">
             + Add Column
           </div>
         </div>
@@ -213,14 +229,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1 transition-colors"
             >
               ◀
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1 transition-colors"
             >
               ▶
             </button>
@@ -230,7 +246,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                   key={i}
                   type="button"
                   onClick={() => setIndex(i)}
-                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-blue-600' : 'bg-gray-300'} focus:outline-none`}
+                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-accent' : 'bg-background'} focus:outline-none`}
                 />
               ))}
             </div>
@@ -266,14 +282,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
         <button
           type="button"
           onClick={handlePrev}
-          className="absolute left-1/2 -translate-x-1/2 -top-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
+          className="absolute left-1/2 -translate-x-1/2 -top-2 bg-surface hover:bg-background rounded-full shadow p-1 transition-colors"
         >
           ▲
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-full shadow p-1 transition-colors"
+          className="absolute left-1/2 -translate-x-1/2 bottom-0 bg-surface hover:bg-background rounded-full shadow p-1 transition-colors"
         >
           ▼
         </button>
