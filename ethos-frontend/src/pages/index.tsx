@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
@@ -7,7 +7,7 @@ import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
-import ActivityFeed from '../components/feed/ActivityFeed';
+const TimelineFeed = lazy(() => import('../components/feed/TimelineFeed'));
 import { getRenderableBoardItems } from '../utils/boardUtils';
 
 import type { User } from '../types/userTypes';
@@ -73,7 +73,9 @@ const HomePage: React.FC = () => {
 
       <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
-        <ActivityFeed />
+        <Suspense fallback={<Spinner />}>
+          <TimelineFeed />
+        </Suspense>
       </section>
 
     </main>
