@@ -41,7 +41,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onCancel,
   defaultExpanded = false,
 }) => {
-  const [view, setView] = useState<'timeline' | 'kanban' | 'map' | 'files'>('map');
+  const [mapMode, setMapMode] = useState<'folder' | 'graph'>('folder');
+  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'file' | 'map' | 'files'>('status');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -67,11 +68,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
     setJoinRequested(true);
     alert("Join request sent.");
   };
-  const viewOptions = [
-    { value: 'map', label: 'Task Layout' },
-    { value: 'kanban', label: 'Status' },
-    { value: 'timeline', label: 'Logs' },
-    { value: 'files', label: 'Files' },
+  const mapOptions = [
+    { value: 'folder', label: 'Folder Map' },
+    { value: 'graph', label: 'Task Graph' },
+  ];
+  const tabOptions = [
+    { value: 'status', label: 'Status' },
+    { value: 'logs', label: 'Logs' },
+    { value: 'file', label: 'File/Folder' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -414,7 +418,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           </>
         );
       case 'files':
-        return <GitFileBrowser questId={quest.id} onClose={() => setView('map')} />;
+        return <GitFileBrowser questId={quest.id} onClose={() => setActiveTab('map')} />;
       default:
         return null;
     }
