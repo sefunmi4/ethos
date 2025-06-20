@@ -264,7 +264,7 @@ const Board: React.FC<BoardProps> = ({
     <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>
       {/* Board Header */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-primary dark:text-primary">
           {forcedTitle || board.title || 'Board'}
         </h2>
 
