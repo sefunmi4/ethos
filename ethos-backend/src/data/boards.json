@@ -18,6 +18,9 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "d041e2f5-717d-4494-9445-e1903c98e67a",
+      "1f61b896-c477-4ea4-88e3-3b211792c2e7",
+      "bca44e5a-9b95-42bc-91a8-2628c2c93893"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -31,6 +34,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "95645920-ec0c-4030-b368-8070336c0d22"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -44,6 +48,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "95645920-ec0c-4030-b368-8070336c0d22",
       "49765216-fe00-4217-93f4-e54049cb7dab",
       "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
@@ -59,8 +64,7 @@
     "description": "Posts seeking help",
     "boardType": "post",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -74,11 +78,29 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "95645920-ec0c-4030-b368-8070336c0d22"
     ],
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
+  },
+  {
+    "id": "map-95645920-ec0c-4030-b368-8070336c0d22",
+    "title": "Ethos Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "d041e2f5-717d-4494-9445-e1903c98e67a",
+      "1f61b896-c477-4ea4-88e3-3b211792c2e7",
+      "bca44e5a-9b95-42bc-91a8-2628c2c93893"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-20T17:43:31.001Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "95645920-ec0c-4030-b368-8070336c0d22"
   }
 ]
