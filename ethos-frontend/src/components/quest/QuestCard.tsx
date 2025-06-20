@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import type { Quest } from "../../types/questTypes";
-import type { Post } from "../../types/postTypes";
-import type { User } from "../../types/userTypes";
-import { Button, PostTypeBadge, Select } from "../ui";
-import { ROUTES } from "../../constants/routes";
-import GraphLayout from "../layout/GraphLayout";
-import MapGraphLayout from "../layout/MapGraphLayout";
-import GridLayout from "../layout/GridLayout";
-import CreatePost from "../post/CreatePost";
-import PostCard from "../post/PostCard";
-import { fetchQuestById, updateQuestById } from "../../api/quest";
-import { fetchPostsByQuestId } from "../../api/post";
-import LinkViewer from "../ui/LinkViewer";
-import LinkControls from "../controls/LinkControls";
-import ActionMenu from "../ui/ActionMenu";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { Quest } from '../../types/questTypes';
+import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
+import { Button, PostTypeBadge, Select } from '../ui';
+import { ROUTES } from '../../constants/routes';
+import GraphLayout from '../layout/GraphLayout';
+import GridLayout from '../layout/GridLayout';
+import CreatePost from '../post/CreatePost';
+import { fetchQuestById, updateQuestById } from '../../api/quest';
+import { fetchPostsByQuestId } from '../../api/post';
+import LinkViewer from '../ui/LinkViewer';
+import LinkControls from '../controls/LinkControls';
+import ActionMenu from '../ui/ActionMenu';
+import GitFileBrowser from '../git/GitFileBrowser';
+
 
 /**
  * Props for QuestCard component
@@ -28,6 +28,7 @@ interface QuestCardProps {
   onEdit?: (quest: Quest) => void;
   onCancel?: () => void;
   isEditing?: boolean;
+  defaultExpanded?: boolean;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -37,12 +38,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onDelete,
   onEdit,
   onCancel,
+  defaultExpanded = false,
 }) => {
-  const [mapMode, setMapMode] = useState<"folder" | "graph">("folder");
-  const [activeTab, setActiveTab] = useState<"status" | "logs" | "file">(
-    "status",
-  );
-  const [expanded, setExpanded] = useState(false);
+  const [view, setView] = useState<'timeline' | 'kanban' | 'map' | 'files'>('map');
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
@@ -67,14 +66,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
     setJoinRequested(true);
     alert("Join request sent.");
   };
-  const mapOptions = [
-    { value: "folder", label: "Folder Map" },
-    { value: "graph", label: "Task Graph" },
-  ];
-  const tabOptions = [
-    { value: "status", label: "Status" },
-    { value: "logs", label: "Logs" },
-    { value: "file", label: "File/Folder" },
+  const viewOptions = [
+    { value: 'map', label: 'Task Layout' },
+    { value: 'kanban', label: 'Status' },
+    { value: 'timeline', label: 'Logs' },
+    { value: 'files', label: 'Files' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -372,6 +368,52 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </div>
           </>
         );
+      case 'map':
+        return (
+          <>
+            {showTaskForm && (
+              <div className="mb-4">
+                <CreatePost
+                  initialType="task"
+                  questId={quest.id}
+                  boardId={`map-${quest.id}`}
+                  onSave={(p) => {
+                    setLogs((prev) => [...prev, p]);
+                    setShowTaskForm(false);
+                  }}
+                  onCancel={() => setShowTaskForm(false)}
+                />
+              </div>
+            )}
+            <div className="text-right mb-2">
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowTaskForm(true)}
+                >
+                  + Add Item
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={handleJoinRequest}
+                >
+                  Request to Join
+                </Button>
+              )}
+            </div>
+            <GraphLayout
+              items={logs as any}
+              user={user}
+              edges={questData.taskGraph}
+              condensed
+            />
+          </>
+        );
+      case 'files':
+        return <GitFileBrowser questId={quest.id} onClose={() => setView('map')} />;
       default:
         return null;
     }

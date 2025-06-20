@@ -32,6 +32,10 @@ const FeaturedQuestBoard: React.FC = () => {
     load();
   }, []);
 
+  if (loading) {
+    return <Spinner />;
+  }
+
   const maxDots = 5;
   const visibleIndices = useMemo(() => {
     const total = quests.length;
@@ -50,10 +54,6 @@ const FeaturedQuestBoard: React.FC = () => {
   useEffect(() => {
     scrollToIndex(current);
   }, [current]);
-
-  if (loading) {
-    return <Spinner />;
-  }
 
   const handleScroll = () => {
     const el = containerRef.current;

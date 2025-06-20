@@ -28,6 +28,8 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
+const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
+
 
 /**
  * The root App component of the application.
@@ -67,6 +69,7 @@ const App: React.FC = () => {
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
                     <Route path={ROUTES.FLAGGED_QUESTS} element={<FlaggedQuests />} />
+                    <Route path={ROUTES.BANNED_QUESTS} element={<BannedQuests />} />
                   </Route>
 
                   {/* 🔁 Catch-all route for unmatched URLs */}
