@@ -63,8 +63,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
   const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
-  const [createType, setCreateType] = useState<PostType | null>(null);
-  const [asCommit, setAsCommit] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
