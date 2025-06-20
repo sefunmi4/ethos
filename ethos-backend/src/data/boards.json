@@ -64,7 +64,12 @@
     "title": "Request Board",
     "description": "Posts seeking help",
     "layout": "grid",
-    "items": [],
+    "items": [
+      "fec9d147-d212-4668-9db7-daefb9a6951d",
+      "c5a4843c-6c51-4a42-806e-a77d05d0b103",
+      "f34eaba7-2a05-401c-bae0-82bbe774c4bb",
+      "84a01209-92f9-4744-99ec-ae5e0dbb591f"
+    ],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",

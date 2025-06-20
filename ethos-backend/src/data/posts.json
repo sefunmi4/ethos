@@ -216,5 +216,93 @@
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T09"
+  },
+  {
+    "id": "84a01209-92f9-4744-99ec-ae5e0dbb591f",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:08:48.879Z",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
+  },
+  {
+    "id": "f34eaba7-2a05-401c-bae0-82bbe774c4bb",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:08:49.459Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
+  },
+  {
+    "id": "c5a4843c-6c51-4a42-806e-a77d05d0b103",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:08:52.613Z",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
+  },
+  {
+    "id": "fec9d147-d212-4668-9db7-daefb9a6951d",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:08:52.991Z",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
   }
 ]
