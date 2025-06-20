@@ -4,15 +4,15 @@ import React, {
   useRef,
   useLayoutEffect,
   useCallback,
-} from 'react';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
-import { useGitDiff } from '../../hooks/useGit';
-import { Spinner } from '../ui';
-import GraphNode from './GraphNode';
-import type { User } from '../../types/userTypes';
-import type { Post } from '../../types/postTypes';
+} from "react";
+import { DndContext, type DragEndEvent } from "@dnd-kit/core";
+import { useGitDiff } from "../../hooks/useGit";
+import { Spinner } from "../ui";
+import GraphNode from "./GraphNode";
+import type { User } from "../../types/userTypes";
+import type { Post } from "../../types/postTypes";
 
-import type { TaskEdge } from '../../types/questTypes';
+import type { TaskEdge } from "../../types/questTypes";
 
 interface GraphLayoutProps {
   items: Post[];
@@ -24,6 +24,8 @@ interface GraphLayoutProps {
   condensed?: boolean;
   /** Show status dropdowns for tasks */
   showStatus?: boolean;
+  /** Notify parent when a node is selected */
+  onSelectNode?: (n: Post) => void;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
 }
@@ -55,6 +57,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   compact = false,
   condensed = false,
   showStatus = true,
+  onSelectNode,
   onScrollEnd,
   loadingMore = false,
 }) => {
@@ -63,7 +66,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const [paths, setPaths] = useState<{ key: string; d: string }[]>([]);
 
   const [localItems, setLocalItems] = useState<Post[]>(items);
-  const [rootNodes, setRootNodes] = useState<(Post & { children?: NodeChild[] })[]>([]);
+  const [rootNodes, setRootNodes] = useState<
+    (Post & { children?: NodeChild[] })[]
+  >([]);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges || []);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
@@ -90,13 +95,22 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         const fromRect = fromEl.getBoundingClientRect();
         const toRect = toEl.getBoundingClientRect();
         const startX =
-          fromRect.left + fromRect.width / 2 - containerRect.left + container.scrollLeft;
+          fromRect.left +
+          fromRect.width / 2 -
+          containerRect.left +
+          container.scrollLeft;
         const startY =
           fromRect.bottom - containerRect.top + container.scrollTop;
         const endX =
-          toRect.left + toRect.width / 2 - containerRect.left + container.scrollLeft;
+          toRect.left +
+          toRect.width / 2 -
+          containerRect.left +
+          container.scrollLeft;
         const endY = toRect.top - containerRect.top + container.scrollTop;
-        newPaths.push({ key: `${edge.from}-${edge.to}`, d: `M ${startX} ${startY} L ${endX} ${endY}` });
+        newPaths.push({
+          key: `${edge.from}-${edge.to}`,
+          d: `M ${startX} ${startY} L ${endX} ${endY}`,
+        });
       }
     });
     setPaths(newPaths);
@@ -113,8 +127,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   }, [rootNodes, edgeList, computePaths]);
 
   useEffect(() => {
-    window.addEventListener('resize', computePaths);
-    return () => window.removeEventListener('resize', computePaths);
+    window.addEventListener("resize", computePaths);
+    return () => window.removeEventListener("resize", computePaths);
   }, [computePaths]);
 
   useEffect(() => {
@@ -170,14 +184,15 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         onScrollEnd();
       }
     };
-    el.addEventListener('scroll', handleScroll);
-    return () => el.removeEventListener('scroll', handleScroll);
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
   }, [onScrollEnd]);
 
   const handleNodeClick = (n: Post) => {
     setSelectedNode(n);
+    onSelectNode?.(n);
     window.dispatchEvent(
-      new CustomEvent('questTaskSelect', { detail: { taskId: n.id } })
+      new CustomEvent("questTaskSelect", { detail: { taskId: n.id } }),
     );
   };
 
@@ -204,7 +219,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   };
 
   const handleRemoveEdge = (edge: TaskEdge) => {
-    setEdgeList((prev) => prev.filter((e) => !(e.from === edge.from && e.to === edge.to)));
+    setEdgeList((prev) =>
+      prev.filter((e) => !(e.from === edge.from && e.to === edge.to)),
+    );
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -212,16 +229,16 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
 
     const id = active.id as string;
 
-    if (id.startsWith('anchor-')) {
+    if (id.startsWith("anchor-")) {
       const parentId = id.slice(7);
       const newId = `new-${Date.now()}`;
       const newNode: Post = {
         id: newId,
-        type: 'task',
-        content: 'New Task',
-        authorId: '',
-        visibility: 'public',
-        timestamp: '',
+        type: "task",
+        content: "New Task",
+        authorId: "",
+        visibility: "public",
+        timestamp: "",
         tags: [],
         collaborators: [],
         linkedItems: [],
@@ -233,7 +250,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
 
     const targetId = over ? (over.id as string) : null;
 
-    const nodeId = id.startsWith('move-') ? id.slice(5) : id;
+    const nodeId = id.startsWith("move-") ? id.slice(5) : id;
 
     if (!targetId) {
       setEdgeList((prev) => prev.filter((e) => e.to !== nodeId));
@@ -249,23 +266,22 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     setEdgeList((prev) => {
       const filtered = prev.filter((e) => e.to !== nodeId);
       const exists = filtered.some(
-        (e) => e.from === targetId && e.to === nodeId
+        (e) => e.from === targetId && e.to === nodeId,
       );
       if (!exists) filtered.push({ from: targetId, to: nodeId });
       return filtered;
     });
   };
 
-
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div
         ref={containerRef}
         className={
-          'overflow-auto w-full h-full p-4 max-w-7xl mx-auto ' +
-          (rootNodes.length === 1 ? 'flex justify-center' : '')
+          "overflow-auto w-full h-full p-4 max-w-7xl mx-auto " +
+          (rootNodes.length === 1 ? "flex justify-center" : "")
         }
-        style={{ minHeight: '60vh', maxHeight: '80vh', position: 'relative' }}
+        style={{ minHeight: "60vh", maxHeight: "80vh", position: "relative" }}
       >
         <svg
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
@@ -285,7 +301,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             </marker>
           </defs>
           {paths.map((p) => (
-            <path key={p.key} d={p.d} stroke="#aaa" fill="none" markerEnd="url(#arrow)" />
+            <path
+              key={p.key}
+              d={p.d}
+              stroke="#aaa"
+              fill="none"
+              markerEnd="url(#arrow)"
+            />
           ))}
         </svg>
         {rootNodes.map((node) => (
