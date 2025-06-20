@@ -1,2 +1,78 @@
 [
+  {
+    "id": "default-home-board",
+    "title": "Welcome Board",
+    "description": "This is the default home board for new users.",
+    "layout": "grid",
+    "items": [],
+    "defaultFor": "home",
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  },
+  {
+    "id": "my-posts",
+    "title": "My Posts",
+    "description": "Personal posts board.",
+    "layout": "grid",
+    "items": [
+    ],
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  },
+  {
+    "id": "my-quests",
+    "title": "My Quests",
+    "description": "Personal quests board.",
+    "layout": "grid",
+    "items": [
+    ],
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  },
+  {
+    "id": "featured-quest",
+    "title": "Featured Quest",
+    "description": "Highlighted quest",
+    "layout": "grid",
+    "items": [
+      "49765216-fe00-4217-93f4-e54049cb7dab",
+      "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
+    ],
+    "featured": true,
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "quest"
+  },
+  {
+    "id": "request-board",
+    "title": "Request Board",
+    "description": "Posts seeking help",
+    "layout": "grid",
+    "items": [
+    ],
+    "featured": true,
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "post"
+  },
+  {
+    "id": "timeline-board",
+    "title": "Timeline",
+    "description": "Recent posts and quests",
+    "layout": "grid",
+    "items": [
+    ],
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-07T00:00:00Z",
+    "userId": "system",
+    "category": "default"
+  }
 ]
