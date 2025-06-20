@@ -44,7 +44,22 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLogForm, setShowLogForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
+  const [joinRequested, setJoinRequested] = useState(false);
   const navigate = useNavigate();
+
+  const handleJoinRequest = () => {
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+    if (joinRequested) {
+      alert('Request already sent. Awaiting approval.');
+      return;
+    }
+    onJoinToggle?.(questData);
+    setJoinRequested(true);
+    alert('Join request sent.');
+  };
   const viewOptions = [
     { value: 'map', label: 'Map - Graph' },
     { value: 'timeline', label: 'Log' },
@@ -133,8 +148,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
           onArchived={isOwner ? () => {
             console.log(`[QuestCard] Quest ${quest.id} archived`);
           } : undefined}
-          onJoin={!isOwner ? () => onJoinToggle?.(questData) : undefined}
-          joinLabel="Join Quest"
+          onJoin={!isOwner ? handleJoinRequest : undefined}
+          joinLabel="Request to Join"
           permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
         />
   
@@ -196,9 +211,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 <Button
                   size="sm"
                   variant="contrast"
-                  onClick={() => onJoinToggle?.(questData)}
+                  onClick={handleJoinRequest}
                 >
-                  Join Quest
+                  Request to Join
                 </Button>
               )}
             </div>
@@ -241,9 +256,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 <Button
                   size="sm"
                   variant="contrast"
-                  onClick={() => onJoinToggle?.(questData)}
+                  onClick={handleJoinRequest}
                 >
-                  Join Quest
+                  Request to Join
                 </Button>
               )}
             </div>
@@ -279,9 +294,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 <Button
                   size="sm"
                   variant="contrast"
-                  onClick={() => onJoinToggle?.(questData)}
+                  onClick={handleJoinRequest}
                 >
-                  Join Quest
+                  Request to Join
                 </Button>
               )}
             </div>
