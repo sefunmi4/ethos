@@ -349,4 +349,58 @@ describe('post routes', () => {
     const writtenQuest = postsStore.write.mock.calls[0][0][0];
     expect(writtenQuest.helpRequest).toBe(true);
   });
+
+  it('deleting a quest head post removes the quest instead', async () => {
+    const post = {
+      id: 'p1',
+      authorId: 'u1',
+      type: 'log',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+      questId: 'q1',
+    };
+    const quest = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: 'p1',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+
+    postsStore.read.mockReturnValue([post]);
+    questsStore.read.mockReturnValue([quest]);
+    questsStore.write.mockClear();
+
+    const res = await request(app).delete('/posts/p1');
+
+    expect(res.status).toBe(200);
+    expect(questsStore.write).toHaveBeenCalledWith([]);
+    expect(postsStore.write).not.toHaveBeenCalledWith([]); // post not removed
+    expect(res.body.questDeleted).toBe('q1');
+  });
+
+  it('deleting a normal post removes only the post', async () => {
+    const post = {
+      id: 'p1',
+      authorId: 'u1',
+      type: 'log',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+
+    postsStore.read.mockReturnValue([post]);
+    questsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+
+    const res = await request(app).delete('/posts/p1');
+
+    expect(res.status).toBe(200);
+    expect(postsStore.write).toHaveBeenCalledWith([]);
+    expect(res.body.questDeleted).toBeUndefined();
+  });
 });
