@@ -28,7 +28,8 @@
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T00",
-    "status": "To Do"
+    "status": "In Progress",
+    "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
   },
   {
     "id": "7e56ebb4-8c65-43b2-a180-176063f77c5b",
@@ -45,11 +46,22 @@
       {
         "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
         "itemType": "quest"
+      },
+      {
+        "itemId": "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
+        "itemType": "post",
+        "nodeId": "",
+        "title": "dark theme baord and nav bard need more color cont…",
+        "linkType": "task_edge",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
       }
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T01",
-    "status": "To Do"
+    "status": "To Do",
+    "questNodeTitle": "Link Controls Updates\n---\nwhen the card is in view…"
   },
   {
     "id": "440dcb99-e34b-468a-ae9b-4a955336f068",
@@ -66,11 +78,22 @@
       {
         "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
         "itemType": "quest"
+      },
+      {
+        "itemId": "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
+        "itemType": "post",
+        "nodeId": "",
+        "title": "dark theme baord and nav bard need more color cont…",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
       }
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T02",
-    "status": "To Do"
+    "status": "In Progress",
+    "questNodeTitle": "When I change from TODO to inprogress the chnage d…"
   },
   {
     "id": "e7f7ed9f-033a-44e1-bbd1-b4df1bbf9863",
@@ -87,11 +110,22 @@
       {
         "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
         "itemType": "quest"
+      },
+      {
+        "itemId": "7e56ebb4-8c65-43b2-a180-176063f77c5b",
+        "itemType": "post",
+        "nodeId": "",
+        "title": "Link Controls Updates\n---\nwhen the card is in view…",
+        "linkType": "related",
+        "linkStatus": "active",
+        "cascadeSolution": false,
+        "notifyOnChange": false
       }
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "nodeId": "Q:ethos:T03",
-    "status": "To Do"
+    "status": "To Do",
+    "questNodeTitle": "dark theme baord and nav bard need more color cont…"
   },
   {
     "id": "816e795e-1a3a-4714-a901-01e92c052ce5",
@@ -260,29 +294,6 @@
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
   },
   {
-    "id": "c5a4843c-6c51-4a42-806e-a77d05d0b103",
-    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
-    "type": "request",
-    "content": "- [ ] Add headers to post in quest or added to quest using link controls.\n- [ ] If the post is short it can be the header other wise a summary header is required\n- [ ] add a comment for future AI summary header feature implementation",
-    "visibility": "public",
-    "timestamp": "2025-06-20T01:08:52.613Z",
-    "tags": [
-      "archived"
-    ],
-    "collaborators": [],
-    "replyTo": null,
-    "repostedFrom": null,
-    "linkedItems": [
-      {
-        "itemId": "56ebd07f-72d8-4a2c-81e0-5cd3b5697ea3",
-        "itemType": "post",
-        "linkType": "reference"
-      }
-    ],
-    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
-    "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
-  },
-  {
     "id": "fec9d147-d212-4668-9db7-daefb9a6951d",
     "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
     "type": "request",
@@ -304,5 +315,67 @@
     ],
     "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
     "questNodeTitle": "- [ ] Add headers to post in quest or added to que…"
+  },
+  {
+    "id": "88ee133e-354f-4547-b511-ccc095315a63",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "Instead of a reply button for task it should say quest log / file change view and a expand view ",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:19:29.756Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "8932c168-376d-4a33-be41-579bb5342d55",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
+  },
+  {
+    "id": "5b26ab7a-4f15-4fcb-b96c-dfa29fcdd3f1",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "request",
+    "content": "Instead of a reply button for task it should say quest log / file change view and a expand view ",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:19:31.259Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "8932c168-376d-4a33-be41-579bb5342d55",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
+  },
+  {
+    "id": "103939ca-eb3d-4b28-b67f-be8c8acfd4b6",
+    "authorId": "u_65dd7ba8-72fa-4b78-aeba-15b01b2042c9",
+    "type": "task",
+    "content": "The request help button should be toogle able to create and repmove a request post and find collaberators",
+    "visibility": "public",
+    "timestamp": "2025-06-20T01:20:23.520Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "99aec9c4-a8f6-404a-86ee-3ce2676ab03e",
+    "status": "To Do",
+    "nodeId": "Q:ethos:T10",
+    "questNodeTitle": "The request help button should be toogle able to c…"
   }
 ]
