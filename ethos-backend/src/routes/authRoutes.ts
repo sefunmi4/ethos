@@ -16,6 +16,7 @@ import type { User } from '../types/api';
 
 import { asyncHandler } from '../utils/asyncHandler';
 import { error } from '../utils/logger';
+import { generateRandomUsername } from '../utils/usernameUtils';
 
 import type { AuthenticatedRequest } from '../types/express';
 
@@ -127,9 +128,14 @@ router.post('/register', asyncHandler(async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
+    let newUsername = username || generateRandomUsername();
+    while (users.find(u => u.username === newUsername)) {
+      newUsername = generateRandomUsername();
+    }
+
     const newUser: User = {
       id: `u_${uuidv4()}`,
-      username: username || email.split('@')[0],
+      username: newUsername,
       email,
       password: await hashPassword(password),
       role: 'user',
