@@ -199,6 +199,14 @@ export const solvePost = async (postId: string): Promise<{ success: boolean }> =
 };
 
 /**
+ * 🤝 Request help for a task
+ */
+export const requestHelpForTask = async (taskId: string): Promise<Post> => {
+  const res = await axiosWithAuth.post(`/posts/tasks/${taskId}/request-help`);
+  return res.data;
+};
+
+/**
  * 🔗 Get all posts linked to a post (e.g. solutions, duplicates, references)
  * @param postId - Post ID
  */

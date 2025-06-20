@@ -235,6 +235,8 @@ Current build includes:
 - Quests linking posts with Git repo metadata
 - Boards to visualize posts and quests in grid, graph or timeline views
 - Thread replies endpoint now supports pagination via `page` and `limit` query options
+- Tasks now include a **Request Help** action using `/api/posts/tasks/:id/request-help`,
+  automatically adding the new request to the `request-board`
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
 - Review system for AI apps, quests and creators

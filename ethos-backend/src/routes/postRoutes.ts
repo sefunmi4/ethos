@@ -286,6 +286,44 @@ router.get('/:id/reactions', (req: Request<{ id: string }>, res: Response) => {
 });
 
 //
+// ✅ POST /api/tasks/:id/request-help – Create a help request from a task
+//
+router.post(
+  '/tasks/:id/request-help',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const task = posts.find((p) => p.id === req.params.id && p.type === 'task');
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+
+    const requestPost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'request',
+      content: task.content,
+      visibility: task.visibility,
+      timestamp: new Date().toISOString(),
+      tags: [],
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [
+        { itemId: task.id, itemType: 'post', linkType: 'reference' },
+      ],
+      questId: task.questId || null,
+    };
+
+    posts.push(requestPost);
+    postsStore.write(posts);
+    const users = usersStore.read();
+    res.status(201).json(enrichPost(requestPost, { users }));
+  }
+);
+
+//
 // ✅ POST /api/posts/:id/solve – Mark a post as solved
 //
 router.post(
