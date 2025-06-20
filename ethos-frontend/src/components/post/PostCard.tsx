@@ -10,6 +10,7 @@ import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTa
 import { linkPostToQuest } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
+import CreatePost from './CreatePost';
 import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
