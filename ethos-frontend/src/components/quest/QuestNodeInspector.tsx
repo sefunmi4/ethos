@@ -1,19 +1,21 @@
 import React from 'react';
 import type { Post } from '../../types/postTypes';
+import PostCard from '../post/PostCard';
+import StatusBoardPanel from './StatusBoardPanel';
 
 interface QuestNodeInspectorProps {
-  node: Post;
-  onClose: () => void;
+  node: Post | null;
+  questId: string;
 }
 
-const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ node, onClose }) => {
+const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ node, questId }) => {
+  if (!node) {
+    return <div className="p-2 text-sm text-secondary">Select a node</div>;
+  }
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Node Details</h2>
-        <button onClick={onClose} className="text-xl leading-none">&times;</button>
-      </div>
-      <p className="text-sm whitespace-pre-wrap">{node.content}</p>
+    <div className="space-y-4">
+      <PostCard post={node} questId={questId} />
+      <StatusBoardPanel questId={questId} linkedNodeId={node.id} />
     </div>
   );
 };
