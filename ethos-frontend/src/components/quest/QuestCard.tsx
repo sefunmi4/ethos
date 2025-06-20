@@ -85,7 +85,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-primary">{questData.title}</h2>
+        <h2
+          className="text-xl font-bold text-primary cursor-pointer hover:underline"
+          onClick={() => navigate(ROUTES.QUEST(questData.id))}
+        >
+          {questData.title}
+        </h2>
         <div className="flex items-center gap-2 text-sm text-secondary">
           <PostTypeBadge type="quest" />
           <button
@@ -161,9 +166,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
             options={viewOptions}
           />
         )}
-        <Button onClick={() => navigate(ROUTES.QUEST(quest.id))} variant="ghost">
-          View details
-        </Button>
   
         {onCancel && (
           <Button onClick={onCancel} variant="secondary">
