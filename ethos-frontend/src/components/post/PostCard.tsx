@@ -36,6 +36,8 @@ interface PostCardProps {
   onDelete?: (id: string) => void;
   compact?: boolean;
   questId?: string;
+  /** Show status dropdown controls for task posts */
+  showStatusControl?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -45,6 +47,7 @@ const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   compact = false,
   questId,
+  showStatusControl = true,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -255,7 +258,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
-          {canEdit && post.type === 'task' && (
+          {canEdit && post.type === 'task' && showStatusControl && (
             <div className="ml-1 w-28">
               <Select
                 value={post.status || 'To Do'}
