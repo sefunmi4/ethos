@@ -16,6 +16,7 @@ interface ActionMenuProps {
   id: string;
   canEdit?: boolean;
   onEdit?: () => void;
+  onEditLinks?: () => void;
   onDelete?: () => void;
   onArchived?: () => void;
   permalink?: string;
@@ -36,6 +37,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   onEdit,
   onDelete,
   onArchived,
+  onEditLinks,
   permalink,
   content,
   boardId,
@@ -137,6 +139,17 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
               >
                 <FaArchive className="inline mr-2" /> {isArchiving ? 'Archiving…' : 'Archive'}
               </button>
+              {onEditLinks && (
+                <button
+                  onClick={() => {
+                    onEditLinks();
+                    setShowMenu(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+                >
+                  <FaLink className="inline mr-2" /> Edit Links
+                </button>
+              )}
             </>
           )}
           {content && (
