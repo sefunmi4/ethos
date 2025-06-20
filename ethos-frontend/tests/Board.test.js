@@ -131,4 +131,29 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
       expect(layoutSelect.value).toBe('graph');
       expect(screen.getByText('Graph')).toBeInTheDocument();
     });
+
+    it('renders no controls when there are zero items', async () => {
+      fetchBoard.mockResolvedValue({
+        id: 'b2',
+        title: 'Board',
+        layout: 'grid',
+        items: [],
+        createdAt: new Date().toISOString(),
+        enrichedItems: [],
+      });
+
+      fetchBoardItems.mockResolvedValue([]);
+
+      render(
+        React.createElement(BrowserRouter, null,
+          React.createElement(Board, { boardId: 'b2', user: { id: 'u1' }, showCreate: false })
+        )
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByText('Board not found.')).not.toBeInTheDocument();
+      });
+
+      expect(screen.queryByPlaceholderText('Filter...')).toBeNull();
+    });
   });

@@ -49,6 +49,19 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [localFilter, setLocalFilter] = useState({
+    itemType: filter.itemType || '',
+    postType: filter.postType || '',
+    linkType: filter.linkType || '',
+  });
+
+  useEffect(() => {
+    setLocalFilter({
+      itemType: filter.itemType || '',
+      postType: filter.postType || '',
+      linkType: filter.linkType || '',
+    });
+  }, [filter.itemType, filter.postType, filter.linkType]);
 
   // Keep items state in sync with BoardContext updates
   useEffect(() => {
@@ -107,27 +120,28 @@ const Board: React.FC<BoardProps> = ({
   });
 
   const filteredItems = useMemo(() => {
+    const effective = { ...filter, ...localFilter };
     let result = [...items];
 
-    if (filter?.itemType) {
+    if (effective.itemType) {
       result = result.filter((item) =>
-        filter.itemType === 'quest'
+        effective.itemType === 'quest'
           ? 'headPostId' in item
           : 'content' in item
       );
     }
 
-    if (filter?.postType) {
+    if (effective.postType) {
       result = result.filter((item) =>
-        'type' in item && (item as Post).type === filter.postType
+        'type' in item && (item as Post).type === effective.postType
       );
     }
 
-    if (filter?.linkType) {
+    if (effective.linkType) {
       result = result.filter(
         (item) =>
           'linkedItems' in item &&
-          (item as Post).linkedItems?.some((l) => l.linkType === filter.linkType)
+          (item as Post).linkedItems?.some((l) => l.linkType === effective.linkType)
       );
     }
 
@@ -143,12 +157,42 @@ const Board: React.FC<BoardProps> = ({
           sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as Post) ?? '';
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
-  }, [items, filter, filterText, sortKey, sortOrder]);
+  }, [items, filter, localFilter, filterText, sortKey, sortOrder]);
 
   const renderableItems = useMemo(
     () => getRenderableBoardItems(filteredItems),
     [filteredItems]
   );
+  const hasItems = renderableItems.length > 0;
+
+  const itemTypes = useMemo(() => {
+    const types = new Set<string>();
+    renderableItems.forEach((it) => {
+      if ('headPostId' in it) types.add('quest');
+      else if ('type' in it) types.add('post');
+    });
+    return Array.from(types);
+  }, [renderableItems]);
+
+  const postTypes = useMemo(() => {
+    const types = new Set<string>();
+    renderableItems.forEach((it) => {
+      if ('type' in it) types.add((it as Post).type);
+    });
+    return Array.from(types);
+  }, [renderableItems]);
+
+  const linkTypes = useMemo(() => {
+    const types = new Set<string>();
+    renderableItems.forEach((it) => {
+      if ('linkedItems' in it) {
+        (it as Post).linkedItems?.forEach((l) => {
+          if (l.linkType) types.add(l.linkType);
+        });
+      }
+    });
+    return Array.from(types);
+  }, [renderableItems]);
 
   const questItems = useMemo(
     () => renderableItems.filter((it) => 'headPostId' in it),
@@ -225,7 +269,7 @@ const Board: React.FC<BoardProps> = ({
         </h2>
 
         <div className="flex gap-2 flex-wrap items-center">
-          {!hideControls && (
+          {!hideControls && hasItems && (
             <>
               <Input
                 value={filterText}
@@ -233,6 +277,42 @@ const Board: React.FC<BoardProps> = ({
                 placeholder="Filter..."
                 className="w-40 text-sm"
               />
+              {itemTypes.length > 1 && (
+                <Select
+                  value={localFilter.itemType}
+                  onChange={(e) =>
+                    setLocalFilter((p) => ({ ...p, itemType: e.target.value }))
+                  }
+                  options={[
+                    { value: '', label: 'All Items' },
+                    ...itemTypes.map((t) => ({ value: t, label: t }))
+                  ]}
+                />
+              )}
+              {postTypes.length > 1 && (
+                <Select
+                  value={localFilter.postType}
+                  onChange={(e) =>
+                    setLocalFilter((p) => ({ ...p, postType: e.target.value }))
+                  }
+                  options={[
+                    { value: '', label: 'All Posts' },
+                    ...postTypes.map((t) => ({ value: t, label: t }))
+                  ]}
+                />
+              )}
+              {linkTypes.length > 1 && (
+                <Select
+                  value={localFilter.linkType}
+                  onChange={(e) =>
+                    setLocalFilter((p) => ({ ...p, linkType: e.target.value }))
+                  }
+                  options={[
+                    { value: '', label: 'All Links' },
+                    ...linkTypes.map((t) => ({ value: t, label: t }))
+                  ]}
+                />
+              )}
               <Select
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value as 'createdAt' | 'displayTitle')}
