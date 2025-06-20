@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
-import { fetchRecentPosts } from '../../api/post';
+import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import Board from '../board/Board';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
@@ -43,11 +43,25 @@ const ActiveQuestBoard: React.FC = () => {
           const current = questMap[p.questId];
           if (
             !current.lastLog ||
-            (p.createdAt || p.timestamp) > (current.lastLog.createdAt || current.lastLog.timestamp)
+            (p.createdAt || p.timestamp) > (current.lastLog?.createdAt || current.lastLog?.timestamp || '')
           ) {
             questMap[p.questId] = { ...current, lastLog: p };
           }
         });
+
+        await Promise.all(
+          quests.map(async q => {
+            if (!questMap[q.id].lastLog && q.headPostId) {
+              try {
+                const head = await fetchPostById(q.headPostId);
+                questMap[q.id].lastLog = head;
+              } catch {
+                /* ignore errors fetching head post */
+              }
+            }
+          })
+        );
+
         const enriched = Object.values(questMap);
         if (enriched.length) {
           setBoard({
