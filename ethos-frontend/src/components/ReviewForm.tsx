@@ -75,7 +75,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
               onClick={() => setRating(n)}
               className={
                 'text-2xl focus:outline-none ' +
-                (rating >= n ? 'text-yellow-400' : 'text-gray-300')
+                (rating >= n
+                  ? 'text-yellow-400'
+                  : 'text-gray-300 dark:text-gray-600')
               }
             >
               ★
