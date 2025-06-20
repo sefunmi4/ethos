@@ -80,7 +80,7 @@ const QuestPage: React.FC = () => {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark">
+    <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
       {/* 🎯 Quest Summary Card */}
       <Banner quest={quest} />
       <Board
@@ -109,7 +109,7 @@ const QuestPage: React.FC = () => {
 
       {/* 📜 Quest Log Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">📜 Quest Log</h2>
+        <h2 className="text-xl font-semibold text-primary mb-4">📜 Quest Log</h2>
         {logBoard ? (
           <Board
             boardId={`log-${id}`}
@@ -124,7 +124,7 @@ const QuestPage: React.FC = () => {
             showCreate
           />
         ) : (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-secondary">
             No quest logs yet. Start journaling progress.
           </p>
         )}
@@ -132,7 +132,7 @@ const QuestPage: React.FC = () => {
 
       {/* ⭐ Review Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">⭐ Leave a Review</h2>
+        <h2 className="text-xl font-semibold text-primary mb-4">⭐ Leave a Review</h2>
         <ReviewForm targetType="quest" questId={quest.id} />
       </section>
     </main>

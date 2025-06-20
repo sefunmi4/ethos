@@ -4,9 +4,15 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { boardsStore, questsStore, postsStore, usersStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
+import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, LinkedItem } from '../types/api';
-import type { DBQuest } from '../types/db';
+import type { DBQuest, DBPost } from '../types/db';
+
+const makeQuestNodeTitle = (content: string): string => {
+  const text = content.trim();
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
 
 interface AuthRequest<
   P = any,
@@ -35,6 +41,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     description = '',
     tags = [],
     fromPostId = '',
+    headType = 'log',
   } = req.body;
 
   const authorId = req.user?.id;
@@ -54,9 +61,32 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
       : [],
     collaborators: [],
     status: 'active',
-    headPostId: fromPostId || '',
+    headPostId: '',
     taskGraph: [],
   };
+
+  const posts = postsStore.read();
+  const rootContent = `${title}${description ? `\n\n${description}` : ''}`.trim();
+  const headPost: DBPost = {
+    id: uuidv4(),
+    authorId,
+    type: headType === 'task' ? 'task' : 'log',
+    content: rootContent,
+    visibility: 'public',
+    timestamp: new Date().toISOString(),
+    tags: [],
+    collaborators: [],
+    replyTo: null,
+    repostedFrom: null,
+    linkedItems: [],
+    questId: newQuest.id,
+    nodeId: generateNodeId({ quest: newQuest, posts, postType: headType === 'task' ? 'task' : 'log', parentPost: null }),
+    questNodeTitle: makeQuestNodeTitle(rootContent),
+  };
+  posts.push(headPost);
+  postsStore.write(posts);
+
+  newQuest.headPostId = headPost.id;
 
   const quests = questsStore.read();
   const dbQuest = {
