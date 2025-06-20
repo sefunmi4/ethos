@@ -40,10 +40,6 @@ const FeaturedQuestBoard: React.FC = () => {
     return Array.from({ length: count }, (_, i) => start + i);
   }, [current, quests]);
 
-  if (loading) {
-    return <Spinner />;
-  }
-
   const scrollToIndex = (idx: number) => {
     const el = containerRef.current;
     if (!el) return;
@@ -52,8 +48,10 @@ const FeaturedQuestBoard: React.FC = () => {
   };
 
   useEffect(() => {
-    scrollToIndex(current);
-  }, [current]);
+    if (!loading) {
+      scrollToIndex(current);
+    }
+  }, [current, loading]);
 
   const handleScroll = () => {
     const el = containerRef.current;
@@ -61,6 +59,10 @@ const FeaturedQuestBoard: React.FC = () => {
     const idx = Math.round(el.scrollLeft / (CARD_WIDTH + GAP));
     if (idx !== current) setCurrent(idx);
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div>
