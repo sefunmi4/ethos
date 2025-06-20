@@ -6,6 +6,7 @@ import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
 import CreateQuest from '../quest/CreateQuest';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
 
@@ -48,7 +49,17 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
+const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
+
+  const boardType: BoardType | undefined =
+    boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
+
+  const allowedPostTypes: PostType[] =
+    boardType === 'quest'
+      ? ['quest', 'task', 'log']
+      : boardType === 'post'
+      ? ['free_speech', 'request', 'commit', 'issue']
+      : POST_TYPES.map(p => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
 
@@ -142,7 +153,10 @@ const CreatePost: React.FC<CreatePostProps> = ({
               setType(val);
               if (val === 'task') setStatus('To Do');
             }}
-            options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+            options={allowedPostTypes.map((t) => {
+              const opt = POST_TYPES.find((o) => o.value === t)!;
+              return { value: opt.value, label: opt.label };
+            })}
           />
         </FormSection>
         <CreateQuest onSave={(q) => onSave?.(q as any)} onCancel={onCancel} />
@@ -162,7 +176,10 @@ const CreatePost: React.FC<CreatePostProps> = ({
             setType(val);
             if (val === 'task') setStatus('To Do');
           }}
-          options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
+          options={allowedPostTypes.map((t) => {
+            const opt = POST_TYPES.find((o) => o.value === t)!;
+            return { value: opt.value, label: opt.label };
+          })}
         />
 
         {type === 'task' && (

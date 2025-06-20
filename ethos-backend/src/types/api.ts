@@ -184,6 +184,7 @@ export interface Board {
   id: string;
   title: string;
   description?: string;
+  boardType: BoardType;
   layout: BoardLayout;
   items: (string | null)[];
   filters?: Record<string, any>;

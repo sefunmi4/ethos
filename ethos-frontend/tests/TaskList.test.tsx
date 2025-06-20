@@ -27,7 +27,11 @@ jest.mock('../src/hooks/useGraph', () => ({
 
 jest.mock('../src/contexts/BoardContext', () => ({
   __esModule: true,
-  useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem: jest.fn() }),
+  useBoardContext: () => ({
+    selectedBoard: 'b1',
+    updateBoardItem: jest.fn(),
+    boards: { b1: { boardType: 'post' } },
+  }),
 }));
 
 jest.mock('react-router-dom', () => {

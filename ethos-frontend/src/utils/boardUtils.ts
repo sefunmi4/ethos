@@ -15,7 +15,8 @@ import type { Quest } from '../types/questTypes';
 export const createMockBoard = (
   id: string,
   title: string,
-  items: Array<string | Post | Quest | null>
+  items: Array<string | Post | Quest | null>,
+  boardType: BoardData['boardType'] = 'post'
 ): BoardData => {
   const itemIds = items.map((item) => {
     if (item && typeof item === 'object') {
@@ -27,6 +28,7 @@ export const createMockBoard = (
   return {
     id,
     title,
+    boardType,
     layout: 'grid',
     items: itemIds,
     enrichedItems: items,

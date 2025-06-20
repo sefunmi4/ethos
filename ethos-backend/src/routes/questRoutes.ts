@@ -109,6 +109,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     id: `map-${newQuest.id}`,
     title: `${newQuest.title} Map`,
     description: '',
+    boardType: 'map',
     layout: 'graph',
     items: newQuest.headPostId ? [newQuest.headPostId] : [],
     filters: {},

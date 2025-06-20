@@ -7,8 +7,12 @@ import {
   Label,
   TextArea,
 } from '../ui';
-import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
-import type { BoardLayout } from '../../types/boardTypes';
+import {
+  STRUCTURE_OPTIONS,
+  VISIBILITY_OPTIONS,
+  BOARD_TYPE_OPTIONS,
+} from '../../constants/options';
+import type { BoardLayout, BoardType } from '../../types/boardTypes';
 import { addBoard } from '../../api/board'; 
 
 const CreateBoard: React.FC<{
@@ -18,6 +22,7 @@ const CreateBoard: React.FC<{
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [layout, setStructure] = useState<BoardLayout>('grid');
+  const [boardType, setBoardType] = useState<BoardType>('post');
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
   const [category, setCategory] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,6 +46,7 @@ const CreateBoard: React.FC<{
     const boardData = {
       title: title.trim(),
       description: description.trim(),
+      boardType,
       layout,
       items: items.map(item => item.id),
       filters: { visibility },
@@ -80,6 +86,13 @@ const CreateBoard: React.FC<{
           value={layout}
           onChange={e => setStructure(e.target.value as BoardLayout)}
           options={STRUCTURE_OPTIONS.slice()}
+        />
+
+        <Label>Board Type</Label>
+        <Select
+          value={boardType}
+          onChange={e => setBoardType(e.target.value as BoardType)}
+          options={BOARD_TYPE_OPTIONS.slice()}
         />
 
         <Label>Visibility</Label>
