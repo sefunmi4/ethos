@@ -25,6 +25,25 @@ router.get('/', authOptional, (_req: Request, res: Response): void => {
   res.json(posts.map((p) => enrichPost(p, { users, currentUserId: (_req as any).user?.id || null })));
 });
 
+// GET recent posts (optionally excluding a user)
+router.get('/recent', authOptional, (req: Request<{}, any, any, { userId?: string; hops?: string }>, res: Response): void => {
+  const { userId } = req.query;
+  const posts = postsStore.read();
+  const users = usersStore.read();
+  const recent = posts
+    .filter((p) =>
+      p.visibility === 'public' ||
+      p.visibility === 'request_board' ||
+      p.needsHelp === true
+    )
+    .filter((p) => (userId ? p.authorId !== userId : true))
+    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+    .slice(0, 20)
+    .map((p) => enrichPost(p, { users, currentUserId: userId || null }));
+
+  res.json(recent);
+});
+
 //
 // ✅ GET a single post by ID
 //
