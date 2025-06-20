@@ -240,6 +240,16 @@ const Board: React.FC<BoardProps> = ({
     return board?.id ? canEditBoard(board.id) : false;
   }, [readOnly, forcedEditable, board?.id, canEditBoard]);
 
+  const activeView = useMemo<'map' | 'log' | 'file-change'>(() => {
+    if (['map-graph', 'graph', 'graph-condensed'].includes(resolvedStructure)) {
+      return 'map';
+    }
+    const hasCommit = renderableItems.some(
+      (it) => 'type' in it && (it as Post).type === 'commit'
+    );
+    return hasCommit ? 'file-change' : 'log';
+  }, [resolvedStructure, renderableItems]);
+
   const Layout = {
     grid: GridLayout,
     horizontal: GridLayout,
@@ -372,6 +382,7 @@ const Board: React.FC<BoardProps> = ({
             onSave={handleAdd}
             onCancel={() => setShowCreateForm(false)}
             boardId={board.id}
+            currentView={activeView}
           />
         </div>
       )}
