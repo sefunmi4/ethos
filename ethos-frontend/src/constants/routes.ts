@@ -49,6 +49,13 @@ export const ROUTES = {
      */
     BOARD: (id = ':id') => `/boards/${id}`,
 
+    /**
+     * Listing page for a board type
+     * @param boardType - board category
+     * @returns A route string like `/board/quests`
+     */
+    BOARD_TYPE: (boardType = ':boardType') => `/board/${boardType}`,
+
     FLAGGED_QUESTS: '/admin/flagged-quests',
     BANNED_QUESTS: '/admin/banned-quests',
 
