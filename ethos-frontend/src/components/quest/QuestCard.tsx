@@ -5,7 +5,6 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, PostTypeBadge, Select } from '../ui';
 import { ROUTES } from '../../constants/routes';
-import ThreadLayout from '../layout/ThreadLayout';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
 import CreatePost from '../post/CreatePost';
@@ -192,7 +191,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 />
               </div>
             )}
-            <ThreadLayout contributions={logs} user={user} questId={quest.id} />
+            <GridLayout
+              questId={quest.id}
+              items={logs}
+              user={user}
+              layout="vertical"
+            />
             <div className="text-right mt-2">
               <Button
                 size="sm"

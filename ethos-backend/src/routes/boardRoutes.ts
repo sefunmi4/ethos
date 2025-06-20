@@ -89,7 +89,7 @@ router.get(
       id: `thread-${postId}`,
       title: 'Thread',
       items: replies.map(r => r.id),
-      layout: 'thread',
+      layout: 'grid',
       createdAt: new Date().toISOString(),
       userId: '',
     };

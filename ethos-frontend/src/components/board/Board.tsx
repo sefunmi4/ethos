@@ -11,7 +11,6 @@ import CreatePost from '../post/CreatePost';
 
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
-import ThreadLayout from '../layout/ThreadLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
 
@@ -202,7 +201,6 @@ const Board: React.FC<BoardProps> = ({
     kanban: GridLayout,
     graph: GraphLayout,
     'graph-condensed': GraphLayout,
-    thread: ThreadLayout,
   }[resolvedStructure] ?? GridLayout;
 
   if (loading) {
@@ -262,7 +260,6 @@ const Board: React.FC<BoardProps> = ({
                         { value: 'graph-condensed', label: 'Graph (Condensed)' },
                       ]
                     : []),
-                  { value: 'thread', label: 'Timeline' },
                 ]}
               />
             </>
