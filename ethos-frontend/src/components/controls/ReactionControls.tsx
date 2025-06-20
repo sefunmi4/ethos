@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 import {
   FaThumbsUp,
   FaRegThumbsUp,
@@ -6,6 +8,8 @@ import {
   FaRegHeart,
   FaReply,
   FaRetweet,
+  FaExpand,
+  FaCompress,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -44,6 +48,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -148,11 +154,35 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </button>
 
         <button
-          className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-          onClick={() => setShowReplyPanel(prev => !prev)}
+          className={clsx(
+            'flex items-center gap-1',
+            post.type !== 'task' && post.type !== 'commit' && showReplyPanel && 'text-green-600'
+          )}
+          onClick={() => {
+            if (post.type === 'task' && post.questId) {
+              navigate(ROUTES.BOARD(`log-${post.questId}`));
+            } else if (post.type === 'commit') {
+              navigate(ROUTES.POST(post.id));
+            } else {
+              setShowReplyPanel(prev => !prev);
+            }
+          }}
         >
-          <FaReply /> {showReplyPanel ? 'Cancel' : 'Reply'}
+          <FaReply />{' '}
+          {post.type === 'task'
+            ? 'Quest Log'
+            : post.type === 'commit'
+            ? 'File Change View'
+            : showReplyPanel
+            ? 'Cancel'
+            : 'Reply'}
         </button>
+
+        {(post.type === 'task' || post.type === 'commit') && (
+          <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
+            {expanded ? <FaCompress /> : <FaExpand />} {expanded ? 'Collapse View' : 'Expand View'}
+          </button>
+        )}
 
       </div>
 
@@ -166,6 +196,26 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             }}
             onCancel={() => setShowReplyPanel(false)}
           />
+        </div>
+      )}
+
+      {expanded && post.type === 'task' && (
+        <div className="mt-3 text-sm text-gray-600">
+          {post.questId && <div>Quest ID: {post.questId}</div>}
+          {post.status && <div>Status: {post.status}</div>}
+        </div>
+      )}
+
+      {expanded && post.type === 'commit' && (
+        <div className="mt-3 text-sm">
+          {post.commitSummary && (
+            <div className="mb-1 text-gray-700 italic">{post.commitSummary}</div>
+          )}
+          {post.gitDiff && (
+            <pre className="whitespace-pre-wrap overflow-x-auto bg-gray-50 p-2 border text-xs">
+              {post.gitDiff}
+            </pre>
+          )}
         </div>
       )}
     </>

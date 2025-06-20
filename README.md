@@ -28,6 +28,7 @@ It’s a new operating system for solving problems together.
 * **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
 * **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
+* **Interactive Task Lists** – Check off markdown tasks directly within posts.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
 
@@ -239,6 +240,8 @@ Current build includes:
 - Quests linking posts with Git repo metadata
 - Boards to visualize posts and quests in grid, graph or timeline views
 - Thread replies endpoint now supports pagination via `page` and `limit` query options
+- Tasks now include a **Request Help** action using `/api/posts/tasks/:id/request-help`,
+  automatically adding the new request to the `request-board`
 - Inline linking of quests and posts
 - Link dropdowns support node ID search and sorting
 - Review system for AI apps, quests and creators

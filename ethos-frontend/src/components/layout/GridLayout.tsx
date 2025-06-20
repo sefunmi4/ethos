@@ -1,6 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
-import { DndContext, useDraggable, useDroppable, type DragEndEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+} from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { updatePost, archivePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -80,6 +89,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
   const scrollToIndex = useCallback((i: number) => {
     const el = containerRef.current;
     if (!el) return;
@@ -158,12 +170,16 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   if (layout === 'kanban') {
     return (
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+      >
         <div className="flex overflow-auto space-x-4 pb-4 px-2">
           {defaultKanbanColumns.map((col) => (
             <div
               key={col}
-              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 border rounded-lg p-4 shadow-sm"
+              className="min-w-[280px] w-[320px] flex-shrink-0 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow-sm"
             >
               <h3 className="text-sm font-bold text-gray-600 mb-4">{col}</h3>
               <DroppableColumn id={col}>
@@ -180,7 +196,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               </DroppableColumn>
             </div>
           ))}
-          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white cursor-pointer">
+          <div className="min-w-[280px] w-[320px] flex items-center justify-center text-blue-500 hover:text-blue-700 font-medium border rounded-lg shadow-sm bg-white dark:bg-gray-700 cursor-pointer">
             + Add Column
           </div>
         </div>

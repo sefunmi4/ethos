@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTask } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -21,6 +21,11 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 
 const PREVIEW_LIMIT = 240;
+const makeHeader = (content: string): string => {
+  const text = content.trim();
+  // TODO: replace with AI-generated summaries
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
 
 interface PostCardProps {
   post: Post;
@@ -56,7 +61,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
-  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+  const { selectedBoard, updateBoardItem, appendToBoard } = useBoardContext() || {};
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -69,6 +74,15 @@ const PostCard: React.FC<PostCardProps> = ({
       onUpdate?.(updated);
     } catch (err) {
       console.error('[PostCard] Failed to update status:', err);
+    }
+  };
+
+  const handleRequestHelp = async () => {
+    try {
+      const reqPost = await requestHelpForTask(post.id);
+      appendToBoard?.('request-board', reqPost);
+    } catch (err) {
+      console.error('[PostCard] Failed to request help:', err);
     }
   };
 
@@ -114,6 +128,25 @@ const PostCard: React.FC<PostCardProps> = ({
       }
     }
     setShowReplies(prev => !prev);
+  };
+
+  const handleToggleTask = async (index: number, checked: boolean) => {
+    const regex = /- \[[ xX]\]/g;
+    let i = -1;
+    const updatedContent = post.content.replace(regex, match => {
+      i += 1;
+      if (i === index) return `- [${checked ? 'x' : ' '}]`;
+      return match;
+    });
+
+    const optimistic = { ...post, content: updatedContent } as Post;
+    onUpdate?.(optimistic);
+    try {
+      const updated = await updatePost(post.id, { content: updatedContent });
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[PostCard] Failed to toggle task:', err);
+    }
   };
 
   const renderRepostInfo = () => {
@@ -262,7 +295,10 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="text-sm text-gray-800 dark:text-gray-200">
         {isLong ? (
           <>
-            <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} />
+            <MarkdownRenderer
+              content={content.slice(0, PREVIEW_LIMIT) + '…'}
+              onToggleTask={handleToggleTask}
+            />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
@@ -271,7 +307,7 @@ const PostCard: React.FC<PostCardProps> = ({
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={content} />
+          <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
@@ -335,6 +371,7 @@ const PostCard: React.FC<PostCardProps> = ({
                           parentId: parentId || undefined,
                           edgeType,
                           edgeLabel: edgeLabel || undefined,
+                          title: post.questNodeTitle || makeHeader(post.content),
                         });
                         loadGraph(questId || post.questId!);
                       }
@@ -370,6 +407,15 @@ const PostCard: React.FC<PostCardProps> = ({
         user={user}
         onUpdate={onUpdate}
       />
+
+      {post.type === 'task' && (
+        <button
+          onClick={handleRequestHelp}
+          className="text-blue-600 underline text-xs mt-1"
+        >
+          Request Help
+        </button>
+      )}
 
       {(initialReplies > 0 || replies.length > 0) && (
         <button

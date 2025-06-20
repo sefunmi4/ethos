@@ -221,12 +221,13 @@ router.post(
         parentId?: string;
         edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
         edgeLabel?: string;
+        title?: string;
       }
     >,
     res: Response
   ) => {
   const { id } = req.params;
-  const { postId, parentId, edgeType, edgeLabel } = req.body;
+  const { postId, parentId, edgeType, edgeLabel, title } = req.body;
   if (!postId) {
     res.status(400).json({ error: 'Missing postId' });
     return;
@@ -252,7 +253,7 @@ router.post(
   quest.linkedPosts = quest.linkedPosts || [];
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
   if (!alreadyLinked) {
-    quest.linkedPosts.push({ itemId: postId, itemType: 'post' });
+    quest.linkedPosts.push({ itemId: postId, itemType: 'post', title });
     if (post && post.type === 'task') {
       quest.taskGraph = quest.taskGraph || [];
       const from = parentId || quest.headPostId;

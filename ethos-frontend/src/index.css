@@ -50,8 +50,11 @@ a:hover {
 
 .dragging {
   opacity: 0.5;
+  transition: transform 0.15s ease;
 }
 
 .droppable-over {
   background-color: var(--info-background);
+  transform: scale(1.05);
+  transition: transform 0.15s ease;
 }

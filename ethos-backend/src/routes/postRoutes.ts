@@ -8,6 +8,12 @@ import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
+const makeQuestNodeTitle = (content: string): string => {
+  const text = content.trim();
+  // TODO: Replace simple truncation with AI-generated summaries
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
+
 const router = express.Router();
 
 //
@@ -39,7 +45,10 @@ router.post(
       replyTo = null,
       linkedItems = [],
       collaborators = [],
+      status,
     } = req.body;
+
+    const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
 
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -59,8 +68,13 @@ router.post(
       repostedFrom: null,
       linkedItems,
       questId,
+      status: finalStatus,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
+
+    if (questId && (!newPost.questNodeTitle || newPost.questNodeTitle.trim() === '')) {
+      newPost.questNodeTitle = makeQuestNodeTitle(content);
+    }
 
     posts.push(newPost);
     postsStore.write(posts);
@@ -89,6 +103,13 @@ router.patch(
   const originalType = post.type;
 
   Object.assign(post, req.body);
+
+  if (
+    post.questId &&
+    (!post.questNodeTitle || post.questNodeTitle.trim() === '')
+  ) {
+    post.questNodeTitle = makeQuestNodeTitle(post.content);
+  }
 
   const questIdChanged =
     'questId' in req.body && req.body.questId !== originalQuestId;
@@ -284,6 +305,44 @@ router.get('/:id/reactions', (req: Request<{ id: string }>, res: Response) => {
 
   res.json(postReactions);
 });
+
+//
+// ✅ POST /api/tasks/:id/request-help – Create a help request from a task
+//
+router.post(
+  '/tasks/:id/request-help',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const task = posts.find((p) => p.id === req.params.id && p.type === 'task');
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+
+    const requestPost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'request',
+      content: task.content,
+      visibility: task.visibility,
+      timestamp: new Date().toISOString(),
+      tags: [],
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [
+        { itemId: task.id, itemType: 'post', linkType: 'reference' },
+      ],
+      questId: task.questId || null,
+    };
+
+    posts.push(requestPost);
+    postsStore.write(posts);
+    const users = usersStore.read();
+    res.status(201).json(enrichPost(requestPost, { users }));
+  }
+);
 
 //
 // ✅ POST /api/posts/:id/solve – Mark a post as solved
