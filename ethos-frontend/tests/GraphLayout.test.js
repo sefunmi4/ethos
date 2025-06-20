@@ -87,6 +87,43 @@ describe('GraphLayout node interaction', () => {
     expect(screen.queryByText('Some very long task content')).toBeNull();
   });
 
+  it('expands condensed node on click', () => {
+    const posts = [
+      {
+        id: 'p1',
+        nodeId: 'N1',
+        type: 'task',
+        content: 'Some very long task content that should be trimmed',
+        authorId: 'u1',
+        visibility: 'public',
+        timestamp: '',
+        tags: ['task'],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ];
+
+    render(
+      React.createElement(GraphLayout, {
+        items: posts,
+        questId: 'q1',
+        condensed: true,
+      })
+    );
+
+    fireEvent.click(screen.getByText('N1'));
+
+    expect(
+      screen.getByText('Some very long task content that should be trimmed')
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Collapse'));
+
+    expect(
+      screen.queryByText('Some very long task content that should be trimmed')
+    ).toBeNull();
+  });
+
   it('shows reply form when clicking Reply on a node', () => {
     const posts = [
       {

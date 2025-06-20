@@ -66,6 +66,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
 
   const [pulsing, setPulsing] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (isOver) {
@@ -92,45 +93,60 @@ const GraphNode: React.FC<GraphNodeProps> = ({
     node.children.length > MAX_CHILDREN_BEFORE_CONDENSE;
 
 
-  if (condensed) {
+  if (condensed && !expanded) {
     const colorKey = node.tags[0] || node.type;
     const color = stringToColor(colorKey);
     const label = node.nodeId || node.id.slice(0, 6);
     const snippet = (node.content || '').slice(0, 30);
     return (
-      <div className="relative" ref={(el) => registerNode?.(node.id, el)}>
+      <div
+        className={`relative ${isOver ? 'ring-2 ring-blue-400' : ''} ${pulsing ? 'animate-pulse' : ''}`}
+        ref={(el) => {
+          setDropRef(el);
+          registerNode?.(node.id, el);
+        }}
+      >
         <div
-          className="mb-2 flex items-center cursor-pointer"
-          style={{ marginLeft: depth * 16 }}
-          onClick={() => {
-            onSelect(node);
-            onFocus?.(node.id);
-          }}
-          title={snippet}
+          ref={setNodeRef}
+          style={style}
+          className={isDragging ? 'opacity-50' : ''}
+          {...attributes}
+          {...listeners}
         >
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white mr-2"
-            style={{ backgroundColor: color }}
+            className="mb-2 flex items-center cursor-pointer"
+            style={{ marginLeft: depth * 16 }}
+            onClick={() => {
+              setExpanded(true);
+              onSelect(node);
+              onFocus?.(node.id);
+            }}
+            title={snippet}
           >
-            {label}
+            <div
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white mr-2"
+              style={{ backgroundColor: color }}
+            >
+              {label}
+            </div>
+            {edge && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
+                {edge.label || edge.type}
+                {onRemoveEdge && (
+                  <button
+                    data-testid={`remove-edge-${edge.from}-${edge.to}`}
+                    className="ml-1 text-red-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveEdge(edge);
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </span>
+            )}
           </div>
-          {edge && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
-              {edge.label || edge.type}
-              {onRemoveEdge && (
-                <button
-                  data-testid={`remove-edge-${edge.from}-${edge.to}`}
-                  className="ml-1 text-red-500"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemoveEdge(edge);
-                  }}
-                >
-                  ×
-                </button>
-              )}
-            </span>
-          )}
         </div>
         {selectedNode?.id === node.id && (
           <div className="ml-8 mb-4">
@@ -192,6 +208,18 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {icon}
           </span>
           <ContributionCard contribution={node} user={user} compact={compact} />
+          {condensed && (
+            <button
+              className="text-xs underline ml-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded(false);
+              }}
+              title="Collapse"
+            >
+              Collapse
+            </button>
+          )}
           {edge && (
             <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
               {edge.label || edge.type}
