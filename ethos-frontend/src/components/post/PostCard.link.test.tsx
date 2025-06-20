@@ -18,6 +18,10 @@ jest.mock('../../api/quest', () => ({
   linkPostToQuest: jest.fn(() => Promise.resolve({}))
 }));
 
+jest.mock('../../contexts/BoardContext', () => ({
+  useBoardContext: () => ({ selectedBoard: 'b1', updateBoardItem: jest.fn() }),
+}));
+
 const loadGraphMock = jest.fn();
 jest.mock('../../hooks/useGraph', () => ({
   useGraph: () => ({ loadGraph: loadGraphMock })

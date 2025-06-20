@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import QuestPage from '../quest/[id]';
 
 jest.mock('../../contexts/AuthContext', () => ({
@@ -51,7 +52,11 @@ jest.mock('../../api/board', () => ({
 
 describe('QuestLog permissions', () => {
   it('hides editing controls for unauthorized users', async () => {
-    render(<QuestPage />);
+    render(
+      <BrowserRouter>
+        <QuestPage />
+      </BrowserRouter>
+    );
     await waitFor(() =>
       expect(screen.getByText('📜 Quest Log')).toBeInTheDocument()
     );
