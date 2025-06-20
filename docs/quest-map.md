@@ -35,3 +35,7 @@ The `/api/quests/:id/map` endpoint returns:
 
 The frontend uses these nodes and edges to build the quest graph. Nodes without an incoming edge become roots in the visualization. Dragging nodes in the graph view calls `linkPostToQuest` to create or update edges.
 
+## Map Graph view
+
+Boards may use a force-directed layout by setting their layout to `map-graph`. Quest pages pass this layout to their map board so users can freely drag nodes around. The map graph uses `react-force-graph` under the hood.
+
