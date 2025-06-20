@@ -18,6 +18,8 @@ interface ContributionCardProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   questId?: string;
+  /** Show status dropdowns for task posts when rendering PostCard */
+  showStatusControl?: boolean;
 }
 
 const ContributionCard: React.FC<ContributionCardProps> = ({
@@ -27,6 +29,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   onEdit,
   onDelete,
   questId,
+  showStatusControl = true,
 }) => {
   if (!contribution) return null;
 
@@ -37,7 +40,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     return null;
   }
 
-  const sharedProps = { user, compact, onEdit, onDelete };
+  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl };
 
   // ✅ Render Post types
   if ('type' in contribution) {

@@ -24,6 +24,8 @@ interface GraphNodeProps {
   user?: User;
   compact?: boolean;
   condensed?: boolean;
+  /** Show status dropdowns for task nodes */
+  showStatus?: boolean;
   focusedNodeId?: string | null;
   onFocus?: (id: string) => void;
   selectedNode: Post | null;
@@ -41,6 +43,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   user,
   compact = false,
   condensed = false,
+  showStatus = true,
   focusedNodeId,
   onFocus,
   selectedNode,
@@ -160,7 +163,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             }}
             title={snippet}
           >
-            <CompactNodeCard post={node} />
+            <CompactNodeCard post={node} showStatus={showStatus} />
             {edge && (
               <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
                 {edge.label || edge.type}
@@ -201,6 +204,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
                   condensed ||
                   (shouldCondenseChildren && child.node.id !== focusedNodeId)
                 }
+                showStatus={showStatus}
                 focusedNodeId={focusedNodeId}
                 onFocus={onFocus}
                 selectedNode={selectedNode}
@@ -239,7 +243,12 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           <span className="text-xl select-none cursor-grab">
             {icon}
           </span>
-          <ContributionCard contribution={node} user={user} compact={compact} />
+          <ContributionCard
+            contribution={node}
+            user={user}
+            compact={compact}
+            showStatusControl={showStatus}
+          />
           <span
             data-testid={`move-${node.id}`}
             ref={setSubtreeRef}
