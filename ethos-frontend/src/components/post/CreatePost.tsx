@@ -29,6 +29,11 @@ type CreatePostProps = {
   boardId?: string;
   initialGitFilePath?: string;
   initialLinkedNodeId?: string;
+  /**
+   * Optional active board view. When provided and the board is a quest board
+   * this limits the available post types to those relevant for the view.
+   */
+  currentView?: 'map' | 'log' | 'file-change';
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -41,6 +46,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
   initialGitFilePath,
   initialLinkedNodeId,
+  currentView,
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
