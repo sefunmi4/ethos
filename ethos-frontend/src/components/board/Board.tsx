@@ -213,8 +213,8 @@ const Board: React.FC<BoardProps> = ({
     return <div className="text-red-500 p-4">Board not found.</div>;
   }
 
-  const containerBg = 'bg-soft dark:bg-soft-dark';
-  const panelBg = 'bg-soft dark:bg-soft-dark';
+  const containerBg = 'bg-white dark:bg-card-dark';
+  const panelBg = 'bg-white dark:bg-card-dark';
 
   return (
     <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>
