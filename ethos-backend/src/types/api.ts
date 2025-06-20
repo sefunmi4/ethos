@@ -14,6 +14,8 @@ export type UserRole = 'user' | 'admin' | 'moderator';
  */
 export type ReactionType = 'like' | 'heart' | 'repost';
 
+export type ApprovalStatus = 'approved' | 'flagged' | 'banned';
+
 export type AppItem = Post | Quest | Board | RenderableItem;
 
 /**
@@ -152,6 +154,9 @@ export interface Quest {
   title: string;
   description?: string;
   authorId: string;
+  visibility: Visibility;
+  approvalStatus: ApprovalStatus;
+  flagCount?: number;
   status: 'active' | 'completed' | 'archived';
   headPostId: string;
   createdAt?: string;

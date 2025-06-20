@@ -13,6 +13,7 @@ import { fetchPostsByQuestId } from '../../api/post';
 import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
+import GitFileBrowser from '../git/GitFileBrowser';
 
 /**
  * Props for QuestCard component
@@ -26,6 +27,7 @@ interface QuestCardProps {
   onEdit?: (quest: Quest) => void;
   onCancel?: () => void;
   isEditing?: boolean;
+  defaultExpanded?: boolean;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -35,9 +37,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onDelete,
   onEdit,
   onCancel,
+  defaultExpanded = false,
 }) => {
-  const [view, setView] = useState<'timeline' | 'kanban' | 'map'>('map');
-  const [expanded, setExpanded] = useState(false);
+  const [view, setView] = useState<'timeline' | 'kanban' | 'map' | 'files'>('map');
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -61,9 +64,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
     alert('Join request sent.');
   };
   const viewOptions = [
-    { value: 'map', label: 'Map - Graph' },
-    { value: 'timeline', label: 'Log' },
-    { value: 'kanban', label: 'Log Status - Card' },
+    { value: 'map', label: 'Task Layout' },
+    { value: 'kanban', label: 'Status' },
+    { value: 'timeline', label: 'Logs' },
+    { value: 'files', label: 'Files' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -308,6 +312,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
             />
           </>
         );
+      case 'files':
+        return <GitFileBrowser questId={quest.id} onClose={() => setView('map')} />;
       default:
         return null;
     }

@@ -48,7 +48,10 @@ export const ROUTES = {
      * @returns A route string like `/boards/abc123`
      */
     BOARD: (id = ':id') => `/boards/${id}`,
-  
+
+    FLAGGED_QUESTS: '/admin/flagged-quests',
+    BANNED_QUESTS: '/admin/banned-quests',
+
     /** Wildcard route for handling 404 pages */
     NOT_FOUND: '*',
   };
