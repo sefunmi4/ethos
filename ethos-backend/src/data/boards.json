@@ -3,6 +3,7 @@
     "id": "default-home-board",
     "title": "Welcome Board",
     "description": "This is the default home board for new users.",
+    "boardType": "post",
     "layout": "grid",
     "items": [],
     "defaultFor": "home",
@@ -14,6 +15,7 @@
     "id": "my-posts",
     "title": "My Posts",
     "description": "Personal posts board.",
+    "boardType": "post",
     "layout": "grid",
     "items": [
     ],
@@ -26,6 +28,7 @@
     "id": "my-quests",
     "title": "My Quests",
     "description": "Personal quests board.",
+    "boardType": "quest",
     "layout": "grid",
     "items": [
     ],
@@ -38,6 +41,7 @@
     "id": "featured-quest",
     "title": "Featured Quest",
     "description": "Highlighted quest",
+    "boardType": "quest",
     "layout": "grid",
     "items": [
       "49765216-fe00-4217-93f4-e54049cb7dab",
@@ -53,6 +57,7 @@
     "id": "request-board",
     "title": "Request Board",
     "description": "Posts seeking help",
+    "boardType": "post",
     "layout": "grid",
     "items": [
     ],
@@ -66,6 +71,7 @@
     "id": "timeline-board",
     "title": "Timeline",
     "description": "Recent posts and quests",
+    "boardType": "post",
     "layout": "grid",
     "items": [
     ],
