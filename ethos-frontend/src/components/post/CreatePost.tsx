@@ -232,7 +232,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" variant="primary" disabled={isSubmitting}>
+        <Button type="submit" variant="contrast" disabled={isSubmitting}>
           {isSubmitting ? 'Posting...' : 'Create Post'}
         </Button>
       </div>

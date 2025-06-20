@@ -144,6 +144,16 @@ a:hover {
   color: var(--text-primary);
 }
 
+.btn-contrast {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.dark .btn-contrast {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
 .dark .btn-secondary {
   background-color: var(--color-surface);
 }

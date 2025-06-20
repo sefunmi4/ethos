@@ -200,7 +200,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <div className="text-right mt-2">
               <Button
                 size="sm"
-                variant="primary"
+                variant="contrast"
                 onClick={() => setShowLogForm(true)}
               >
                 + Add Item
@@ -234,7 +234,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <div className="text-right mt-2">
               <Button
                 size="sm"
-                variant="primary"
+                variant="contrast"
                 onClick={() => setShowTaskForm(true)}
               >
                 + Add Item
@@ -262,7 +262,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <div className="text-right mb-2">
               <Button
                 size="sm"
-                variant="primary"
+                variant="contrast"
                 onClick={() => setShowTaskForm(true)}
               >
                 + Add Item

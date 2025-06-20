@@ -353,7 +353,7 @@ const Board: React.FC<BoardProps> = ({
             </Button>
           )}
           {showCreate && user && (
-            <Button variant="primary" onClick={() => setShowCreateForm(true)}>
+            <Button variant="contrast" onClick={() => setShowCreateForm(true)}>
               + Add Item
             </Button>
           )}

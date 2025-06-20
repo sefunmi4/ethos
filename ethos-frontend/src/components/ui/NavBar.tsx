@@ -15,8 +15,7 @@ const NavBar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const navClasses =
-    // Use the surface color in dark mode so the navbar contrasts the page background
-    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-white dark:bg-surface border-gray-200 dark:border-gray-700';
+    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-surface dark:bg-soft-dark border-gray-200 dark:border-gray-700';
 
   return (
     <nav className={navClasses}>
