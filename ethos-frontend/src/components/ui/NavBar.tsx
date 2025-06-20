@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const navClasses =
-    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-white dark:bg-card-dark border-gray-200 dark:border-gray-700';
+    'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-surface border-background';
 
   return (
     <nav className={navClasses}>
@@ -51,7 +51,7 @@ const NavBar: React.FC = () => {
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="px-2 py-1 rounded border text-xs sm:text-sm border-gray-300 dark:border-gray-600"
+            className="px-2 py-1 rounded border text-xs sm:text-sm border-secondary"
           >
             {theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'}
           </button>
