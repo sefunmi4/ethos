@@ -4,5 +4,11 @@
     "path": "/api/quests/undefined/link",
     "count": 2,
     "lastOccurred": "2025-06-20T17:49:49.407Z"
+  },
+  {
+    "questId": "featured",
+    "path": "/api/quests/featured",
+    "count": 2,
+    "lastOccurred": "2025-06-20T20:29:25.094Z"
   }
 ]
