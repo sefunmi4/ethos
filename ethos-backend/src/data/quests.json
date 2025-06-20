@@ -24,5 +24,18 @@
       }
     ],
     "helpRequest": false
+  },
+  {
+    "id": "41f1e562-2389-4717-a9c4-15abb17ded27",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "title": "Graduate Applications",
+    "description": "",
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "5cfed02e-9695-4ccc-83a9-c57f06999e19",
+    "taskGraph": [],
+    "helpRequest": false
   }
 ]

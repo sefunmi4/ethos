@@ -33,7 +33,7 @@
       }
     ],
     "questId": "91544b2a-a2c0-408f-b21b-15845869a23b",
-    "status": "To Do",
+    "status": "In Progress",
     "helpRequest": false,
     "nodeId": "Q:ethos:T00",
     "questNodeTitle": "test out ethos platform"
@@ -83,5 +83,55 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T02",
     "questNodeTitle": "add projects"
+  },
+  {
+    "id": "5cfed02e-9695-4ccc-83a9-c57f06999e19",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "log",
+    "content": "Graduate Applications",
+    "visibility": "public",
+    "timestamp": "2025-06-20T18:41:58.288Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "41f1e562-2389-4717-a9c4-15abb17ded27",
+    "nodeId": "Q:graduateapplications:L00",
+    "questNodeTitle": "Graduate Applications"
+  },
+  {
+    "id": "cb48db1e-1daa-4764-9448-472c66c7abd6",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-20T18:47:01.099Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": false
+  },
+  {
+    "id": "42b6d1da-af12-4b1c-bee7-80731be7dc8d",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "meta_system",
+    "content": "🧭 Visited a 404 page",
+    "visibility": "private",
+    "timestamp": "2025-06-20T18:47:01.100Z",
+    "tags": [
+      "system"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": false
   }
 ]

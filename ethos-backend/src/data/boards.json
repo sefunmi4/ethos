@@ -35,6 +35,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "41f1e562-2389-4717-a9c4-15abb17ded27",
       "91544b2a-a2c0-408f-b21b-15845869a23b"
     ],
     "defaultFor": null,
@@ -49,6 +50,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "41f1e562-2389-4717-a9c4-15abb17ded27",
       "91544b2a-a2c0-408f-b21b-15845869a23b",
       "95645920-ec0c-4030-b368-8070336c0d22",
       "49765216-fe00-4217-93f4-e54049cb7dab",
@@ -66,7 +68,11 @@
     "description": "Posts seeking help",
     "boardType": "post",
     "layout": "grid",
-    "items": [],
+    "items": [
+      "c3ebfb66-12c8-4203-b517-1fd2464844c3",
+      "1a8ff78e-d937-4b93-bc7f-82160f5ef07f",
+      "492d563c-82ea-432e-ae28-9eb93a6d76ab"
+    ],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -80,6 +86,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "41f1e562-2389-4717-a9c4-15abb17ded27",
       "95645920-ec0c-4030-b368-8070336c0d22"
     ],
     "featured": false,
@@ -121,5 +128,20 @@
     "createdAt": "2025-06-20T18:36:38.095Z",
     "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
     "questId": "91544b2a-a2c0-408f-b21b-15845869a23b"
+  },
+  {
+    "id": "map-41f1e562-2389-4717-a9c4-15abb17ded27",
+    "title": "Graduate Applications Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "5cfed02e-9695-4ccc-83a9-c57f06999e19"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-20T18:41:58.289Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "41f1e562-2389-4717-a9c4-15abb17ded27"
   }
 ]
