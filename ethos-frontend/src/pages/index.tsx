@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
+import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
@@ -46,19 +47,8 @@ const HomePage: React.FC = () => {
       </header>
 
       <section>
-        <Board
-          boardId="featured-quest"
-          title="✨ Featured Quest"
-          layout="grid"
-          gridLayout="horizontal"
-          user={user as User}
-          hideControls
-        />
-        <div className="text-right mt-1">
-          <Link to={ROUTES.BOARD('featured-quest')} className="text-blue-600 underline text-sm">
-            View Board Details
-          </Link>
-        </div>
+        <h2 className="text-xl font-semibold mb-2">✨ Featured Quests</h2>
+        <FeaturedQuestBoard />
       </section>
 
       <section className="space-y-4">
