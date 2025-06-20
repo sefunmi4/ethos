@@ -6,16 +6,14 @@ This guide documents the color tokens used throughout the Ethos application and 
 
 The palette is defined in `ethos-frontend/src/theme.ts` and mirrored in Tailwind and CSS variables. Each token represents a color that can be referenced in Tailwind classes or via `var(--token-name)`.
 
-| Token | Light | Description |
-| ----- | ----- | ----------- |
-| `primary` | `#111827` | Default text color |
-| `secondary` | `#4B5563` | Subtle text elements |
-| `accent` | `#4F46E5` | Brand accent and buttons |
-| `soft` | `#E5E7EB` | Application background |
-| `surface` | `#ffffff` | Cards and panels |
-| `infoBackground` | `#bfdbfe` | Highlight color for drag/drop or info blocks |
-
-Dark mode colors are automatically calculated as the complementary hex values of the light palette, except for the text colors `primary` and `secondary`, which retain their original light values for readability.
+| Token | Light | Dark | Description |
+| ----- | ----- | ---- | ----------- |
+| `primary` | `#111827` | `#f9fafb` | Default text color |
+| `secondary` | `#4B5563` | `#D1D5DB` | Subtle text elements |
+| `accent` | `#4F46E5` | `#818cf8` | Brand accent and buttons |
+| `soft` | `#E5E7EB` | `#1f2937` | Application background |
+| `surface` | `#ffffff` | `#374151` | Cards and panels |
+| `infoBackground` | `#bfdbfe` | `#1e40af` | Highlight color for drag/drop or info blocks |
 
 `soft` now has a slightly darker light mode value. Use `surface` for most card backgrounds and reserve `soft` for overall page backgrounds.
 
@@ -47,7 +45,7 @@ for buttons and card backgrounds.
 }
 ```
 
-In dark mode the variables automatically switch to the complementary colors.
+In dark mode the variables automatically switch to their `*-Dark` counterparts.
 
 ## Adding or Updating Tokens
 
