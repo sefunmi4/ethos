@@ -9,7 +9,6 @@ import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { useGitDiff } from '../../hooks/useGit';
 import { Spinner } from '../ui';
 import GraphNode from './GraphNode';
-import { linkPostToQuest } from '../../api/quest';
 import type { User } from '../../types/userTypes';
 import type { Post } from '../../types/postTypes';
 
@@ -60,10 +59,15 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [paths, setPaths] = useState<{ key: string; d: string }[]>([]);
 
+  const [localItems, setLocalItems] = useState<Post[]>(items);
   const [rootNodes, setRootNodes] = useState<(Post & { children?: NodeChild[] })[]>([]);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges || []);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLocalItems(items);
+  }, [items]);
 
   const { data: diffData, isLoading: diffLoading } = useGitDiff({
     questId,
@@ -114,7 +118,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     const nodeMap: NodeMap = {};
     const roots: (Post & { children?: NodeChild[] })[] = [];
 
-    items.forEach((item) => {
+    localItems.forEach((item) => {
       nodeMap[item.id] = { ...item, children: [] };
     });
 
@@ -134,7 +138,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         }
       });
     } else {
-      items.forEach((item) => {
+      localItems.forEach((item) => {
         const parentId = item.replyTo || item.repostedFrom?.originalPostId;
         if (parentId && nodeMap[parentId]) {
           nodeMap[parentId].children!.push({ node: nodeMap[item.id] });
@@ -145,7 +149,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     }
 
     setRootNodes(roots);
-  }, [items, edgeList]);
+  }, [localItems, edgeList]);
 
   useEffect(() => {
     setEdgeList(edges || []);
@@ -203,40 +207,50 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over) {
-      // Dropped on empty space - detach from parent
-      setEdgeList((prev) => prev.filter((e) => e.to !== (active.id as string)));
-      try {
-        await linkPostToQuest(questId, { postId: active.id as string });
-      } catch (err) {
-        console.error('[GraphLayout] failed to unlink post:', err);
-      }
+    const id = active.id as string;
+
+    if (id.startsWith('anchor-')) {
+      const parentId = id.slice(7);
+      const newId = `new-${Date.now()}`;
+      const newNode: Post = {
+        id: newId,
+        type: 'task',
+        content: 'New Task',
+        authorId: '',
+        visibility: 'public',
+        timestamp: '',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      };
+      setLocalItems((prev) => [...prev, newNode]);
+      setEdgeList((prev) => [...prev, { from: parentId, to: newId }]);
       return;
     }
 
-    if (active.id === over.id) return;
+    const targetId = over ? (over.id as string) : null;
 
-    if (isDescendant(active.id as string, over.id as string)) {
-      // Prevent cycles
+    const nodeId = id.startsWith('move-') ? id.slice(5) : id;
+
+    if (!targetId) {
+      setEdgeList((prev) => prev.filter((e) => e.to !== nodeId));
       return;
     }
 
-    try {
-      await linkPostToQuest(questId, {
-        postId: active.id as string,
-        parentId: over.id as string,
-      });
-      setEdgeList((prev) => {
-        const filtered = prev.filter((e) => e.to !== (active.id as string));
-        const exists = filtered.some(
-          (e) => e.from === (over.id as string) && e.to === (active.id as string)
-        );
-        if (!exists) filtered.push({ from: over.id as string, to: active.id as string });
-        return filtered;
-      });
-    } catch (err) {
-      console.error('[GraphLayout] failed to link post:', err);
+    if (nodeId === targetId) return;
+
+    if (isDescendant(nodeId, targetId)) {
+      return;
     }
+
+    setEdgeList((prev) => {
+      const filtered = prev.filter((e) => e.to !== nodeId);
+      const exists = filtered.some(
+        (e) => e.from === targetId && e.to === nodeId
+      );
+      if (!exists) filtered.push({ from: targetId, to: nodeId });
+      return filtered;
+    });
   };
 
 
