@@ -248,7 +248,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           'overflow-auto w-full h-full p-4 max-w-7xl mx-auto ' +
           (rootNodes.length === 1 ? 'flex justify-center' : '')
         }
-        style={{ minHeight: '50vh', position: 'relative' }}
+        style={{ minHeight: '60vh', maxHeight: '80vh', position: 'relative' }}
       >
         <svg
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
