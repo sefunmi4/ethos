@@ -121,6 +121,25 @@ const PostCard: React.FC<PostCardProps> = ({
     setShowReplies(prev => !prev);
   };
 
+  const handleToggleTask = async (index: number, checked: boolean) => {
+    const regex = /- \[[ xX]\]/g;
+    let i = -1;
+    const updatedContent = post.content.replace(regex, match => {
+      i += 1;
+      if (i === index) return `- [${checked ? 'x' : ' '}]`;
+      return match;
+    });
+
+    const optimistic = { ...post, content: updatedContent } as Post;
+    onUpdate?.(optimistic);
+    try {
+      const updated = await updatePost(post.id, { content: updatedContent });
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[PostCard] Failed to toggle task:', err);
+    }
+  };
+
   const renderRepostInfo = () => {
     const quote = post.repostedFrom;
     if (!quote?.originalContent) return null;
@@ -267,7 +286,10 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="text-sm text-gray-800 dark:text-gray-200">
         {isLong ? (
           <>
-            <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} />
+            <MarkdownRenderer
+              content={content.slice(0, PREVIEW_LIMIT) + '…'}
+              onToggleTask={handleToggleTask}
+            />
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-blue-600 underline text-xs ml-1"
@@ -276,7 +298,7 @@ const PostCard: React.FC<PostCardProps> = ({
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={content} />
+          <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
