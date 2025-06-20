@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import ContributionCard from '../contribution/ContributionCard';
+import CompactNodeCard from './CompactNodeCard';
 import GitDiffViewer from '../git/GitDiffViewer';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
@@ -9,15 +10,6 @@ import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 
 export const MAX_CHILDREN_BEFORE_CONDENSE = 5;
-
-const stringToColor = (str: string) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue},70%,70%)`;
-};
 
 interface NodeChild {
   node: Post;
@@ -94,9 +86,6 @@ const GraphNode: React.FC<GraphNodeProps> = ({
 
 
   if (condensed && !expanded) {
-    const colorKey = node.tags[0] || node.type;
-    const color = stringToColor(colorKey);
-    const label = node.nodeId || node.id.slice(0, 6);
     const snippet = (node.content || '').slice(0, 30);
     return (
       <div
@@ -123,12 +112,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             }}
             title={snippet}
           >
-            <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] text-white mr-2"
-              style={{ backgroundColor: color }}
-            >
-              {label}
-            </div>
+            <CompactNodeCard post={node} />
             {edge && (
               <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
                 {edge.label || edge.type}
