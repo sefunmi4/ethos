@@ -107,7 +107,7 @@ const CreateBoard: React.FC<{
             placeholder={`Item ${index + 1}`}
           />
         ))}
-        <Button type="button" variant="secondary" onClick={handleAddItem}>
+        <Button type="button" variant="primary" onClick={handleAddItem}>
           + Add Item
         </Button>
       </FormSection>
