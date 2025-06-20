@@ -96,7 +96,7 @@ const QuestPage: React.FC = () => {
           <Board
             boardId={`map-${id}`}
             board={mapBoard}
-            layout="graph"
+            layout="graph-condensed"
             editable={user?.id === quest.ownerId}
             quest={quest}
             user={user as User}
