@@ -458,8 +458,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
       {expanded && (
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="md:w-1/2 lg:w-1/3">{renderMap()}</div>
-          <div className="flex-1">{renderRightPanel()}</div>
+          <div className="md:w-1/2 lg:w-1/3 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700">
+            {renderMap()}
+          </div>
+          <div className="flex-1 md:pl-4">{renderRightPanel()}</div>
         </div>
       )}
     </div>
