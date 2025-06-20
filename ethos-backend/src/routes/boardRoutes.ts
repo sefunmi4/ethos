@@ -11,12 +11,8 @@ import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
 const getQuestBoardItems = (
-  posts: ReturnType<typeof postsStore.read>,
-  quests: ReturnType<typeof questsStore.read>
+  posts: ReturnType<typeof postsStore.read>
 ) => {
-  const questIds = quests
-    .filter((q) => (q as any).displayOnBoard)
-    .map((q) => q.id);
   const requestIds = posts
     .filter(
       (p) =>
@@ -26,7 +22,7 @@ const getQuestBoardItems = (
           p.helpRequest)
     )
     .map((p) => p.id);
-  return [...questIds, ...requestIds];
+  return requestIds;
 };
 
 const router = express.Router();
@@ -61,7 +57,7 @@ router.get(
       }
 
       if (board.id === 'quest-board') {
-        const items = getQuestBoardItems(posts, quests);
+        const items = getQuestBoardItems(posts);
         return { ...board, items };
       }
 
@@ -193,7 +189,7 @@ router.get(
     const end = start + pageSize;
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts, quests);
+      boardItems = getQuestBoardItems(posts);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
@@ -238,7 +234,7 @@ router.get(
 
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts, quests);
+      boardItems = getQuestBoardItems(posts);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
@@ -296,7 +292,7 @@ router.get(
 
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts, quests).filter(id =>
+      boardItems = getQuestBoardItems(posts).filter(id =>
         quests.find(q => q.id === id)
       );
     } else if (userId && board.id === 'my-quests') {
