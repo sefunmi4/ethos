@@ -40,7 +40,11 @@ jest.mock('../../hooks/useBoard', () => ({
 
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
-  useBoardContext: () => ({ refreshBoards: jest.fn(), boards: {} })
+  useBoardContext: () => ({
+    refreshBoards: jest.fn(),
+    boards: {},
+    setSelectedBoard: jest.fn(),
+  }),
 }));
 
 jest.mock('../../hooks/useSocket', () => ({
