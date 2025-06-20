@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
+import { getRenderableBoardItems } from '../utils/boardUtils';
 
 import type { User } from '../types/userTypes';
 
 const HomePage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
+  const { boards } = useBoardContext();
   const [postType, setPostType] = useState('');
+
+  const requestBoard = boards['request-board'];
+  const postTypes = useMemo(() => {
+    if (!requestBoard?.enrichedItems) return [] as string[];
+    const types = new Set<string>();
+    getRenderableBoardItems(requestBoard.enrichedItems).forEach((it) => {
+      if ('type' in it) types.add((it as any).type);
+    });
+    return Array.from(types);
+  }, [requestBoard?.enrichedItems]);
+  const showPostFilter = postTypes.length > 1 && (requestBoard?.enrichedItems?.length || 0) > 0;
 
   if (authLoading) {
     return (
@@ -48,7 +62,9 @@ const HomePage: React.FC = () => {
       </section>
 
       <section className="space-y-4">
-        <PostTypeFilter value={postType} onChange={setPostType} />
+        {showPostFilter && (
+          <PostTypeFilter value={postType} onChange={setPostType} />
+        )}
         <Board
           boardId="request-board"
           title="🙋 Requests"
