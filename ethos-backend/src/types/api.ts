@@ -24,7 +24,13 @@ export type ReactionCountMap = Record<ReactionType, number>;
 //
 // 🧭 BOARD
 //
-export type BoardLayout = 'grid' | 'graph' | 'graph-condensed' | 'thread';
+export type BoardLayout =
+  | 'grid'
+  | 'horizontal'
+  | 'kanban'
+  | 'graph'
+  | 'graph-condensed'
+  | 'thread';
   
 /**
  * Supported tags for labeling and filtering posts.

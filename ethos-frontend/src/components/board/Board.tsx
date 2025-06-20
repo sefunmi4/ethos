@@ -198,6 +198,8 @@ const Board: React.FC<BoardProps> = ({
 
   const Layout = {
     grid: GridLayout,
+    horizontal: GridLayout,
+    kanban: GridLayout,
     graph: GraphLayout,
     'graph-condensed': GraphLayout,
     thread: ThreadLayout,
@@ -252,6 +254,8 @@ const Board: React.FC<BoardProps> = ({
                 onChange={(e) => setViewMode(e.target.value as BoardLayout)}
                 options={[
                   { value: 'grid', label: 'Grid' },
+                  { value: 'horizontal', label: 'Horizontal' },
+                  { value: 'kanban', label: 'Kanban' },
                   ...(graphEligible
                     ? [
                         { value: 'graph', label: 'Graph' },
@@ -328,7 +332,9 @@ const Board: React.FC<BoardProps> = ({
             ? { edges: quest?.taskGraph }
             : {})}
           {...(resolvedStructure === 'graph-condensed' ? { condensed: true } : {})}
-          {...(resolvedStructure === 'grid' ? { layout: gridLayout } : {})}
+          {...(['grid', 'horizontal', 'kanban'].includes(resolvedStructure)
+            ? { layout: resolvedStructure === 'grid' ? gridLayout : resolvedStructure }
+            : {})}
         />
       )}
     </div>
