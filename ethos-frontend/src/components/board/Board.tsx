@@ -11,6 +11,7 @@ import CreatePost from '../post/CreatePost';
 
 import GridLayout from '../layout/GridLayout';
 import GraphLayout from '../layout/GraphLayout';
+import MapGraphLayout from '../layout/MapGraphLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
 
@@ -201,6 +202,7 @@ const Board: React.FC<BoardProps> = ({
     kanban: GridLayout,
     graph: GraphLayout,
     'graph-condensed': GraphLayout,
+    'map-graph': MapGraphLayout,
   }[resolvedStructure] ?? GridLayout;
 
   if (loading) {
@@ -258,6 +260,7 @@ const Board: React.FC<BoardProps> = ({
                     ? [
                         { value: 'graph', label: 'Graph' },
                         { value: 'graph-condensed', label: 'Graph (Condensed)' },
+                        { value: 'map-graph', label: 'Map Graph' },
                       ]
                     : []),
                 ]}
@@ -314,7 +317,9 @@ const Board: React.FC<BoardProps> = ({
       ) : (
         <Layout
           items={
-            resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed'
+            resolvedStructure === 'graph' ||
+            resolvedStructure === 'graph-condensed' ||
+            resolvedStructure === 'map-graph'
               ? graphItems
               : renderableItems
           }
@@ -325,9 +330,11 @@ const Board: React.FC<BoardProps> = ({
           contributions={items}
           questId={quest?.id || ''}
           initialExpanded={initialExpanded}
-          {...(resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed'
-            ? { edges: quest?.taskGraph }
-            : {})}
+          {...(resolvedStructure === 'graph' ||
+            resolvedStructure === 'graph-condensed' ||
+            resolvedStructure === 'map-graph'
+              ? { edges: quest?.taskGraph }
+              : {})}
           {...(resolvedStructure === 'graph-condensed' ? { condensed: true } : {})}
           {...(['grid', 'horizontal', 'kanban'].includes(resolvedStructure)
             ? { layout: resolvedStructure === 'grid' ? gridLayout : resolvedStructure }
