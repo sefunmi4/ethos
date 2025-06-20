@@ -21,6 +21,11 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 
 const PREVIEW_LIMIT = 240;
+const makeHeader = (content: string): string => {
+  const text = content.trim();
+  // TODO: replace with AI-generated summaries
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
 
 interface PostCardProps {
   post: Post;
@@ -335,6 +340,7 @@ const PostCard: React.FC<PostCardProps> = ({
                           parentId: parentId || undefined,
                           edgeType,
                           edgeLabel: edgeLabel || undefined,
+                          title: post.questNodeTitle || makeHeader(post.content),
                         });
                         loadGraph(questId || post.questId!);
                       }

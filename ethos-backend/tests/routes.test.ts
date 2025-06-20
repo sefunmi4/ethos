@@ -148,7 +148,7 @@ describe('route handlers', () => {
 
     const res = await request(app)
       .post('/quests/q1/link')
-      .send({ postId: 't1', edgeType: 'sub_problem', edgeLabel: 'relates' });
+      .send({ postId: 't1', edgeType: 'sub_problem', edgeLabel: 'relates', title: 'Task t1' });
 
     expect(res.status).toBe(200);
     expect(quest.taskGraph).toHaveLength(1);
@@ -158,6 +158,7 @@ describe('route handlers', () => {
       type: 'sub_problem',
       label: 'relates',
     });
+    expect(quest.linkedPosts[0].title).toBe('Task t1');
   });
 
   it('POST /quests/:id/link links task to task when parentId provided', async () => {
@@ -194,11 +195,12 @@ describe('route handlers', () => {
 
     const res = await request(app)
       .post('/quests/q1/link')
-      .send({ postId: 't2', parentId: 't1' });
+      .send({ postId: 't2', parentId: 't1', title: 'Task t2' });
 
     expect(res.status).toBe(200);
     expect(quest.taskGraph).toHaveLength(1);
     expect(quest.taskGraph[0]).toEqual({ from: 't1', to: 't2', type: undefined, label: undefined });
+    expect(quest.linkedPosts[0].title).toBe('Task t2');
   });
 
   it('GET /boards/:id/quests returns quests from board', async () => {
