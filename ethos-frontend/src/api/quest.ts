@@ -108,6 +108,7 @@ export const linkPostToQuest = async (
     parentId?: string;
     edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
     edgeLabel?: string;
+    title?: string;
   }
 ): Promise<Quest> => {
   const res = await axiosWithAuth.post(`${BASE_URL}/${questId}/link`, data);

@@ -52,7 +52,10 @@ describe('PostCard task_edge linking', () => {
     fireEvent.click(screen.getByText('Save'));
 
     await waitFor(() => expect(linkPostToQuest).toHaveBeenCalled());
-    expect(linkPostToQuest).toHaveBeenCalledWith('q1', expect.objectContaining({ postId: 'c1', parentId: 'p1' }));
+    expect(linkPostToQuest).toHaveBeenCalledWith(
+      'q1',
+      expect.objectContaining({ postId: 'c1', parentId: 'p1', title: expect.any(String) })
+    );
     expect(loadGraphMock).toBeCalledWith('q1');
   });
 });

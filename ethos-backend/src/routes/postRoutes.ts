@@ -8,6 +8,12 @@ import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
+const makeQuestNodeTitle = (content: string): string => {
+  const text = content.trim();
+  // TODO: Replace simple truncation with AI-generated summaries
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
+
 const router = express.Router();
 
 //
@@ -62,6 +68,10 @@ router.post(
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
+    if (questId && (!newPost.questNodeTitle || newPost.questNodeTitle.trim() === '')) {
+      newPost.questNodeTitle = makeQuestNodeTitle(content);
+    }
+
     posts.push(newPost);
     postsStore.write(posts);
     const users = usersStore.read();
@@ -89,6 +99,13 @@ router.patch(
   const originalType = post.type;
 
   Object.assign(post, req.body);
+
+  if (
+    post.questId &&
+    (!post.questNodeTitle || post.questNodeTitle.trim() === '')
+  ) {
+    post.questNodeTitle = makeQuestNodeTitle(post.content);
+  }
 
   const questIdChanged =
     'questId' in req.body && req.body.questId !== originalQuestId;

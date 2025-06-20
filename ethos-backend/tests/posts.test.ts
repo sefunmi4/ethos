@@ -33,6 +33,21 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
+  it('sets questNodeTitle when creating post with questId', async () => {
+    questsStore.read.mockReturnValue([
+      { id: 'q1', title: 'Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
+    ]);
+    usersStore.read.mockReturnValue([]);
+
+    const content = 'hello there this is a long text that will exceed fifty characters to test the snippet';
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', content, visibility: 'public', questId: 'q1' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.questNodeTitle).toBe('hello there this is a long text that will exceed f…');
+  });
+
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
     const posts = [
       {
