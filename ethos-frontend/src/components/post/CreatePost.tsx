@@ -56,10 +56,10 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
   const allowedPostTypes: PostType[] =
     boardType === 'quest'
-      ? ['quest', 'task', 'log']
+      ? ['quest']
       : boardType === 'post'
       ? ['free_speech', 'request', 'commit', 'issue']
-      : POST_TYPES.map(p => p.value as PostType);
+      : POST_TYPES.map((p) => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
 
