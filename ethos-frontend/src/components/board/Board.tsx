@@ -430,6 +430,7 @@ const Board: React.FC<BoardProps> = ({
           contributions={items}
           questId={quest?.id || ''}
           initialExpanded={initialExpanded}
+          editable={editable}
           {...(resolvedStructure === 'graph' ||
             resolvedStructure === 'graph-condensed' ||
             resolvedStructure === 'map-graph'

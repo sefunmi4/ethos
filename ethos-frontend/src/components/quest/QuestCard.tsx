@@ -52,6 +52,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   ];
 
   const isOwner = user?.id === questData.authorId;
+  const canEdit = isOwner || questData.collaborators?.some(c => c.userId === user?.id);
 
   const saveLinks = async () => {
     try {
@@ -188,15 +189,26 @@ const QuestCard: React.FC<QuestCardProps> = ({
               items={logs}
               user={user}
               layout="vertical"
+              editable={canEdit}
             />
             <div className="text-right mt-2">
-              <Button
-                size="sm"
-                variant="contrast"
-                onClick={() => setShowLogForm(true)}
-              >
-                + Add Item
-              </Button>
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowLogForm(true)}
+                >
+                  + Add Item
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => onJoinToggle?.(questData)}
+                >
+                  Join Quest
+                </Button>
+              )}
             </div>
         </>
       );
@@ -222,15 +234,26 @@ const QuestCard: React.FC<QuestCardProps> = ({
               items={logs}
               user={user}
               layout="kanban"
+              editable={canEdit}
             />
             <div className="text-right mt-2">
-              <Button
-                size="sm"
-                variant="contrast"
-                onClick={() => setShowTaskForm(true)}
-              >
-                + Add Item
-              </Button>
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowTaskForm(true)}
+                >
+                  + Add Item
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => onJoinToggle?.(questData)}
+                >
+                  Join Quest
+                </Button>
+              )}
             </div>
           </>
         );
@@ -252,13 +275,23 @@ const QuestCard: React.FC<QuestCardProps> = ({
               </div>
             )}
             <div className="text-right mb-2">
-              <Button
-                size="sm"
-                variant="contrast"
-                onClick={() => setShowTaskForm(true)}
-              >
-                + Add Item
-              </Button>
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowTaskForm(true)}
+                >
+                  + Add Item
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => onJoinToggle?.(questData)}
+                >
+                  Join Quest
+                </Button>
+              )}
             </div>
             <GraphLayout
               items={logs as any}
