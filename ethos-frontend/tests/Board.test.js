@@ -28,8 +28,8 @@ jest.mock('../src/contexts/BoardContext', () => ({
 
 const { fetchBoard, fetchBoardItems } = require('../src/api/board');
 
-describe('Board layout logic', () => {
-  it('falls back to grid when posts from other quests exist', async () => {
+  describe('Board layout logic', () => {
+    it('falls back to grid when posts from other quests exist', async () => {
     fetchBoard.mockResolvedValue({
       id: 'b1',
       title: 'Board',
@@ -66,6 +66,60 @@ describe('Board layout logic', () => {
     const selects = screen.getAllByRole('combobox');
     const layoutSelect = selects[2];
     expect(layoutSelect.value).toBe('grid');
-    expect(screen.queryByText('Graph')).toBeNull();
+      expect(screen.queryByText('Graph')).toBeNull();
+    });
+
+    it('renders map view when a single quest is attached', async () => {
+      fetchBoard.mockResolvedValue({
+        id: 'b1',
+        title: 'Board',
+        layout: 'graph',
+        questId: 'q1',
+        items: [],
+        createdAt: new Date().toISOString(),
+        enrichedItems: [],
+      });
+
+      const quest = {
+        id: 'q1',
+        headPostId: 'p1',
+        title: 'Quest',
+        status: 'active',
+        linkedPosts: [],
+        collaborators: [],
+        authorId: 'u1',
+      };
+
+      const items = [
+        quest,
+        {
+          id: 'p2',
+          type: 'post',
+          questId: 'q1',
+          createdAt: '',
+          content: '',
+          authorId: 'u1',
+          visibility: 'public',
+          timestamp: '',
+          tags: [],
+          collaborators: [],
+          linkedItems: [],
+        },
+      ];
+
+      fetchBoardItems.mockResolvedValue(items);
+
+      render(
+        React.createElement(Board, { boardId: 'b1', user: { id: 'u1' }, showCreate: false })
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByText('Loading board...')).not.toBeInTheDocument();
+      });
+
+      const selects = screen.getAllByRole('combobox');
+      const layoutSelect = selects[2];
+      expect(layoutSelect.value).toBe('graph');
+      expect(screen.getByText('Graph')).toBeInTheDocument();
+    });
   });
-});
