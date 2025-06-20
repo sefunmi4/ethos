@@ -85,7 +85,7 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
               className={`px-3 py-1 rounded-full border text-sm ${
                 selectedRoles.includes(role)
                   ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'bg-white text-gray-700 border-gray-300'
+                  : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600'
               }`}
             >
               {role}
@@ -102,7 +102,7 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
             {value.map((c, index) => (
               <li
                 key={index}
-                className="flex justify-between items-start bg-gray-50 p-2 rounded-md border"
+                className="flex justify-between items-start bg-gray-50 dark:bg-gray-700 p-2 rounded-md border"
               >
                 <div>
                   <strong>@{c.username}</strong>
