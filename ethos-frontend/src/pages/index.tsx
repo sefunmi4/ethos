@@ -4,6 +4,7 @@ import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
 import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
+import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
@@ -69,6 +70,10 @@ const HomePage: React.FC = () => {
             → See all
           </Link>
         </div>
+      </section>
+
+      <section>
+        <ActiveQuestBoard />
       </section>
 
       <section>

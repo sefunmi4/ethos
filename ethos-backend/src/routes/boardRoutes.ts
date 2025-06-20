@@ -14,9 +14,6 @@ const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>,
   quests: ReturnType<typeof questsStore.read>
 ) => {
-  const questIds = quests
-    .filter((q) => (q as any).displayOnBoard)
-    .map((q) => q.id);
   const requestIds = posts
     .filter(
       (p) =>
@@ -26,7 +23,7 @@ const getQuestBoardItems = (
           p.helpRequest)
     )
     .map((p) => p.id);
-  return [...questIds, ...requestIds];
+  return requestIds;
 };
 
 const router = express.Router();
