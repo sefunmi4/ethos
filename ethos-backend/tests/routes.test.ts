@@ -63,6 +63,36 @@ describe('route handlers', () => {
     expect(res.body[0].id).toBe('q1');
   });
 
+  it('POST /quests creates quest with head post', async () => {
+    const { postsStore, questsStore } = require('../src/models/stores');
+    postsStore.read.mockReturnValue([]);
+    questsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    questsStore.write.mockClear();
+
+    const res = await request(app)
+      .post('/quests')
+      .send({ title: 'New Quest', description: 'desc' });
+
+    expect(res.status).toBe(201);
+    const newPost = postsStore.write.mock.calls[0][0][0];
+    const newQuest = questsStore.write.mock.calls[0][0][0];
+    expect(newQuest.headPostId).toBe(newPost.id);
+    expect(newPost.questId).toBe(newQuest.id);
+    questsStore.read.mockReturnValue([
+      {
+        id: 'q1',
+        authorId: 'u1',
+        title: 'Quest',
+        status: 'active',
+        headPostId: '',
+        linkedPosts: [],
+        collaborators: [],
+        taskGraph: [],
+      },
+    ]);
+  });
+
   it('GET /boards/:id returns single board', async () => {
     const res = await request(app).get('/boards/b1');
     expect(res.status).toBe(200);
