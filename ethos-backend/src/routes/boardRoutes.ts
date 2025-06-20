@@ -88,6 +88,7 @@ router.get(
     const board: BoardData = {
       id: `thread-${postId}`,
       title: 'Thread',
+      boardType: 'post',
       items: replies.map(r => r.id),
       layout: 'grid',
       createdAt: new Date().toISOString(),
@@ -289,6 +290,7 @@ router.post(
       featured = false,
       defaultFor = null,
       layout = "grid",
+      boardType = 'post',
       questId,
     } = req.body;
 
@@ -297,6 +299,7 @@ router.post(
       id: customId || uuidv4(),
       title,
       description,
+      boardType,
       items,
       filters,
       featured,
@@ -329,6 +332,7 @@ router.patch(
         id: req.params.id,
         title: req.body.title || 'Untitled Board',
         description: req.body.description || '',
+        boardType: req.body.boardType || 'post',
         layout: req.body.layout || 'grid',
         items: req.body.items ?? [],
         filters: req.body.filters ?? {},

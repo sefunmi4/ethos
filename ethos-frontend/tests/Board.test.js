@@ -36,6 +36,7 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
     fetchBoard.mockResolvedValue({
       id: 'b1',
       title: 'Board',
+      boardType: 'post',
       layout: 'graph',
       items: [],
       createdAt: new Date().toISOString(),
@@ -80,6 +81,7 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
       fetchBoard.mockResolvedValue({
         id: 'b1',
         title: 'Board',
+        boardType: 'quest',
         layout: 'graph',
         questId: 'q1',
         items: [],
@@ -136,6 +138,7 @@ const { fetchBoard, fetchBoardItems } = require('../src/api/board');
       fetchBoard.mockResolvedValue({
         id: 'b2',
         title: 'Board',
+        boardType: 'post',
         layout: 'grid',
         items: [],
         createdAt: new Date().toISOString(),

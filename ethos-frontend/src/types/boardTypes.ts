@@ -3,11 +3,14 @@ import type { Post } from './postTypes';
 import type { Quest } from './questTypes';
 import type { Visibility, ItemType } from './common';
 
+export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
+
 /** Generic board interface shared across profile, quests, etc. */
 export interface Board {
   id: string;
   title: string;
   description?: string;
+  boardType: BoardType;
   layout: BoardLayout;
   items: (string | null)[];
   filters?: Record<string, any>;
@@ -31,6 +34,7 @@ export interface CreateBoardPayload {
   id?: string;
   title: string;
   description?: string;
+  boardType: BoardType;
   layout: BoardLayout;
   items: string[];
   filters?: Record<string, any>;

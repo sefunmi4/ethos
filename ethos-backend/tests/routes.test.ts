@@ -14,8 +14,8 @@ jest.mock('../src/middleware/authMiddleware', () => ({
 jest.mock('../src/models/stores', () => ({
   boardsStore: {
     read: jest.fn(() => [
-      { id: 'b1', title: 'Board', description: '', layout: 'grid', items: [] },
-      { id: 'home', title: 'Home', description: '', layout: 'grid', items: [], defaultFor: 'home' },
+      { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: [] },
+      { id: 'home', title: 'Home', boardType: 'post', description: '', layout: 'grid', items: [], defaultFor: 'home' },
     ]),
     write: jest.fn(),
   },
@@ -283,7 +283,7 @@ describe('route handlers', () => {
   it('GET /boards/:id/quests returns quests from board', async () => {
     const { boardsStore, questsStore } = require('../src/models/stores');
     boardsStore.read.mockReturnValue([
-      { id: 'b1', title: 'Board', description: '', layout: 'grid', items: ['q1'] },
+      { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
     ]);
     questsStore.read.mockReturnValue([
       {
@@ -306,7 +306,7 @@ describe('route handlers', () => {
   it('GET /boards/:id/quests?enrich=true returns enriched quests', async () => {
     const { boardsStore, questsStore, usersStore } = require('../src/models/stores');
     boardsStore.read.mockReturnValue([
-      { id: 'b1', title: 'Board', description: '', layout: 'grid', items: ['q1'] },
+      { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
     ]);
     questsStore.read.mockReturnValue([
       {
@@ -348,7 +348,7 @@ describe('route handlers', () => {
     boardLogsStore.write.mockClear();
     await request(app)
       .post('/boards')
-      .send({ title: 'Board', items: [], layout: 'grid' });
+      .send({ title: 'Board', items: [], layout: 'grid', boardType: 'post' });
     expect(boardLogsStore.write).toHaveBeenCalled();
     const log = boardLogsStore.write.mock.calls[0][0][0];
     expect(log.action).toBe('create');
@@ -356,7 +356,7 @@ describe('route handlers', () => {
 
   it('PATCH /boards/:id logs update', async () => {
     const { boardsStore, boardLogsStore } = require('../src/models/stores');
-    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', layout: 'grid', items: [] }]);
+    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
     boardLogsStore.read.mockReturnValue([]);
     boardLogsStore.write.mockClear();
     await request(app).patch('/boards/b1').send({ title: 'New' });
@@ -367,7 +367,7 @@ describe('route handlers', () => {
 
   it('DELETE /boards/:id logs deletion', async () => {
     const { boardsStore, boardLogsStore } = require('../src/models/stores');
-    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', layout: 'grid', items: [] }]);
+    boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
     boardLogsStore.read.mockReturnValue([]);
     boardLogsStore.write.mockClear();
     await request(app).delete('/boards/b1');

@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Input, Select, TextArea, Button, Label, FormSection } from '../ui';
-import { STRUCTURE_OPTIONS, VISIBILITY_OPTIONS } from '../../constants/options';
+import {
+  STRUCTURE_OPTIONS,
+  VISIBILITY_OPTIONS,
+  BOARD_TYPE_OPTIONS,
+} from '../../constants/options';
 import { updateBoard, removeBoard } from '../../api/board';
-import type { BoardData, EditBoardProps } from '../../types/boardTypes';
-import type { BoardLayout } from '../../types/boardTypes';
+import type {
+  BoardData,
+  EditBoardProps,
+  BoardLayout,
+  BoardType,
+} from '../../types/boardTypes';
 import { getDisplayTitle } from '../../utils/displayUtils'; 
 
 const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete }) => {
   const [title, setTitle] = useState(board.title || '');
   const [description, setDescription] = useState(board.description || '');
   const [layout, setStructure] = useState(board.layout || 'grid');
+  const [boardType, setBoardType] = useState<BoardType>(board.boardType || 'post');
   const [visibility, setVisibility] = useState(board.filters?.visibility || 'public');
   const [category, setCategory] = useState(board.category || '');
   const [items, setItems] = useState<(string | null)[]>(board.items || []);
@@ -32,6 +41,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
     const payload: Partial<BoardData> = {
       title: title.trim(),
       description: description.trim(),
+      boardType,
       layout,
       items,
       filters: { visibility },
@@ -80,6 +90,14 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
           value={layout}
           onChange={(e) => setStructure(e.target.value as BoardLayout)}
           options={STRUCTURE_OPTIONS.slice()}
+        />
+
+        <Label htmlFor="board-type">Board Type</Label>
+        <Select
+          id="board-type"
+          value={boardType}
+          onChange={(e) => setBoardType(e.target.value as BoardType)}
+          options={BOARD_TYPE_OPTIONS.slice()}
         />
 
         <Label htmlFor="visibility">Visibility</Label>
