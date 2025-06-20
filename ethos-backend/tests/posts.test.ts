@@ -33,19 +33,26 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
-  it('sets questNodeTitle when creating post with questId', async () => {
-    questsStore.read.mockReturnValue([
-      { id: 'q1', title: 'Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
-    ]);
-    usersStore.read.mockReturnValue([]);
+  it("POST /posts defaults task status to 'To Do'", async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+    const res = await request(app).post('/posts').send({ type: 'task' });
+    expect(res.status).toBe(201);
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('To Do');
+    expect(res.body.status).toBe('To Do');
+  });
 
-    const content = 'hello there this is a long text that will exceed fifty characters to test the snippet';
+  it('POST /posts uses provided task status', async () => {
+    postsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'task', content, visibility: 'public', questId: 'q1' });
-
+      .send({ type: 'task', status: 'Blocked' });
     expect(res.status).toBe(201);
-    expect(res.body.questNodeTitle).toBe('hello there this is a long text that will exceed f…');
+    const written = postsStore.write.mock.calls[0][0][0];
+    expect(written.status).toBe('Blocked');
+    expect(res.body.status).toBe('Blocked');
   });
 
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
