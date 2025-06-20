@@ -128,7 +128,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   return (
     <>
-      <div className="flex gap-4 items-center text-sm text-gray-500">
+      <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400">
         <button
           className={clsx('flex items-center gap-1', reactions.like && 'text-blue-600')}
           onClick={() => handleToggleReaction('like')}
@@ -200,7 +200,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       )}
 
       {expanded && post.type === 'task' && (
-        <div className="mt-3 text-sm text-gray-600">
+        <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
           {post.questId && <div>Quest ID: {post.questId}</div>}
           {post.status && <div>Status: {post.status}</div>}
         </div>

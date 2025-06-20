@@ -327,7 +327,7 @@ const PostCard: React.FC<PostCardProps> = ({
               />
               {linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId) && (
                 <div className="mt-2 space-y-1">
-                  <label className="text-xs text-gray-600">Parent Post</label>
+                  <label className="text-xs text-gray-600 dark:text-gray-400">Parent Post</label>
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={parentId}
@@ -340,7 +340,7 @@ const PostCard: React.FC<PostCardProps> = ({
                       </option>
                     ))}
                   </select>
-                  <label className="text-xs text-gray-600">Edge Type</label>
+                  <label className="text-xs text-gray-600 dark:text-gray-400">Edge Type</label>
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={edgeType}
@@ -350,7 +350,7 @@ const PostCard: React.FC<PostCardProps> = ({
                     <option value="solution_branch">solution_branch</option>
                     <option value="folder_split">folder_split</option>
                   </select>
-                  <label className="text-xs text-gray-600">Edge Label</label>
+                  <label className="text-xs text-gray-600 dark:text-gray-400">Edge Label</label>
                   <input
                     type="text"
                     className="border rounded px-1 py-0.5 text-xs w-full"

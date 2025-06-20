@@ -105,7 +105,7 @@ const PostPage: React.FC = () => {
   return (
     <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12">
       {post.repostedFrom && (
-        <section className="border-l-4 border-gray-300 pl-4 mb-4 text-sm text-gray-500">
+        <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-gray-500 dark:text-gray-400">
           ♻️ Reposted from @{post.repostedFrom.username}
         </section>
       )}

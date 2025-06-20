@@ -100,7 +100,7 @@ const QuestPage: React.FC = () => {
 
       {/* 🗺 Quest Map Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">🗺 Quest Map</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">🗺 Quest Map</h2>
         {mapBoard ? (
           <Board
             boardId={`map-${id}`}
@@ -112,7 +112,7 @@ const QuestPage: React.FC = () => {
             showCreate
           />
         ) : (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
             <p className="mb-2">No quest map defined yet.</p>
             {user?.id === quest.ownerId && !isMapLoading && (
               <Button variant="primary" onClick={handleCreateMapBoard}>
@@ -125,7 +125,7 @@ const QuestPage: React.FC = () => {
 
       {/* 📜 Quest Log Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">📜 Quest Log</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">📜 Quest Log</h2>
         {logBoard ? (
           <Board
             boardId={`log-${id}`}
@@ -140,7 +140,7 @@ const QuestPage: React.FC = () => {
             showCreate
           />
         ) : (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             No quest logs yet. Start journaling progress.
           </p>
         )}
@@ -148,7 +148,7 @@ const QuestPage: React.FC = () => {
 
       {/* ⭐ Review Section */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">⭐ Leave a Review</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">⭐ Leave a Review</h2>
         <ReviewForm targetType="quest" questId={quest.id} />
       </section>
     </main>

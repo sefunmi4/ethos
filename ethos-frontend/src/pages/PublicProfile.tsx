@@ -92,7 +92,7 @@ const PublicProfilePage: React.FC = () => {
 
       {/* 📘 Public Quests */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">📘 Public Quests</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">📘 Public Quests</h2>
         {questBoard ? (
           questBoard.enrichedItems?.length ? (
             <Board
@@ -102,7 +102,7 @@ const PublicProfilePage: React.FC = () => {
               readOnly
             />
           ) : (
-            <div className="text-gray-500 text-center py-8">No public quests available.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-center py-8">No public quests available.</div>
           )
         ) : (
           <Spinner />
@@ -111,7 +111,7 @@ const PublicProfilePage: React.FC = () => {
 
       {/* 🧭 Public Posts */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">🧭 Public Posts</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">🧭 Public Posts</h2>
         {postBoard ? (
           postBoard.enrichedItems?.length ? (
             <Board
@@ -121,7 +121,7 @@ const PublicProfilePage: React.FC = () => {
               readOnly
             />
           ) : (
-            <div className="text-gray-500 text-center py-8">No public posts found.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-center py-8">No public posts found.</div>
           )
         ) : (
           <Spinner />
@@ -130,7 +130,7 @@ const PublicProfilePage: React.FC = () => {
 
       {/* ⭐ Review Section */}
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">⭐ Leave a Review</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">⭐ Leave a Review</h2>
         <ReviewForm targetType="creator" modelId={profile.id} />
       </section>
     </main>

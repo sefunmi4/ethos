@@ -70,7 +70,7 @@ const EditContribution: React.FC<EditContributionProps> = ({
         return <EditQuest {...sharedProps} quest={item as Quest} />;
       default:
         return (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
             Unsupported contribution type: <strong>{type}</strong>
           </div>
         );
