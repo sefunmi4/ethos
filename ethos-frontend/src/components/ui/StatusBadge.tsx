@@ -8,7 +8,7 @@ interface StatusBadgeProps {
 }
 
 const statusStyles: Record<string, string> = {
-  'To Do': 'bg-background text-secondary',
+  'To Do': 'bg-soft text-secondary',
   'In Progress': 'bg-warning text-warning',
   Blocked: 'bg-error text-error',
   Done: 'bg-success text-success',
@@ -16,7 +16,7 @@ const statusStyles: Record<string, string> = {
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
   const style =
-    statusStyles[status] || 'bg-background text-secondary';
+    statusStyles[status] || 'bg-soft text-secondary';
   return (
     <span
       className={clsx(
