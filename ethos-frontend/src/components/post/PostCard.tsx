@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
 
-import type { Post } from '../../types/postTypes';
+import type { Post, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTask } from '../../api/post';
@@ -61,6 +61,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
   const [showBrowser, setShowBrowser] = useState(false);
+  const [createType, setCreateType] = useState<PostType | null>(null);
+  const [asCommit, setAsCommit] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
