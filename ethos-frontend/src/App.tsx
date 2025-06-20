@@ -30,7 +30,6 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
 const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
 
-
 /**
  * The root App component of the application.
  * Wraps the entire UI in required context providers for:

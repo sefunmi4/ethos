@@ -9,6 +9,7 @@ import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { useGitDiff } from "../../hooks/useGit";
 import { Spinner } from "../ui";
 import GraphNode from "./GraphNode";
+import QuestNodeInspector from "../quest/QuestNodeInspector";
 import type { User } from "../../types/userTypes";
 import type { Post } from "../../types/postTypes";
 
@@ -72,6 +73,10 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges || []);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const activeNode = activeNodeId
+    ? localItems.find((it) => it.id === activeNodeId) || null
+    : null;
 
   useEffect(() => {
     setLocalItems(items);
@@ -190,6 +195,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
 
   const handleNodeClick = (n: Post) => {
     setSelectedNode(n);
+    setActiveNodeId((prev) => (prev === n.id ? null : n.id));
     onSelectNode?.(n);
     window.dispatchEvent(
       new CustomEvent("questTaskSelect", { detail: { taskId: n.id } }),
@@ -335,6 +341,21 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           <div className="flex justify-center py-4">
             <Spinner />
           </div>
+        )}
+      </div>
+      <div
+        className={
+          'fixed top-0 right-0 h-full w-80 bg-surface dark:bg-background shadow-lg transform transition-transform duration-300 ' +
+          (activeNodeId ? 'translate-x-0' : 'translate-x-full')
+        }
+        data-testid="quest-node-inspector"
+      >
+        {activeNode && (
+          <QuestNodeInspector
+            node={activeNode}
+            user={user}
+            onClose={() => setActiveNodeId(null)}
+          />
         )}
       </div>
     </DndContext>

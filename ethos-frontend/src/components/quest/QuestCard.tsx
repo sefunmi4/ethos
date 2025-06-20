@@ -14,6 +14,7 @@ import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
+import QuestNodeInspector from './QuestNodeInspector';
 
 
 /**
@@ -268,7 +269,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
     return (
       <div className="p-2">
-        <PostCard post={selectedNode} user={user} questId={quest.id} />
+        <QuestNodeInspector questId={quest.id} node={selectedNode} user={user} />
       </div>
     );
   };
