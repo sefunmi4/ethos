@@ -178,20 +178,61 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     setFocusedNodeId(id);
   };
 
+  const isDescendant = (parentId: string, childId: string): boolean => {
+    const visited = new Set<string>();
+    const stack = [parentId];
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (current === childId) return true;
+      edgeList
+        .filter((e) => e.from === current)
+        .forEach((e) => {
+          if (!visited.has(e.to)) {
+            visited.add(e.to);
+            stack.push(e.to);
+          }
+        });
+    }
+    return false;
+  };
+
+  const handleRemoveEdge = (edge: TaskEdge) => {
+    setEdgeList((prev) => prev.filter((e) => !(e.from === edge.from && e.to === edge.to)));
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+
+    if (!over) {
+      // Dropped on empty space - detach from parent
+      setEdgeList((prev) => prev.filter((e) => e.to !== (active.id as string)));
+      try {
+        await linkPostToQuest(questId, { postId: active.id as string });
+      } catch (err) {
+        console.error('[GraphLayout] failed to unlink post:', err);
+      }
+      return;
+    }
+
+    if (active.id === over.id) return;
+
+    if (isDescendant(active.id as string, over.id as string)) {
+      // Prevent cycles
+      return;
+    }
+
     try {
       await linkPostToQuest(questId, {
         postId: active.id as string,
         parentId: over.id as string,
       });
       setEdgeList((prev) => {
-        const exists = prev.some(
+        const filtered = prev.filter((e) => e.to !== (active.id as string));
+        const exists = filtered.some(
           (e) => e.from === (over.id as string) && e.to === (active.id as string)
         );
-        if (exists) return prev;
-        return [...prev, { from: over.id as string, to: active.id as string }];
+        if (!exists) filtered.push({ from: over.id as string, to: active.id as string });
+        return filtered;
       });
     } catch (err) {
       console.error('[GraphLayout] failed to link post:', err);
@@ -242,6 +283,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             onFocus={handleNodeFocus}
             selectedNode={selectedNode}
             onSelect={handleNodeClick}
+            onRemoveEdge={handleRemoveEdge}
             diffData={diffData}
             diffLoading={diffLoading}
             registerNode={(id, el) => {

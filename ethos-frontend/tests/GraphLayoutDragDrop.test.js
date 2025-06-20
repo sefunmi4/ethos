@@ -115,4 +115,77 @@ describe('GraphLayout drag and drop', () => {
     jest.useRealTimers();
     isOverMock = false;
   });
+
+  it('reparents node when dragged to new parent', async () => {
+    const posts = [
+      { id: 'p1', type: 'task', content: 'A', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p2', type: 'task', content: 'B', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p3', type: 'task', content: 'C', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ];
+
+    const { container } = render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
+    });
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p3' } });
+    });
+
+    const rootContainer = container.firstElementChild;
+    const rootNodes = rootContainer.querySelectorAll(':scope > div.relative');
+    expect(rootNodes.length).toBe(2);
+    expect(within(rootContainer).getByText('C')).toBeInTheDocument();
+  });
+
+  it('removes edge when dropped outside any node', async () => {
+    const posts = [
+      { id: 'p1', type: 'task', content: 'A', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p2', type: 'task', content: 'B', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ];
+
+    const { container } = render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
+    });
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: null });
+    });
+
+    const rootContainer = container.firstElementChild;
+    const rootNodes = rootContainer.querySelectorAll(':scope > div.relative');
+    expect(rootNodes.length).toBe(2);
+  });
+
+  it('prevents cycles when dragging onto descendant', async () => {
+    const posts = [
+      { id: 'p1', type: 'task', content: 'A', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p2', type: 'task', content: 'B', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },
+      { id: 'p3', type: 'task', content: 'C', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ];
+
+    const { container } = render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p2' }, over: { id: 'p1' } });
+    });
+    await act(async () => {
+      await dragHandler({ active: { id: 'p3' }, over: { id: 'p2' } });
+    });
+
+    await act(async () => {
+      await dragHandler({ active: { id: 'p1' }, over: { id: 'p3' } });
+    });
+
+    const rootContainer = container.firstElementChild;
+    const rootNodes = rootContainer.querySelectorAll(':scope > div.relative');
+    expect(rootNodes.length).toBe(1);
+    const root = rootNodes[0];
+    expect(within(root).getByText('A')).toBeInTheDocument();
+    expect(within(root).getByText('B')).toBeInTheDocument();
+    expect(within(root).getByText('C')).toBeInTheDocument();
+  });
 });

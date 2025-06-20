@@ -38,6 +38,7 @@ interface GraphNodeProps {
   diffData?: { diffMarkdown?: string } | null;
   diffLoading: boolean;
   registerNode?: (id: string, el: HTMLDivElement | null) => void;
+  onRemoveEdge?: (edge: TaskEdge) => void;
 }
 
 const GraphNode: React.FC<GraphNodeProps> = ({
@@ -54,6 +55,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   diffData,
   diffLoading,
   registerNode,
+  onRemoveEdge,
 }) => {
   const isFolder = node.type === 'quest' || node.tags.includes('quest');
   const icon = isFolder ? '📁' : '📄';
@@ -113,7 +115,21 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             {label}
           </div>
           {edge && (
-            <span className="text-xs text-gray-500 ml-1">{edge.label || edge.type}</span>
+            <span className="text-xs text-gray-500 ml-1 flex items-center">
+              {edge.label || edge.type}
+              {onRemoveEdge && (
+                <button
+                  data-testid={`remove-edge-${edge.from}-${edge.to}`}
+                  className="ml-1 text-red-500"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveEdge(edge);
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </span>
           )}
         </div>
         {selectedNode?.id === node.id && (
@@ -141,6 +157,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
                 onFocus={onFocus}
                 selectedNode={selectedNode}
                 onSelect={onSelect}
+                onRemoveEdge={onRemoveEdge}
                 diffData={diffData}
                 diffLoading={diffLoading}
               />
@@ -170,7 +187,21 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           <span className="text-xl select-none">{icon}</span>
           <ContributionCard contribution={node} user={user} compact={compact} />
           {edge && (
-            <span className="text-xs text-gray-500 ml-1">{edge.label || edge.type}</span>
+            <span className="text-xs text-gray-500 ml-1 flex items-center">
+              {edge.label || edge.type}
+              {onRemoveEdge && (
+                <button
+                  data-testid={`remove-edge-${edge.from}-${edge.to}`}
+                  className="ml-1 text-red-500"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveEdge(edge);
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </span>
           )}
         </div>
         {selectedNode?.id === node.id && (
