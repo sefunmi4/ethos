@@ -209,7 +209,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       {expanded && post.type === 'commit' && (
         <div className="mt-3 text-sm">
           {post.commitSummary && (
-            <div className="mb-1 text-gray-700 italic">{post.commitSummary}</div>
+            <div className="mb-1 italic text-secondary dark:text-secondary">{post.commitSummary}</div>
           )}
           {post.gitDiff && (
             <pre className="whitespace-pre-wrap overflow-x-auto bg-gray-50 p-2 border text-xs">
