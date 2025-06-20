@@ -27,6 +27,7 @@ const Board = lazy(() => import('./pages/board/[id]'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
 
 /**
  * The root App component of the application.
@@ -65,6 +66,7 @@ const App: React.FC = () => {
                     <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
+                    <Route path={ROUTES.FLAGGED_QUESTS} element={<FlaggedQuests />} />
                   </Route>
 
                   {/* 🔁 Catch-all route for unmatched URLs */}

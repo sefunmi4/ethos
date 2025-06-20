@@ -43,6 +43,11 @@ export const fetchAllQuests = async (): Promise<Quest[]> => {
   return res.data;
 };
 
+export const fetchFeaturedQuests = async (): Promise<Quest[]> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/featured`);
+  return res.data;
+};
+
 /**
  * Update a quest by ID  
  * @function updateQuestById  
@@ -129,6 +134,19 @@ export const fetchQuestsByBoardId = async (
   const res = await axiosWithAuth.get(
     `/boards/${boardId}/quests${params.toString() ? `?${params.toString()}` : ''}`
   );
+  return res.data;
+};
+
+export const flagQuest = async (id: string): Promise<{ success: boolean; flags: number }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/flag`);
+  return res.data;
+};
+
+export const moderateQuest = async (
+  id: string,
+  updates: { visibility?: Quest['visibility']; approvalStatus?: Quest['approvalStatus'] }
+): Promise<Quest> => {
+  const res = await axiosWithAuth.patch(`${BASE_URL}/${id}/moderate`, updates);
   return res.data;
 };
 

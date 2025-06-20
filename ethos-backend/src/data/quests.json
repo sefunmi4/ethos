@@ -31,7 +31,10 @@
         "to": "59687208-c91b-4562-9d39-5d7181c4623b"
       }
     ],
-    "helpRequest": false
+    "helpRequest": false,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0
   },
   {
     "id": "41f1e562-2389-4717-a9c4-15abb17ded27",
@@ -44,6 +47,9 @@
     "status": "active",
     "headPostId": "5cfed02e-9695-4ccc-83a9-c57f06999e19",
     "taskGraph": [],
-    "helpRequest": false
+    "helpRequest": false,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0
   }
 ]
