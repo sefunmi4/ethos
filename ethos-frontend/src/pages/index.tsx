@@ -17,16 +17,16 @@ const HomePage: React.FC = () => {
   const { boards } = useBoardContext();
   const [postType, setPostType] = useState('');
 
-  const requestBoard = boards['request-board'];
+  const questBoard = boards['quest-board'];
   const postTypes = useMemo(() => {
-    if (!requestBoard?.enrichedItems) return [] as string[];
+    if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
-    getRenderableBoardItems(requestBoard.enrichedItems).forEach((it) => {
+    getRenderableBoardItems(questBoard.enrichedItems).forEach((it) => {
       if ('type' in it) types.add((it as any).type);
     });
     return Array.from(types);
-  }, [requestBoard?.enrichedItems]);
-  const showPostFilter = postTypes.length > 1 && (requestBoard?.enrichedItems?.length || 0) > 0;
+  }, [questBoard?.enrichedItems]);
+  const showPostFilter = postTypes.length > 1 && (questBoard?.enrichedItems?.length || 0) > 0;
 
   if (authLoading) {
     return (
@@ -57,16 +57,16 @@ const HomePage: React.FC = () => {
           <PostTypeFilter value={postType} onChange={setPostType} />
         )}
         <Board
-          boardId="request-board"
-          title="🙋 Requests"
+          boardId="quest-board"
+          title="🗺️ Quest Board"
           layout="grid"
           user={user as User}
           hideControls
           filter={postType ? { postType } : {}}
         />
         <div className="text-right">
-          <Link to={ROUTES.BOARD('request-board')} className="text-blue-600 underline text-sm">
-            View Board Details
+          <Link to="/board/quests" className="text-blue-600 underline text-sm">
+            → See all
           </Link>
         </div>
       </section>

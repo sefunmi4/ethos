@@ -59,7 +59,7 @@ router.post(
     const quest = questId ? quests.find(q => q.id === questId) : null;
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
-    if (boardId === 'request-board' &&
+    if (boardId === 'quest-board' &&
         !(type === 'request' || (type === 'quest' && helpRequest))) {
       res.status(400).json({ error: 'Only help requests allowed on this board' });
       return;

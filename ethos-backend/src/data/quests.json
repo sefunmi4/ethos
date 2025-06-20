@@ -36,6 +36,7 @@
       }
     ],
     "helpRequest": false,
+    "displayOnBoard": true,
     "visibility": "public",
     "approvalStatus": "approved",
     "flagCount": 0
@@ -52,6 +53,7 @@
     "headPostId": "f116d807-dd25-447e-b965-1abd3969676d",
     "taskGraph": [],
     "helpRequest": false,
+    "displayOnBoard": true,
     "visibility": "public",
     "approvalStatus": "approved",
     "flagCount": 0

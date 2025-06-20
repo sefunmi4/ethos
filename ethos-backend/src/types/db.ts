@@ -86,6 +86,8 @@ export interface DBQuest {
   };
   createdAt?: string;
   tags?: string[];
+  /** When true this quest appears on the Quest Board */
+  displayOnBoard?: boolean;
   defaultBoardId?: string;
   taskGraph?: TaskEdge[];
 

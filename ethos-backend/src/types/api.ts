@@ -177,6 +177,8 @@ export interface Quest {
   };
 
   tags?: string[];
+  /** When true this quest appears on the Quest Board */
+  displayOnBoard?: boolean;
   defaultBoardId?: string;
   /** Graph edges between tasks/logs */
   taskGraph?: TaskEdge[];
