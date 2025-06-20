@@ -35,7 +35,7 @@ describe('CreatePost board type filtering', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Quest']);
+    expect(options).toEqual(['Quest', 'Quest Task', 'Quest Log']);
   });
 
   it('limits post type options for quest board', () => {
@@ -46,6 +46,6 @@ describe('CreatePost board type filtering', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Request', 'Quest']);
+    expect(options).toEqual(['Request', 'Review', 'Quest']);
   });
 });

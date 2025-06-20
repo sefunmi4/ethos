@@ -55,7 +55,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [helpRequest] = useState(boardId === 'quest-board');
+  const [helpRequest, setHelpRequest] = useState(boardId === 'quest-board');
 
 const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
@@ -64,7 +64,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
   const allowedPostTypes: PostType[] =
     boardId === 'quest-board'
-      ? ['request', 'quest']
+      ? ['request', 'review', 'quest']
       : boardType === 'quest'
       ? ['quest', 'task', 'log']
       : boardType === 'post'
@@ -170,6 +170,17 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
               return { value: opt.value, label: opt.label };
             })}
           />
+          {(boardId || selectedBoard) === 'quest-board' && (
+            <label className="inline-flex items-center mt-2 space-x-2">
+              <input
+                type="checkbox"
+                checked={helpRequest}
+                onChange={(e) => setHelpRequest(e.target.checked)}
+                className="form-checkbox"
+              />
+              <span>Ask for help</span>
+            </label>
+          )}
         </FormSection>
         <CreateQuest
           onSave={(q) => onSave?.(q as any)}
@@ -245,6 +256,18 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
               required
             />
           </>
+        )}
+
+        {(boardId || selectedBoard) === 'quest-board' && (
+          <label className="inline-flex items-center mt-2 space-x-2">
+            <input
+              type="checkbox"
+              checked={helpRequest}
+              onChange={(e) => setHelpRequest(e.target.checked)}
+              className="form-checkbox"
+            />
+            <span>Ask for help</span>
+          </label>
         )}
       </FormSection>
 
