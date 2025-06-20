@@ -31,6 +31,10 @@ The class `bg-accent` maps to the `accent` token defined above. The same applies
 
 Tokens are also exposed as CSS custom properties in `src/index.css`. Use them when writing custom styles or when Tailwind utility classes are not flexible enough.
 
+Each palette token is mirrored with a `--color-<token>` variable. For example,
+`--color-accent` and `--color-surface` provide the accent and surface colors used
+for buttons and card backgrounds.
+
 ```css
 .card {
   background-color: var(--bg-soft);
