@@ -97,15 +97,17 @@ const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
   const items = board.enrichedItems || [];
 
   return (
-    <div
-      ref={containerRef}
-      className="space-y-2 overflow-y-auto max-h-[80vh] border rounded-lg p-2"
-    >
-      {items.map((item) => (
-        <PostListItem key={item.id} post={item} />
-      ))}
-      {loading && <Spinner />}
-    </div>
+    <Board
+      boardId={boardId}
+      board={board}
+      layout="list"
+      compact
+      hideControls
+      onScrollEnd={loadMore}
+      loading={loading}
+      user={user}
+      headerOnly
+    />
   );
 };
 
