@@ -24,7 +24,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const CreatePost = require('../src/components/post/CreatePost').default;
+import CreatePost from '../src/components/post/CreatePost';
 
 describe('CreatePost board type filtering', () => {
   it('limits post type options for quest board', () => {

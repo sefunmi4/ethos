@@ -110,7 +110,9 @@ const ActiveQuestBoard: React.FC = () => {
             <div
               key={q.id}
               className={`snap-center flex-shrink-0 transition-all ${
-                idx === index ? 'w-full sm:w-[640px]' : 'w-64 sm:w-[300px] opacity-80'
+                idx === index
+                  ? 'w-[80%] sm:w-[640px]'
+                  : 'w-64 sm:w-[300px] opacity-80'
               }`}
             >
               <div className="w-full">

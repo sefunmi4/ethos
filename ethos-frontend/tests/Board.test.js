@@ -1,7 +1,7 @@
-const React = require('react');
-const { render, screen, waitFor } = require('@testing-library/react');
-const { BrowserRouter } = require('react-router-dom');
-const Board = require('../src/components/board/Board').default;
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import Board from '../src/components/board/Board';
 
 jest.mock('../src/api/board', () => ({
   __esModule: true,
@@ -29,7 +29,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const { fetchBoard, fetchBoardItems } = require('../src/api/board');
+import { fetchBoard, fetchBoardItems } from '../src/api/board';
 
   describe('Board layout logic', () => {
     it('falls back to grid when posts from other quests exist', async () => {
