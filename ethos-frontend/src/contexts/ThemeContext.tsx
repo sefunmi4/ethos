@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Theme, getSystemTheme } from './ThemeHelpers';
+import { getSystemTheme } from './ThemeHelpers';
+import type { Theme } from './ThemeHelpers';
 
 interface ThemeContextType {
   theme: Theme;
