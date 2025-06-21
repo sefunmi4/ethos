@@ -20,7 +20,9 @@
     "content": "you can reply which is standard",
     "visibility": "public",
     "timestamp": "2025-06-12T15:58:58.605Z",
-    "tags": [],
+    "tags": [
+      "task"
+    ],
     "collaborators": [],
     "replyTo": "c882ad20-74f4-4f19-9484-81818ccd5915",
     "repostedFrom": null,
@@ -34,7 +36,9 @@
     "content": "I want to put on a battle of the bands.\nAny one down to help out and collaborate?",
     "visibility": "public",
     "timestamp": "2025-06-12T15:59:47.676Z",
-    "tags": [],
+    "tags": [
+      "issue"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
@@ -58,7 +62,9 @@
     "content": "Make poster design's:\n\n- [x] 1. Instagram poster - IN PROGRESS\n- [ ] 2. Website event poster\n  - [ ] Pre event poster - Free \n   - [ ] Simplest approach would be to have a vendor viewing and pre signing , listen party  or get to meet the judges if they are famous \n  - [ ] Main event poster - Early Admission, Special Deals, & General admission\n    - [ ] 4 - 8 bands tournament style \n  - [ ] Afterparty poster - Early bird, General entry\n    - [ ] closed of venue or spefic club partmenad with to pleay crataors music or have a photographer ready, possible singing\n  - [ ] Get Updates pages\n    - [ ] email subscriptions to stay up to date\n  - [ ] Get Tickets pages\n    - [ ] Posh and architecture of homosapien's \n\n",
     "visibility": "public",
     "timestamp": "2025-06-12T16:08:03.282Z",
-    "tags": [],
+    "tags": [
+      "task"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
@@ -84,7 +90,9 @@
     "content": "Post and quest I make aren't showing up on my profile page",
     "visibility": "public",
     "timestamp": "2025-06-12T16:11:15.473Z",
-    "tags": [],
+    "tags": [
+      "issue"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,

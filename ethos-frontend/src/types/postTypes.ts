@@ -178,6 +178,9 @@ export type PostTag =
   | 'release'
   | 'repost'
   | 'quest'
+  | 'task'
+  | 'issue'
+  | 'review'
   | string;
 
 

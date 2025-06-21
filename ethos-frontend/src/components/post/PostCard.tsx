@@ -468,6 +468,18 @@ const PostCard: React.FC<PostCardProps> = ({
           </div>
         )}
         <MediaPreview media={post.mediaPreviews} />
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {post.tags.map(tag => (
+              <span
+                key={tag}
+                className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-700 dark:text-gray-200"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {renderCommitDiff()}
