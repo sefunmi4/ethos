@@ -41,6 +41,8 @@ interface PostCardProps {
   replyOverride?: { label: string; onClick: () => void };
   /** Render only the post header and reaction controls */
   headerOnly?: boolean;
+  /** Show replies immediately when rendered */
+  initialShowReplies?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -53,10 +55,11 @@ const PostCard: React.FC<PostCardProps> = ({
   showStatusControl = true,
   replyOverride,
   headerOnly = false,
+  initialShowReplies = false,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
-  const [showReplies, setShowReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(initialShowReplies);
   const [repliesLoaded, setRepliesLoaded] = useState(false);
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [replyError, setReplyError] = useState('');
@@ -120,6 +123,24 @@ const PostCard: React.FC<PostCardProps> = ({
         .catch(() => {});
     }
   }, [post.id, post.replyTo]);
+
+  useEffect(() => {
+    if (initialShowReplies && !repliesLoaded) {
+      setShowReplies(true);
+      setLoadingReplies(true);
+      setReplyError('');
+      fetchRepliesByPostId(post.id)
+        .then((res) => {
+          setReplies(res || []);
+          setRepliesLoaded(true);
+        })
+        .catch((err) => {
+          console.error(`[PostCard] Load replies failed:`, err);
+          setReplyError('Could not load replies.');
+        })
+        .finally(() => setLoadingReplies(false));
+    }
+  }, [initialShowReplies, post.id, repliesLoaded]);
 
   useEffect(() => {
     const qid = questId || post.questId;
