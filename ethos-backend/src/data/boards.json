@@ -54,8 +54,9 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
-      "91544b2a-a2c0-408f-b21b-15845869a23b"
+      "2c3512f0-c26a-4655-b051-e76e319a9d35",
+      "91544b2a-a2c0-408f-b21b-15845869a23b",
+      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -245,6 +246,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "2c3512f0-c26a-4655-b051-e76e319a9d35",
       "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
     ],
     "filters": {},
@@ -252,5 +254,20 @@
     "defaultFor": null,
     "createdAt": "2025-06-21T03:49:15.231Z",
     "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732"
+  },
+  {
+    "id": "map-2c3512f0-c26a-4655-b051-e76e319a9d35",
+    "title": "Test Quest Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "7332829d-d875-4b92-92cf-f0011c63004d"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T05:14:54.334Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "2c3512f0-c26a-4655-b051-e76e319a9d35"
   }
 ]

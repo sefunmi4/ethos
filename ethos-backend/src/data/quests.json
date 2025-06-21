@@ -57,5 +57,22 @@
     "headPostId": "6b8a599d-078e-4bd4-bb15-b0b7608ad7ff",
     "taskGraph": [],
     "helpRequest": true
+  },
+  {
+    "id": "2c3512f0-c26a-4655-b051-e76e319a9d35",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "title": "Test Quest",
+    "description": "",
+    "displayOnBoard": true,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0,
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "7332829d-d875-4b92-92cf-f0011c63004d",
+    "taskGraph": [],
+    "helpRequest": false
   }
 ]

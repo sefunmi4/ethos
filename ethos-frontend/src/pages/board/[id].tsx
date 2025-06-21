@@ -31,6 +31,7 @@ const BoardPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [tab, setTab] = useState<'board' | 'activity'>('board');
 
   const loadQuest = useCallback(async (questId: string) => {
     try {
