@@ -116,6 +116,7 @@ router.post(
   (req: AuthenticatedRequest, res: Response): void => {
     const {
       type = 'free_speech',
+      title = '',
       content = '',
       details = '',
       visibility = 'public',
@@ -157,6 +158,7 @@ router.post(
       id: uuidv4(),
       authorId: req.user!.id,
       type,
+      title: type === 'task' ? content : title || makeQuestNodeTitle(content),
       content,
       details,
       visibility,
@@ -228,6 +230,12 @@ router.patch(
   const originalType = post.type;
 
   Object.assign(post, req.body);
+
+  if (post.type === 'task') {
+    post.title = post.content;
+  } else if (post.type !== 'free_speech' && (!post.title || post.title.trim() === '')) {
+    post.title = makeQuestNodeTitle(post.content);
+  }
 
   if (
     post.questId &&

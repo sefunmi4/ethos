@@ -7,6 +7,7 @@ import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 import RecentActivityBoard from '../components/feed/RecentActivityBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
+import { BOARD_PREVIEW_LIMIT } from '../constants/pagination';
 import { Spinner } from '../components/ui';
 import { getRenderableBoardItems } from '../utils/boardUtils';
 
@@ -18,7 +19,10 @@ const HomePage: React.FC = () => {
   const [postType, setPostType] = useState('');
 
   const questBoard = boards['quest-board'];
-  const showSeeAll = (questBoard?.enrichedItems?.length || 0) > 6;
+  const timelineBoard = boards['timeline-board'];
+  const showQuestSeeAll = (questBoard?.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
+  const showTimelineSeeAll =
+    (timelineBoard?.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
   const postTypes = useMemo(() => {
     if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
@@ -61,7 +65,7 @@ const HomePage: React.FC = () => {
           hideControls
           filter={postType ? { postType } : {}}
         />
-        {showSeeAll && (
+        {showQuestSeeAll && (
           <div className="text-right">
             <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
               → See all
@@ -73,11 +77,13 @@ const HomePage: React.FC = () => {
       <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
         <RecentActivityBoard />
-        <div className="text-right">
-          <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
-            → See all
-          </Link>
-        </div>
+        {showTimelineSeeAll && (
+          <div className="text-right">
+            <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
+              → See all
+            </Link>
+          </div>
+        )}
       </section>
 
     </main>

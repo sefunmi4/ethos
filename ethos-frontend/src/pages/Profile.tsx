@@ -80,7 +80,7 @@ const ProfilePage: React.FC = () => {
               <Board
                 boardId="my-posts"
                 board={userPostBoard}
-                layout="grid"
+                layout="list"
                 user={castUser}
                 showCreate
                 hideControls

@@ -50,6 +50,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
+  const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [details, setDetails] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
@@ -68,7 +69,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       : boardType === 'quest'
       ? ['quest', 'task', 'log']
       : boardType === 'post'
-      ? ['free_speech', 'request', 'commit', 'issue']
+      ? ['quest', 'free_speech', 'request', 'review']
       : POST_TYPES.map((p) => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
@@ -101,6 +102,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
       const payload: Partial<Post> = {
         type,
+        title: type === 'task' ? content : title || undefined,
         content,
         ...(type === 'task' && details ? { details } : {}),
         visibility: 'public',
@@ -143,6 +145,18 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         const myItems = [newPost.id, ...(boards['my-posts'].items || [])];
         updateBoard('my-posts', { items: myItems }).catch((err) =>
           console.error('[CreatePost] Failed to update my-posts board:', err)
+        );
+      }
+
+      // Ensure the timeline board reflects new posts immediately
+      if (boards?.['timeline-board']) {
+        appendToBoard('timeline-board', newPost);
+        const timelineItems = [
+          newPost.id,
+          ...(boards['timeline-board'].items || []),
+        ];
+        updateBoard('timeline-board', { items: timelineItems }).catch((err) =>
+          console.error('[CreatePost] Failed to update timeline board:', err)
         );
       }
       onSave?.(newPost);

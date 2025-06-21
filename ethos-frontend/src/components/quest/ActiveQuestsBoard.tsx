@@ -6,6 +6,7 @@ import { fetchPostsByQuestId, fetchRepliesByPostId } from '../../api/post';
 import Board from '../board/Board';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
+import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
 
@@ -80,13 +81,17 @@ const ActiveQuestsBoard: React.FC = () => {
   if (loading) return <Spinner />;
   if (!board) return null;
 
+  const showSeeAll = (board.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
+
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
-        <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-          → See all
-        </Link>
+        {showSeeAll && (
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        )}
       </div>
       <Board board={board} layout="grid" hideControls compact />
     </div>
