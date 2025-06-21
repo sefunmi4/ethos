@@ -45,7 +45,12 @@ router.get(
     let result: (BoardData | EnrichedBoard)[] = boards.map(board => {
       if (userId && board.id === 'my-posts') {
         const filtered = posts
-          .filter(p => p.authorId === userId)
+          .filter(
+            p =>
+              p.authorId === userId &&
+              p.type !== 'meta_system' &&
+              p.systemGenerated !== true
+          )
           .map(p => p.id);
         return { ...board, items: filtered };
       }
@@ -192,7 +197,14 @@ router.get(
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
     } else if (userId && board.id === 'my-posts') {
-      boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
+      boardItems = posts
+        .filter(
+          p =>
+            p.authorId === userId &&
+            p.type !== 'meta_system' &&
+            p.systemGenerated !== true
+        )
+        .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
     }
@@ -237,7 +249,14 @@ router.get(
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
     } else if (userId && board.id === 'my-posts') {
-      boardItems = posts.filter(p => p.authorId === userId).map(p => p.id);
+      boardItems = posts
+        .filter(
+          p =>
+            p.authorId === userId &&
+            p.type !== 'meta_system' &&
+            p.systemGenerated !== true
+        )
+        .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
     }

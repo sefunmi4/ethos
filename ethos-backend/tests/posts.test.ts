@@ -404,4 +404,33 @@ describe('post routes', () => {
     expect(postsStore.write).toHaveBeenCalledWith([]);
     expect(res.body.questDeleted).toBeUndefined();
   });
+
+  it('forbids editing system posts by regular users', async () => {
+    const post = {
+      id: 's1',
+      authorId: 'u1',
+      type: 'meta_system',
+      content: 'sys',
+      visibility: 'private',
+      timestamp: '',
+      systemGenerated: true,
+    };
+    postsStore.read.mockReturnValue([post]);
+    const res = await request(app).patch('/posts/s1').send({ content: 'new' });
+    expect(res.status).toBe(403);
+  });
+
+  it('forbids fetching system posts by regular users', async () => {
+    const post = {
+      id: 's2',
+      authorId: 'u1',
+      type: 'meta_system',
+      content: 'sys',
+      visibility: 'private',
+      timestamp: '',
+    };
+    postsStore.read.mockReturnValue([post]);
+    const res = await request(app).get('/posts/s2');
+    expect(res.status).toBe(403);
+  });
 });
