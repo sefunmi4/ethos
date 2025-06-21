@@ -109,10 +109,8 @@ const ActiveQuestBoard: React.FC = () => {
           {quests.map((q, idx) => (
             <div
               key={q.id}
-              className={`snap-center flex-shrink-0 transition-all ${
-                idx === index
-                  ? 'w-[80%] sm:w-[640px]'
-                  : 'w-64 sm:w-[300px] opacity-80'
+              className={`snap-center flex-shrink-0 w-[80%] sm:w-[640px] transition-opacity ${
+                idx === index ? '' : 'opacity-80'
               }`}
             >
               <div className="w-full">
