@@ -19,6 +19,7 @@ import QuestNodeInspector from './QuestNodeInspector';
 import PostCard from '../post/PostCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
+import LogThreadPanel from './LogThreadPanel';
 
 
 /**
@@ -59,19 +60,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
   const navigate = useNavigate();
 
-  const handleJoinRequest = () => {
-    if (!user?.id) {
-      navigate(ROUTES.LOGIN);
-      return;
-    }
-    if (joinRequested) {
-      alert("Request already sent. Awaiting approval.");
-      return;
-    }
-    onJoinToggle?.(questData);
-    setJoinRequested(true);
-    alert("Join request sent.");
-  };
   const mapOptions = [
     { value: 'folder', label: 'Folder Map' },
     { value: 'graph', label: 'Task Graph' },
