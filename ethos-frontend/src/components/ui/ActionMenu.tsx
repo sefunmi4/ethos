@@ -26,6 +26,8 @@ interface ActionMenuProps {
   className?: string;
   onJoin?: () => void;
   joinLabel?: string;
+  /** Hide the delete option */
+  allowDelete?: boolean;
 }
 
 /**
@@ -47,6 +49,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   className = '',
   onJoin,
   joinLabel = 'Request to Join',
+  allowDelete = true,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
@@ -134,9 +137,14 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
               <button onClick={onEdit} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
                 <FaEdit className="inline mr-2" /> Edit
               </button>
-              <button onClick={handleDelete} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 focus:bg-red-100 dark:focus:bg-gray-700">
-                <FaTrash className="inline mr-2" /> Delete
-              </button>
+              {allowDelete && (
+                <button
+                  onClick={handleDelete}
+                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 focus:bg-red-100 dark:focus:bg-gray-700"
+                >
+                  <FaTrash className="inline mr-2" /> Delete
+                </button>
+              )}
               <button
                 onClick={handleArchive}
                 disabled={isArchiving}
