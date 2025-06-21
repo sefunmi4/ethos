@@ -56,6 +56,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const navigate = useNavigate();
   const { selectedBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
+  const isQuestRequest = selectedBoard === 'quest-board' && post.type === 'request';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,13 +152,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
         </button>
 
-        <button
-          className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
-          onClick={handleRepost}
-          disabled={loading || repostLoading || !user}
-        >
-          <FaRetweet /> {counts.repost || ''}
-        </button>
+        {!isQuestRequest && (
+          <button
+            className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
+            onClick={handleRepost}
+            disabled={loading || repostLoading || !user}
+          >
+            <FaRetweet /> {counts.repost || ''}
+          </button>
+        )}
 
         <button
           className={clsx(
@@ -189,6 +192,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             ? 'Cancel'
             : 'Reply'}
         </button>
+
+        {isQuestRequest && (
+          <button className="flex items-center gap-1">
+            {post.questId ? 'Join' : 'Apply'}
+          </button>
+        )}
 
         {(post.type === 'task' || post.type === 'commit') && (
           <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
