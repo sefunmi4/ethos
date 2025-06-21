@@ -451,5 +451,21 @@
     "questId": null,
     "helpRequest": true,
     "needsHelp": true
+  },
+  {
+    "id": "7332829d-d875-4b92-92cf-f0011c63004d",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "log",
+    "content": "Test Quest",
+    "visibility": "public",
+    "timestamp": "2025-06-21T05:14:54.333Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "2c3512f0-c26a-4655-b051-e76e319a9d35",
+    "nodeId": "Q:testquest:L00",
+    "questNodeTitle": "Test Quest"
   }
 ]
