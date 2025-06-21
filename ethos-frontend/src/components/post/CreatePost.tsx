@@ -143,6 +143,18 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           console.error('[CreatePost] Failed to update my-posts board:', err)
         );
       }
+
+      // Ensure the timeline board reflects new posts immediately
+      if (boards?.['timeline-board']) {
+        appendToBoard('timeline-board', newPost);
+        const timelineItems = [
+          newPost.id,
+          ...(boards['timeline-board'].items || []),
+        ];
+        updateBoard('timeline-board', { items: timelineItems }).catch((err) =>
+          console.error('[CreatePost] Failed to update timeline board:', err)
+        );
+      }
       onSave?.(newPost);
     } catch (err) {
       console.error('[CreatePost] Error creating post:', err);
