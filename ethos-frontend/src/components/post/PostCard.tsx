@@ -51,6 +51,8 @@ interface PostCardProps {
   className?: string;
   /** Expand replies when first rendered */
   initialShowReplies?: boolean;
+  /** Show detailed view including reply chain */
+  showDetails?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -67,6 +69,7 @@ const PostCard: React.FC<PostCardProps> = ({
   depth = 0,
   className = '',
   initialShowReplies = false,
+  showDetails = false,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -244,8 +247,16 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   const renderLinkSummary = () => {
-    if (!post.linkedItems || post.linkedItems.length === 0) return null;
-    return <LinkViewer items={post.linkedItems} />;
+    if (!showDetails && (!post.linkedItems || post.linkedItems.length === 0)) {
+      return null;
+    }
+    return (
+      <LinkViewer
+        items={post.linkedItems || []}
+        post={post}
+        showReplyChain={showDetails}
+      />
+    );
   };
 
   const renderCommitDiff = () => {
