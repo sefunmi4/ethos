@@ -1,2 +1,28 @@
 [
+  {
+    "id": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
+    "username": "mighty_wizard_2133",
+    "email": "testerbot1@ethos.com",
+    "password": "$2b$10$fP92wP9yGbNfC7jRQdoizuSan932b4bT9O3Z0wLtOssmeTPg9T.DG",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-06-21T15:58:00.808Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  }
 ]

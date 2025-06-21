@@ -18,6 +18,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "7fd444ac-2d34-476d-b3eb-3bbe246a752d",
+      "f4430e32-96ce-4474-a988-47b6fc5bdded"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -30,8 +32,7 @@
     "description": "Personal quests board.",
     "boardType": "quest",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
@@ -43,8 +44,7 @@
     "description": "Highlighted quest",
     "boardType": "quest",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -57,8 +57,7 @@
     "description": "Posts seeking help",
     "boardType": "post",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "featured": true,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -71,8 +70,7 @@
     "description": "Recent posts and quests",
     "boardType": "post",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
