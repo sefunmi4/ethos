@@ -97,7 +97,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     description = '',
     tags = [],
     fromPostId = '',
-    headType = 'log',
+    headType = 'task',
     helpRequest = false,
   } = req.body;
 
