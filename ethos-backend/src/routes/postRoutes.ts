@@ -25,25 +25,65 @@ router.get('/', authOptional, (_req: Request, res: Response): void => {
   res.json(posts.map((p) => enrichPost(p, { users, currentUserId: (_req as any).user?.id || null })));
 });
 
-// GET recent posts (optionally excluding a user)
-router.get('/recent', authOptional, (req: Request<{}, any, any, { userId?: string; hops?: string }>, res: Response): void => {
-  const { userId } = req.query;
-  const posts = postsStore.read();
-  const users = usersStore.read();
-  const recent = posts
-    .filter((p) =>
-      p.visibility === 'public' ||
-      p.visibility === 'request_board' ||
-      p.needsHelp === true
-    )
-    .filter(p => p.type !== 'meta_system' && p.systemGenerated !== true)
-    .filter((p) => (userId ? p.authorId !== userId : true))
-    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-    .slice(0, 20)
-    .map((p) => enrichPost(p, { users, currentUserId: userId || null }));
+// GET recent posts. If userId is provided, return posts related to that user.
+router.get(
+  '/recent',
+  authOptional,
+  (
+    req: Request<{}, any, any, { userId?: string; hops?: string }>,
+    res: Response
+  ): void => {
+    const { userId } = req.query;
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+    const users = usersStore.read();
 
-  res.json(recent);
-});
+    let filtered: DBPost[] = [];
+
+    if (userId) {
+      // Posts authored by the user
+      const authored = posts.filter(p => p.authorId === userId);
+
+      // Posts in quests the user authored or collaborates on
+      const relatedQuestIds = quests
+        .filter(
+          q =>
+            q.authorId === userId ||
+            (q.collaborators || []).some(c => c.userId === userId)
+        )
+        .map(q => q.id);
+      const questPosts = posts.filter(
+        p => p.questId && relatedQuestIds.includes(p.questId)
+      );
+
+      // Posts linking to any post by the user
+      const userPostIds = new Set(authored.map(p => p.id));
+      const linked = posts.filter(p =>
+        (p.linkedItems || []).some(
+          li => li.itemType === 'post' && userPostIds.has(li.itemId)
+        )
+      );
+
+      filtered = [...authored, ...questPosts, ...linked];
+    } else {
+      // Public recent posts across the site
+      filtered = posts.filter(
+        p =>
+          p.visibility === 'public' ||
+          p.visibility === 'request_board' ||
+          p.needsHelp === true
+      );
+    }
+
+    const recent = filtered
+      .filter(p => p.type !== 'meta_system' && p.systemGenerated !== true)
+      .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+      .slice(0, 20)
+      .map(p => enrichPost(p, { users, currentUserId: userId || null }));
+
+    res.json(recent);
+  }
+);
 
 //
 // ✅ GET a single post by ID
