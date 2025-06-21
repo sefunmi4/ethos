@@ -151,6 +151,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
   const summaryTags = buildSummaryTags(post, questTitle, questId);
+  const showAuthor = !summaryTags.some(t => t.type === 'log' || t.type === 'free_speech');
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -351,19 +352,21 @@ const PostCard: React.FC<PostCardProps> = ({
             ))}
             <PostTypeBadge type={post.type} />
             {post.status && <StatusBadge status={post.status} />}
-            <button
-              type="button"
-              onClick={() =>
-                navigate(
-                  post.authorId === user?.id
-                    ? ROUTES.PROFILE
-                    : ROUTES.PUBLIC_PROFILE(post.authorId)
-                )
-              }
-              className="text-accent underline"
-            >
-              @{post.author?.username || post.authorId}
-            </button>
+            {showAuthor && (
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    post.authorId === user?.id
+                      ? ROUTES.PROFILE
+                      : ROUTES.PUBLIC_PROFILE(post.authorId)
+                  )
+                }
+                className="text-accent underline"
+              >
+                @{post.author?.username || post.authorId}
+              </button>
+            )}
             <span>{timestamp}</span>
           </div>
         </div>
@@ -412,19 +415,21 @@ const PostCard: React.FC<PostCardProps> = ({
               />
             </div>
           )}
-          <button
-            type="button"
-            onClick={() =>
-              navigate(
-                post.authorId === user?.id
-                  ? ROUTES.PROFILE
-                  : ROUTES.PUBLIC_PROFILE(post.authorId)
-              )
-            }
-            className="text-accent underline"
-          >
-            @{post.author?.username || post.authorId}
-          </button>
+          {showAuthor && (
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  post.authorId === user?.id
+                    ? ROUTES.PROFILE
+                    : ROUTES.PUBLIC_PROFILE(post.authorId)
+                )
+              }
+              className="text-accent underline"
+            >
+              @{post.author?.username || post.authorId}
+            </button>
+          )}
           <span>{timestamp}</span>
         </div>
         <ActionMenu
