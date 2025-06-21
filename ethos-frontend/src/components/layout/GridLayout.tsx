@@ -92,6 +92,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   onDelete,
   onScrollEnd,
   loadingMore = false,
+  initialExpanded = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
