@@ -84,7 +84,8 @@ const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
     <Board
       boardId={boardId}
       board={board}
-      layout="grid"
+      layout="list"
+      compact
       hideControls
       onScrollEnd={loadMore}
       loading={loading}
