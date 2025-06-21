@@ -14,25 +14,25 @@
   {
     "questId": "41f1e562-2389-4717-a9c4-15abb17ded27",
     "path": "/api/quests/41f1e562-2389-4717-a9c4-15abb17ded27",
-    "count": 8,
-    "lastOccurred": "2025-06-21T01:00:17.644Z"
+    "count": 18,
+    "lastOccurred": "2025-06-21T01:32:14.540Z"
   },
   {
     "questId": "8dcab4d0-207c-4bfe-b84f-155688f46be0",
     "path": "/api/quests/8dcab4d0-207c-4bfe-b84f-155688f46be0",
-    "count": 8,
-    "lastOccurred": "2025-06-21T01:00:17.659Z"
+    "count": 18,
+    "lastOccurred": "2025-06-21T01:32:14.554Z"
   },
   {
     "questId": "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
     "path": "/api/quests/8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
-    "count": 8,
-    "lastOccurred": "2025-06-21T01:00:17.656Z"
+    "count": 18,
+    "lastOccurred": "2025-06-21T01:32:14.552Z"
   },
   {
     "questId": "d78fd6e3-3357-4009-a15b-dfa47022840c",
     "path": "/api/quests/d78fd6e3-3357-4009-a15b-dfa47022840c",
-    "count": 8,
-    "lastOccurred": "2025-06-21T01:00:17.662Z"
+    "count": 18,
+    "lastOccurred": "2025-06-21T01:32:14.556Z"
   }
 ]
