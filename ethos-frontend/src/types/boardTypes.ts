@@ -61,6 +61,7 @@ export type BoardItem = RenderableItem | Post | Quest | Board ;
 
 export type BoardLayout =
   | 'grid'
+  | 'list'
   | 'horizontal'
   | 'kanban'
   | 'graph'
