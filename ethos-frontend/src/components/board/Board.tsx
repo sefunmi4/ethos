@@ -17,7 +17,7 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import { Button, Input, Select, Spinner } from '../ui';
 
 import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
-import type { Post } from '../../types/postTypes';
+import type { Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 const Board: React.FC<BoardProps> = ({
@@ -391,6 +391,10 @@ const Board: React.FC<BoardProps> = ({
               onCancel={() => setShowCreateForm(false)}
               boardId={board.id}
               currentView={activeView}
+              initialType={
+                (localFilter.postType ||
+                  (board.id === 'quest-board' ? 'request' : 'free_speech')) as PostType
+              }
             />
           )}
         </div>

@@ -10,16 +10,18 @@ import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
+const QUEST_BOARD_TYPES = ['request', 'review', 'issue', 'task'];
 const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>
 ) => {
   const ids = posts
-    .filter(
-      (p) =>
-        p.helpRequest === true ||
-        (p.type === 'request' &&
-          (p.visibility === 'public' || p.visibility === 'request_board'))
-    )
+    .filter((p) => {
+      if (!QUEST_BOARD_TYPES.includes(p.type)) return false;
+      if (p.type === 'request') {
+        return p.visibility === 'public' || p.visibility === 'request_board';
+      }
+      return p.helpRequest === true;
+    })
     .map((p) => p.id);
   return ids;
 };
