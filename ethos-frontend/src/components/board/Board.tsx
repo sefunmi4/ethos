@@ -11,6 +11,7 @@ import CreatePost from '../post/CreatePost';
 import CreateQuest from '../quest/CreateQuest';
 
 import GridLayout from '../layout/GridLayout';
+import ListLayout from '../layout/ListLayout';
 import GraphLayout from '../layout/GraphLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
 
@@ -253,6 +254,7 @@ const Board: React.FC<BoardProps> = ({
 
   const Layout = {
     grid: GridLayout,
+    list: ListLayout,
     horizontal: GridLayout,
     kanban: GridLayout,
     graph: GraphLayout,
@@ -345,6 +347,7 @@ const Board: React.FC<BoardProps> = ({
                 onChange={(e) => setViewMode(e.target.value as BoardLayout)}
                 options={[
                   { value: 'grid', label: 'Grid' },
+                  { value: 'list', label: 'List' },
                   { value: 'horizontal', label: 'Horizontal' },
                   { value: 'kanban', label: 'Kanban' },
                   ...(graphEligible
@@ -441,7 +444,7 @@ const Board: React.FC<BoardProps> = ({
               ? { edges: quest?.taskGraph }
               : {})}
           {...(resolvedStructure === 'graph-condensed' ? { condensed: true } : {})}
-          {...(['grid', 'horizontal', 'kanban'].includes(resolvedStructure)
+          {...(['grid', 'list', 'horizontal', 'kanban'].includes(resolvedStructure)
             ? { layout: resolvedStructure === 'grid' ? gridLayout : resolvedStructure }
             : {})}
         />

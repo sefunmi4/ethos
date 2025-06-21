@@ -9,6 +9,7 @@ export interface FilterState {
   postType: string;
   role: string;
   sortBy: string;
+  view: 'grid' | 'list';
 }
 
 interface BoardSearchFilterProps {
@@ -44,6 +45,11 @@ const SORT_OPTIONS: option[] = [
   { value: 'trending', label: 'Trending' },
 ];
 
+const VIEW_OPTIONS: option[] = [
+  { value: 'grid', label: 'Grid' },
+  { value: 'list', label: 'List' },
+];
+
 const DEFAULT_FILTERS: FilterState = {
   search: '',
   tags: [],
@@ -51,6 +57,7 @@ const DEFAULT_FILTERS: FilterState = {
   postType: '',
   role: '',
   sortBy: 'recent',
+  view: 'grid',
 };
 
 const STORAGE_KEY = 'boardFilters';
@@ -151,6 +158,11 @@ const BoardSearchFilter: React.FC<BoardSearchFilterProps> = ({
             value={filters.sortBy}
             onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
             options={SORT_OPTIONS}
+          />
+          <Select
+            value={filters.view}
+            onChange={(e) => setFilters({ ...filters, view: e.target.value as 'grid' | 'list' })}
+            options={VIEW_OPTIONS}
           />
         </div>
       )}
