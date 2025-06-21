@@ -39,6 +39,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
 }));
 
 jest.mock('react-router-dom', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const actual = jest.requireActual('react-router-dom');
   return {
     __esModule: true,

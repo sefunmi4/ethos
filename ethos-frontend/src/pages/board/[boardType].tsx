@@ -82,10 +82,10 @@ const BoardTypePage: React.FC = () => {
         }
       >
         {visible.map(it =>
-          !compact && 'headPostId' in (it as any) ? (
-            <QuestSummaryCard key={(it as any).id} quest={it as Quest} />
+          !compact && (it as Quest).headPostId ? (
+            <QuestSummaryCard key={(it as Quest).id} quest={it as Quest} />
           ) : (
-            <ContributionCard key={(it as any).id} contribution={it as any} compact={compact} />
+            <ContributionCard key={(it as Post).id} contribution={it as Post} compact={compact} />
           )
         )}
       </div>

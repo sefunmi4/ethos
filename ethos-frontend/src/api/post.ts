@@ -1,7 +1,7 @@
 // src/api/post.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import type { Post, ReactionType, Reaction } from '../types/postTypes';
+import type { Post, Reaction } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
 import type { Quest } from '../types/questTypes';
 

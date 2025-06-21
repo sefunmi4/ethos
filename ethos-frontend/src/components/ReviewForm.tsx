@@ -54,9 +54,10 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       setTags('');
       setFeedback('');
       onSubmitted?.(review);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[ReviewForm] Failed to submit review:', err);
-      const msg = err?.response?.data?.error || 'Failed to submit review.';
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+        'Failed to submit review.';
       setError(msg);
       alert(msg);
     } finally {

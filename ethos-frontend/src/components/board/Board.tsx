@@ -5,6 +5,7 @@ import { useSocketListener } from '../../hooks/useSocket';
 import { getDisplayTitle } from '../../utils/displayUtils';
 import { getRenderableBoardItems } from '../../utils/boardUtils';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 
 import EditBoard from './EditBoard';
 import CreatePost from '../post/CreatePost';
@@ -59,6 +60,7 @@ const Board: React.FC<BoardProps> = ({
     linkType: filter.linkType || '',
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setLocalFilter({
       itemType: filter.itemType || '',
@@ -114,6 +116,7 @@ const Board: React.FC<BoardProps> = ({
     } else {
       loadBoard();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId, boardProp, setSelectedBoard, userId]);
 
   useSocketListener('board:update', (payload: { boardId: string }) => {
@@ -232,7 +235,7 @@ const Board: React.FC<BoardProps> = ({
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
     if (board) {
-      appendToBoard(board.id, item as any);
+      appendToBoard(board.id, item as BoardItem);
     }
   };
 

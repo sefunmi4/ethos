@@ -15,7 +15,7 @@ import { useGraph } from '../hooks/useGraph';
 
 
 // Type guard to validate layout of user object
-const isValidAuthUser = (data: any): data is AuthUser => {
+const isValidAuthUser = (data: unknown): data is AuthUser => {
   return data && typeof data.id === 'string' && typeof data.email === 'string';
 };
 
@@ -110,9 +110,10 @@ const Login: React.FC = () => {
       } else {
         throw new Error('Invalid user response from fetchCurrentUser');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Auth failed:', err);
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error;
+      setError(msg || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

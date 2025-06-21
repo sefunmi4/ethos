@@ -4,6 +4,7 @@ import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
 import { fetchAllPosts } from '../../api/post';
 import type { LinkedItem, Post } from '../../types/postTypes';
+import type { Quest } from '../../types/questTypes';
 
 interface LinkControlsProps {
   value: LinkedItem[];
@@ -23,7 +24,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   currentPostId = null,
   itemTypes = ['quest'],
 }) => {
-  const [quests, setQuests] = useState<any[]>([]);
+  const [quests, setQuests] = useState<Quest[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -46,7 +47,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const promises: Promise<any>[] = [];
+      const promises: Promise<unknown>[] = [];
 
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
@@ -72,7 +73,9 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 
   const handleLinkSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const [type, id] = e.target.value.split(':');
-    const alreadyLinked = value.find((v) => v.itemId === id && v.itemType === (type as any));
+    const alreadyLinked = value.find(
+      v => v.itemId === id && v.itemType === (type as 'quest' | 'post')
+    );
     if (!alreadyLinked) {
       let header = '';
       if (type === 'post') {
@@ -119,7 +122,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     setCreating(false);
   };
 
-  const handleUpdate = (idx: number, key: keyof LinkedItem, val: any) => {
+  const handleUpdate = (idx: number, key: keyof LinkedItem, val: unknown) => {
     const updated = [...value];
     updated[idx] = { ...updated[idx], [key]: val };
     onChange(updated);
@@ -178,7 +181,18 @@ const LinkControls: React.FC<LinkControlsProps> = ({
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setPostTypeFilter(t as any)}
+                  onClick={() =>
+                    setPostTypeFilter(
+                      t as
+                        | 'all'
+                        | 'request'
+                        | 'task'
+                        | 'log'
+                        | 'commit'
+                        | 'issue'
+                        | 'meta_system'
+                    )
+                  }
                   className={`text-xs px-2 py-0.5 rounded ${
                     postTypeFilter === t
                       ? 'bg-indigo-600 text-white'

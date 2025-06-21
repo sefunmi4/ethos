@@ -55,7 +55,7 @@ describe('PostCard task_edge linking', () => {
     tags: [],
     collaborators: [],
     linkedItems: [{ itemId: 'q1', itemType: 'quest', linkType: 'task_edge' }]
-  } as any;
+  } as unknown as Post;
 
   it('calls linkPostToQuest and refreshes graph on save', async () => {
     render(

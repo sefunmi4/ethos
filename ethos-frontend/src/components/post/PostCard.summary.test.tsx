@@ -34,7 +34,7 @@ const post: Post = {
   tags: [],
   collaborators: [],
   linkedItems: [],
-} as any;
+} as unknown as Post;
 
 describe('PostCard summary tags', () => {
   it('renders summary tags with quest title and node id', () => {

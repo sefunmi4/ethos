@@ -5,12 +5,12 @@ import { io, Socket } from 'socket.io-client';
 // 🔌 Define supported socket events
 // ---------------------------
 type SocketEvents = {
-  'board:update': (data: any) => void;
+  'board:update': (data: unknown) => void;
   'user_connected': (payload: { userId: string }) => void;
   'auth:reset-page-visited': (payload: { token: string }) => void;
   'auth:password-reset-success': (payload: { userId: string }) => void;
   'navigation:404': (payload: { userId: string | null }) => void;
-  [event: string]: (...args: any[]) => void;
+  [event: string]: (...args: unknown[]) => void;
 };
 
 // ---------------------------
@@ -107,9 +107,9 @@ export const useSocketListener = <K extends keyof SocketEvents>(
 
     const eventName = event as string;
 
-    socket.on(eventName, handler as (...args: any[]) => void);
+    socket.on(eventName, handler as (...args: unknown[]) => void);
     return () => {
-      socket.off(eventName, handler as (...args: any[]) => void);
+      socket.off(eventName, handler as (...args: unknown[]) => void);
     };
   }, [event, handler, socket]);
 };

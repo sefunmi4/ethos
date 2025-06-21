@@ -91,9 +91,10 @@ const ResetPassword: React.FC = () => {
       } else {
         throw new Error('Unexpected response format');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[ResetPassword] Reset failed:', err);
-      setError(err.response?.data?.error || 'Failed to reset password.');
+      setError((err as { response?: { data?: { error?: string } } }).response?.data?.error ||
+        'Failed to reset password.');
     } finally {
       setLoading(false);
     }

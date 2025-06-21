@@ -17,7 +17,7 @@ import {
 } from '../api/git';
 
 
-function isQuest(obj: any): obj is Quest {
+function isQuest(obj: unknown): obj is Quest {
   return (
     obj &&
     typeof obj === 'object' &&
