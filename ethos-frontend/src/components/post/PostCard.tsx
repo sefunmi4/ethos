@@ -23,7 +23,8 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
-import { getPostSummary } from '../../utils/displayUtils';
+import { buildSummaryTags } from '../../utils/displayUtils';
+import SummaryTag from '../ui/SummaryTag';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -148,7 +149,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
-  const summaryText = getPostSummary(post, questTitle);
+  const summaryTags = buildSummaryTags(post, questTitle, questId);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -342,8 +343,12 @@ const PostCard: React.FC<PostCardProps> = ({
           className
         )}
       >
-        {summaryText && (
-          <div className="text-sm font-semibold text-secondary">{summaryText}</div>
+        {summaryTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 text-sm font-semibold text-secondary">
+            {summaryTags.map((tag, idx) => (
+              <SummaryTag key={idx} {...tag} />
+            ))}
+          </div>
         )}
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex items-center gap-2">
@@ -394,8 +399,12 @@ const PostCard: React.FC<PostCardProps> = ({
         className
       )}
     >
-      {summaryText && (
-        <div className="text-sm font-semibold text-secondary">{summaryText}</div>
+      {summaryTags.length > 0 && (
+        <div className="flex flex-wrap gap-1 text-sm font-semibold text-secondary">
+          {summaryTags.map((tag, idx) => (
+            <SummaryTag key={idx} {...tag} />
+          ))}
+        </div>
       )}
       <div className="flex justify-between text-sm text-secondary">
         <div className="flex items-center gap-2">

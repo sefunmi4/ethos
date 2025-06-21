@@ -36,13 +36,15 @@ const post: Post = {
   linkedItems: [],
 } as any;
 
-describe('PostCard summary text', () => {
-  it('renders summary using quest title and node id', () => {
+describe('PostCard summary tags', () => {
+  it('renders summary tags with quest title and node id', () => {
     render(
       <BrowserRouter>
         <PostCard post={post} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(screen.getByText('(Quest: Quest A) (Task: T1) (In Progress)')).toBeInTheDocument();
+    expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
+    expect(screen.getByText('Task: T1')).toBeInTheDocument();
+    expect(screen.getByText('In Progress')).toBeInTheDocument();
   });
 });
