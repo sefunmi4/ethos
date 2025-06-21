@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
@@ -21,6 +22,7 @@ import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
+import NestedReply from './NestedReply';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -41,6 +43,10 @@ interface PostCardProps {
   replyOverride?: { label: string; onClick: () => void };
   /** Render only the post header and reaction controls */
   headerOnly?: boolean;
+  /** Nesting depth for replies */
+  depth?: number;
+  /** Additional classes for outer wrapper */
+  className?: string;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -53,6 +59,8 @@ const PostCard: React.FC<PostCardProps> = ({
   showStatusControl = true,
   replyOverride,
   headerOnly = false,
+  depth = 0,
+  className = '',
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -270,7 +278,11 @@ const PostCard: React.FC<PostCardProps> = ({
     return (
       <div
         id={post.id}
-        className="relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose mx-auto"
+        className={clsx(
+          'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
+          depth === 0 ? 'mx-auto' : '',
+          className
+        )}
       >
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex items-center gap-2">
@@ -305,7 +317,11 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <div
       id={post.id}
-      className="relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose mx-auto"
+      className={clsx(
+        'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
+        depth === 0 ? 'mx-auto' : '',
+        className
+      )}
     >
       <div className="flex justify-between text-sm text-secondary">
         <div className="flex items-center gap-2">
@@ -620,7 +636,7 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       {replies.length > 0 && showReplies && (
-        <div className="mt-2 space-y-2 border-l-2 border-accent pl-4">
+        <div className="mt-2 space-y-2">
           {loadingReplies && (
             <div className="flex justify-center">
               <Spinner />
@@ -628,13 +644,13 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
           {replyError && <p className="text-xs text-error">{replyError}</p>}
           {replies.map((r) => (
-            <PostCard
+            <NestedReply
               key={r.id}
               post={r}
               user={user}
-              compact
               onUpdate={onUpdate}
               onDelete={onDelete}
+              depth={depth + 1}
             />
           ))}
         </div>
