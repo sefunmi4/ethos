@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { addPost } from '../../api/post';
-import { Button, TextArea, Select, Label, FormSection, Input } from '../ui';
+import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
 import CreateQuest from '../quest/CreateQuest';
@@ -237,31 +237,43 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           </>
         )}
 
+        {type !== 'task' && (
+          <>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required={type !== 'free_speech'}
+            />
+          </>
+        )}
+
         {type === 'task' ? (
           <>
             <Label htmlFor="content">Task Title</Label>
             <Input
               id="content"
               value={content}
-              onChange={e => setContent(e.target.value)}
+              onChange={(e) => setContent(e.target.value)}
               placeholder="Short task summary"
               required
             />
             <Label htmlFor="details">Details</Label>
-            <TextArea
+            <MarkdownEditor
               id="details"
               value={details}
-              onChange={e => setDetails(e.target.value)}
+              onChange={setDetails}
               placeholder="Additional information (optional)"
             />
           </>
         ) : (
           <>
-            <Label htmlFor="content">Content</Label>
-            <TextArea
+            <Label htmlFor="content">Description</Label>
+            <MarkdownEditor
               id="content"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
               placeholder={
                 replyTo
                   ? 'Reply to this post...'
@@ -269,7 +281,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
                   ? 'Add a comment to your repost...'
                   : 'Share your thoughts or progress...'
               }
-              required
             />
           </>
         )}
