@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
-import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 import RecentActivityBoard from '../components/feed/RecentActivityBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';

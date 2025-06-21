@@ -19,14 +19,12 @@ import { Spinner } from '../ui';
 
 type GridLayoutProps = {
   items: Post[];
-  questId: string;
   user?: User;
   layout?: 'vertical' | 'horizontal' | 'kanban' | 'paged';
   compact?: boolean;
   editable?: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  onScrollEnd?: () => void;
   loadingMore?: boolean;
   /** Expand replies for all posts */
   initialExpanded?: boolean;
@@ -83,14 +81,12 @@ const DroppableColumn: React.FC<{ id: string; children: React.ReactNode }> = ({ 
 
 const GridLayout: React.FC<GridLayoutProps> = ({
   items,
-  questId,
   user,
   layout = 'vertical',
   compact = false,
   editable = false,
   onEdit,
   onDelete,
-  onScrollEnd,
   loadingMore = false,
   initialExpanded = false,
 }) => {

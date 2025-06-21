@@ -29,9 +29,6 @@ interface ReactionControlsProps {
   post: Post;
   user?: User;
   onUpdate?: (data: any) => void;
-  replyCount?: number;
-  showReplies?: boolean;
-  onToggleReplies?: () => void;
   /** Override default reply behavior */
   replyOverride?: { label: string; onClick: () => void };
   /** Treat reply action as coming from the timeline board */
@@ -42,9 +39,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   post,
   user,
   onUpdate,
-  replyCount,
-  showReplies,
-  onToggleReplies,
   replyOverride,
   isTimeline,
 }) => {
