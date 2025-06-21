@@ -110,6 +110,12 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     [items.length]
   );
 
+  /** Context for board updates is needed in several layouts. Call it here so
+   *  hook order stays consistent regardless of early returns.
+   */
+  const { selectedBoard, updateBoardItem, removeItemFromBoard } =
+    useBoardContext();
+
   useEffect(() => {
     if (layout === 'horizontal') {
       scrollToIndex(index);
@@ -146,7 +152,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   }, {} as Record<string, Post[]>);
 
   /** 📌 Kanban Layout */
-  const { selectedBoard, updateBoardItem, removeItemFromBoard } = useBoardContext();
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;

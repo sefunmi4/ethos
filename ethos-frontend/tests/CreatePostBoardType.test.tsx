@@ -18,7 +18,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
     selectedBoard: 'b1',
     boards: {
       b1: { id: 'b1', title: 'Board', boardType: 'quest', layout: 'grid', items: [], createdAt: '' },
-      'request-board': { id: 'request-board', title: 'Request', boardType: 'post', layout: 'grid', items: [], createdAt: '' },
+      'quest-board': { id: 'quest-board', title: 'Quest', boardType: 'post', layout: 'grid', items: [], createdAt: '' },
     },
     appendToBoard: jest.fn(),
   }),
@@ -35,17 +35,17 @@ describe('CreatePost board type filtering', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Quest']);
+    expect(options).toEqual(['Quest', 'Quest Task', 'Quest Log']);
   });
 
-  it('limits post type options for request board', () => {
+  it('limits post type options for quest board', () => {
     render(
       <BrowserRouter>
-        <CreatePost onCancel={() => {}} boardId="request-board" />
+        <CreatePost onCancel={() => {}} boardId="quest-board" />
       </BrowserRouter>
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Request', 'Quest']);
+    expect(options).toEqual(['Request', 'Review', 'Quest']);
   });
 });

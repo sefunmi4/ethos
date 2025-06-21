@@ -11,9 +11,15 @@ const makeHeader = (content: string): string => {
 interface CompactNodeCardProps {
   post: Post;
   onClick?: () => void;
+  /** Whether to show the status dropdown for task posts */
+  showStatus?: boolean;
 }
 
-const CompactNodeCard: React.FC<CompactNodeCardProps> = ({ post, onClick }) => {
+const CompactNodeCard: React.FC<CompactNodeCardProps> = ({
+  post,
+  onClick,
+  showStatus = true,
+}) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   return (
     <div
@@ -21,7 +27,7 @@ const CompactNodeCard: React.FC<CompactNodeCardProps> = ({ post, onClick }) => {
       onClick={onClick}
     >
       <div className="font-semibold">{makeHeader(post.content || '')}</div>
-      {post.type === 'task' && (
+      {showStatus && post.type === 'task' && (
         <Select
           value={status}
           onChange={(e) => setStatus(e.target.value as QuestTaskStatus)}

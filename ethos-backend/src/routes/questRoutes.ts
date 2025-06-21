@@ -6,7 +6,7 @@ import { boardsStore, questsStore, postsStore, usersStore } from '../models/stor
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
-import type { Quest, LinkedItem } from '../types/api';
+import type { Quest, LinkedItem, Visibility } from '../types/api';
 import type { DBQuest, DBPost } from '../types/db';
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -24,6 +24,62 @@ interface AuthRequest<
 }
 
 const router = express.Router();
+
+// GET top 10 featured quests
+router.get('/featured', authOptional, (req: AuthRequest, res: Response) => {
+  const { userId } = req.query as { userId?: string };
+  const quests = questsStore.read();
+  const posts = postsStore.read();
+
+  const popularity = (q: DBQuest) =>
+    posts.filter((p) => p.questId === q.id).length + (q.linkedPosts?.length || 0);
+
+  const featured = quests
+    .filter(
+      (q) => q.visibility === 'public' && q.approvalStatus === 'approved'
+    )
+    .filter((q) => {
+      if (!userId) return true;
+      const involved =
+        q.authorId === userId ||
+        (q.collaborators || []).some((c) => c.userId === userId) ||
+        posts.some((p) => p.questId === q.id && p.authorId === userId);
+      return !involved;
+    })
+    .sort((a, b) => popularity(b) - popularity(a))
+    .slice(0, 10)
+    .map((q) => ({
+      ...q,
+      popularity: popularity(q),
+      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+    }));
+
+  res.json(featured);
+});
+
+// GET active quests (optionally excluding a user)
+router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
+  const { userId } = req.query as { userId?: string };
+  const quests = questsStore.read();
+  const posts = postsStore.read();
+
+  const active = quests
+    .filter((q) => q.status === 'active' && q.visibility === 'public')
+    .filter((q) => {
+      if (!userId) return true;
+      const involved =
+        q.authorId === userId ||
+        (q.collaborators || []).some((c) => c.userId === userId) ||
+        posts.some((p) => p.questId === q.id && p.authorId === userId);
+      return !involved;
+    })
+    .map((q) => ({
+      ...q,
+      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+    }));
+
+  res.json(active);
+});
 
 // GET all quests
 router.get('/', (req: Request, res: Response) => {
@@ -56,6 +112,10 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     authorId,
     title,
     description,
+    displayOnBoard: req.body.displayOnBoard ?? true,
+    visibility: 'public',
+    approvalStatus: 'approved',
+    flagCount: 0,
     tags,
     linkedPosts: fromPostId
       ? [{ itemId: fromPostId, itemType: 'post' } satisfies LinkedItem]
@@ -98,10 +158,11 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
           repoId: newQuest.gitRepo.repoId,
           repoUrl: newQuest.gitRepo.repoUrl,
           headCommitId: newQuest.gitRepo.headCommitId,
-          defaultBranch: newQuest.gitRepo.defaultBranch,
-        }
+        defaultBranch: newQuest.gitRepo.defaultBranch,
+      }
       : undefined,
     helpRequest,
+    displayOnBoard: newQuest.displayOnBoard,
   } as DBQuest;
   quests.push(dbQuest);
   questsStore.write(quests);
@@ -138,7 +199,7 @@ router.patch(
     res: Response
   ): void => {
     const { id } = req.params;
-    const { itemId, gitRepo, title, description, tags } = req.body;
+    const { itemId, gitRepo, title, description, tags, displayOnBoard } = req.body;
 
   const quests = questsStore.read();
   const quest = quests.find(q => q.id === id);
@@ -175,6 +236,7 @@ router.patch(
   if (title !== undefined) quest.title = title;
   if (description !== undefined) quest.description = description;
   if (tags !== undefined) quest.tags = tags;
+  if (displayOnBoard !== undefined) quest.displayOnBoard = displayOnBoard;
   if (gitRepo && typeof gitRepo.repoUrl === 'string') {
     quest.gitRepo = { ...(quest.gitRepo || { repoId: '' }), ...quest.gitRepo, repoUrl: gitRepo.repoUrl } as any;
   }
@@ -201,6 +263,44 @@ router.get(
     );
   }
 );
+
+// POST flag a quest for moderation
+router.post('/:id/flag', authMiddleware, (req: AuthRequest<{ id: string }>, res: Response) => {
+  const { id } = req.params;
+  const quests = questsStore.read();
+  const posts = postsStore.read();
+  const quest = quests.find(q => q.id === id);
+  if (!quest) {
+    logQuest404(id, req.originalUrl);
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
+
+  quest.flagCount = (quest.flagCount || 0) + 1;
+
+  if (quest.flagCount >= 3 && quest.approvalStatus === 'approved') {
+    quest.approvalStatus = 'flagged';
+    const reviewPost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'meta_system',
+      subtype: 'mod_review',
+      content: `Quest ${quest.id} flagged for review`,
+      visibility: 'hidden',
+      timestamp: new Date().toISOString(),
+      tags: ['mod_review'],
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [{ itemId: quest.id, itemType: 'quest' }],
+    };
+    posts.push(reviewPost);
+    postsStore.write(posts);
+  }
+
+  questsStore.write(quests);
+  res.json({ success: true, flags: quest.flagCount });
+});
 
 // GET task graph map for a quest
 router.get(
@@ -441,6 +541,36 @@ router.post(
     questsStore.write(quests);
     postsStore.write(posts);
 
+    res.json(quest);
+  }
+);
+
+// PATCH quest visibility or approval status by moderators
+router.patch(
+  '/:id/moderate',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }, any, { visibility?: Visibility; approvalStatus?: 'approved' | 'flagged' | 'banned' }>, res: Response) => {
+    const { id } = req.params;
+    const { visibility, approvalStatus } = req.body;
+    const quests = questsStore.read();
+    const users = usersStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    const user = users.find(u => u.id === req.user!.id);
+    if (!user || (user.role !== 'moderator' && user.role !== 'admin')) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    if (visibility) quest.visibility = visibility;
+    if (approvalStatus) quest.approvalStatus = approvalStatus as any;
+
+    questsStore.write(quests);
     res.json(quest);
   }
 );

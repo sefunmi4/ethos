@@ -13,7 +13,8 @@ import type {
   BoardType,
   ReactionSet,
   ReactionCountMap,
-  ReviewTargetType
+  ReviewTargetType,
+  ApprovalStatus
 } from './api';
 
 // types/db.ts
@@ -23,6 +24,8 @@ export interface DBPost {
   type: PostType;
   subtype?: string;
   content: string;
+  /** Optional extra details for task posts */
+  details?: string;
   visibility: Visibility;
   timestamp: string;
 
@@ -47,6 +50,9 @@ export interface DBPost {
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
 
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
+
   questId?: string | null;
   questNodeTitle?: string;
   nodeId?: string;
@@ -60,7 +66,13 @@ export interface DBQuest {
   authorId: string;
   title: string;
   description?: string;
+  visibility: Visibility;
+  approvalStatus: ApprovalStatus;
+  flagCount?: number;
   status: 'active' | 'completed' | 'archived';
+
+  /** Whether this quest should appear on boards */
+  displayOnBoard?: boolean;
 
   headPostId: string;
   linkedPosts: LinkedItem[];
@@ -74,6 +86,8 @@ export interface DBQuest {
   };
   createdAt?: string;
   tags?: string[];
+  /** When true this quest appears on the Quest Board */
+  displayOnBoard?: boolean;
   defaultBoardId?: string;
   taskGraph?: TaskEdge[];
 

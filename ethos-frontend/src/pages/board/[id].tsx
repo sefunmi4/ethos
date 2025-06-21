@@ -8,6 +8,7 @@ import { useSocket } from '../../hooks/useSocket';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
+import BoardSearchFilter from '../../components/board/BoardSearchFilter';
 import { Spinner } from '../../components/ui';
 import { fetchQuestById } from '../../api/quest';
 
@@ -27,6 +28,7 @@ const BoardPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   const loadQuest = useCallback(async (questId: string) => {
     try {
@@ -68,6 +70,11 @@ const BoardPage: React.FC = () => {
       } else {
         setQuest(null);
       }
+      const tagSet = new Set<string>();
+      (boardData.enrichedItems || []).forEach((it: any) => {
+        (it.tags || []).forEach((t: string) => tagSet.add(t));
+      });
+      setAvailableTags(Array.from(tagSet));
     }
   }, [boardData, setBoardMeta, loadQuest]);
 
@@ -112,26 +119,31 @@ const BoardPage: React.FC = () => {
 
   return (
     <main className="max-w-7xl mx-auto p-4 space-y-8 bg-soft dark:bg-soft-dark">
-      <div className="bg-soft dark:bg-soft-dark rounded-xl shadow-lg p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-primary dark:text-primary">{boardData.title}</h1>
-          {editable && (
-            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              Edit Board
-            </button>
-          )}
-        </div>
+      <div className="flex flex-col md:flex-row gap-6">
+        <BoardSearchFilter tags={availableTags} className="md:w-64" />
+        <div className="flex-1">
+          <div className="bg-soft dark:bg-soft-dark rounded-xl shadow-lg p-6 space-y-6">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold text-primary dark:text-primary">{boardData.title}</h1>
+              {editable && (
+                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  Edit Board
+                </button>
+              )}
+            </div>
 
-        <Board
-          boardId={id}
-          board={boardData}
-          layout={boardData.layout}
-          quest={quest || undefined}
-          editable={editable}
-          showCreate={editable}
-          onScrollEnd={loadMore}
-          loading={loadingMore}
-        />
+            <Board
+              boardId={id}
+              board={boardData}
+              layout={boardData.layout}
+              quest={quest || undefined}
+              editable={editable}
+              showCreate={editable}
+              onScrollEnd={loadMore}
+              loading={loadingMore}
+            />
+          </div>
+        </div>
       </div>
     </main>
   );

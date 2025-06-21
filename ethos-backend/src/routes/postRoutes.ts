@@ -25,6 +25,25 @@ router.get('/', authOptional, (_req: Request, res: Response): void => {
   res.json(posts.map((p) => enrichPost(p, { users, currentUserId: (_req as any).user?.id || null })));
 });
 
+// GET recent posts (optionally excluding a user)
+router.get('/recent', authOptional, (req: Request<{}, any, any, { userId?: string; hops?: string }>, res: Response): void => {
+  const { userId } = req.query;
+  const posts = postsStore.read();
+  const users = usersStore.read();
+  const recent = posts
+    .filter((p) =>
+      p.visibility === 'public' ||
+      p.visibility === 'request_board' ||
+      p.needsHelp === true
+    )
+    .filter((p) => (userId ? p.authorId !== userId : true))
+    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+    .slice(0, 20)
+    .map((p) => enrichPost(p, { users, currentUserId: userId || null }));
+
+  res.json(recent);
+});
+
 //
 // ✅ GET a single post by ID
 //
@@ -39,6 +58,7 @@ router.post(
     const {
       type = 'free_speech',
       content = '',
+      details = '',
       visibility = 'public',
       tags = [],
       questId = null,
@@ -48,6 +68,7 @@ router.post(
       status,
       boardId,
       helpRequest = false,
+      needsHelp = undefined,
     } = req.body;
 
     const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
@@ -57,9 +78,13 @@ router.post(
     const quest = questId ? quests.find(q => q.id === questId) : null;
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
-    if (boardId === 'request-board' &&
-        !(type === 'request' || (type === 'quest' && helpRequest))) {
-      res.status(400).json({ error: 'Only help requests allowed on this board' });
+    if (
+      boardId === 'quest-board' &&
+      !(type === 'request' || helpRequest === true)
+    ) {
+      res
+        .status(400)
+        .json({ error: 'Only help requests allowed on this board' });
       return;
     }
 
@@ -68,6 +93,7 @@ router.post(
       authorId: req.user!.id,
       type,
       content,
+      details,
       visibility,
       timestamp: new Date().toISOString(),
       tags,
@@ -78,6 +104,7 @@ router.post(
       questId,
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
+      needsHelp: type === 'request' ? needsHelp ?? true : undefined,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
     };
 
@@ -361,6 +388,7 @@ router.post(
       ],
       questId: task.questId || null,
       helpRequest: true,
+      needsHelp: true,
     };
 
     posts.push(requestPost);
@@ -415,10 +443,25 @@ router.delete(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
+    const quests = questsStore.read();
     const index = posts.findIndex((p) => p.id === req.params.id);
     if (index === -1) {
       res.status(404).json({ error: 'Post not found' });
       return;
+    }
+
+    const post = posts[index];
+    if (post.questId) {
+      const questIndex = quests.findIndex(
+        (q) => q.id === post.questId && q.headPostId === post.id
+      );
+      if (questIndex !== -1) {
+        // Deleting the head post deletes the entire quest instead
+        const [removedQuest] = quests.splice(questIndex, 1);
+        questsStore.write(quests);
+        res.json({ success: true, questDeleted: removedQuest.id });
+        return;
+      }
     }
 
     posts.splice(index, 1);

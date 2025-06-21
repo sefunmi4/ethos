@@ -36,6 +36,8 @@ interface PostCardProps {
   onDelete?: (id: string) => void;
   compact?: boolean;
   questId?: string;
+  /** Show status dropdown controls for task posts */
+  showStatusControl?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -45,6 +47,7 @@ const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   compact = false,
   questId,
+  showStatusControl = true,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -86,7 +89,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const handleRequestHelp = async () => {
     try {
       const reqPost = await requestHelpForTask(post.id);
-      appendToBoard?.('request-board', reqPost);
+      appendToBoard?.('quest-board', reqPost);
     } catch (err) {
       console.error('[PostCard] Failed to request help:', err);
     }
@@ -263,7 +266,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
-          {canEdit && post.type === 'task' && (
+          {canEdit && post.type === 'task' && showStatusControl && (
             <div className="ml-1 w-28">
               <Select
                 value={post.status || 'To Do'}
@@ -309,7 +312,32 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       <div className="text-sm text-primary">
-        {isLong ? (
+        {post.type === 'task' ? (
+          <>
+            <div className="font-semibold">{post.content}</div>
+            {post.details && (
+              isLong ? (
+                <>
+                  <MarkdownRenderer
+                    content={post.details.slice(0, PREVIEW_LIMIT) + '…'}
+                    onToggleTask={handleToggleTask}
+                  />
+                  <button
+                    onClick={() => navigate(ROUTES.POST(post.id))}
+                    className="text-accent underline text-xs ml-1"
+                  >
+                    See more
+                  </button>
+                </>
+              ) : (
+                <MarkdownRenderer
+                  content={post.details}
+                  onToggleTask={handleToggleTask}
+                />
+              )
+            )}
+          </>
+        ) : isLong ? (
           <>
             <MarkdownRenderer
               content={content.slice(0, PREVIEW_LIMIT) + '…'}

@@ -316,37 +316,91 @@ describe('post routes', () => {
     expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
   });
 
-  it('rejects non-help posts on request board', async () => {
+  it('rejects non-help posts on quest board', async () => {
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'free_speech', boardId: 'request-board' });
+      .send({ type: 'free_speech', boardId: 'quest-board' });
     expect(res.status).toBe(400);
   });
 
-  it('allows request post on request board', async () => {
+  it('allows request post on quest board', async () => {
     postsStore.read.mockReturnValue([]);
     postsStore.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'request', boardId: 'request-board' });
+      .send({ type: 'request', boardId: 'quest-board' });
     expect(res.status).toBe(201);
     const written = postsStore.write.mock.calls[0][0][0];
     expect(written.helpRequest).toBe(true);
   });
 
-  it('requires help flag for quest on request board', async () => {
+  it('requires help flag for quest on quest board', async () => {
     postsStore.read.mockReturnValue([]);
     let res = await request(app)
       .post('/posts')
-      .send({ type: 'quest', boardId: 'request-board' });
+      .send({ type: 'quest', boardId: 'quest-board' });
     expect(res.status).toBe(400);
 
     postsStore.write.mockClear();
     res = await request(app)
       .post('/posts')
-      .send({ type: 'quest', boardId: 'request-board', helpRequest: true });
+      .send({ type: 'quest', boardId: 'quest-board', helpRequest: true });
     expect(res.status).toBe(201);
     const writtenQuest = postsStore.write.mock.calls[0][0][0];
     expect(writtenQuest.helpRequest).toBe(true);
+  });
+
+  it('deleting a quest head post removes the quest instead', async () => {
+    const post = {
+      id: 'p1',
+      authorId: 'u1',
+      type: 'log',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+      questId: 'q1',
+    };
+    const quest = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: 'p1',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+
+    postsStore.read.mockReturnValue([post]);
+    questsStore.read.mockReturnValue([quest]);
+    questsStore.write.mockClear();
+
+    const res = await request(app).delete('/posts/p1');
+
+    expect(res.status).toBe(200);
+    expect(questsStore.write).toHaveBeenCalledWith([]);
+    expect(postsStore.write).not.toHaveBeenCalledWith([]); // post not removed
+    expect(res.body.questDeleted).toBe('q1');
+  });
+
+  it('deleting a normal post removes only the post', async () => {
+    const post = {
+      id: 'p1',
+      authorId: 'u1',
+      type: 'log',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+
+    postsStore.read.mockReturnValue([post]);
+    questsStore.read.mockReturnValue([]);
+    postsStore.write.mockClear();
+
+    const res = await request(app).delete('/posts/p1');
+
+    expect(res.status).toBe(200);
+    expect(postsStore.write).toHaveBeenCalledWith([]);
+    expect(res.body.questDeleted).toBeUndefined();
   });
 });

@@ -15,6 +15,8 @@ export interface Post {
   type: PostType;
   subtype?: string;
   content: string;
+  /** Optional extra details for task posts */
+  details?: string;
   visibility: Visibility;
   timestamp: string;
   createdAt?: string;
@@ -48,6 +50,9 @@ export interface Post {
 
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
+
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
 }
 
 /**

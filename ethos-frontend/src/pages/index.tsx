@@ -1,11 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
+import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
+import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
+const TimelineFeed = lazy(() => import('../components/feed/TimelineFeed'));
 import { getRenderableBoardItems } from '../utils/boardUtils';
 
 import type { User } from '../types/userTypes';
@@ -15,16 +18,16 @@ const HomePage: React.FC = () => {
   const { boards } = useBoardContext();
   const [postType, setPostType] = useState('');
 
-  const requestBoard = boards['request-board'];
+  const questBoard = boards['quest-board'];
   const postTypes = useMemo(() => {
-    if (!requestBoard?.enrichedItems) return [] as string[];
+    if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
-    getRenderableBoardItems(requestBoard.enrichedItems).forEach((it) => {
+    getRenderableBoardItems(questBoard.enrichedItems).forEach((it) => {
       if ('type' in it) types.add((it as any).type);
     });
     return Array.from(types);
-  }, [requestBoard?.enrichedItems]);
-  const showPostFilter = postTypes.length > 1 && (requestBoard?.enrichedItems?.length || 0) > 0;
+  }, [questBoard?.enrichedItems]);
+  const showPostFilter = postTypes.length > 1 && (questBoard?.enrichedItems?.length || 0) > 0;
 
   if (authLoading) {
     return (
@@ -46,19 +49,8 @@ const HomePage: React.FC = () => {
       </header>
 
       <section>
-        <Board
-          boardId="featured-quest"
-          title="✨ Featured Quest"
-          layout="grid"
-          gridLayout="horizontal"
-          user={user as User}
-          hideControls
-        />
-        <div className="text-right mt-1">
-          <Link to={ROUTES.BOARD('featured-quest')} className="text-blue-600 underline text-sm">
-            View Board Details
-          </Link>
-        </div>
+        <h2 className="text-xl font-semibold mb-2">✨ Featured Quests</h2>
+        <FeaturedQuestBoard />
       </section>
 
       <section className="space-y-4">
@@ -66,28 +58,29 @@ const HomePage: React.FC = () => {
           <PostTypeFilter value={postType} onChange={setPostType} />
         )}
         <Board
-          boardId="request-board"
-          title="🙋 Requests"
+          boardId="quest-board"
+          title="🗺️ Quest Board"
           layout="grid"
           user={user as User}
           hideControls
           filter={postType ? { postType } : {}}
         />
         <div className="text-right">
-          <Link to={ROUTES.BOARD('request-board')} className="text-blue-600 underline text-sm">
-            View Board Details
+          <Link to="/board/quests" className="text-blue-600 underline text-sm">
+            → See all
           </Link>
         </div>
       </section>
 
       <section>
-        <Board
-          boardId="timeline-board"
-          title="⏳ Recent Activity"
-          layout="grid"
-          user={user as User}
-          hideControls
-        />
+        <ActiveQuestBoard />
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
+        <Suspense fallback={<Spinner />}>
+          <TimelineFeed />
+        </Suspense>
       </section>
 
     </main>

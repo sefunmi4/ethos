@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Spinner } from './components/ui';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
@@ -24,9 +24,12 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Quest = lazy(() => import('./pages/quest/[id]'));
 const Post = lazy(() => import('./pages/post/[id]'));
 const Board = lazy(() => import('./pages/board/[id]'));
+const BoardType = lazy(() => import('./pages/board/[boardType]'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
+const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
 
 /**
  * The root App component of the application.
@@ -64,7 +67,11 @@ const App: React.FC = () => {
                     <Route path={ROUTES.PROFILE} element={<Profile />} />
                     <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
+                    <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
+                    <Route path={ROUTES.BOARD_TYPE()} element={<BoardType />} />
+                    <Route path={ROUTES.FLAGGED_QUESTS} element={<FlaggedQuests />} />
+                    <Route path={ROUTES.BANNED_QUESTS} element={<BannedQuests />} />
                   </Route>
 
                   {/* 🔁 Catch-all route for unmatched URLs */}

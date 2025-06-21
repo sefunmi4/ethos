@@ -5,7 +5,7 @@ export type UUID = string;
 export type Timestamp = string;
 
 // 🔒 Access Control
-export type Visibility = 'public' | 'private' | 'hidden' | 'system';
+export type Visibility = 'public' | 'private' | 'hidden' | 'system' | 'request_board';
 
 export type UserRole = 'user' | 'admin' | 'moderator';
 
@@ -13,6 +13,8 @@ export type UserRole = 'user' | 'admin' | 'moderator';
  * Supported reaction types.
  */
 export type ReactionType = 'like' | 'heart' | 'repost';
+
+export type ApprovalStatus = 'approved' | 'flagged' | 'banned';
 
 export type AppItem = Post | Quest | Board | RenderableItem;
 
@@ -91,6 +93,8 @@ export interface Post {
   type: PostType;
   subtype?: string;
   content: string;
+  /** Optional extra details for task posts */
+  details?: string;
   visibility: Visibility;
   timestamp: string;
   createdAt?: string;
@@ -121,6 +125,9 @@ export interface Post {
 
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
+
+  /** Whether this request still needs help */
+  needsHelp?: boolean;
 }
 
 
@@ -150,7 +157,13 @@ export interface Quest {
   title: string;
   description?: string;
   authorId: string;
+  visibility: Visibility;
+  approvalStatus: ApprovalStatus;
+  flagCount?: number;
   status: 'active' | 'completed' | 'archived';
+
+  /** Whether this quest should appear on boards */
+  displayOnBoard?: boolean;
   headPostId: string;
   createdAt?: string;
 
@@ -164,6 +177,8 @@ export interface Quest {
   };
 
   tags?: string[];
+  /** When true this quest appears on the Quest Board */
+  displayOnBoard?: boolean;
   defaultBoardId?: string;
   /** Graph edges between tasks/logs */
   taskGraph?: TaskEdge[];

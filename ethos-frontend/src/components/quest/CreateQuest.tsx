@@ -43,7 +43,7 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
   const [collaberatorRoles, setCollaberatorRoles] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [syncRepo, setSyncRepo] = useState(true); // default checked
-  const [helpRequest] = useState(boardId === 'request-board');
+  const [helpRequest, setHelpRequest] = useState(boardId === 'quest-board');
 
   const syncGit = useSyncGitRepo();
   const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
@@ -141,6 +141,18 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
               className="form-checkbox"
             />
             <span>Initialize Git sync on create</span>
+          </label>
+        )}
+
+        {(boardId || selectedBoard) === 'quest-board' && (
+          <label className="inline-flex items-center mt-2 space-x-2">
+            <input
+              type="checkbox"
+              checked={helpRequest}
+              onChange={(e) => setHelpRequest(e.target.checked)}
+              className="form-checkbox"
+            />
+            <span>Ask for help</span>
           </label>
         )}
       </FormSection>

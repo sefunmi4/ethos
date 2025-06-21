@@ -23,6 +23,18 @@ export const fetchAllPosts = async (): Promise<Post[]> => {
   return res.data;
 };
 
+export const fetchRecentPosts = async (
+  userId?: string,
+  hops: number = 1
+): Promise<Post[]> => {
+  const params = new URLSearchParams();
+  if (userId) params.set('userId', userId);
+  params.set('hops', hops.toString());
+  const url = `${BASE_URL}/recent${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await axiosWithAuth.get(url);
+  return res.data;
+};
+
 /**
  * ➕ Add a new post
  * @param data - Partial post data
