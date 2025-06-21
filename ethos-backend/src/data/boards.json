@@ -18,18 +18,20 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "8e164dca-f3e1-437d-b025-8b787f4253c6",
-      "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
-      "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
-      "7d8cb7a0-f51c-4166-bcee-a437456f2be9",
-      "b93b2e31-7faa-4d00-94e1-42e6da112cce",
-      "05d47a8c-0c23-49e6-b2d2-3fce3a792420",
+      "8458f79a-2de4-483a-af08-a5c6dedff58e",
+      "b70ea694-b981-410d-b69b-de98b4f708bf",
       "f4430e32-96ce-4474-a988-47b6fc5bdded",
       "6d42d548-fc29-462e-ba9d-e6ce58c26a02",
       "7fd444ac-2d34-476d-b3eb-3bbe246a752d",
       "dae4995b-245a-46c3-bdaf-74d4ee5d121a",
       "50851c72-a777-4c33-a8da-21b8ed14db62",
-      "9d85ed66-fc37-49a0-9315-bb40385a69d6"
+      "9d85ed66-fc37-49a0-9315-bb40385a69d6",
+      "05d47a8c-0c23-49e6-b2d2-3fce3a792420",
+      "b93b2e31-7faa-4d00-94e1-42e6da112cce",
+      "7d8cb7a0-f51c-4166-bcee-a437456f2be9",
+      "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
+      "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
+      "8e164dca-f3e1-437d-b025-8b787f4253c6"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -89,6 +91,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "8458f79a-2de4-483a-af08-a5c6dedff58e",
+      "b70ea694-b981-410d-b69b-de98b4f708bf",
       "8e164dca-f3e1-437d-b025-8b787f4253c6",
       "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
       "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
@@ -118,5 +122,21 @@
     "createdAt": "2025-06-21T16:45:43.373Z",
     "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
     "questId": "3b52037d-9c82-4924-b91a-f8e7f2d6e4d0"
+  },
+  {
+    "id": "thread-7d8cb7a0-f51c-4166-bcee-a437456f2be9",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "8458f79a-2de4-483a-af08-a5c6dedff58e",
+      "b70ea694-b981-410d-b69b-de98b4f708bf"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-21T18:05:15.086Z",
+    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b"
   }
 ]

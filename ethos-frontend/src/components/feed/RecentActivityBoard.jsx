@@ -22,6 +22,7 @@ import { useBoard } from '../../hooks/useBoard';
 import { useSocketListener } from '../../hooks/useSocket';
 import { fetchBoard } from '../../api/board';
 import { Spinner } from '../ui';
+import Board from '../board/Board';
 import PostListItem from '../post/PostListItem';
 
 /**
