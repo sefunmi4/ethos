@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { TimelineContext } from '../contexts/TimelineContext';
+import { TimelineContext } from '../contexts/TimelineContextBase';
 import { addPost, fetchPostsByBoardId } from '../api/post';
 import type { TimelineEvent } from '../types/postTypes';
 

@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, screen, fireEvent, waitFor } = require('@testing-library/react');
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 jest.mock('../src/hooks/useGit', () => ({
   __esModule: true,
@@ -20,8 +20,8 @@ jest.mock('../src/contexts/BoardContext', () => ({
   })
 }));
 
-const { useGitDiff } = require('../src/hooks/useGit');
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import { useGitDiff } from '../src/hooks/useGit';
+import GraphLayout from '../src/components/layout/GraphLayout';
 
 describe('GraphLayout node interaction', () => {
   it('loads git diff and dispatches event on node click', async () => {

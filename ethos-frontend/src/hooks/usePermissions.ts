@@ -1,5 +1,5 @@
 import { useCallback, useContext, useRef } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContextBase';
 import type { AuthContextType } from '../types/authTypes';
 import { getBoardPermissions } from '../api/board';
 

@@ -1,8 +1,9 @@
 // src/api/post.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import type { Post } from '../types/postTypes';
+import type { Post, ReactionType, Reaction } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
+import type { Quest } from '../types/questTypes';
 
 const BASE_URL = '/posts';
 
@@ -106,7 +107,7 @@ export const fetchPostsByBoardId = async (
   const res = await axiosWithAuth.get(
     `/boards/${boardId}/items?${params.toString()}`
   );
-  return (res.data || []).filter((item: any) => 'content' in item);
+  return (res.data || []).filter((item: Post | Record<string, unknown>) => 'content' in item) as Post[];
 };
 
 /**
@@ -148,9 +149,9 @@ export const updateReaction = async (
  * 🔁 Fetch all reactions on a post
  * @param postId - Post ID
  */
-export const fetchReactions = async (postId: string): Promise<any[]> => {
+export const fetchReactions = async (postId: string): Promise<Reaction[]> => {
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/reactions`);
-  return res.data;
+  return res.data as Reaction[];
 };
 
 /**
@@ -223,7 +224,7 @@ export const requestHelp = async (postId: string): Promise<Post> => {
  */
 export const acceptRequest = async (
   postId: string
-): Promise<{ post: Post; quest: any }> => {
+): Promise<{ post: Post; quest: Quest }> => {
   const res = await axiosWithAuth.post(`/posts/${postId}/accept`);
   return res.data;
 };

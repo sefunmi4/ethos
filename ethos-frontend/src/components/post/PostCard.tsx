@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
 
-import type { Post, PostType } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest } from '../../api/post';
@@ -23,7 +23,8 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
-import { getPostSummary } from '../../utils/displayUtils';
+import { buildSummaryTags } from '../../utils/displayUtils';
+import SummaryTag from '../ui/SummaryTag';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -148,7 +149,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
-  const summaryText = getPostSummary(post, questTitle);
+  const summaryTags = buildSummaryTags(post, questTitle, questId);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -342,11 +343,11 @@ const PostCard: React.FC<PostCardProps> = ({
           className
         )}
       >
-        {summaryText && (
-          <div className="text-sm font-semibold text-secondary">{summaryText}</div>
-        )}
         <div className="flex justify-between text-sm text-secondary">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {summaryTags.map((tag, idx) => (
+              <SummaryTag key={idx} {...tag} />
+            ))}
             <PostTypeBadge type={post.type} />
             {post.status && <StatusBadge status={post.status} />}
             <button
@@ -394,11 +395,11 @@ const PostCard: React.FC<PostCardProps> = ({
         className
       )}
     >
-      {summaryText && (
-        <div className="text-sm font-semibold text-secondary">{summaryText}</div>
-      )}
       <div className="flex justify-between text-sm text-secondary">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {summaryTags.map((tag, idx) => (
+            <SummaryTag key={idx} {...tag} />
+          ))}
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
           {canEdit && ['task', 'request', 'issue'].includes(post.type) && showStatusControl && (
@@ -547,7 +548,11 @@ const PostCard: React.FC<PostCardProps> = ({
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={edgeType}
-                    onChange={e => setEdgeType(e.target.value as any)}
+                    onChange={e =>
+                      setEdgeType(
+                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split'
+                      )
+                    }
                   >
                     <option value="sub_problem">sub_problem</option>
                     <option value="solution_branch">solution_branch</option>

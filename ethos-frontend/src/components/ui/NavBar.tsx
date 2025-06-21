@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContextBase';
 import type { AuthContextType } from '../../types/authTypes';
 import { logoutUser } from '../../utils/authUtils';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -38,6 +38,9 @@ const NavBar: React.FC = () => {
             <>
               <Link to="/profile" className="hover:text-accent transition">
                 Account
+              </Link>
+              <Link to="/task-library" className="hover:text-accent transition">
+                Task Library
               </Link>
               <button
                 onClick={logoutUser}

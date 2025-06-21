@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, act } = require('@testing-library/react');
+import React from 'react';
+import { render, act } from '@testing-library/react';
 
 // Mock ESM-only deps used deep in GridLayout to avoid Jest ESM parsing issues
 jest.mock('react-markdown', () => () => null, { virtual: true });
@@ -58,11 +58,11 @@ let dragHandler;
 
 jest.mock('@dnd-kit/utilities', () => ({ CSS: { Translate: { toString: () => '' } } }), { virtual: true });
 
-const GridLayout = require('../src/components/layout/GridLayout').default;
+import GridLayout from '../src/components/layout/GridLayout';
 
 const updateBoardItem = global.updateBoardItemMock;
 const removeItemFromBoard = global.removeItemFromBoardMock;
-const { updatePost, archivePost } = require('../src/api/post');
+import { updatePost, archivePost } from '../src/api/post';
 
 const basePost = {
   id: 't1',

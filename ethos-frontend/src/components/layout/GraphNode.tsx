@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import ContributionCard from '../contribution/ContributionCard';
-import CompactNodeCard from './CompactNodeCard';
 import GitDiffViewer from '../git/GitDiffViewer';
 import EditPost from '../post/EditPost';
 import { Spinner } from '../ui';

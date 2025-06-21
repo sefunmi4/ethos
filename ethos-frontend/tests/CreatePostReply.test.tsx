@@ -21,13 +21,13 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const CreatePost = require('../src/components/post/CreatePost').default;
+import CreatePost from '../src/components/post/CreatePost';
 
-const { addPost } = require('../src/api/post');
+import { addPost } from '../src/api/post';
 
 describe('CreatePost replying', () => {
   it('limits options to log when replying to a task', () => {
-    const reply = { id: 't1', type: 'task' } as any;
+    const reply = { id: 't1', type: 'task' } as Post;
     render(
       <BrowserRouter>
         <CreatePost onCancel={() => {}} replyTo={reply} />
@@ -40,7 +40,7 @@ describe('CreatePost replying', () => {
   });
 
   it('includes reply questId in payload', async () => {
-    const reply = { id: 'r1', type: 'task', questId: 'q123' } as any;
+    const reply = { id: 'r1', type: 'task', questId: 'q123' } as Post;
     render(
       <BrowserRouter>
         <CreatePost onCancel={() => {}} replyTo={reply} />

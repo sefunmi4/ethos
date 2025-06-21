@@ -14,7 +14,7 @@ jest.mock('../src/models/stores', () => ({
   reviewsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-const { reviewsStore } = require('../src/models/stores');
+import { reviewsStore } from '../src/models/stores';
 
 const app = express();
 app.use(express.json());

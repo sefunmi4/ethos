@@ -3,14 +3,14 @@ import '@testing-library/jest-dom';
 // Polyfill TextEncoder and TextDecoder for testing environment
 import { TextEncoder, TextDecoder } from 'util';
 
-// @ts-ignore
+// @ts-expect-error polyfill for tests
 if (typeof global.TextEncoder === 'undefined') {
-  // @ts-ignore
+  // @ts-expect-error polyfill for tests
   global.TextEncoder = TextEncoder;
 }
-// @ts-ignore
+// @ts-expect-error polyfill for tests
 if (typeof global.TextDecoder === 'undefined') {
-  // @ts-ignore
+  // @ts-expect-error polyfill for tests
   global.TextDecoder = TextDecoder;
 }
 

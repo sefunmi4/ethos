@@ -1,6 +1,6 @@
-const React = require('react');
-const { render, within } = require('@testing-library/react');
-const { BrowserRouter } = require('react-router-dom');
+import React from 'react';
+import { render, within } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 
 jest.mock('../src/hooks/useGit', () => ({
   __esModule: true,
@@ -16,7 +16,7 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import GraphLayout from '../src/components/layout/GraphLayout';
 
 describe('GraphLayout task graph reorg', () => {
   it('nests child tasks when edges define hierarchy', () => {

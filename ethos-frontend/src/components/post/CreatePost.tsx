@@ -9,9 +9,10 @@ import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
+import type { Quest } from '../../types/questTypes';
 
 type CreatePostProps = {
-  onSave?: (post: Post) => void;
+  onSave?: (post: Post | Quest) => void;
   onCancel: () => void;
   replyTo?: Post | null;
   repostSource?: Post | null;
@@ -33,7 +34,6 @@ type CreatePostProps = {
    * Optional active board view. When provided and the board is a quest board
    * this limits the available post types to those relevant for the view.
    */
-  currentView?: 'map' | 'log' | 'file-change';
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -46,7 +46,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
   initialGitFilePath,
   initialLinkedNodeId,
-  currentView,
 }) => {
   const restrictedReply =
     replyTo && ['task', 'log', 'commit', 'issue'].includes(replyTo.type);
@@ -207,7 +206,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           )}
         </FormSection>
         <CreateQuest
-          onSave={(q) => onSave?.(q as any)}
+          onSave={(q) => onSave?.(q)}
           onCancel={onCancel}
           boardId={boardId || selectedBoard}
         />

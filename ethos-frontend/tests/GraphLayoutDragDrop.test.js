@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, act, within } = require('@testing-library/react');
+import React from 'react';
+import { render, act, within } from '@testing-library/react';
 
 let isOverMock = false;
 
@@ -51,9 +51,9 @@ jest.mock('../src/api/quest', () => ({
   linkPostToQuest: jest.fn(() => Promise.resolve({}))
 }));
 
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import GraphLayout from '../src/components/layout/GraphLayout';
 
-const { linkPostToQuest } = require('../src/api/quest');
+import { linkPostToQuest } from '../src/api/quest';
 
 describe('GraphLayout drag and drop', () => {
   it('links tasks on drop and updates hierarchy', async () => {

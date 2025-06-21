@@ -1,6 +1,6 @@
-const React = require('react');
-const { render } = require('@testing-library/react');
-const { ThemeProvider } = require('../src/contexts/ThemeContext');
+import React from 'react';
+import { render } from '@testing-library/react';
+import { ThemeProvider } from '../src/contexts/ThemeContext';
 
 function setupMatchMedia(matches) {
   Object.defineProperty(window, 'matchMedia', {

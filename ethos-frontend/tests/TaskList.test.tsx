@@ -72,7 +72,7 @@ jest.mock(
 
 jest.mock('remark-gfm', () => () => ({}), { virtual: true });
 
-const { updatePost } = require('../src/api/post');
+import { updatePost } from '../src/api/post';
 
 describe('task list checkbox', () => {
   it('toggles checkbox and updates post', async () => {
@@ -86,7 +86,7 @@ describe('task list checkbox', () => {
       tags: [],
       collaborators: [],
       linkedItems: [],
-    } as any;
+    } as Post;
 
     function Wrapper() {
       const [p, setP] = React.useState(post);

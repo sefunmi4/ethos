@@ -111,10 +111,21 @@ export interface RepostMeta {
  */
 export type ReactionType = 'like' | 'heart' | 'repost';
 
+/** Individual reaction returned from the API */
+export interface Reaction {
+  userId: string;
+  type: ReactionType;
+}
+
 /**
  * Count of reactions by type.
  */
 export type ReactionCountMap = Record<ReactionType, number>;
+
+export interface Reaction {
+  userId: string;
+  type: ReactionType;
+}
 
 /**
  * Raw user reactions.

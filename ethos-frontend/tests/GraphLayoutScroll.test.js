@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, fireEvent, act } = require('@testing-library/react');
+import React from 'react';
+import { render, fireEvent, act } from '@testing-library/react';
 
 jest.mock('../src/hooks/useGit', () => ({
   __esModule: true,
@@ -33,7 +33,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import GraphLayout from '../src/components/layout/GraphLayout';
 
 describe('GraphLayout scroll alignment', () => {
   it('recomputes connector paths when scrolling', () => {

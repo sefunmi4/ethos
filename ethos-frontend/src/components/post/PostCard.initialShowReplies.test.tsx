@@ -34,7 +34,7 @@ const mockReply: Post = {
   collaborators: [],
   linkedItems: [],
   replyTo: 'p1'
-} as any;
+} as Post;
 
 describe('PostCard initialShowReplies', () => {
   const basePost: Post = {
@@ -45,9 +45,9 @@ describe('PostCard initialShowReplies', () => {
     visibility: 'public',
     timestamp: '',
     tags: [],
-    collaborators: [],
-    linkedItems: [],
-  } as any;
+  collaborators: [],
+  linkedItems: [],
+  } as Post;
 
   it('loads and displays replies automatically', async () => {
     (fetchRepliesByPostId as jest.Mock).mockResolvedValue([mockReply]);

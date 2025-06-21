@@ -1,5 +1,5 @@
-const React = require('react');
-const { render } = require('@testing-library/react');
+import React from 'react';
+import { render } from '@testing-library/react';
 
 jest.mock('../src/hooks/useGit', () => ({
   __esModule: true,
@@ -24,7 +24,7 @@ jest.mock('../src/components/layout/GraphNode', () => ({
     }),
 }), { virtual: true });
 
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import GraphLayout from '../src/components/layout/GraphLayout';
 
 describe('GraphLayout edges svg', () => {
   it('renders a svg path when an edge exists', () => {
