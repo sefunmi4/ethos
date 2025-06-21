@@ -417,5 +417,39 @@
     "questId": null,
     "helpRequest": true,
     "needsHelp": true
+  },
+  {
+    "id": "c72eeb37-ee9e-48c0-859f-8d1851648df7",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "request",
+    "content": "please remove the nested board on board detailes page\n\nalso the link to the ethos home page from that page doesnt refresh the screenor show the homepage immedatly",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-21T04:48:21.031Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "33c786a9-ef8d-4fca-9240-65bfcef9a2a2",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "request",
+    "content": "please create thies page with standard default information",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-21T04:48:44.378Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]
