@@ -18,7 +18,7 @@ Q:<quest-slug>:<segment><number>
   - `I` – issue
 - `<number>` – a zero‑padded counter starting at `00` for each segment within a quest.
 
-Example: the first task in the `Ethos` quest becomes `Q:ethos:T00`. A reply log on that task would be `Q:ethos:T00:L01`.
+Example: the first task in the `Ethos` quest becomes `Q:ethos:T01`. A reply log on that task would be `Q:ethos:T01:L01`.
 
 Node IDs are generated in [`nodeIdUtils.ts`](../ethos-backend/src/utils/nodeIdUtils.ts) when a post is created or its quest/link changes.
 
