@@ -343,15 +343,11 @@ const PostCard: React.FC<PostCardProps> = ({
           className
         )}
       >
-        {summaryTags.length > 0 && (
-          <div className="flex flex-wrap gap-1 text-sm font-semibold text-secondary">
+        <div className="flex justify-between text-sm text-secondary">
+          <div className="flex flex-wrap items-center gap-2">
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-          </div>
-        )}
-        <div className="flex justify-between text-sm text-secondary">
-          <div className="flex items-center gap-2">
             <PostTypeBadge type={post.type} />
             {post.status && <StatusBadge status={post.status} />}
             <button
@@ -399,15 +395,11 @@ const PostCard: React.FC<PostCardProps> = ({
         className
       )}
     >
-      {summaryTags.length > 0 && (
-        <div className="flex flex-wrap gap-1 text-sm font-semibold text-secondary">
+      <div className="flex justify-between text-sm text-secondary">
+        <div className="flex flex-wrap items-center gap-2">
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
-        </div>
-      )}
-      <div className="flex justify-between text-sm text-secondary">
-        <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
           {canEdit && ['task', 'request', 'issue'].includes(post.type) && showStatusControl && (

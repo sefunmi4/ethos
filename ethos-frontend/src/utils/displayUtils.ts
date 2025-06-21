@@ -86,14 +86,17 @@ export const buildSummaryTags = (
 ): SummaryTagData[] => {
   const tags: SummaryTagData[] = [];
   const title = questTitle || post.questTitle;
+  const multipleSources = (post.linkedItems || []).length > 1;
 
   if (post.type === 'review') {
-    if (title) tags.push({ type: 'review', label: `Review: ${title}`, link: post.id ? ROUTES.POST(post.id) : undefined });
+    if (!multipleSources && title) {
+      tags.push({ type: 'review', label: `Review: ${title}`, link: post.id ? ROUTES.POST(post.id) : undefined });
+    }
     if (post.subtype) tags.push({ type: 'category', label: post.subtype });
     return tags;
   }
 
-  if (title) {
+  if (!multipleSources && title) {
     tags.push({ type: 'quest', label: `Quest: ${title}`, link: (questId || post.questId) ? ROUTES.QUEST(questId || post.questId!) : undefined });
   }
 
