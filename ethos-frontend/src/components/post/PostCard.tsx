@@ -103,6 +103,7 @@ const PostCard: React.FC<PostCardProps> = ({
     : 'Unknown time';
 
   const content = post.renderedContent || post.content;
+  const titleText = post.title || (post.type === 'task' ? post.content : '');
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -312,6 +313,10 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       {renderRepostInfo()}
+
+      {titleText && (
+        <h3 className="font-semibold text-lg mt-1">{titleText}</h3>
+      )}
 
       <div className="text-sm text-primary">
         {post.type === 'task' ? (

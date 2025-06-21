@@ -50,6 +50,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
 }) => {
   const [type, setType] = useState<PostType>(initialType);
   const [status, setStatus] = useState<string>('To Do');
+  const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [details, setDetails] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
@@ -101,6 +102,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
       const payload: Partial<Post> = {
         type,
+        title: type === 'task' ? content : title || undefined,
         content,
         ...(type === 'task' && details ? { details } : {}),
         visibility: 'public',
@@ -208,6 +210,18 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             return { value: opt.value, label: opt.label };
           })}
         />
+
+        {type !== 'task' && (
+          <>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required={type !== 'free_speech'}
+            />
+          </>
+        )}
 
         {type === 'task' && (
           <>
