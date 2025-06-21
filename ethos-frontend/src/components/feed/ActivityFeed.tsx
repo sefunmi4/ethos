@@ -5,11 +5,7 @@ import PostCard from '../post/PostCard';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
 
-interface ActivityFeedProps {
-  boardId?: string;
-}
-
-const ActivityFeed: React.FC<ActivityFeedProps> = ({ boardId = 'timeline-board' }) => {
+const ActivityFeed: React.FC = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);

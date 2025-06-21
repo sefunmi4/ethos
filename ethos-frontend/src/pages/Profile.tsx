@@ -18,7 +18,6 @@ const ProfilePage: React.FC = () => {
   const {
     board: userQuestBoard,
     setBoard: setUserQuestBoard,
-    isLoading: loadingQuests,
   } = useBoard('my-quests', { pageSize: 1000 });
 
   const {
@@ -38,8 +37,8 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (!userPostBoard) return;
     const tagSet = new Set<string>();
-    (userPostBoard.enrichedItems || []).forEach((it: any) => {
-      (it.tags || []).forEach((t: string) => tagSet.add(t));
+    (userPostBoard.enrichedItems || []).forEach((it: unknown) => {
+      ((it as { tags?: string[] }).tags || []).forEach((t: string) => tagSet.add(t));
     });
     setAvailableTags(Array.from(tagSet));
   }, [userPostBoard]);

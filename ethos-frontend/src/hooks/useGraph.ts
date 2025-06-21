@@ -24,9 +24,10 @@ export const useGraph = () => {
       const { nodes, edges } = await fetchQuestMapData(questId);
       setNodes(nodes || []);
       setEdges(edges || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useGraph] Failed to load quest map:', err);
-      setError(err?.response?.data?.error || 'Failed to load graph data.');
+      setError((err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+        'Failed to load graph data.');
     } finally {
       setLoading(false);
     }

@@ -131,7 +131,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     setIndex(i => Math.min(i, items.length - 1));
   }, [items.length]);
   useEffect(() => {
-    const handler = (e: any) => {
+    const handler = (e: CustomEvent) => {
       const id = e.detail?.taskId;
       if (!id) return;
       const el = document.getElementById(id);

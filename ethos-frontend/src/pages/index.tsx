@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
     if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
     getRenderableBoardItems(questBoard.enrichedItems).forEach((it) => {
-      if ('type' in it) types.add((it as any).type);
+      if ('type' in it) types.add((it as { type?: string }).type as string);
     });
     return Array.from(types);
   }, [questBoard?.enrichedItems]);

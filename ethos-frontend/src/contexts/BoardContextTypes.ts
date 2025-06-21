@@ -5,7 +5,7 @@ export interface BoardItem {
   id: string;
   gitStatus?: GitStatus;
   fileTree?: GitFileNode[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export type BoardMap = Record<string, BoardData>;

@@ -50,7 +50,6 @@ const QuestPage: React.FC = () => {
   const {
     board: fetchedMap,
     refresh: refreshMap,
-    isLoading: isMapLoading,
   } = useBoard(`map-${id}`);
 
   const {
