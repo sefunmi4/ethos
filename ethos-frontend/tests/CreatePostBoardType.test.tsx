@@ -46,6 +46,6 @@ describe('CreatePost board type filtering', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Request', 'Review', 'Quest']);
+    expect(options).toEqual(['Request', 'Review', 'Issue', 'Quest Task']);
   });
 });

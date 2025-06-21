@@ -334,20 +334,21 @@ describe('post routes', () => {
     expect(written.helpRequest).toBe(true);
   });
 
-  it('requires help flag for quest on quest board', async () => {
+  it('allows task post with help flag on quest board', async () => {
     postsStore.read.mockReturnValue([]);
-    let res = await request(app)
-      .post('/posts')
-      .send({ type: 'quest', boardId: 'quest-board' });
-    expect(res.status).toBe(400);
-
     postsStore.write.mockClear();
-    res = await request(app)
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', boardId: 'quest-board', helpRequest: true });
+    expect(res.status).toBe(201);
+  });
+
+  it('rejects quest post on quest board', async () => {
+    postsStore.read.mockReturnValue([]);
+    const res = await request(app)
       .post('/posts')
       .send({ type: 'quest', boardId: 'quest-board', helpRequest: true });
-    expect(res.status).toBe(201);
-    const writtenQuest = postsStore.write.mock.calls[0][0][0];
-    expect(writtenQuest.helpRequest).toBe(true);
+    expect(res.status).toBe(400);
   });
 
   it('deleting a quest head post removes the quest instead', async () => {

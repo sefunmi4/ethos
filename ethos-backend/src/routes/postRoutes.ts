@@ -79,14 +79,18 @@ router.post(
     const quest = questId ? quests.find(q => q.id === questId) : null;
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
-    if (
-      boardId === 'quest-board' &&
-      !(type === 'request' || helpRequest === true)
-    ) {
-      res
-        .status(400)
-        .json({ error: 'Only help requests allowed on this board' });
-      return;
+    if (boardId === 'quest-board') {
+      const allowed = ['request', 'review', 'issue', 'task'];
+      if (!allowed.includes(type)) {
+        res
+          .status(400)
+          .json({ error: 'Only request, review, issue, or task posts allowed on this board' });
+        return;
+      }
+      if (type !== 'request' && helpRequest !== true) {
+        res.status(400).json({ error: 'Help request flag required' });
+        return;
+      }
     }
 
     const newPost: DBPost = {

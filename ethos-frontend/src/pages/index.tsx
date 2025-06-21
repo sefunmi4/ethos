@@ -1,14 +1,13 @@
-import React, { useState, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
-import FeaturedQuestBoard from '../components/quest/FeaturedQuestBoard';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
+import ActivityFeed from '../components/feed/ActivityFeed';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
-const TimelineFeed = lazy(() => import('../components/feed/TimelineFeed'));
 import { getRenderableBoardItems } from '../utils/boardUtils';
 
 import type { User } from '../types/userTypes';
@@ -48,11 +47,6 @@ const HomePage: React.FC = () => {
         </p>
       </header>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">✨ Featured Quests</h2>
-        <FeaturedQuestBoard />
-      </section>
-
       <section className="space-y-4">
         {showPostFilter && (
           <PostTypeFilter value={postType} onChange={setPostType} />
@@ -78,9 +72,7 @@ const HomePage: React.FC = () => {
 
       <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
-        <Suspense fallback={<Spinner />}>
-          <TimelineFeed />
-        </Suspense>
+        <ActivityFeed />
       </section>
 
     </main>

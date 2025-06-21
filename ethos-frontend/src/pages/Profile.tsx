@@ -6,6 +6,7 @@ import { useSocketListener } from '../hooks/useSocket';
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 import { Spinner } from '../components/ui';
+import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 
 import type { User } from '../types/userTypes';
 import type { BoardData } from '../types/boardTypes';
@@ -71,6 +72,10 @@ const ProfilePage: React.FC = () => {
             )}
           </>
         )}
+      </section>
+
+      <section className="mb-12">
+        <ActiveQuestBoard />
       </section>
 
       {/* 📝 Post History */}
