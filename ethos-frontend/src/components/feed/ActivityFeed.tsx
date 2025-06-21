@@ -5,6 +5,7 @@ import { useBoard } from '../../hooks/useBoard';
 import { fetchBoard } from '../../api/board';
 import Board from '../board/Board';
 import { Spinner } from '../ui';
+import type { User } from '../../types/userTypes';
 
 import type { BoardData } from '../../types/boardTypes';
 
@@ -62,6 +63,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ boardId = 'timeline-board' 
       board={board}
       layout="grid"
       hideControls
+      user={user as User}
       onScrollEnd={loadMore}
       loading={loading}
     />

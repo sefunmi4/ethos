@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import Board from '../board/Board';
+import type { User } from '../../types/userTypes';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import type { Quest } from '../../types/questTypes';
@@ -93,7 +94,7 @@ const ActiveQuestBoard: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      <Board board={board} layout="grid" hideControls compact />
+      <Board board={board} layout="grid" hideControls compact user={user as User} />
       <div className="text-right">
         <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
           → See all
