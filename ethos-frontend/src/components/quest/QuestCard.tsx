@@ -214,16 +214,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
           permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
         />
 
-        {expanded && (
-          <>
-            <Select
-              value={mapMode}
-              onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
-              options={mapOptions}
-            />
-          </>
-        )}
-
         {onCancel && (
           <Button onClick={onCancel} variant="secondary">
             Cancel
@@ -236,10 +226,36 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderMap = () => {
     if (!expanded) return null;
     if (mapMode === "graph") {
-      return <MapGraphLayout items={logs as any} edges={questData.taskGraph} />;
+      return (
+        <>
+          {selectedNode && (
+            <div className="mb-2">
+              <PostCard post={selectedNode} user={user} questId={quest.id} />
+            </div>
+          )}
+          <Select
+            className="mb-2"
+            value={mapMode}
+            onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
+            options={mapOptions}
+          />
+          <MapGraphLayout items={logs as any} edges={questData.taskGraph} />
+        </>
+      );
     }
     return (
       <>
+        {selectedNode && (
+          <div className="mb-2">
+            <PostCard post={selectedNode} user={user} questId={quest.id} />
+          </div>
+        )}
+        <Select
+          className="mb-2"
+          value={mapMode}
+          onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
+          options={mapOptions}
+        />
         {openTaskId && (
           (() => {
             const task = logs.find((p) => p.id === openTaskId);
@@ -510,13 +526,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
     return (
       <>
-        {selectedNode && (
-          <div className="mb-2">
-            <PostCard post={selectedNode} user={user} questId={quest.id} />
-          </div>
-        )}
-        <hr className="border-secondary mb-2" />
-        <div className="border-b border-secondary flex text-sm">
+        <div className="border-b border-secondary flex text-sm overflow-x-auto whitespace-nowrap">
           {tabOptions.map((t) => (
             <button
               key={t.value}
