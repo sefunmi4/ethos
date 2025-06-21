@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchAllQuests, fetchActiveQuests } from '../../api/quest';
 import { fetchAllPosts } from '../../api/post';
 import ContributionCard from '../../components/contribution/ContributionCard';
+import QuestSummaryCard from '../../components/quest/QuestSummaryCard';
 import { Spinner, Button } from '../../components/ui';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
@@ -80,9 +81,13 @@ const BoardTypePage: React.FC = () => {
             : 'grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
         }
       >
-        {visible.map(it => (
-          <ContributionCard key={(it as any).id} contribution={it as any} compact={compact} />
-        ))}
+        {visible.map(it =>
+          !compact && 'headPostId' in (it as any) ? (
+            <QuestSummaryCard key={(it as any).id} quest={it as Quest} />
+          ) : (
+            <ContributionCard key={(it as any).id} contribution={it as any} compact={compact} />
+          )
+        )}
       </div>
       {visible.length < items.length && <div ref={loader} className="h-4" />}
     </main>
