@@ -8,14 +8,16 @@ interface QuestNodeInspectorProps {
   questId: string;
   node: Post | null;
   user?: User;
+  showPost?: boolean;
+  showLogs?: boolean;
 }
 
-const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ questId, node, user }) => {
+const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ questId, node, user, showPost = true, showLogs = true }) => {
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
   return (
     <div className="space-y-4">
-      <PostCard post={node} user={user} questId={questId} />
-      <LogThreadPanel questId={questId} node={node} user={user} />
+      {showPost && <PostCard post={node} user={user} questId={questId} />}
+      {showLogs && <LogThreadPanel questId={questId} node={node} user={user} />}
     </div>
   );
 };
