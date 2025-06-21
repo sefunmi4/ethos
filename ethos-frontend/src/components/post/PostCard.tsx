@@ -666,7 +666,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type !== 'request' && (
+      {post.type !== 'request' && post.type !== 'free_speech' && (
         <label className="flex items-center gap-1 text-xs mt-1">
           <input
             type="checkbox"
