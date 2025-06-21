@@ -1,13 +1,9 @@
-import React, { useCallback, useState } from 'react';
-import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useBoard } from '../../hooks/useBoard';
-import { fetchBoard } from '../../api/board';
-import Board from '../board/Board';
+import { fetchRecentPosts } from '../../api/post';
+import PostCard from '../post/PostCard';
 import { Spinner } from '../ui';
-import type { User } from '../../types/userTypes';
-
-import type { BoardData } from '../../types/boardTypes';
+import type { Post } from '../../types/postTypes';
 
 interface ActivityFeedProps {
   boardId?: string;
@@ -15,58 +11,34 @@ interface ActivityFeedProps {
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ boardId = 'timeline-board' }) => {
   const { user } = useAuth();
-  const { board, setBoard } = useBoard(boardId);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadMore = useCallback(async () => {
-    if (!boardId || loading || !hasMore) return;
-    setLoading(true);
-    try {
-      const nextPage = page + 1;
-      const more: BoardData = await fetchBoard(boardId, {
-        page: nextPage,
-        limit: DEFAULT_PAGE_SIZE,
-        enrich: true,
-        userId: user?.id,
-      });
-      if (more.items?.length) {
-        setBoard(prev =>
-          prev
-            ? {
-                ...prev,
-                items: [...prev.items, ...more.items],
-                enrichedItems: [
-                  ...(prev.enrichedItems || []),
-                  ...(more.enrichedItems || []),
-                ],
-              }
-            : more
-        );
-        setPage(nextPage);
-      } else {
-        setHasMore(false);
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const recent = await fetchRecentPosts(user.id);
+        setPosts(recent);
+      } catch (err) {
+        console.warn('[ActivityFeed] Failed to load recent posts:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.warn('[ActivityFeed] Pagination error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [boardId, page, loading, hasMore, user?.id, setBoard]);
+    };
+    load();
+  }, [user]);
 
-  if (!board) return <Spinner />;
+  if (!user) return null;
+  if (loading) return <Spinner />;
 
   return (
-    <Board
-      boardId={boardId}
-      board={board}
-      layout="grid"
-      hideControls
-      user={user as User}
-      onScrollEnd={loadMore}
-      loading={loading}
-    />
+    <div className="space-y-4">
+      {posts.map(p => (
+        <PostCard key={p.id} post={p} user={user} />
+      ))}
+    </div>
   );
 };
 

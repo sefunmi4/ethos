@@ -56,15 +56,33 @@ router.get(
         p => p.questId && relatedQuestIds.includes(p.questId)
       );
 
-      // Posts linking to any post by the user
       const userPostIds = new Set(authored.map(p => p.id));
+
+      // Posts linking to any post by the user
       const linked = posts.filter(p =>
         (p.linkedItems || []).some(
           li => li.itemType === 'post' && userPostIds.has(li.itemId)
         )
       );
 
-      filtered = [...authored, ...questPosts, ...linked];
+      // Posts replying to any post by the user
+      const replies = posts.filter(p => p.replyTo && userPostIds.has(p.replyTo));
+
+      // Posts in quests that contain any user-authored post
+      const userQuestIds = new Set(
+        authored.map(p => p.questId).filter((id): id is string => Boolean(id))
+      );
+      const questActivity = posts.filter(
+        p => p.questId && userQuestIds.has(p.questId)
+      );
+
+      filtered = [
+        ...authored,
+        ...questPosts,
+        ...linked,
+        ...replies,
+        ...questActivity,
+      ];
     } else {
       // Public recent posts across the site
       filtered = posts.filter(
