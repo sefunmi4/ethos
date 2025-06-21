@@ -141,15 +141,10 @@ router.post(
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
     if (boardId === 'quest-board') {
-      const allowed = ['request', 'review', 'issue', 'task'];
-      if (!allowed.includes(type)) {
+      if (type !== 'request') {
         res
           .status(400)
-          .json({ error: 'Only request, review, issue, or task posts allowed on this board' });
-        return;
-      }
-      if (type !== 'request' && helpRequest !== true) {
-        res.status(400).json({ error: 'Help request flag required' });
+          .json({ error: 'Only request posts allowed on this board' });
         return;
       }
     }
@@ -468,6 +463,46 @@ router.post(
         { itemId: task.id, itemType: 'post', linkType: 'reference' },
       ],
       questId: task.questId || null,
+      helpRequest: true,
+      needsHelp: true,
+    };
+
+    posts.push(requestPost);
+    postsStore.write(posts);
+    const users = usersStore.read();
+    res.status(201).json(enrichPost(requestPost, { users }));
+  }
+);
+
+//
+// ✅ POST /api/posts/:id/request-help – Create a help request from any post
+//
+router.post(
+  '/:id/request-help',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const original = posts.find((p) => p.id === req.params.id);
+    if (!original) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    const requestPost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'request',
+      content: original.content,
+      visibility: original.visibility,
+      timestamp: new Date().toISOString(),
+      tags: [],
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [
+        { itemId: original.id, itemType: 'post', linkType: 'reference' },
+      ],
+      questId: original.questId || null,
       helpRequest: true,
       needsHelp: true,
     };

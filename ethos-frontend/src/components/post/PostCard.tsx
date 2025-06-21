@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTask } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -91,10 +91,13 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
+
   const handleRequestHelp = async () => {
     try {
-      const reqPost = await requestHelpForTask(post.id);
+      const reqPost = await requestHelp(post.id);
       appendToBoard?.('quest-board', reqPost);
+      setHelpRequested(true);
     } catch (err) {
       console.error('[PostCard] Failed to request help:', err);
     }
@@ -582,13 +585,18 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type === 'task' && (
-        <button
-          onClick={handleRequestHelp}
-          className="text-accent underline text-xs mt-1"
-        >
+      {post.type !== 'request' && (
+        <label className="flex items-center gap-1 text-xs mt-1">
+          <input
+            type="checkbox"
+            checked={helpRequested}
+            onChange={() => !helpRequested && handleRequestHelp()}
+          />
           Request Help
-        </button>
+          {helpRequested && (
+            <span className="ml-1 text-secondary">tracking</span>
+          )}
+        </label>
       )}
 
       {(initialReplies > 0 || replies.length > 0) && (

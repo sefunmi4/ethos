@@ -10,17 +10,15 @@ import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
-const QUEST_BOARD_TYPES = ['request', 'review', 'issue'];
+// Only request posts should appear on the quest board. Other post types can
+// generate request posts, but the board itself shows requests only.
 const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>
 ) => {
   const ids = posts
     .filter((p) => {
-      if (!QUEST_BOARD_TYPES.includes(p.type)) return false;
-      if (p.type === 'request') {
-        return p.visibility === 'public' || p.visibility === 'request_board';
-      }
-      return p.visibility === 'public';
+      if (p.type !== 'request') return false;
+      return p.visibility === 'public' || p.visibility === 'request_board';
     })
     .map((p) => p.id);
   return ids;
@@ -291,12 +289,21 @@ router.get(
       .filter((item) => {
         if ('type' in item) {
           const p = item as DBPost;
-          return p.type !== 'request' || p.visibility === 'public' || p.visibility === 'request_board' || p.needsHelp === true;
+          if (p.type !== 'request') return false;
+          return (
+            p.visibility === 'public' ||
+            p.visibility === 'request_board' ||
+            p.needsHelp === true
+          );
         }
         const q = item as DBQuest;
         if (q.displayOnBoard === false) return false;
         if (q.status === 'active' && userId) {
-          const participant = q.authorId === userId || (q.collaborators || []).some((c: { userId?: string }) => c.userId === userId);
+          const participant =
+            q.authorId === userId ||
+            (q.collaborators || []).some(
+              (c: { userId?: string }) => c.userId === userId
+            );
           if (!participant) return false;
         }
         return true;
