@@ -3,6 +3,7 @@
 import React from 'react';
 import PostCard from '../post/PostCard';
 import QuestCard from '../quest/QuestCard';
+import RequestCard from '../request/RequestCard';
 
 import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
@@ -50,9 +51,13 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   // ✅ Render Post types
   if ('type' in contribution) {
+    const post = contribution as Post;
+    if (post.type === 'request') {
+      return <RequestCard post={post} user={user} onUpdate={onEdit as any} />;
+    }
     return (
       <PostCard
-        post={contribution as Post}
+        post={post}
         questId={questId}
         {...sharedProps}
         headerOnly={headerOnly}
