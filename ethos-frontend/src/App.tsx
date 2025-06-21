@@ -33,6 +33,7 @@ const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
 const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
+const TaskLibrary = lazy(() => import('./pages/TaskLibrary'));
 
 /**
  * The root App component of the application.
@@ -70,8 +71,9 @@ const App: React.FC = () => {
 
                   {/* 🔒 Routes requiring authentication (wrapped in PrivateRoute) */}
                   <Route element={<PrivateRoute />}>
-                    <Route path={ROUTES.PROFILE} element={<Profile />} />
-                    <Route path={ROUTES.QUEST()} element={<Quest />} />
+                  <Route path={ROUTES.PROFILE} element={<Profile />} />
+                  <Route path={ROUTES.TASK_LIBRARY} element={<TaskLibrary />} />
+                  <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />

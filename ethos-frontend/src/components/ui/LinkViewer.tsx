@@ -3,6 +3,7 @@ import type { LinkedItem, Post } from '../../types/postTypes';
 import { fetchQuestById } from '../../api/quest';
 import { fetchPostById } from '../../api/post';
 import { getQuestLinkLabel } from '../../utils/displayUtils';
+import { FaExpand, FaCompress } from 'react-icons/fa';
 
 interface LinkViewerProps {
   items: LinkedItem[];
@@ -81,9 +82,9 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
     <div className="text-xs text-primary dark:text-primary">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="text-blue-600 underline"
+        className="flex items-center gap-1 text-blue-600 underline"
       >
-        {open ? 'Collapse Details' : 'Expand Details'}
+        {open ? <FaCompress /> : <FaExpand />} {open ? 'Collapse Details' : 'Expand Details'}
       </button>
       {open && (
         <div className="mt-2 border rounded bg-background dark:bg-surface p-2 space-y-1">
