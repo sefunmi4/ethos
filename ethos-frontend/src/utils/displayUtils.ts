@@ -75,13 +75,17 @@ export interface SummaryTagData {
  * Returns structured summary tags for a post.
  * Each tag contains a label, type, and optional link.
  */
+export interface PostWithQuestTitle extends Post {
+  questTitle?: string;
+}
+
 export const buildSummaryTags = (
-  post: Post,
+  post: PostWithQuestTitle,
   questTitle?: string,
   questId?: string
 ): SummaryTagData[] => {
   const tags: SummaryTagData[] = [];
-  const title = questTitle || (post as any).questTitle;
+  const title = questTitle || post.questTitle;
 
   if (post.type === 'review') {
     if (title) tags.push({ type: 'review', label: `Review: ${title}`, link: post.id ? ROUTES.POST(post.id) : undefined });
@@ -120,9 +124,9 @@ export const buildSummaryTags = (
  * Format: "Quest: {title} Task:{nodeId} {status}".
  * Quest title may be provided via optional param or `post.questTitle` field.
  */
-export const getPostSummary = (post: Post, questTitle?: string): string => {
+export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): string => {
   const parts: string[] = [];
-  const title = questTitle || (post as any).questTitle;
+  const title = questTitle || post.questTitle;
 
   if (post.type === 'review') {
     if (title) parts.push(`(Review: ${title})`);

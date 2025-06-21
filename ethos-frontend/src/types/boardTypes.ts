@@ -6,6 +6,18 @@ import type { Visibility, ItemType } from './common';
 export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
 
 /** Generic board interface shared across profile, quests, etc. */
+export interface BoardFilters {
+  visibility?: Visibility;
+  search?: string;
+  tags?: string[];
+  status?: string;
+  postType?: string;
+  role?: string;
+  sortBy?: string;
+  view?: 'grid' | 'list';
+  [key: string]: unknown;
+}
+
 export interface Board {
   id: string;
   title: string;
@@ -13,7 +25,7 @@ export interface Board {
   boardType: BoardType;
   layout: BoardLayout;
   items: (string | null)[];
-  filters?: Record<string, any>;
+  filters?: BoardFilters;
   featured?: boolean;
   defaultFor?: 'home' | 'profile' | 'quests';
   createdAt: string;
@@ -25,7 +37,7 @@ export interface Board {
  * Enriched board format used when fetching detailed items
  */
 export interface BoardData extends Board {
-  enrichedItems?: any[];       // hydrated post/quest objects
+  enrichedItems?: BoardItem[];       // hydrated post/quest objects
   questId?: string;            // Used to associate board with a quest, if relevant
 }
 
@@ -37,7 +49,7 @@ export interface CreateBoardPayload {
   boardType: BoardType;
   layout: BoardLayout;
   items: string[];
-  filters?: Record<string, any>;
+  filters?: BoardFilters;
   featured?: boolean;
   defaultFor?: 'home' | 'profile' | 'quests' | null;
   category?: string;
@@ -82,7 +94,7 @@ export interface BoardProps {
   showCreate?: boolean;
   /** Hide filter and sort controls */
   hideControls?: boolean;
-  filter?: Record<string, any>;
+  filter?: BoardFilters;
   onScrollEnd?: () => void;
   loading?: boolean;
   quest?: Quest;

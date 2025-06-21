@@ -9,9 +9,10 @@ import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
+import type { Quest } from '../../types/questTypes';
 
 type CreatePostProps = {
-  onSave?: (post: Post) => void;
+  onSave?: (post: Post | Quest) => void;
   onCancel: () => void;
   replyTo?: Post | null;
   repostSource?: Post | null;
@@ -205,7 +206,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           )}
         </FormSection>
         <CreateQuest
-          onSave={(q) => onSave?.(q as any)}
+          onSave={(q) => onSave?.(q)}
           onCancel={onCancel}
           boardId={boardId || selectedBoard}
         />

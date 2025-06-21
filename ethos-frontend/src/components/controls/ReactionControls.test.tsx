@@ -43,7 +43,7 @@ describe('ReactionControls', () => {
     collaborators: [],
     linkedItems: [],
     questId: 'q1',
-  } as any;
+  };
 
   it('shows Quest Log for task posts', async () => {
     render(

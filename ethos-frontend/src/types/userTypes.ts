@@ -65,7 +65,7 @@ export interface AuthUser extends Partial<Omit<User, 'role'>> {
   email: string;
   role?: UserRole;
   name?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

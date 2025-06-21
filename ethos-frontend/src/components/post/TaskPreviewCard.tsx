@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Select, StatusBadge } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
+import type { option } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 
 interface TaskPreviewCardProps {
@@ -33,7 +34,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
         <Select
           value={status}
           onChange={handleStatusChange}
-          options={STATUS_OPTIONS as any}
+          options={STATUS_OPTIONS as option[]}
           className="text-xs"
         />
       </div>
@@ -41,7 +42,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
         <Select
           value={taskType}
           onChange={handleTypeChange}
-          options={TASK_TYPE_OPTIONS as any}
+          options={TASK_TYPE_OPTIONS as option[]}
           className="text-xs"
         />
         {taskType === 'file' && (
