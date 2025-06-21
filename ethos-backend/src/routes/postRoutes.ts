@@ -132,7 +132,8 @@ router.post(
       needsHelp = undefined,
     } = req.body;
 
-    const finalStatus = status ?? (type === 'task' ? 'To Do' : undefined);
+    const finalStatus =
+      status ?? (['task', 'request', 'issue'].includes(type) ? 'To Do' : undefined);
 
     const posts = postsStore.read();
     const quests = questsStore.read();

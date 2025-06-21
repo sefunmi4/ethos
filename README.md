@@ -195,6 +195,9 @@ different stages. Each card can be in one of four statuses:
 - **Blocked** – something is preventing progress
 - **Done** – completed and ready for review
 
+Request and Issue posts can use these same status labels so progress on
+bugs or help requests can be tracked alongside tasks.
+
 Click and hold a card to drag it to another column. Dropping the card updates
 its status immediately and the overall quest progress reflects the change for
 everyone on the board.
