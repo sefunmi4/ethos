@@ -34,6 +34,8 @@ beforeAll(async () => {
     fs_1.default.mkdirSync(baseRepo, { recursive: true });
     const git = (0, simple_git_1.default)(baseRepo);
     await git.init();
+    await git.addConfig('user.name', 'Test User');
+    await git.addConfig('user.email', 'test@example.com');
     await git.checkoutLocalBranch('main');
     fs_1.default.writeFileSync(path_1.default.join(baseRepo, 'file.txt'), 'hello');
     await git.add('.');
