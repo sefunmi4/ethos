@@ -376,7 +376,7 @@ const Board: React.FC<BoardProps> = ({
           )}
           {showCreate && user && (
             <Button variant="contrast" onClick={() => setShowCreateForm(true)}>
-              + Add Item
+              {board?.id === 'quest-board' ? '+ Add Request' : '+ Add Item'}
             </Button>
           )}
           {editable && (
