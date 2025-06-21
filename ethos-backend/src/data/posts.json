@@ -369,5 +369,38 @@
     "questId": "bc345b07-aab5-4dda-bf0b-c843a094fac3",
     "nodeId": "Q:battleofthebands:L00",
     "questNodeTitle": "Battle of The Bands"
+  },
+  {
+    "id": "70a3179f-98c9-41d9-984a-49765b6597de",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "free_speech",
+    "title": "tetsing extra post",
+    "content": "",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-21T21:03:11.015Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": false
+  },
+  {
+    "id": "bcc74ae8-16b1-435f-b20a-556ded658ff0",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "log",
+    "content": "test extra quest",
+    "visibility": "public",
+    "timestamp": "2025-06-21T21:03:51.044Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "d350e17b-f3cc-405e-881a-dabc5d2fde4d",
+    "nodeId": "Q:testextraquest:L00",
+    "questNodeTitle": "test extra quest"
   }
 ]
