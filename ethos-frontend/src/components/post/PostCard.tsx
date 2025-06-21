@@ -38,6 +38,7 @@ interface PostCardProps {
   questId?: string;
   /** Show status dropdown controls for task posts */
   showStatusControl?: boolean;
+  replyOverride?: { label: string; onClick: () => void };
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -48,6 +49,7 @@ const PostCard: React.FC<PostCardProps> = ({
   compact = false,
   questId,
   showStatusControl = true,
+  replyOverride,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -450,6 +452,7 @@ const PostCard: React.FC<PostCardProps> = ({
         post={post}
         user={user}
         onUpdate={onUpdate}
+        replyOverride={replyOverride}
       />
 
       {post.type === 'task' && post.linkedNodeId && post.questId && (

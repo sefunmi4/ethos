@@ -147,4 +147,29 @@ describe('GraphLayout node interaction', () => {
 
     expect(screen.getByText('Create Post')).toBeInTheDocument();
   });
+
+  it('dispatches event on node double click', () => {
+    const posts = [
+      {
+        id: 'p1',
+        type: 'task',
+        content: 'Task',
+        authorId: 'u1',
+        visibility: 'public',
+        timestamp: '',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+    ];
+
+    const listener = jest.fn();
+    window.addEventListener('questTaskOpen', listener);
+
+    render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
+
+    fireEvent.doubleClick(screen.getAllByText('Task')[1]);
+
+    expect(listener).toHaveBeenCalled();
+  });
 });

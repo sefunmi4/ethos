@@ -59,6 +59,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [taskCardOpen, setTaskCardOpen] = useState(true);
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const navigate = useNavigate();
 
   const mapOptions = [
@@ -144,6 +147,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
     fetchData();
   }, [quest.id, expanded]);
 
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = e.detail?.taskId;
+      if (!id) return;
+      setOpenTaskId(id);
+      setTaskCardOpen(true);
+    };
+    window.addEventListener('questTaskOpen', handler);
+    return () => window.removeEventListener('questTaskOpen', handler);
+  }, []);
+
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
@@ -226,6 +240,61 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
     return (
       <>
+        {openTaskId && (
+          (() => {
+            const task = logs.find((p) => p.id === openTaskId);
+            if (!task) return null;
+            return (
+              <div className="mb-2 border border-secondary rounded">
+                <div
+                  className="flex justify-between items-center p-2 bg-background cursor-pointer"
+                  onClick={() => setTaskCardOpen((prev) => !prev)}
+                >
+                  <span className="font-semibold text-sm">
+                    {task.content.slice(0, 40)}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="text-xs underline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenTaskId(null);
+                      }}
+                    >
+                      ✕
+                    </button>
+                    <span className="text-xs">{taskCardOpen ? '▲' : '▼'}</span>
+                  </div>
+                </div>
+                {taskCardOpen && (
+                  <div className="p-2 space-y-2">
+                    {showAddItemForm && (
+                      <CreatePost
+                        questId={quest.id}
+                        boardId={`map-${quest.id}`}
+                        replyTo={task}
+                        onSave={(p) => {
+                          setLogs((prev) => [...prev, p]);
+                          setShowAddItemForm(false);
+                        }}
+                        onCancel={() => setShowAddItemForm(false)}
+                      />
+                    )}
+                    <PostCard
+                      post={task}
+                      user={user}
+                      questId={quest.id}
+                      replyOverride={{
+                        label: 'Add Item',
+                        onClick: () => setShowAddItemForm(true),
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })()
+        )}
         {showTaskForm && (
           <div className="mb-4">
             <CreatePost
