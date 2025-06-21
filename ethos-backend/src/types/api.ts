@@ -92,6 +92,8 @@ export interface Post {
 
   type: PostType;
   subtype?: string;
+  /** Short header for the post */
+  title?: string;
   content: string;
   /** Optional extra details for task posts */
   details?: string;

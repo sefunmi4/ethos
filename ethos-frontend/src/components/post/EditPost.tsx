@@ -22,6 +22,7 @@ interface EditPostProps {
 const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [type, setType] = useState<PostType>(post.type);
   const [status, setStatus] = useState<string>(post.status || 'To Do');
+  const [title, setTitle] = useState<string>(post.title || '');
   const [content, setContent] = useState<string>(post.content || '');
   const [details, setDetails] = useState<string>(post.details || '');
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>(post.collaborators || []);
@@ -46,6 +47,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 
     const payload: Partial<Post> = {
       type,
+      title: type === 'task' ? content : title || undefined,
       content,
       ...(type === 'task' && details ? { details } : {}),
       ...(type === 'quest' && { collaborators }),
@@ -89,6 +91,18 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+            />
+          </>
+        )}
+
+        {type !== 'task' && (
+          <>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required={type !== 'free_speech'}
             />
           </>
         )}
