@@ -130,6 +130,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     if (layout !== 'paged') setPageIndex(0);
   }, [layout, items.length]);
   useEffect(() => {
+    setIndex(i => Math.min(i, items.length - 1));
+  }, [items.length]);
+  useEffect(() => {
     const handler = (e: any) => {
       const id = e.detail?.taskId;
       if (!id) return;
