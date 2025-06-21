@@ -47,6 +47,8 @@ interface PostCardProps {
   depth?: number;
   /** Additional classes for outer wrapper */
   className?: string;
+  /** Expand replies when first rendered */
+  initialShowReplies?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -61,6 +63,7 @@ const PostCard: React.FC<PostCardProps> = ({
   headerOnly = false,
   depth = 0,
   className = '',
+  initialShowReplies = false,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
