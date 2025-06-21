@@ -10,6 +10,15 @@ export const ROUTES = {
   
     /** Login page (public) */
     LOGIN: '/login',
+
+    /** Informational about page */
+    ABOUT: '/about',
+
+    /** Privacy policy page */
+    PRIVACY: '/privacy',
+
+    /** Terms of service page */
+    TERMS: '/terms',
   
     /** Logged-in user’s private profile page */
     PROFILE: '/profile',

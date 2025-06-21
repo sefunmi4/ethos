@@ -20,6 +20,9 @@ import PrivateRoute from './routes/ProtectedRoute';
  */
 const Home = lazy(() => import('./pages/index'));
 const Login = lazy(() => import('./pages/Login'));
+const About = lazy(() => import('./pages/About'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Quest = lazy(() => import('./pages/quest/[id]'));
 const Post = lazy(() => import('./pages/post/[id]'));
@@ -59,6 +62,9 @@ const App: React.FC = () => {
                   {/* ✅ Publicly accessible routes */}
                   <Route path={ROUTES.HOME} element={<Home />} />
                   <Route path={ROUTES.LOGIN} element={<Login />} />
+                  <Route path={ROUTES.ABOUT} element={<About />} />
+                  <Route path={ROUTES.PRIVACY} element={<Privacy />} />
+                  <Route path={ROUTES.TERMS} element={<Terms />} />
                   <Route path={ROUTES.PUBLIC_PROFILE()} element={<PublicProfile />} />
                   <Route path={ROUTES.RESET_PASSWORD()} element={<ResetPassword />} />
 
