@@ -8,8 +8,8 @@ interface PostTypeFilterProps {
 
 const options = [
   { value: '', label: 'All Posts' },
-  { value: 'quest', label: 'Quests' },
   { value: 'request', label: 'Requests' },
+  { value: 'review', label: 'Reviews' },
   { value: 'issue', label: 'Issues' },
 ];
 

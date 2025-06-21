@@ -15,6 +15,7 @@ import GraphLayout from '../layout/GraphLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
 
 import { Button, Input, Select, Spinner } from '../ui';
+import { POST_TYPES } from '../../constants/options';
 
 import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
 import type { Post, PostType } from '../../types/postTypes';
@@ -176,12 +177,15 @@ const Board: React.FC<BoardProps> = ({
   }, [renderableItems]);
 
   const postTypes = useMemo(() => {
+    if (board?.id === 'quest-board') {
+      return ['request', 'review', 'issue'];
+    }
     const types = new Set<string>();
     renderableItems.forEach((it) => {
       if ('type' in it) types.add((it as Post).type);
     });
     return Array.from(types);
-  }, [renderableItems]);
+  }, [renderableItems, board?.id]);
 
   const linkTypes = useMemo(() => {
     const types = new Set<string>();
@@ -301,16 +305,19 @@ const Board: React.FC<BoardProps> = ({
                 />
               )}
               {postTypes.length > 1 && (
-                <Select
-                  value={localFilter.postType}
-                  onChange={(e) =>
-                    setLocalFilter((p) => ({ ...p, postType: e.target.value }))
-                  }
-                  options={[
-                    { value: '', label: 'All Posts' },
-                    ...postTypes.map((t) => ({ value: t, label: t }))
-                  ]}
-                />
+              <Select
+                value={localFilter.postType}
+                onChange={(e) =>
+                  setLocalFilter((p) => ({ ...p, postType: e.target.value }))
+                }
+                options={[
+                  { value: '', label: 'All Posts' },
+                  ...postTypes.map((t) => {
+                    const opt = POST_TYPES.find((o) => o.value === t);
+                    return { value: t, label: opt?.label || t };
+                  })
+                ]}
+              />
               )}
               {linkTypes.length > 1 && (
                 <Select
