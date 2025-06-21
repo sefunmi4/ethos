@@ -233,8 +233,6 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         ref={setNodeRef}
         style={style}
         className={isDragging ? 'opacity-50' : ''}
-        {...attributes}
-        {...listeners}
       >
         <div
           style={{ marginLeft: depth * 16 }}
@@ -246,7 +244,16 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             )
           }
         >
-          <span className="text-xl select-none cursor-grab">
+          <span
+            className="text-xl select-none cursor-grab"
+            {...attributes}
+            {...listeners}
+            onDoubleClick={() =>
+              window.dispatchEvent(
+                new CustomEvent('questTaskOpen', { detail: { taskId: node.id } })
+              )
+            }
+          >
             {icon}
           </span>
           <ContributionCard
