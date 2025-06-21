@@ -44,7 +44,11 @@
     "description": "Personal quests board.",
     "boardType": "quest",
     "layout": "grid",
-    "items": [],
+    "items": [
+      "a4898447-a963-4d3e-8586-b872fd01628d",
+      "f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
+      "3b52037d-9c82-4924-b91a-f8e7f2d6e4d0"
+    ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
@@ -138,5 +142,51 @@
     "defaultFor": null,
     "createdAt": "2025-06-21T18:05:15.086Z",
     "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b"
+  },
+  {
+    "id": "map-f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
+    "title": "Test Quest Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "4addd0e5-6247-458e-a847-84e750114f87"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T18:31:11.360Z",
+    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
+    "questId": "f46937dc-33e4-4ab0-bcaa-9b82b37976bb"
+  },
+  {
+    "id": "active-quests",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "a4898447-a963-4d3e-8586-b872fd01628d",
+      "f46937dc-33e4-4ab0-bcaa-9b82b37976bb"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-21T18:31:11.364Z",
+    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b"
+  },
+  {
+    "id": "map-a4898447-a963-4d3e-8586-b872fd01628d",
+    "title": "Graduate Applications Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "62336f70-b5ad-4be6-87bc-5125ca03c809"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T18:31:18.575Z",
+    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
+    "questId": "a4898447-a963-4d3e-8586-b872fd01628d"
   }
 ]
