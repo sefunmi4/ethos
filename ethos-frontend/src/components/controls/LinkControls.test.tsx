@@ -3,6 +3,7 @@ import LinkControls from './LinkControls';
 import type { LinkedItem } from '../../types/postTypes';
 
 jest.mock('../../api/post', () => ({
+  __esModule: true,
   fetchAllPosts: jest.fn(() =>
     Promise.resolve([
       {
