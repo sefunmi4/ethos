@@ -22,9 +22,6 @@ export const ROUTES = {
   
     /** Logged-in user’s private profile page */
     PROFILE: '/profile',
-
-    /** Task library page */
-    TASK_LIBRARY: '/task-library',
   
     /**
      * Public profile page for any user

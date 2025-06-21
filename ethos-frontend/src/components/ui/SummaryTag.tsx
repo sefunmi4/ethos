@@ -10,6 +10,7 @@ import {
   FaUser
 } from 'react-icons/fa';
 import clsx from 'clsx';
+import { TAG_BASE } from '../../constants/styles';
 
 export type SummaryTagType =
   | 'quest'
@@ -40,7 +41,6 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
   type: FaUser,
 };
 
-const baseClasses = 'inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200';
 
 const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({ type, label, link, className }) => {
   const Icon = icons[type] || FaStickyNote;
@@ -52,12 +52,12 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({ type, l
   );
   if (link) {
     return (
-      <Link to={link} className={clsx(baseClasses, className)}>
+      <Link to={link} className={clsx(TAG_BASE, className)}>
         {content}
       </Link>
     );
   }
-  return <span className={clsx(baseClasses, className)}>{content}</span>;
+  return <span className={clsx(TAG_BASE, className)}>{content}</span>;
 };
 
 export default SummaryTag;

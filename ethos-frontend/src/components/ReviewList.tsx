@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { TAG_BASE } from '../constants/styles';
 import { fetchReviews } from '../api/review';
 import type { Review, ReviewTargetType } from '../types/reviewTypes';
 import { Select, Spinner } from './ui';
@@ -73,12 +74,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
               {review.tags && review.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {review.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-700 dark:text-gray-200"
-                    >
-                      #{tag}
-                    </span>
+                    <span key={tag} className={TAG_BASE}>#{tag}</span>
                   ))}
                 </div>
               )}

@@ -25,6 +25,7 @@ import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import SummaryTag from '../ui/SummaryTag';
+import { TAG_BASE } from '../../constants/styles';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -505,12 +506,7 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
             {post.tags.map(tag => (
-              <span
-                key={tag}
-                className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-gray-700 dark:text-gray-200"
-              >
-                #{tag}
-              </span>
+              <span key={tag} className={TAG_BASE}>#{tag}</span>
             ))}
           </div>
         )}

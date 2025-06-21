@@ -1,4 +1,5 @@
 import React from 'react';
+import { TAG_BASE } from '../../constants/styles';
 import type { User } from '../../types/userTypes';
 import type { Quest } from '../../types/questTypes';
 
@@ -55,10 +56,7 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
           tags.map((tag, index) => {
             if (typeof tag === 'string') {
               return (
-                <span
-                  key={index}
-                  className="text-xs font-medium bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-gray-700 dark:text-gray-200"
-                >
+                <span key={index} className={TAG_BASE}>
                   #{tag}
                 </span>
               );

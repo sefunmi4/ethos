@@ -105,8 +105,8 @@ export const buildSummaryTags = (
   } else if (post.type === 'issue' && post.nodeId) {
     tags.push({ type: 'issue', label: `Issue: ${post.nodeId}`, link: ROUTES.POST(post.id) });
   } else if (post.type === 'log') {
-    const suffix = post.id.slice(-4);
-    tags.push({ type: 'log', label: `Log: L${suffix}`, link: ROUTES.POST(post.id) });
+    const user = post.author?.username || post.authorId;
+    tags.push({ type: 'log', label: `Log: @${user}`, link: ROUTES.POST(post.id) });
   } else if (post.type) {
     tags.push({ type: 'type', label: post.type.charAt(0).toUpperCase() + post.type.slice(1), link: ROUTES.POST(post.id) });
   }
@@ -116,7 +116,8 @@ export const buildSummaryTags = (
   }
 
   if (post.type === 'free_speech') {
-    tags.push({ type: 'free_speech', label: 'Free Speech' });
+    const user = post.author?.username || post.authorId;
+    tags.push({ type: 'free_speech', label: `Free Speech: @${user}` });
   }
 
   return tags;
@@ -144,8 +145,8 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   } else if (post.type === 'issue' && post.nodeId) {
     parts.push(`(Issue: ${post.nodeId})`);
   } else if (post.type === 'log') {
-    const suffix = post.id.slice(-4);
-    parts.push(`(Log: L${suffix})`);
+    const user = post.author?.username || post.authorId;
+    parts.push(`(Log: @${user})`);
   } else if (post.type) {
     parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
   }
@@ -155,7 +156,8 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   }
 
   if (post.type === 'free_speech') {
-    parts.push('(Free Speech)');
+    const user = post.author?.username || post.authorId;
+    parts.push(`(Free Speech: @${user})`);
   }
 
   return parts.join(' ').trim();
