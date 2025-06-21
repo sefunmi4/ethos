@@ -154,7 +154,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           {...listeners}
         >
           <div
-            className="mb-2 flex items-center cursor-pointer"
+            className="flex items-center text-xs cursor-pointer py-0.5 px-1 truncate"
             style={{ marginLeft: depth * 16 }}
             onClick={() => {
               setExpanded(true);
@@ -163,9 +163,10 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             }}
             title={snippet}
           >
-            <CompactNodeCard post={node} showStatus={showStatus} />
+            <span className="mr-1 select-none">{icon}</span>
+            <span className="truncate">{snippet}{node.content && node.content.length > 30 ? '…' : ''}</span>
             {edge && (
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 flex items-center">
+              <span className="text-[10px] text-gray-500 dark:text-gray-400 ml-1 flex items-center">
                 {edge.label || edge.type}
                 {onRemoveEdge && (
                   <button

@@ -52,6 +52,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [logs, setLogs] = useState<Post[]>([]);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [rootNode, setRootNode] = useState<Post | null>(null);
+  const [leftWidth, setLeftWidth] = useState(280);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
@@ -113,6 +114,21 @@ const QuestCard: React.FC<QuestCardProps> = ({
     } catch (err) {
       console.error("[QuestCard] Failed to save links:", err);
     }
+  };
+
+  const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const startX = e.clientX;
+    const startWidth = leftWidth;
+    const onMove = (ev: MouseEvent) => {
+      const newWidth = Math.min(500, Math.max(200, startWidth + ev.clientX - startX));
+      setLeftWidth(newWidth);
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
   };
 
   useEffect(() => {
@@ -310,10 +326,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
   const renderRightPanel = () => {
     if (!expanded) return null;
+    let panel: React.ReactNode = null;
     switch (activeTab) {
-      case "logs":
-        if (!selectedNode)
-          return (
+      case 'logs':
+        if (!selectedNode) {
+          panel = (
             <>
               {showLogForm && (
                 <div className="mb-4">
@@ -338,33 +355,27 @@ const QuestCard: React.FC<QuestCardProps> = ({
               />
               <div className="text-right mt-2">
                 {canEdit ? (
-                  <Button
-                    size="sm"
-                    variant="contrast"
-                    onClick={() => setShowLogForm(true)}
-                  >
+                  <Button size="sm" variant="contrast" onClick={() => setShowLogForm(true)}>
                     + Add Item
                   </Button>
                 ) : (
-                  <Button
-                    size="sm"
-                    variant="contrast"
-                    onClick={handleJoinRequest}
-                  >
+                  <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
                     Request to Join
                   </Button>
                 )}
               </div>
             </>
           );
-        return (
-          <LogThreadPanel questId={quest.id} node={selectedNode} user={user} />
-        );
-      case "file":
-        return renderFileView();
-      case "status":
-        if (!selectedNode)
-          return (
+        } else {
+          panel = <LogThreadPanel questId={quest.id} node={selectedNode} user={user} />;
+        }
+        break;
+      case 'file':
+        panel = renderFileView();
+        break;
+      case 'status':
+        if (!selectedNode) {
+          panel = (
             <>
               {showTaskForm && (
                 <div className="mb-4">
@@ -390,30 +401,23 @@ const QuestCard: React.FC<QuestCardProps> = ({
               />
               <div className="text-right mt-2">
                 {canEdit ? (
-                  <Button
-                    size="sm"
-                    variant="contrast"
-                    onClick={() => setShowTaskForm(true)}
-                  >
+                  <Button size="sm" variant="contrast" onClick={() => setShowTaskForm(true)}>
                     + Add Item
                   </Button>
                 ) : (
-                  <Button
-                    size="sm"
-                    variant="contrast"
-                    onClick={handleJoinRequest}
-                  >
+                  <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
                     Request to Join
                   </Button>
                 )}
               </div>
             </>
           );
-        return (
-          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
-        );
+        } else {
+          panel = <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />;
+        }
+        break;
       case 'map':
-        return (
+        panel = (
           <>
             {showTaskForm && (
               <div className="mb-4">
@@ -431,20 +435,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
             )}
             <div className="text-right mb-2">
               {canEdit ? (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={() => setShowTaskForm(true)}
-                >
+                <Button size="sm" variant="contrast" onClick={() => setShowTaskForm(true)}>
                   + Add Item
                 </Button>
               ) : (
                 !hasJoined && (
-                  <Button
-                    size="sm"
-                    variant="contrast"
-                    onClick={handleJoinRequest}
-                  >
+                  <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
                     Request to Join
                   </Button>
                 )
@@ -459,11 +455,24 @@ const QuestCard: React.FC<QuestCardProps> = ({
             />
           </>
         );
+        break;
       case 'files':
-        return <GitFileBrowser questId={quest.id} onClose={() => setActiveTab('map')} />;
+        panel = <GitFileBrowser questId={quest.id} onClose={() => setActiveTab('map')} />;
+        break;
       default:
-        return null;
+        panel = null;
     }
+
+    return (
+      <>
+        {selectedNode && (
+          <div className="mb-2">
+            <PostCard post={selectedNode} user={user} questId={quest.id} />
+          </div>
+        )}
+        {panel}
+      </>
+    );
   };
 
   return (
@@ -505,10 +514,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
       {expanded && (
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="md:w-1/3 lg:w-1/4 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700">
+          <div
+            className="overflow-auto md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700"
+            style={{ width: leftWidth }}
+          >
             {renderMap()}
           </div>
-          <div className="flex-1 md:pl-4">{renderRightPanel()}</div>
+          <div
+            className="hidden md:block w-1 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+            onMouseDown={handleDividerMouseDown}
+          />
+          <div className="flex-1 md:pl-4 overflow-auto">{renderRightPanel()}</div>
         </div>
       )}
     </div>
