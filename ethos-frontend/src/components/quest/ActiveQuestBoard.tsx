@@ -100,7 +100,7 @@ const ActiveQuestBoard: React.FC = () => {
   const showSeeAll = quests.length > BOARD_PREVIEW_LIMIT;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-background p-4 rounded shadow-md">
       <div className="relative">
         <div
           ref={containerRef}
