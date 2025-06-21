@@ -107,13 +107,15 @@ export const enrichPost = (
   post: DBPost,
   {
     users = usersStore.read(),
+    quests = questsStore.read(),
     currentUserId = null,
   }: {
     users?: DBUser[];
+    quests?: DBQuest[];
     currentUserId?: string | null;
   } = {}
 ): EnrichedPost | null => {
-  return enrichPosts([post], users, currentUserId)[0] || null;
+  return enrichPosts([post], users, quests, currentUserId)[0] || null;
 };
 
 /**
@@ -122,6 +124,7 @@ export const enrichPost = (
 export const enrichPosts = (
   posts: DBPost[],
   users: DBUser[] = usersStore.read(),
+  quests: DBQuest[] = questsStore.read(),
   currentUserId: string | null = null
 ): EnrichedPost[] => {
   const enriched = posts.map((post) => {
@@ -150,6 +153,9 @@ export const enrichPosts = (
         id: enrichedAuthor.id,
         username: enrichedAuthor.username,
       },
+      questTitle: normalized.questId
+        ? quests.find((q) => q.id === normalized.questId)?.title
+        : undefined,
       enriched: true,
     };
   });
@@ -172,7 +178,7 @@ export const enrichQuest = (
     currentUserId?: string | null;
   } = {}
 ): EnrichedQuest => {
-  const allPosts = enrichPosts(posts, users, currentUserId);
+  const allPosts = enrichPosts(posts, users, questsStore.read(), currentUserId);
   const normalizedQuest = normalizeQuest(quest);
   const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
   const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');

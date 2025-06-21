@@ -106,6 +106,7 @@ export interface Post {
 
   questId?: string | null;
   questNodeTitle?: string;
+  questTitle?: string;
   nodeId?: string;
 
   tags: PostTag[];
