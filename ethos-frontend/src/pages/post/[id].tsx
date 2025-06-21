@@ -4,6 +4,7 @@ import Board from '../../components/board/Board';
 import PostCard from '../../components/post/PostCard';
 import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
+import { useAuth } from '../../contexts/AuthContext';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
@@ -14,6 +15,7 @@ import type { BoardData } from '../../types/boardTypes';
 const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
+  const { user } = useAuth();
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
@@ -121,6 +123,7 @@ const PostPage: React.FC = () => {
             editable={false}
             compact={true}
             initialExpanded={true}
+            user={user || undefined}
           />
         ) : (
           <Spinner />
