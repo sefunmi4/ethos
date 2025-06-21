@@ -35,6 +35,41 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     });
   };
 
+  const applyPrefix = (prefix: string) => {
+    const ta = document.getElementById(id || '') as HTMLTextAreaElement | null;
+    if (!ta) return;
+    const { selectionStart, selectionEnd } = ta;
+    const before = value.slice(0, selectionStart);
+    const selected = value.slice(selectionStart, selectionEnd) || '';
+    const after = value.slice(selectionEnd);
+    const lines = selected.split('\n');
+    const newLines = lines.map(line => prefix + line);
+    const newVal = before + newLines.join('\n') + after;
+    onChange(newVal);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.selectionStart = selectionStart;
+      ta.selectionEnd = selectionEnd + prefix.length * lines.length;
+    });
+  };
+
+  const applyCodeBlock = () => {
+    const lang = prompt('Language for code block?') || '';
+    const ta = document.getElementById(id || '') as HTMLTextAreaElement | null;
+    if (!ta) return;
+    const { selectionStart, selectionEnd } = ta;
+    const before = value.slice(0, selectionStart);
+    const selected = value.slice(selectionStart, selectionEnd);
+    const after = value.slice(selectionEnd);
+    const newVal = `${before}\n\`\`\`${lang}\n${selected}\n\`\`\`\n${after}`;
+    onChange(newVal);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.selectionStart = selectionStart + 4;
+      ta.selectionEnd = selectionStart + 4 + lang.length;
+    });
+  };
+
   return (
     <div>
       <div className="flex gap-2 mb-1 text-sm">
@@ -52,6 +87,18 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         </button>
         <button type="button" className="px-1" onClick={() => applyWrap('## ')}>
           H
+        </button>
+        <button type="button" className="px-1" onClick={() => applyPrefix('- [ ] ')}>
+          ✓
+        </button>
+        <button type="button" className="px-1" onClick={() => applyPrefix('- ')}>
+          •
+        </button>
+        <button type="button" className="px-1" onClick={() => applyPrefix('1. ')}>
+          1.
+        </button>
+        <button type="button" className="px-1" onClick={applyCodeBlock}>
+          code
         </button>
         <button
           type="button"

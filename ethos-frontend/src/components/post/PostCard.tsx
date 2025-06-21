@@ -325,10 +325,12 @@ const PostCard: React.FC<PostCardProps> = ({
             {post.details && (
               isLong ? (
                 <>
-                  <MarkdownRenderer
-                    content={post.details.slice(0, PREVIEW_LIMIT) + '…'}
-                    onToggleTask={handleToggleTask}
-                  />
+                  <div className={compact ? 'clamp-3' : ''}>
+                    <MarkdownRenderer
+                      content={post.details.slice(0, PREVIEW_LIMIT) + '…'}
+                      onToggleTask={handleToggleTask}
+                    />
+                  </div>
                   <button
                     onClick={() => navigate(ROUTES.POST(post.id))}
                     className="text-accent underline text-xs ml-1"
@@ -337,19 +339,23 @@ const PostCard: React.FC<PostCardProps> = ({
                   </button>
                 </>
               ) : (
-                <MarkdownRenderer
-                  content={post.details}
-                  onToggleTask={handleToggleTask}
-                />
+                <div className={compact ? 'clamp-3' : ''}>
+                  <MarkdownRenderer
+                    content={post.details}
+                    onToggleTask={handleToggleTask}
+                  />
+                </div>
               )
             )}
           </>
         ) : isLong ? (
           <>
-            <MarkdownRenderer
-              content={content.slice(0, PREVIEW_LIMIT) + '…'}
-              onToggleTask={handleToggleTask}
-            />
+            <div className={compact ? 'clamp-3' : ''}>
+              <MarkdownRenderer
+                content={content.slice(0, PREVIEW_LIMIT) + '…'}
+                onToggleTask={handleToggleTask}
+              />
+            </div>
             <button
               onClick={() => navigate(ROUTES.POST(post.id))}
               className="text-accent underline text-xs ml-1"
@@ -358,7 +364,9 @@ const PostCard: React.FC<PostCardProps> = ({
             </button>
           </>
         ) : (
-          <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
+          <div className={compact ? 'clamp-3' : ''}>
+            <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
+          </div>
         )}
         <MediaPreview media={post.mediaPreviews} />
       </div>
