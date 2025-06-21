@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
-import { createMockBoard } from '../../utils/boardUtils';
+import PostCard from '../../components/post/PostCard';
 import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
 
@@ -23,14 +23,9 @@ const PostPage: React.FC = () => {
   const [page, setPage] = useState(1);
 
   const boardWithPost = useMemo<BoardData | null>(() => {
-    if (!post) return null;
-    if (!replyBoard) return createMockBoard(`post-${post.id}`, 'Post', [post]);
-    return {
-      ...replyBoard,
-      items: [post.id, ...(replyBoard.items ?? [])],
-      enrichedItems: [post, ...(replyBoard.enrichedItems ?? [])],
-    };
-  }, [post, replyBoard]);
+    if (!replyBoard) return null;
+    return replyBoard;
+  }, [replyBoard]);
 
   const fetchPostData = useCallback(async () => {
     if (!id) return;
@@ -111,12 +106,7 @@ const PostPage: React.FC = () => {
       )}
 
       <section>
-        <Board
-          board={createMockBoard(`post-${post.id}`, 'Post', [post])}
-          editable={false}
-          compact={false}
-          initialExpanded={true}
-        />
+        <PostCard post={post} />
       </section>
 
 
