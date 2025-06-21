@@ -1,0 +1,40 @@
+version: 1
+# Codex script to auto-refactor TypeScript/React code
+# Run with: codex run docs/codex_auto_fix_template.yml
+
+setup:
+  # install dependencies if needed
+  - run: npm install
+
+tasks:
+  - name: remove-unused-vars
+    description: Remove unused variable declarations and imports
+    run: |
+      codex ast --pattern "identifier" --where "isUnused" --delete
+
+  - name: replace-any
+    description: Replace 'any' with 'unknown' (or inferred types)
+    run: |
+      codex ast --pattern "any" --replace "unknown"
+
+  - name: fix-hooks
+    description: Add missing React hook dependencies with eslint comment if necessary
+    run: |
+      codex eslint --rule react-hooks/exhaustive-deps --fix
+
+  - name: move-non-component-exports
+    description: Move constants/helpers out of component files to utils folder
+    run: |
+      codex move --source "src/**/*.{ts,tsx}" --destination "src/utils"
+
+  - name: convert-require
+    description: Replace CommonJS require calls with ES6 imports
+    run: |
+      codex codemod commonjs-to-esm "src/**/*.{ts,tsx}" "tests/**/*.{ts,tsx}"
+
+  - name: lint-and-test
+    description: Run lint and unit tests after refactor
+    run: |
+      npm run lint
+      npm test -- -w=1
+
