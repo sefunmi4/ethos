@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
   const timelineBoard = boards['timeline-board'];
   const showQuestSeeAll = (questBoard?.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
   const showTimelineSeeAll =
-    (timelineBoard?.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
+    (timelineBoard?.enrichedItems?.length || 0) >= BOARD_PREVIEW_LIMIT;
   const postTypes = useMemo(() => {
     if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
