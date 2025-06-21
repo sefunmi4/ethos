@@ -23,6 +23,7 @@ It’s a new operating system for solving problems together.
 * **Post Problems** – Share life struggles, project needs, or global ideas.
 * **Turn Posts Into Quests** – Structure solutions into sub-tasks or timelines.
 * **Boards & Timelines** – Navigate via visual boards and chronological views.
+* **Recent Activity Board** – Prioritizes posts from quests you're involved in and highlights linked tasks.
 * **Adventure Guilds** – Collaborate through guilds with defined roles and ranks.
 * **Quest Logs** – Track the history, updates, and team discussions around any quest.
 * **AI Content Reviews** – Rate and tag AI apps, quests, creators, or datasets.
@@ -184,6 +185,7 @@ console output. Each log line includes a timestamp for easier tracing.
 3. Posts evolve into quests or timelines based on collaboration.
 4. Quests are mapped visually and tracked via quest logs.
 5. Boards show all active or completed items in grid, list, or timeline views.
+6. The Recent Activity board surfaces quest-related posts first and highlights tasks linked through parent paths.
 
 ## Task Status & Kanban Boards
 
