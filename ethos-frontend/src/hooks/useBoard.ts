@@ -44,7 +44,7 @@ export const useBoard = (
     async (id: string, page = 1, limit = pageSize) => {
       setIsLoading(true);
       try {
-        const enrich = typeof arg === 'object' && arg.enrich;
+        const enrich = typeof arg === 'object' ? !!arg.enrich : true;
         const result = await fetchBoard(id, {
           enrich,
           page,
