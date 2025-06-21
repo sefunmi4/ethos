@@ -195,7 +195,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                     key={item.id}
                     item={item}
                     user={user}
-                    compact={compact}
+                    compact={true}
                     onEdit={onEdit}
                     onDelete={onDelete}
                   />
@@ -221,19 +221,22 @@ const GridLayout: React.FC<GridLayoutProps> = ({
           ref={containerRef}
           className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
         >
-          {items.map((item) => (
-            <div key={item.id} className="snap-center min-w-[280px] flex-shrink-0">
+          {items.map((item, idx) => (
+            <div
+              key={item.id}
+              className={`snap-center flex-shrink-0 transition-all ${idx === index ? 'w-full sm:w-[640px]' : 'w-64 sm:w-[300px] opacity-80'}`}
+            >
               <ContributionCard
                 contribution={item}
                 user={user}
-                compact={compact}
+                compact={compact || idx !== index}
                 onEdit={onEdit}
                 onDelete={onDelete}
               />
             </div>
           ))}
         </div>
-        {items.length > 3 && (
+        {items.length > 1 && (
           <>
             <button
               type="button"
@@ -250,14 +253,20 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               ▶
             </button>
             <div className="flex justify-center mt-2">
-              {items.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setIndex(i)}
-                  className={`mx-1 w-2 h-2 rounded-full ${i === index ? 'bg-accent' : 'bg-background'} focus:outline-none`}
-                />
-              ))}
+              {(() => {
+                const dots = items.length > 3 ? [index - 1, index, index + 1] : items.map((_, i) => i);
+                return dots.map((i, idx) => {
+                  const actual = ((i % items.length) + items.length) % items.length;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setIndex(actual)}
+                      className={`mx-1 w-2 h-2 rounded-full ${actual === index ? 'bg-accent' : 'bg-background'} focus:outline-none`}
+                    />
+                  );
+                });
+              })()}
             </div>
           </>
         )}

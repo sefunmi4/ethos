@@ -25,6 +25,8 @@ interface GraphLayoutProps {
   condensed?: boolean;
   /** Show status dropdowns for tasks */
   showStatus?: boolean;
+  /** Display side inspector panel */
+  showInspector?: boolean;
   /** Notify parent when a node is selected */
   onSelectNode?: (n: Post) => void;
   onScrollEnd?: () => void;
@@ -58,6 +60,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   compact = false,
   condensed = false,
   showStatus = true,
+  showInspector = true,
   onSelectNode,
   onScrollEnd,
   loadingMore = false,
@@ -343,21 +346,23 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           </div>
         )}
       </div>
-      <div
-        className={
-          'fixed top-0 right-0 h-full w-80 bg-surface dark:bg-background shadow-lg transform transition-transform duration-300 ' +
-          (activeNodeId ? 'translate-x-0' : 'translate-x-full')
-        }
-        data-testid="quest-node-inspector"
-      >
-        {activeNode && (
-          <QuestNodeInspector
-            node={activeNode}
-            user={user}
-            onClose={() => setActiveNodeId(null)}
-          />
-        )}
-      </div>
+      {showInspector && (
+        <div
+          className={
+            'fixed top-0 right-0 h-full w-80 bg-surface dark:bg-background shadow-lg transform transition-transform duration-300 ' +
+            (activeNodeId ? 'translate-x-0' : 'translate-x-full')
+          }
+          data-testid="quest-node-inspector"
+        >
+          {activeNode && (
+            <QuestNodeInspector
+              node={activeNode}
+              user={user}
+              onClose={() => setActiveNodeId(null)}
+            />
+          )}
+        </div>
+      )}
     </DndContext>
   );
 };
