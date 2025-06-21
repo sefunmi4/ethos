@@ -70,8 +70,8 @@ const App: React.FC = () => {
 
                   {/* 🔒 Routes requiring authentication (wrapped in PrivateRoute) */}
                   <Route element={<PrivateRoute />}>
-                    <Route path={ROUTES.PROFILE} element={<Profile />} />
-                    <Route path={ROUTES.QUEST()} element={<Quest />} />
+                  <Route path={ROUTES.PROFILE} element={<Profile />} />
+                  <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
