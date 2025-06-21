@@ -10,7 +10,7 @@ import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
-const QUEST_BOARD_TYPES = ['request', 'review', 'issue', 'task'];
+const QUEST_BOARD_TYPES = ['request', 'review', 'issue'];
 const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>
 ) => {
@@ -20,7 +20,7 @@ const getQuestBoardItems = (
       if (p.type === 'request') {
         return p.visibility === 'public' || p.visibility === 'request_board';
       }
-      return p.helpRequest === true;
+      return p.visibility === 'public';
     })
     .map((p) => p.id);
   return ids;
