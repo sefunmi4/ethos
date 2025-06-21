@@ -80,8 +80,27 @@ const QuestCard: React.FC<QuestCardProps> = ({
   ];
 
   const isOwner = user?.id === questData.authorId;
-  const canEdit =
-    isOwner || questData.collaborators?.some((c) => c.userId === user?.id);
+  const isCollaborator = questData.collaborators?.some(c => c.userId === user?.id);
+  const canEdit = isOwner || isCollaborator;
+  const hasJoined = isOwner || isCollaborator;
+
+  const handleJoinRequest = () => {
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+    if (hasJoined) {
+      alert('You are already part of this quest.');
+      return;
+    }
+    if (joinRequested) {
+      alert('Request already sent. Awaiting approval.');
+      return;
+    }
+    onJoinToggle?.(questData);
+    setJoinRequested(true);
+    alert('Join request sent.');
+  };
 
   const saveLinks = async () => {
     try {
@@ -166,14 +185,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
           onEdit={isOwner ? () => onEdit?.(questData) : undefined}
           onEditLinks={isOwner ? () => setShowLinkEditor(true) : undefined}
           onDelete={isOwner ? () => onDelete?.(questData) : undefined}
-          onArchived={
-            isOwner
-              ? () => {
-                  console.log(`[QuestCard] Quest ${quest.id} archived`);
-                }
-              : undefined
-          }
-          onJoin={!isOwner ? handleJoinRequest : undefined}
+          onArchived={isOwner ? () => {
+            console.log(`[QuestCard] Quest ${quest.id} archived`);
+          } : undefined}
+          onJoin={!hasJoined ? handleJoinRequest : undefined}
           joinLabel="Request to Join"
           permalink={`${window.location.origin}${ROUTES.QUEST(quest.id)}`}
         />
@@ -316,13 +331,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   + Add Item
                 </Button>
               ) : (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={handleJoinRequest}
-                >
-                  Request to Join
-                </Button>
+                !hasJoined && (
+                  <Button
+                    size="sm"
+                    variant="contrast"
+                    onClick={handleJoinRequest}
+                  >
+                    Request to Join
+                  </Button>
+                )
               )}
             </div>
           </>
@@ -363,13 +380,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   + Add Item
                 </Button>
               ) : (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={handleJoinRequest}
-                >
-                  Request to Join
-                </Button>
+                !hasJoined && (
+                  <Button
+                    size="sm"
+                    variant="contrast"
+                    onClick={handleJoinRequest}
+                  >
+                    Request to Join
+                  </Button>
+                )
               )}
             </div>
           </>
@@ -401,13 +420,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   + Add Item
                 </Button>
               ) : (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={handleJoinRequest}
-                >
-                  Request to Join
-                </Button>
+                !hasJoined && (
+                  <Button
+                    size="sm"
+                    variant="contrast"
+                    onClick={handleJoinRequest}
+                  >
+                    Request to Join
+                  </Button>
+                )
               )}
             </div>
             <GraphLayout
