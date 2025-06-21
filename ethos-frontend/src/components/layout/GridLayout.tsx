@@ -257,12 +257,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                 const dots = items.length > 3 ? [index - 1, index, index + 1] : items.map((_, i) => i);
                 return dots.map((i, idx) => {
                   const actual = ((i % items.length) + items.length) % items.length;
+                  const isActive = actual === index;
+                  const isEdge = idx === 0 || idx === dots.length - 1;
                   return (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setIndex(actual)}
-                      className={`mx-1 w-2 h-2 rounded-full ${actual === index ? 'bg-accent' : 'bg-background'} focus:outline-none`}
+                      className={`mx-1 w-2 h-2 rounded-full ${isActive ? 'bg-accent' : 'bg-background'} ${isEdge && !isActive ? 'opacity-50' : ''} focus:outline-none`}
                     />
                   );
                 });
