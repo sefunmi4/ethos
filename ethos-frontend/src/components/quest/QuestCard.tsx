@@ -225,121 +225,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
   const renderMap = () => {
     if (!expanded) return null;
-    if (mapMode === "graph") {
-      return (
-        <>
-          {selectedNode && (
-            <div className="mb-2">
-              <TaskPreviewCard post={selectedNode} />
-            </div>
-          )}
-          <Select
-            className="mb-2"
-            value={mapMode}
-            onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
-            options={mapOptions}
-          />
-          <MapGraphLayout items={logs as any} edges={questData.taskGraph} />
-        </>
-      );
-    }
-    return (
-      <>
-        {selectedNode && (
-          <div className="mb-2">
-            <TaskPreviewCard post={selectedNode} />
-          </div>
-        )}
-        <Select
-          className="mb-2"
-          value={mapMode}
-          onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
-          options={mapOptions}
-        />
-        {openTaskId && (
-          (() => {
-            const task = logs.find((p) => p.id === openTaskId);
-            if (!task) return null;
-            return (
-              <div className="mb-2 border border-secondary rounded">
-                <div
-                  className="flex justify-between items-center p-2 bg-background cursor-pointer"
-                  onClick={() => setTaskCardOpen((prev) => !prev)}
-                >
-                  <span className="font-semibold text-sm">
-                    {task.content.slice(0, 40)}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      className="text-xs underline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenTaskId(null);
-                      }}
-                    >
-                      ✕
-                    </button>
-                    <span className="text-xs">{taskCardOpen ? '▲' : '▼'}</span>
-                  </div>
-                </div>
-                {taskCardOpen && (
-                  <div className="p-2 space-y-2">
-                    {showAddItemForm && (
-                      <CreatePost
-                        questId={quest.id}
-                        boardId={`map-${quest.id}`}
-                        replyTo={task}
-                        onSave={(p) => {
-                          setLogs((prev) => [...prev, p]);
-                          setShowAddItemForm(false);
-                        }}
-                        onCancel={() => setShowAddItemForm(false)}
-                      />
-                    )}
-                    <TaskPreviewCard post={task} />
-                    <div className="text-right">
-                      <button
-                        className="text-accent underline text-xs"
-                        onClick={() => setShowAddItemForm(true)}
-                      >
-                        Add Item
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })()
-        )}
-        {showTaskForm && (
-          <div className="mb-4">
-            <CreatePost
-              initialType="task"
-              questId={quest.id}
-              boardId={`map-${quest.id}`}
-              onSave={(p) => {
-                setLogs((prev) => [...prev, p]);
-                setShowTaskForm(false);
-              }}
-              onCancel={() => setShowTaskForm(false)}
-            />
-          </div>
-        )}
-        <div className="text-right mb-2">
-          {canEdit ? (
-            <Button
-              size="sm"
-              variant="contrast"
-              onClick={() => setShowTaskForm(true)}
-            >
-              + Add Item
-            </Button>
-          ) : (
-            <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-              Request to Join
-            </Button>
-          )}
-        </div>
+
+    const canvas =
+      mapMode === 'graph' ? (
+        <MapGraphLayout items={logs as any} edges={questData.taskGraph} />
+      ) : (
         <GraphLayout
           items={logs as any}
           user={user}
@@ -350,7 +240,73 @@ const QuestCard: React.FC<QuestCardProps> = ({
           onSelectNode={setSelectedNode}
           showInspector={false}
         />
-      </>
+      );
+
+    return (
+      <div className="space-y-2">
+        {selectedNode && (
+          <div className="space-y-2">
+            <TaskPreviewCard post={selectedNode} />
+            {showTaskForm && (
+              <CreatePost
+                initialType="task"
+                questId={quest.id}
+                boardId={`map-${quest.id}`}
+                replyTo={selectedNode}
+                onSave={(p) => {
+                  setLogs((prev) => [...prev, p]);
+                  setShowTaskForm(false);
+                }}
+                onCancel={() => setShowTaskForm(false)}
+              />
+            )}
+            <div className="text-right">
+              {canEdit ? (
+                <Button
+                  size="sm"
+                  variant="contrast"
+                  onClick={() => setShowTaskForm(true)}
+                >
+                  Add Subtask
+                </Button>
+              ) : (
+                <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
+                  Request to Join
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        <hr className="border-secondary" />
+        <div className="flex justify-between items-center text-sm">
+          <span className="font-semibold">Folder or Map Layout</span>
+          <div className="flex gap-1">
+            <button
+              className={`px-2 py-1 rounded text-xs border ${
+                mapMode === 'folder'
+                  ? 'bg-accent text-white border-accent'
+                  : 'border-secondary text-secondary'
+              }`}
+              onClick={() => setMapMode('folder')}
+            >
+              Folder
+            </button>
+            <button
+              className={`px-2 py-1 rounded text-xs border ${
+                mapMode === 'graph'
+                  ? 'bg-accent text-white border-accent'
+                  : 'border-secondary text-secondary'
+              }`}
+              onClick={() => setMapMode('graph')}
+            >
+              Map
+            </button>
+          </div>
+        </div>
+        <div className="h-96 overflow-auto" data-testid="quest-map-canvas">
+          {canvas}
+        </div>
+      </div>
     );
   };
 
