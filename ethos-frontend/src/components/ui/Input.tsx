@@ -27,7 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             className={clsx(
-              'w-full px-3 py-2 text-sm bg-surface text-primary',
+              'w-full px-3 py-2 text-sm bg-surface text-primary placeholder-gray-600 dark:placeholder-gray-300',
               error ? 'border-error' : 'border-secondary',
               'focus:outline-none',
               className
