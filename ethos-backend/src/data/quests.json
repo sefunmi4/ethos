@@ -40,5 +40,22 @@
     "visibility": "public",
     "approvalStatus": "approved",
     "flagCount": 0
+  },
+  {
+    "id": "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "title": "Defeat the ender dragon",
+    "description": "",
+    "displayOnBoard": true,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0,
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "6b8a599d-078e-4bd4-bb15-b0b7608ad7ff",
+    "taskGraph": [],
+    "helpRequest": true
   }
 ]

@@ -18,7 +18,9 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "755d3dc2-cba4-4414-8391-16c4327019a5",
+      "fd9037d9-efa5-43e3-a2e5-1b3fa3532a6b",
+      "31b44cb5-24ae-46ff-81c5-48f2b70aec26",
+      "224f1527-b0b6-4e9c-b18a-10d7c093e711",
       "f6619e30-bb1c-4dd4-83b1-e701faa1ebad",
       "e4e9f841-9ba2-4ae4-83b2-44f9f9040cb3",
       "3cafe809-d24a-4788-96db-856ea80bd8c8",
@@ -27,7 +29,13 @@
       "cb48db1e-1daa-4764-9448-472c66c7abd6",
       "42b6d1da-af12-4b1c-bee7-80731be7dc8d",
       "6d6c39ae-dc73-43b5-a3d8-7d5c59006b22",
-      "59687208-c91b-4562-9d39-5d7181c4623b"
+      "59687208-c91b-4562-9d39-5d7181c4623b",
+      "755d3dc2-cba4-4414-8391-16c4327019a5",
+      "69c94051-37d6-42b6-81a1-f560dbedb8f8",
+      "f116d807-dd25-447e-b965-1abd3969676d",
+      "63657925-62c9-4f69-aeae-ccf17a01071f",
+      "86f7346d-50dd-4161-a6f7-447e3f09f6fc",
+      "8402ee60-6cb2-4d7c-95e9-1e0f325b74d4"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -41,9 +49,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "d78fd6e3-3357-4009-a15b-dfa47022840c",
-      "8dcab4d0-207c-4bfe-b84f-155688f46be0",
-      "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
+      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
       "91544b2a-a2c0-408f-b21b-15845869a23b"
     ],
     "defaultFor": null,
@@ -80,9 +86,12 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "c3ebfb66-12c8-4203-b517-1fd2464844c3",
-      "1a8ff78e-d937-4b93-bc7f-82160f5ef07f",
-      "492d563c-82ea-432e-ae28-9eb93a6d76ab"
+      "fd9037d9-efa5-43e3-a2e5-1b3fa3532a6b",
+      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
+      "31b44cb5-24ae-46ff-81c5-48f2b70aec26",
+      "224f1527-b0b6-4e9c-b18a-10d7c093e711",
+      "86f7346d-50dd-4161-a6f7-447e3f09f6fc",
+      "8402ee60-6cb2-4d7c-95e9-1e0f325b74d4"
     ],
     "featured": true,
     "defaultFor": null,
@@ -205,5 +214,35 @@
     "createdAt": "2025-06-20T20:13:53.566Z",
     "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
     "questId": "d78fd6e3-3357-4009-a15b-dfa47022840c"
+  },
+  {
+    "id": "map-cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
+    "title": "Defeat the ender dragon Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "6b8a599d-078e-4bd4-bb15-b0b7608ad7ff"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T03:49:15.220Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
+  },
+  {
+    "id": "active-quests",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-21T03:49:15.231Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732"
   }
 ]
