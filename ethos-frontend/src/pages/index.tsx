@@ -61,6 +61,7 @@ const HomePage: React.FC = () => {
           title="🗺️ Quest Board"
           layout="grid"
           gridLayout="paged"
+          compact
           user={user as User}
           hideControls
           filter={postType ? { postType } : {}}

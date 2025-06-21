@@ -283,6 +283,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Paged Grid Layout */
   if (layout === 'paged') {
+    const container = useRef<HTMLDivElement>(null);
     const pages = useMemo(() => {
       const count = Math.ceil(items.length / 6);
       return Array.from({ length: count }, (_, i) =>
@@ -295,41 +296,61 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       if (pageIndex >= pageCount) setPageIndex(0);
     }, [pageCount, pageIndex]);
 
+    const handleScroll = useCallback(() => {
+      const el = container.current;
+      if (!el) return;
+      const idx = Math.round(el.scrollLeft / el.clientWidth);
+      if (idx !== pageIndex) setPageIndex(idx);
+    }, [pageIndex]);
+
+    const visibleDots = useMemo(() => {
+      const limit = Math.min(pageCount, 4);
+      const start = Math.min(
+        Math.max(0, pageIndex - Math.floor(limit / 2)),
+        Math.max(0, pageCount - limit)
+      );
+      return Array.from({ length: limit }, (_, i) => start + i);
+    }, [pageIndex, pageCount]);
+
     return (
       <div className="space-y-2">
-        <div className="overflow-hidden">
-          <div
-            className="flex transition-transform duration-300"
-            style={{ transform: `translateX(-${pageIndex * 100}%)` }}
-          >
-            {pages.map((group, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 flex-shrink-0 w-full"
-              >
-                {group.map(item => (
-                  <ContributionCard
-                    key={item.id}
-                    contribution={item}
-                    user={user}
-                    compact={compact}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+        <div
+          ref={container}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
+        >
+          {pages.map((group, idx) => (
+            <div
+              key={idx}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 flex-shrink-0 w-full snap-center"
+            >
+              {group.map(item => (
+                <ContributionCard
+                  key={item.id}
+                  contribution={item}
+                  user={user}
+                  compact={compact}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              ))}
+            </div>
+          ))}
         </div>
         {pageCount > 1 && (
           <div className="flex justify-center mt-2 gap-2">
-            {pages.map((_, idx) => (
+            {visibleDots.map(i => (
               <button
-                key={idx}
+                key={i}
                 type="button"
-                onClick={() => setPageIndex(idx)}
+                onClick={() => {
+                  const el = container.current;
+                  if (!el) return;
+                  setPageIndex(i);
+                  el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+                }}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  pageIndex === idx ? 'bg-accent' : 'bg-background'
+                  pageIndex === i ? 'bg-accent' : 'bg-background'
                 }`}
               />
             ))}

@@ -316,7 +316,33 @@ describe('post routes', () => {
     expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
   });
 
-  it('rejects non-help posts on quest board', async () => {
+  it('POST /:id/request-help creates request post', async () => {
+    const post = {
+      id: 'p2',
+      authorId: 'u1',
+      type: 'issue',
+      content: 'issue content',
+      visibility: 'public',
+      timestamp: '',
+      tags: [],
+      collaborators: [],
+      linkedItems: [],
+      questId: null,
+    };
+
+    const store = [post];
+    postsStore.read.mockReturnValue(store);
+    usersStore.read.mockReturnValue([]);
+
+    const res = await request(app).post('/posts/p2/request-help');
+
+    expect(res.status).toBe(201);
+    expect(store).toHaveLength(2);
+    expect(store[1].type).toBe('request');
+    expect((store[1].linkedItems as any[])[0].itemId).toBe('p2');
+  });
+
+  it('rejects non-request posts on quest board', async () => {
     const res = await request(app)
       .post('/posts')
       .send({ type: 'free_speech', boardId: 'quest-board' });
@@ -334,13 +360,12 @@ describe('post routes', () => {
     expect(written.helpRequest).toBe(true);
   });
 
-  it('allows task post with help flag on quest board', async () => {
+  it('rejects task post on quest board', async () => {
     postsStore.read.mockReturnValue([]);
-    postsStore.write.mockClear();
     const res = await request(app)
       .post('/posts')
       .send({ type: 'task', boardId: 'quest-board', helpRequest: true });
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(400);
   });
 
   it('rejects quest post on quest board', async () => {

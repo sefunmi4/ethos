@@ -2,12 +2,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
-import { requestHelpForTask } from '../../api/post';
+import { requestHelp } from '../../api/post';
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
-  requestHelpForTask: jest.fn(() =>
+  requestHelp: jest.fn(() =>
     Promise.resolve({
       id: 'r1',
       authorId: 'u1',
@@ -59,7 +59,7 @@ describe('PostCard request help', () => {
 
     fireEvent.click(screen.getByText(/Request Help/i));
 
-    await waitFor(() => expect(requestHelpForTask).toHaveBeenCalledWith('t1'));
+    await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1'));
     expect(appendMock).toHaveBeenCalled();
   });
 });

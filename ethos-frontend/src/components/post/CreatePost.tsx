@@ -65,7 +65,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
   const allowedPostTypes: PostType[] =
     boardId === 'quest-board'
-      ? ['request', 'review', 'issue', 'task']
+      ? ['request']
       : boardType === 'quest'
       ? ['quest', 'task', 'log']
       : boardType === 'post'

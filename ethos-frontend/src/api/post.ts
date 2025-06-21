@@ -211,10 +211,10 @@ export const solvePost = async (postId: string): Promise<{ success: boolean }> =
 };
 
 /**
- * 🤝 Request help for a task
+ * 🤝 Request help for any post
  */
-export const requestHelpForTask = async (taskId: string): Promise<Post> => {
-  const res = await axiosWithAuth.post(`/posts/tasks/${taskId}/request-help`);
+export const requestHelp = async (postId: string): Promise<Post> => {
+  const res = await axiosWithAuth.post(`/posts/${postId}/request-help`);
   return res.data;
 };
 
