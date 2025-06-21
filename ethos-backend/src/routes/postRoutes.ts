@@ -601,6 +601,30 @@ router.post(
 );
 
 //
+// ✅ POST /api/posts/:id/unaccept – Undo accepting a help request
+// Removes the pending tag for the current user
+//
+router.post(
+  '/:id/unaccept',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    const userId = req.user!.id;
+    post.tags = (post.tags || []).filter(t => t !== `pending:${userId}`);
+    postsStore.write(posts);
+
+    const users = usersStore.read();
+    res.json({ post: enrichPost(post, { users }) });
+  }
+);
+
+//
 // ✅ POST /api/posts/:id/solve – Mark a post as solved
 //
 router.post(

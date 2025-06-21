@@ -105,7 +105,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const [accepting, setAccepting] = useState(false);
   const [accepted, setAccepted] = useState(
-    post.tags?.includes(`pending:${user?.id}`) || false
+    !!user && post.tags?.includes(`pending:${user.id}`)
   );
 
   const handleRequestHelp = async () => {

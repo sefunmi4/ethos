@@ -229,7 +229,7 @@ export const acceptRequest = async (
 };
 
 /**
- * ❌ Cancel acceptance of a help request
+ * ⏪ Undo accepting a help request
  */
 export const unacceptRequest = async (
   postId: string

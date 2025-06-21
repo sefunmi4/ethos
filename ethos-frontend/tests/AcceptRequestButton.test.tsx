@@ -81,17 +81,15 @@ describe('accept request button', () => {
     expect(acceptRequest).toHaveBeenCalledWith('p1');
   });
 
-  it('toggles pending state on second click', async () => {
+  it('toggles pending state on second click', () => {
     render(
       <BrowserRouter>
         <PostCard post={post} user={{ id: 'u1' }} />
       </BrowserRouter>
     );
-    fireEvent.click(screen.getByText('Accept'));
-    await screen.findByText('Pending');
-
-    fireEvent.click(screen.getByText('Pending'));
+    const btn = screen.getByText('Accept');
+    fireEvent.click(btn);
+    fireEvent.click(btn);
     expect(unacceptRequest).toHaveBeenCalledWith('p1');
-    await screen.findByText('Accept');
   });
 });

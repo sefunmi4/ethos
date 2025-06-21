@@ -75,10 +75,10 @@ describe('PostCard request help', () => {
     expect(appendMock).toHaveBeenCalled();
   });
 
-  it('hides request help checkbox for free speech posts', () => {
+  it('does not show checkbox for free speech posts', () => {
     render(
       <BrowserRouter>
-        <PostCard post={freeSpeechPost} user={{ id: 'u2' }} />
+        <PostCard post={{ ...post, type: 'free_speech' }} />
       </BrowserRouter>
     );
 
