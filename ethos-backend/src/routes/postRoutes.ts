@@ -5,7 +5,7 @@ import authOptional from '../middleware/authOptional';
 import { postsStore, usersStore, reactionsStore, questsStore } from '../models/stores';
 import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
-import type { DBPost } from '../types/db';
+import type { DBPost, DBQuest } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -511,6 +511,66 @@ router.post(
     postsStore.write(posts);
     const users = usersStore.read();
     res.status(201).json(enrichPost(requestPost, { users }));
+  }
+);
+
+//
+// ✅ POST /api/posts/:id/accept – Accept a help request
+// Marks the post as pending for the current user and joins or creates a quest
+//
+router.post(
+  '/:id/accept',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    const userId = req.user!.id;
+    post.tags = Array.from(new Set([...(post.tags || []), `pending:${userId}`]));
+
+    let quest = post.questId ? quests.find(q => q.id === post.questId) : null;
+
+    if (quest) {
+      const exists = (quest.collaborators || []).some(c => c.userId === userId);
+      if (!exists) {
+        quest.collaborators = quest.collaborators || [];
+        quest.collaborators.push({ userId });
+      }
+    } else {
+      quest = {
+        id: uuidv4(),
+        authorId: userId,
+        title: makeQuestNodeTitle(post.content),
+        description: '',
+        visibility: 'public',
+        approvalStatus: 'approved',
+        flagCount: 0,
+        status: 'active',
+        headPostId: post.id,
+        linkedPosts: [],
+        collaborators: [{ userId }],
+        createdAt: new Date().toISOString(),
+        tags: [],
+        displayOnBoard: true,
+        taskGraph: [],
+        helpRequest: true,
+      } as DBQuest;
+      quests.push(quest);
+      post.questId = quest.id;
+      post.questNodeTitle = makeQuestNodeTitle(post.content);
+    }
+
+    questsStore.write(quests);
+    postsStore.write(posts);
+
+    const users = usersStore.read();
+    res.json({ post: enrichPost(post, { users }), quest });
   }
 );
 

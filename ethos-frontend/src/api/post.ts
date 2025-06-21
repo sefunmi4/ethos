@@ -219,6 +219,16 @@ export const requestHelp = async (postId: string): Promise<Post> => {
 };
 
 /**
+ * ✅ Accept a help request
+ */
+export const acceptRequest = async (
+  postId: string
+): Promise<{ post: Post; quest: any }> => {
+  const res = await axiosWithAuth.post(`/posts/${postId}/accept`);
+  return res.data;
+};
+
+/**
  * 🔗 Get all posts linked to a post (e.g. solutions, duplicates, references)
  * @param postId - Post ID
  */
