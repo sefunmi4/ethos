@@ -44,6 +44,12 @@ export const STATUS_OPTIONS = [
   { value: 'Done', label: 'Done' },
 ] as const;
 
+export const TASK_TYPE_OPTIONS = [
+  { value: 'abstract', label: 'Abstract' },
+  { value: 'file', label: 'File' },
+  { value: 'folder', label: 'Folder' },
+] as const;
+
 /**
  * Defines the shape of each select option.
  */

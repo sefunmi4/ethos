@@ -35,6 +35,8 @@ export interface DBPost {
 
   tags?: PostTag[];
   status?: QuestTaskStatus;
+  /** Optional classification for task posts */
+  taskType?: 'file' | 'folder' | 'abstract';
   collaborators?: { userId: string; roles?: string[] }[];
   linkedItems?: LinkedItem[];
 

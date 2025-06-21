@@ -39,3 +39,13 @@ The frontend uses these nodes and edges to build the quest graph. Nodes without 
 
 Boards may use a force-directed layout by setting their layout to `map-graph`. Quest pages pass this layout to their map board so users can freely drag nodes around. The map graph uses `react-force-graph` under the hood.
 
+## Task types
+
+Tasks may optionally declare a `taskType`:
+
+- `file` – represents a single file in the repo
+- `folder` – groups subtasks and usually contains a main file
+- `abstract` – a generic task without a direct file mapping
+
+The inspector sidebar lets you change the task type. Changing from `file` to `folder` automatically creates a file subtask and reassigns existing children to it. Converting a folder back to a file removes the intermediate node and promotes its children.
+
