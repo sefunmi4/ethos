@@ -116,6 +116,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     [items.length]
   );
 
+
   /** Context for board updates is needed in several layouts. Call it here so
    *  hook order stays consistent regardless of early returns.
    */
@@ -147,6 +148,37 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     window.addEventListener('questTaskSelect', handler);
     return () => window.removeEventListener('questTaskSelect', handler);
   }, []);
+
+  // Hooks used by the paged layout variant must be declared unconditionally so
+  // that the hook order remains stable when the layout changes at runtime.
+  const pagedContainerRef = useRef<HTMLDivElement>(null);
+  const pages = useMemo(() => {
+    const count = Math.ceil(items.length / 6);
+    return Array.from({ length: count }, (_, i) =>
+      items.slice(i * 6, i * 6 + 6)
+    );
+  }, [items]);
+
+  const pageCount = pages.length;
+  useEffect(() => {
+    if (pageIndex >= pageCount) setPageIndex(0);
+  }, [pageCount, pageIndex]);
+
+  const handleScroll = useCallback(() => {
+    const el = pagedContainerRef.current;
+    if (!el) return;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== pageIndex) setPageIndex(idx);
+  }, [pageIndex]);
+
+  const visibleDots = useMemo(() => {
+    const limit = Math.min(pageCount, 4);
+    const start = Math.min(
+      Math.max(0, pageIndex - Math.floor(limit / 2)),
+      Math.max(0, pageCount - limit)
+    );
+    return Array.from({ length: limit }, (_, i) => start + i);
+  }, [pageIndex, pageCount]);
   if (!items || items.length === 0) {
     return (
       <div className="text-center text-secondary py-12 text-sm">
@@ -292,39 +324,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
   /** 📌 Paged Grid Layout */
   if (layout === 'paged') {
-    const container = useRef<HTMLDivElement>(null);
-    const pages = useMemo(() => {
-      const count = Math.ceil(items.length / 6);
-      return Array.from({ length: count }, (_, i) =>
-        items.slice(i * 6, i * 6 + 6)
-      );
-    }, [items]);
-
-    const pageCount = pages.length;
-    useEffect(() => {
-      if (pageIndex >= pageCount) setPageIndex(0);
-    }, [pageCount, pageIndex]);
-
-    const handleScroll = useCallback(() => {
-      const el = container.current;
-      if (!el) return;
-      const idx = Math.round(el.scrollLeft / el.clientWidth);
-      if (idx !== pageIndex) setPageIndex(idx);
-    }, [pageIndex]);
-
-    const visibleDots = useMemo(() => {
-      const limit = Math.min(pageCount, 4);
-      const start = Math.min(
-        Math.max(0, pageIndex - Math.floor(limit / 2)),
-        Math.max(0, pageCount - limit)
-      );
-      return Array.from({ length: limit }, (_, i) => start + i);
-    }, [pageIndex, pageCount]);
-
     return (
       <div className="space-y-2">
         <div
-          ref={container}
+          ref={pagedContainerRef}
           onScroll={handleScroll}
           className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
         >
@@ -354,7 +357,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                 key={i}
                 type="button"
                 onClick={() => {
-                  const el = container.current;
+                  const el = pagedContainerRef.current;
                   if (!el) return;
                   setPageIndex(i);
                   el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
