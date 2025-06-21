@@ -40,7 +40,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 }) => {
   if (!contribution) return null;
 
-  const { id } = contribution as any;
+  const { id } = contribution;
 
   if (!id) {
     console.warn('[ContributionCard] Missing `id` on contribution:', contribution);
@@ -53,7 +53,13 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   if ('type' in contribution) {
     const post = contribution as Post;
     if (post.type === 'request') {
-      return <RequestCard post={post} user={user} onUpdate={onEdit as any} />;
+      return (
+        <RequestCard
+          post={post}
+          user={user}
+          onUpdate={onEdit ? (p) => onEdit(p.id) : undefined}
+        />
+      );
     }
     return (
       <PostCard
@@ -66,7 +72,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   }
 
   // 🧭 Render Quest
-  if ("headPostId" in contribution || (contribution as any).kind === "quest") {
+  if ('headPostId' in contribution) {
     return (
       <QuestCard
         quest={contribution as Quest}

@@ -1,6 +1,6 @@
 // src/utils/boardUtils.ts
-import type { BoardData } from '../types/boardTypes';
-import type { Post } from '../types/postTypes';
+import type { BoardData, BoardItem } from '../types/boardTypes';
+import type { Post, LinkedItem } from '../types/postTypes';
 import type { Quest } from '../types/questTypes';
 
 /**
@@ -50,8 +50,8 @@ export const getBoardIdFromParams = (
  * - Hides posts linked to quests that already appear on the board
  */
 export const getRenderableBoardItems = (
-  items: Array<any>
-): Array<any> => {
+  items: Array<BoardItem>
+): Array<BoardItem> => {
   const seen = new Set<string>();
   const questIds = new Set<string>();
   items.forEach((item) => {
@@ -60,7 +60,7 @@ export const getRenderableBoardItems = (
     }
   });
 
-  const result: any[] = [];
+  const result: BoardItem[] = [];
   for (const item of items) {
     if (seen.has(item.id)) continue;
     seen.add(item.id);
@@ -68,7 +68,7 @@ export const getRenderableBoardItems = (
     if (!('headPostId' in item)) {
       const questId = item.questId;
       const linkedQuest = item.linkedItems?.find(
-        (l: any) => l.itemType === 'quest' && questIds.has(l.itemId)
+        (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)
       );
       if ((questId && questIds.has(questId)) || linkedQuest) {
         continue;

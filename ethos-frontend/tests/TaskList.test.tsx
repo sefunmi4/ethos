@@ -86,7 +86,7 @@ describe('task list checkbox', () => {
       tags: [],
       collaborators: [],
       linkedItems: [],
-    } as any;
+    } as Post;
 
     function Wrapper() {
       const [p, setP] = React.useState(post);

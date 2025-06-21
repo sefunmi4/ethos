@@ -22,13 +22,13 @@ import {
   fetchRepostCount,
   fetchUserRepost,
 } from '../../api/post';
-import type { Post, ReactionType, ReactionCountMap  } from '../../types/postTypes';
+import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 interface ReactionControlsProps {
   post: Post;
   user?: User;
-  onUpdate?: (data: any) => void;
+  onUpdate?: (data: Post | { id: string; removed?: boolean }) => void;
   replyCount?: number;
   showReplies?: boolean;
   onToggleReplies?: () => void;
@@ -70,7 +70,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           user?.id ? fetchUserRepost(post.id) : Promise.resolve(null),
         ]);
 
-        const userReactions = allReactions.filter((r: any) => r.userId === user?.id);
+        const userReactions = allReactions.filter((r: Reaction) => r.userId === user?.id);
         const countMap: ReactionCountMap = { like: 0, heart: 0, repost: 0 };
 
         allReactions.forEach((r: { type: ReactionType }) => {
@@ -82,8 +82,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
         setCounts(countMap);
         setReactions({
-          like: userReactions.some((r: any) => r.type === 'like'),
-          heart: userReactions.some((r: any) => r.type === 'heart'),
+          like: userReactions.some((r) => r.type === 'like'),
+          heart: userReactions.some((r) => r.type === 'heart'),
         });
         setUserRepostId(userRepostRes?.id || null);
       } catch (err) {
@@ -205,7 +205,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         <div className="mt-3">
           <CreatePost
             replyTo={post}
-            onSave={(newReply: any) => {
+            onSave={(newReply: Post) => {
               onUpdate?.(newReply);
               setShowReplyPanel(false);
             }}

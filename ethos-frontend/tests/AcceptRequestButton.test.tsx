@@ -60,7 +60,7 @@ describe('accept request button', () => {
     tags: [],
     collaborators: [],
     linkedItems: [],
-  } as any;
+  } as Post;
 
   it('shows accept button for request posts', () => {
     render(

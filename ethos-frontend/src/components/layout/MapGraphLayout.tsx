@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 import { getDisplayTitle } from '../../utils/displayUtils';
 
 interface MapGraphLayoutProps {
   items: Post[];
   edges?: TaskEdge[];
-  user?: any;
+  user?: User;
   questId?: string;
   compact?: boolean;
   onScrollEnd?: () => void;
@@ -27,7 +28,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({ items, edges = [] }) =>
         nodeId="id"
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
-        nodeLabel={(node: any) => getDisplayTitle(node as Post)}
+        nodeLabel={(node: unknown) => getDisplayTitle(node as Post)}
       />
     </div>
   );

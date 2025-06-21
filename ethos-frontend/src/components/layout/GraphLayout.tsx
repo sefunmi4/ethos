@@ -42,7 +42,7 @@ interface NodeMap {
   [id: string]: Post & { children?: NodeChild[] };
 }
 
-const debounce = <T extends (...args: any[]) => void>(fn: T, delay: number) => {
+const debounce = <T extends (...args: unknown[]) => void>(fn: T, delay: number) => {
   let timer: ReturnType<typeof setTimeout> | null = null;
   return (...args: Parameters<T>) => {
     if (timer) {

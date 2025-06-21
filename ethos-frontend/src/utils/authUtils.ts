@@ -1,5 +1,5 @@
 // src/utils/authUtils.ts
-import axios, { type AxiosInstance, AxiosError } from 'axios';
+import axios, { type AxiosInstance, AxiosError, type AxiosRequestConfig } from 'axios';
 
 /**
  * 📡 Base API URL — should be environment-configurable
@@ -62,7 +62,7 @@ export const axiosWithAuth: AxiosInstance = axios.create({
 axiosWithAuth.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers = config.headers || {};
-    (config.headers as any).Authorization = `Bearer ${accessToken}`;
+    (config.headers as Record<string, string>).Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
@@ -71,7 +71,7 @@ axiosWithAuth.interceptors.request.use((config) => {
 axiosWithAuth.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest: any = error.config;
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest._retry &&

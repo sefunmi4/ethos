@@ -12,11 +12,11 @@ import {
   VISIBILITY_OPTIONS,
   BOARD_TYPE_OPTIONS,
 } from '../../constants/options';
-import type { BoardLayout, BoardType } from '../../types/boardTypes';
+import type { BoardLayout, BoardType, BoardData } from '../../types/boardTypes';
 import { addBoard } from '../../api/board'; 
 
 const CreateBoard: React.FC<{
-  onSave?: (board: any) => void;
+  onSave?: (board: BoardData) => void;
   onCancel?: () => void;
 }> = ({ onSave, onCancel }) => {
   const [title, setTitle] = useState('');

@@ -556,7 +556,11 @@ const PostCard: React.FC<PostCardProps> = ({
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={edgeType}
-                    onChange={e => setEdgeType(e.target.value as any)}
+                    onChange={e =>
+                      setEdgeType(
+                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split'
+                      )
+                    }
                   >
                     <option value="sub_problem">sub_problem</option>
                     <option value="solution_branch">solution_branch</option>
