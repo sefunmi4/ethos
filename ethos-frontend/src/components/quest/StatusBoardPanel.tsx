@@ -40,11 +40,11 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
   }, {});
 
   return (
-    <div className="flex overflow-auto space-x-4">
+    <div className="flex overflow-auto space-x-2">
       {STATUS_OPTIONS.map(({ value }) => (
         <div
           key={value}
-          className="min-w-[200px] w-[240px] flex-shrink-0 bg-surface border border-secondary rounded-lg p-3 space-y-2"
+          className="min-w-[80px] w-28 flex-shrink-0 bg-surface border border-secondary rounded-lg p-2 space-y-2"
         >
           <h4 className="text-sm font-semibold flex items-center gap-1">
             <span>{statusIcons[value] || '➡️'}</span>
@@ -56,9 +56,11 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
             grouped[value].map((issue) => (
               <div
                 key={issue.id}
-                className="text-xs border border-secondary rounded p-2 bg-background space-y-1"
+                className="text-xs border border-secondary rounded p-1 bg-background space-y-1"
               >
-                <div className="font-semibold">{issue.content}</div>
+                <div className="font-semibold truncate">
+                  {issue.content.length > 15 ? `${issue.content.slice(0, 12)}…` : issue.content}
+                </div>
                 {issue.status && <StatusBadge status={issue.status} />}
               </div>
             ))

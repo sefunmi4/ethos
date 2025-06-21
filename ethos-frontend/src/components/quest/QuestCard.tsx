@@ -60,6 +60,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
   const navigate = useNavigate();
 
+  const rankTag = questData.tags?.find(t => t.toLowerCase().startsWith('rank:'));
+  const rewardTag = questData.tags?.find(t => t.toLowerCase().startsWith('reward:'));
+  const roleTags = questData.tags?.filter(t => t.toLowerCase().startsWith('role:')) || [];
+
+  const rank = rankTag ? rankTag.split(':')[1] : 'Unrated';
+  const reward = rewardTag ? rewardTag.split(':')[1] : 'Unknown';
+  const roles = roleTags.map(t => t.split(':')[1]).join(', ');
+  const desc = questData.description || '';
+  const shortDesc = desc.length > 120 ? desc.slice(0, 117) + '…' : desc;
+
   const tabOptions = [
     { value: 'status', label: 'Status' },
     { value: 'logs', label: 'Logs' },
@@ -488,6 +498,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
   return (
     <div className="border border-secondary rounded-lg shadow bg-surface p-6 text-primary">
       {renderHeader()}
+      {!expanded && (
+        <div className="text-sm text-secondary space-y-1 mb-2">
+          {shortDesc && <p>{shortDesc}</p>}
+          <div className="text-xs space-y-0.5">
+            <div>Rank: {rank}</div>
+            <div>Reward: {reward}</div>
+            {roles && <div>Roles Needed: {roles}</div>}
+          </div>
+        </div>
+      )}
       <div className="text-xs text-secondary space-y-1 mb-2">
         {showLinkEditor && (
           <div className="mt-2">
