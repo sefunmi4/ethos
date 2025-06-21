@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import type { Post } from '../../types/postTypes';
-import type { User } from '../../types/userTypes';
 import { PostTypeBadge, Button } from '../ui';
 import CreatePost from '../post/CreatePost';
 
 interface RequestCardProps {
   post: Post;
-  user?: User;
   onUpdate?: (post: Post) => void;
   className?: string;
 }
 
-const RequestCard: React.FC<RequestCardProps> = ({ post, user, onUpdate, className }) => {
+const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) => {
   const [showReply, setShowReply] = useState(false);
   const collaboratorCount = post.collaborators?.filter(c => c.userId).length || 0;
 

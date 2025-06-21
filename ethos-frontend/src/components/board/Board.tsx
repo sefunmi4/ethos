@@ -47,7 +47,7 @@ const Board: React.FC<BoardProps> = ({
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const { canEditBoard } = usePermissions();
-  const { setSelectedBoard, appendToBoard, updateBoardItem, boards } = useBoardContext();
+  const { setSelectedBoard, appendToBoard, boards } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
