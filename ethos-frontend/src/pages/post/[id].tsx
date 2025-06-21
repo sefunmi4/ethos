@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import PostCard from '../../components/post/PostCard';
+import CreatePost from '../../components/post/CreatePost';
 import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
+
+import { ROUTES } from '../../constants/routes';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
@@ -16,6 +19,8 @@ const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
@@ -23,11 +28,18 @@ const PostPage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [showReplyForm, setShowReplyForm] = useState(false);
 
   const boardWithPost = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
     return replyBoard;
   }, [replyBoard]);
+
+  useEffect(() => {
+    if (searchParams.get('reply') === '1') {
+      setShowReplyForm(true);
+    }
+  }, [searchParams]);
 
   const fetchPostData = useCallback(async () => {
     if (!id) return;
@@ -109,6 +121,22 @@ const PostPage: React.FC = () => {
 
       <section>
         <PostCard post={post} />
+        {showReplyForm && (
+          <div className="mt-4">
+            <CreatePost
+              replyTo={post}
+              onSave={() => {
+                setShowReplyForm(false);
+                navigate(ROUTES.POST(post.id), { replace: true });
+                fetchPostData();
+              }}
+              onCancel={() => {
+                setShowReplyForm(false);
+                navigate(ROUTES.POST(post.id), { replace: true });
+              }}
+            />
+          </div>
+        )}
       </section>
 
 

@@ -13,12 +13,21 @@ jest.mock('../../api/post', () => ({
   fetchUserRepost: jest.fn(() => Promise.resolve(null)),
 }));
 
+const navigateMock = jest.fn();
+
+const useBoardContextMock = jest.fn(() => ({ selectedBoard: null }));
+
+jest.mock('../../contexts/BoardContext', () => ({
+  __esModule: true,
+  useBoardContext: () => useBoardContextMock(),
+}));
+
 jest.mock('react-router-dom', () => {
   const actual = jest.requireActual('react-router-dom');
   return {
     __esModule: true,
     ...actual,
-    useNavigate: () => jest.fn(),
+    useNavigate: () => navigateMock,
   };
 });
 
@@ -90,5 +99,17 @@ describe('ReactionControls', () => {
     const btn = screen.getByText('Add Item');
     fireEvent.click(btn);
     expect(handler).toHaveBeenCalled();
+  });
+
+  it('navigates to post page with reply flag when on timeline board', () => {
+    useBoardContextMock.mockReturnValue({ selectedBoard: 'timeline-board' });
+    const fsPost = { ...basePost, type: 'free_speech' } as Post;
+    render(
+      <BrowserRouter>
+        <ReactionControls post={fsPost} user={{ id: 'u1' }} />
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByText('Reply'));
+    expect(navigateMock).toHaveBeenCalledWith('/post/p1?reply=1');
   });
 });

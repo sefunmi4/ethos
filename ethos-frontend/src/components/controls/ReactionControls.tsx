@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBoardContext } from '../../contexts/BoardContext';
 import { ROUTES } from '../../constants/routes';
 import {
   FaThumbsUp,
@@ -33,6 +34,8 @@ interface ReactionControlsProps {
   onToggleReplies?: () => void;
   /** Override default reply behavior */
   replyOverride?: { label: string; onClick: () => void };
+  /** Treat reply action as coming from the timeline board */
+  isTimeline?: boolean;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -43,6 +46,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   showReplies,
   onToggleReplies,
   replyOverride,
+  isTimeline,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -53,6 +57,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
+  const { selectedBoard } = useBoardContext() || {};
+  const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,6 +174,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               navigate(ROUTES.BOARD(`log-${post.questId}`));
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
+            } else if (isTimelineBoard) {
+              navigate(ROUTES.POST(post.id) + '?reply=1');
             } else {
               setShowReplyPanel(prev => !prev);
             }
