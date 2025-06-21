@@ -1,14 +1,3 @@
 [
-  {
-    "questId": "a4898447-a963-4d3e-8586-b872fd01628d",
-    "path": "/api/quests/a4898447-a963-4d3e-8586-b872fd01628d",
-    "count": 8,
-    "lastOccurred": "2025-06-21T19:21:46.913Z"
-  },
-  {
-    "questId": "f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
-    "path": "/api/quests/f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
-    "count": 6,
-    "lastOccurred": "2025-06-21T19:21:46.910Z"
-  }
+  
 ]

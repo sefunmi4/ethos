@@ -1,40 +1,14 @@
 [
   {
-    "id": "default-home-board",
-    "title": "Welcome Board",
-    "description": "This is the default home board for new users.",
-    "boardType": "post",
-    "layout": "grid",
-    "items": [],
-    "defaultFor": "home",
-    "createdAt": "2025-06-07T00:00:00Z",
-    "userId": "system",
-    "category": "default"
-  },
-  {
     "id": "my-posts",
     "title": " ",
     "description": "Personal posts board.",
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "3ef3d91a-c5c7-4b6a-b011-9d3c3686d014",
-      "f4430e32-96ce-4474-a988-47b6fc5bdded",
-      "6d42d548-fc29-462e-ba9d-e6ce58c26a02",
-      "7fd444ac-2d34-476d-b3eb-3bbe246a752d",
-      "dae4995b-245a-46c3-bdaf-74d4ee5d121a",
-      "50851c72-a777-4c33-a8da-21b8ed14db62",
-      "9d85ed66-fc37-49a0-9315-bb40385a69d6",
-      "05d47a8c-0c23-49e6-b2d2-3fce3a792420",
-      "b93b2e31-7faa-4d00-94e1-42e6da112cce",
-      "7d8cb7a0-f51c-4166-bcee-a437456f2be9",
-      "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
-      "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
-      "8e164dca-f3e1-437d-b025-8b787f4253c6",
-      "b70ea694-b981-410d-b69b-de98b4f708bf",
-      "8458f79a-2de4-483a-af08-a5c6dedff58e",
-      "4addd0e5-6247-458e-a847-84e750114f87",
-      "62336f70-b5ad-4be6-87bc-5125ca03c809"
+      "09931dad-a5b5-4d99-9085-a7a593246173",
+      "79455e9d-596b-47e5-9fff-a526f9695955",
+      "e4b67780-2fe9-4105-b23a-334aa58ae76f"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -47,28 +21,11 @@
     "description": "Personal quests board.",
     "boardType": "quest",
     "layout": "grid",
-    "items": [
-      "a4898447-a963-4d3e-8586-b872fd01628d",
-      "f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
-      "3b52037d-9c82-4924-b91a-f8e7f2d6e4d0"
-    ],
+    "items": [],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
-  },
-  {
-    "id": "featured-quest",
-    "title": "Featured Quest",
-    "description": "Highlighted quest",
-    "boardType": "quest",
-    "layout": "grid",
-    "items": [],
-    "featured": true,
-    "defaultFor": null,
-    "createdAt": "2025-06-07T00:00:00Z",
-    "userId": "system",
-    "category": "quest"
   },
   {
     "id": "quest-board",
@@ -77,12 +34,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "cb597730-b19d-4449-896a-e2232956b170",
-      "05d47a8c-0c23-49e6-b2d2-3fce3a792420",
-      "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
-      "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
-      "8e164dca-f3e1-437d-b025-8b787f4253c6",
-      "3ef3d91a-c5c7-4b6a-b011-9d3c3686d014"
+      "79455e9d-596b-47e5-9fff-a526f9695955"
     ],
     "featured": true,
     "defaultFor": null,
@@ -97,17 +49,10 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "3ef3d91a-c5c7-4b6a-b011-9d3c3686d014",
-      "8458f79a-2de4-483a-af08-a5c6dedff58e",
-      "b70ea694-b981-410d-b69b-de98b4f708bf",
-      "8e164dca-f3e1-437d-b025-8b787f4253c6",
-      "bf122e3b-da4b-40d4-8968-45c2b98e8cde",
-      "c024b4e1-00ef-415d-8f64-25bd4461dfcd",
-      "7d8cb7a0-f51c-4166-bcee-a437456f2be9",
-      "b93b2e31-7faa-4d00-94e1-42e6da112cce",
-      "05d47a8c-0c23-49e6-b2d2-3fce3a792420",
-      "9d85ed66-fc37-49a0-9315-bb40385a69d6",
-      "dae4995b-245a-46c3-bdaf-74d4ee5d121a"
+      "09931dad-a5b5-4d99-9085-a7a593246173",
+      "e4b67780-2fe9-4105-b23a-334aa58ae76f",
+      "79455e9d-596b-47e5-9fff-a526f9695955",
+      "8fd3f1d4-b7f2-4da3-8008-50a383ef55e5"
     ],
     "featured": false,
     "defaultFor": null,
@@ -116,80 +61,19 @@
     "category": "default"
   },
   {
-    "id": "map-3b52037d-9c82-4924-b91a-f8e7f2d6e4d0",
-    "title": "Ethos Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "50851c72-a777-4c33-a8da-21b8ed14db62"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T16:45:43.373Z",
-    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
-    "questId": "3b52037d-9c82-4924-b91a-f8e7f2d6e4d0"
-  },
-  {
-    "id": "thread-7d8cb7a0-f51c-4166-bcee-a437456f2be9",
+    "id": "map-b84f4268-97f9-4045-96a4-7f2d62f743c6",
     "title": "Untitled Board",
     "description": "",
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "8458f79a-2de4-483a-af08-a5c6dedff58e",
-      "b70ea694-b981-410d-b69b-de98b4f708bf"
+      "09931dad-a5b5-4d99-9085-a7a593246173",
+      "e4b67780-2fe9-4105-b23a-334aa58ae76f"
     ],
     "filters": {},
     "featured": false,
     "defaultFor": null,
-    "createdAt": "2025-06-21T18:05:15.086Z",
-    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b"
-  },
-  {
-    "id": "map-f46937dc-33e4-4ab0-bcaa-9b82b37976bb",
-    "title": "Test Quest Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "4addd0e5-6247-458e-a847-84e750114f87"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T18:31:11.360Z",
-    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
-    "questId": "f46937dc-33e4-4ab0-bcaa-9b82b37976bb"
-  },
-  {
-    "id": "active-quests",
-    "title": "Untitled Board",
-    "description": "",
-    "boardType": "post",
-    "layout": "grid",
-    "items": [
-      "a4898447-a963-4d3e-8586-b872fd01628d",
-      "f46937dc-33e4-4ab0-bcaa-9b82b37976bb"
-    ],
-    "filters": {},
-    "featured": false,
-    "defaultFor": null,
-    "createdAt": "2025-06-21T18:31:11.364Z",
-    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b"
-  },
-  {
-    "id": "map-a4898447-a963-4d3e-8586-b872fd01628d",
-    "title": "Graduate Applications Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "62336f70-b5ad-4be6-87bc-5125ca03c809"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T18:31:18.575Z",
-    "userId": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
-    "questId": "a4898447-a963-4d3e-8586-b872fd01628d"
+    "createdAt": "2025-06-21T20:19:17.147Z",
+    "userId": "u_b7f8a113-069f-477d-b704-ae575288246b"
   }
 ]

@@ -1,9 +1,9 @@
 [
   {
-    "id": "u_0b6e4ed5-4228-47bd-a2f5-5d18ddcbf81b",
-    "username": "mighty_wizard_2133",
+    "id": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "username": "brave_wizard_7258",
     "email": "testerbot1@ethos.com",
-    "password": "$2b$10$fP92wP9yGbNfC7jRQdoizuSan932b4bT9O3Z0wLtOssmeTPg9T.DG",
+    "password": "$2b$10$MUdiAiWuVN474iNbGeH2EedmXn2QF60J6OsXpSifxz65tjPHh06Xm",
     "role": "user",
     "tags": [
       "explorer"
@@ -17,7 +17,7 @@
     },
     "experienceTimeline": [
       {
-        "datetime": "2025-06-21T15:58:00.808Z",
+        "datetime": "2025-06-21T20:03:02.556Z",
         "title": "Journey begins",
         "tags": [
           "registered"
