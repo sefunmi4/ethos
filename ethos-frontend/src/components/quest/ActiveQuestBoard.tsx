@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
@@ -79,7 +79,7 @@ const ActiveQuestBoard: React.FC = () => {
     load();
   }, [user]);
 
-  const scrollToIndex = (i: number) => {
+  const scrollToIndex = useCallback((i: number) => {
     const el = containerRef.current;
     if (!el) return;
     const card = el.children[i] as HTMLElement | undefined;
@@ -87,11 +87,11 @@ const ActiveQuestBoard: React.FC = () => {
       const offset = card.offsetLeft - el.clientWidth / 2 + card.clientWidth / 2;
       el.scrollTo({ left: offset, behavior: 'smooth' });
     }
-  };
+  }, []);
 
   useEffect(() => {
     scrollToIndex(index);
-  }, [index]);
+  }, [index, scrollToIndex]);
 
   if (!user) return null;
   if (loading) return <Spinner />;
