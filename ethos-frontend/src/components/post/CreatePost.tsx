@@ -48,7 +48,12 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialLinkedNodeId,
   currentView,
 }) => {
-  const [type, setType] = useState<PostType>(initialType);
+  const restrictedReply =
+    replyTo && ['task', 'log', 'commit', 'issue'].includes(replyTo.type);
+
+  const [type, setType] = useState<PostType>(
+    restrictedReply ? 'log' : initialType
+  );
   const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -63,14 +68,15 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  const allowedPostTypes: PostType[] =
-    boardId === 'quest-board'
-      ? ['request']
-      : boardType === 'quest'
-      ? ['quest', 'task', 'log']
-      : boardType === 'post'
-      ? ['quest', 'free_speech', 'request', 'review']
-      : POST_TYPES.map((p) => p.value as PostType);
+  const allowedPostTypes: PostType[] = restrictedReply
+    ? ['log']
+    : boardId === 'quest-board'
+    ? ['request']
+    : boardType === 'quest'
+    ? ['quest', 'task', 'log']
+    : boardType === 'post'
+    ? ['quest', 'free_speech', 'request', 'review']
+    : POST_TYPES.map((p) => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
 
@@ -81,7 +87,9 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
     const targetBoard = boardId || selectedBoard;
     const boardQuestMatch = targetBoard?.match(/^(?:log|map)-(.+)$/);
-    const questIdFromBoard = boardQuestMatch ? boardQuestMatch[1] : questId || null;
+    const questIdFromBoard = boardQuestMatch
+      ? boardQuestMatch[1]
+      : questId || replyTo?.questId || null;
 
     // Check for quest linkage if required
     if (requiresQuestLink(type)) {
