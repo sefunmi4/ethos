@@ -97,7 +97,8 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     description = '',
     tags = [],
     fromPostId = '',
-    headType = 'task',
+    headType = 'log',
+    taskType = 'folder',
     helpRequest = false,
   } = req.body;
 
@@ -133,6 +134,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     id: uuidv4(),
     authorId,
     type: headType === 'task' ? 'task' : 'log',
+    ...(headType === 'task' ? { taskType } : {}),
     content: rootContent,
     visibility: 'public',
     timestamp: new Date().toISOString(),

@@ -67,6 +67,7 @@ router.post(
       collaborators = [],
       status,
       boardId,
+      taskType = 'abstract',
       helpRequest = false,
       needsHelp = undefined,
     } = req.body;
@@ -102,6 +103,7 @@ router.post(
       repostedFrom: null,
       linkedItems,
       questId,
+      ...(type === 'task' ? { taskType } : {}),
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
       needsHelp: type === 'request' ? needsHelp ?? true : undefined,

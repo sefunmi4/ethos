@@ -27,6 +27,8 @@ export interface Post {
 
   tags: PostTag[];
   status?: QuestTaskStatus;
+  /** Optional classification for task posts */
+  taskType?: 'file' | 'folder' | 'abstract';
   collaborators: CollaberatorRoles[];
 
   replyTo?: string | null;
