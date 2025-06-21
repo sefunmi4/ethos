@@ -1,13 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-export type Theme = 'light' | 'dark' | 'system';
-
-export const getSystemTheme = (): 'light' | 'dark' =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+import { Theme, getSystemTheme } from './ThemeHelpers';
 
 interface ThemeContextType {
   theme: Theme;

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import type { AuthContextType } from '../types/authTypes';
 import type { AuthUser } from '../types/userTypes';
 import {
@@ -11,7 +11,7 @@ import {
   deleteUserAccount as apiDeleteUser,
 } from '../api/auth';
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from './AuthContextBase';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);

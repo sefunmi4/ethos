@@ -1,22 +1,14 @@
 // src/contexts/TimelineContext.tsx
 
-import React, { createContext, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import type { TimelineEvent } from '../types/postTypes';
+import { TimelineContext } from './TimelineContextBase';
 
 /**
  * Context value type for managing timeline state.
  * Each board ID maps to a list of timeline events.
  */
-interface TimelineContextValue {
-  timelines: Record<string, TimelineEvent[]>;
-  setTimelineEvents: (boardId: string, events: TimelineEvent[]) => void;
-}
-
-/**
- * Default context value before the provider is initialized.
- */
-export const TimelineContext = createContext<TimelineContextValue | undefined>(undefined);
 
 /**
  * Props for the TimelineProvider component.
