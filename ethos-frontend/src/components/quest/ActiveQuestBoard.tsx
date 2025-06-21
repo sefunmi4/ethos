@@ -7,6 +7,7 @@ import Board from '../board/Board';
 import type { User } from '../../types/userTypes';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
+import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -92,14 +93,18 @@ const ActiveQuestBoard: React.FC = () => {
   if (loading) return <Spinner />;
   if (!board) return null;
 
+  const showSeeAll = (board.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
+
   return (
     <div className="space-y-2">
       <Board board={board} layout="grid" hideControls compact user={user as User} />
-      <div className="text-right">
-        <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-          → See all
-        </Link>
-      </div>
+      {showSeeAll && (
+        <div className="text-right">
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
