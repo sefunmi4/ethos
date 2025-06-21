@@ -55,3 +55,20 @@ In dark mode the variables automatically switch to their `*-Dark` counterparts.
 4. Restart the development server so Tailwind picks up the config changes.
 
 Following these steps keeps your design system consistent across components and CSS.
+
+## Tag Styles
+
+Posts and quests are annotated with small tags that reuse the same color palette as `PostTypeBadge` components. The tag styles are implemented in `SummaryTag.tsx` and provide consistent background and text colors.
+
+| Tag Type | Light / Dark Classes |
+| -------- | ------------------- |
+| quest | `bg-green-100 text-green-800` / `dark:bg-green-800 dark:text-green-200` |
+| task | `bg-purple-100 text-purple-800` / `dark:bg-purple-800 dark:text-purple-200` |
+| issue | `bg-orange-100 text-orange-800` / `dark:bg-orange-800 dark:text-orange-200` |
+| log | `bg-blue-100 text-blue-800` / `dark:bg-blue-800 dark:text-blue-200` |
+| review | `bg-teal-100 text-teal-800` / `dark:bg-teal-800 dark:text-teal-200` |
+| status | `bg-yellow-100 text-yellow-800` / `dark:bg-yellow-800 dark:text-yellow-200` |
+| category | `bg-indigo-100 text-indigo-800` / `dark:bg-indigo-800 dark:text-indigo-200` |
+| free_speech | `bg-gray-100 text-gray-700` / `dark:bg-gray-700 dark:text-gray-200` |
+
+All tags share the `TAG_BASE` style which sets padding, font size and border radius.

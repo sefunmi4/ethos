@@ -168,6 +168,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
   const summaryTags = buildSummaryTags(post, questTitle, questId);
+  const showAuthor = !summaryTags.some(t => t.type === 'log' || t.type === 'free_speech');
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -386,25 +387,23 @@ const PostCard: React.FC<PostCardProps> = ({
               <SummaryTag key={idx} {...tag} />
             ))}
             <PostTypeBadge type={post.type} />
-            {!isQuestBoardRequest && post.status && <StatusBadge status={post.status} />}
-            {!isQuestBoardRequest && (
-              <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate(
-                      post.authorId === user?.id
-                        ? ROUTES.PROFILE
-                        : ROUTES.PUBLIC_PROFILE(post.authorId)
-                    )
-                  }
-                  className="text-accent underline"
-                >
-                  @{post.author?.username || post.authorId}
-                </button>
-                <span>{timestamp}</span>
-              </>
+            {post.status && <StatusBadge status={post.status} />}
+            {showAuthor && (
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    post.authorId === user?.id
+                      ? ROUTES.PROFILE
+                      : ROUTES.PUBLIC_PROFILE(post.authorId)
+                  )
+                }
+                className="text-accent underline"
+              >
+                @{post.author?.username || post.authorId}
+              </button>
             )}
+            <span>{timestamp}</span>
           </div>
         </div>
         {titleText && (
@@ -455,23 +454,20 @@ const PostCard: React.FC<PostCardProps> = ({
               />
             </div>
           )}
-          {!isQuestBoardRequest && (
-            <>
-              <button
-                type="button"
-                onClick={() =>
-                  navigate(
-                    post.authorId === user?.id
-                      ? ROUTES.PROFILE
-                      : ROUTES.PUBLIC_PROFILE(post.authorId)
-                  )
-                }
-                className="text-accent underline"
-              >
-                @{post.author?.username || post.authorId}
-              </button>
-              <span>{timestamp}</span>
-            </>
+          {showAuthor && (
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  post.authorId === user?.id
+                    ? ROUTES.PROFILE
+                    : ROUTES.PUBLIC_PROFILE(post.authorId)
+                )
+              }
+              className="text-accent underline"
+            >
+              @{post.author?.username || post.authorId}
+            </button>
           )}
         </div>
         <ActionMenu
