@@ -64,28 +64,6 @@ const ProfilePage: React.FC = () => {
       <Banner user={castUser} />
 
       {/* 📘 Your Quests */}
-      <section className="mt-10 mb-12">
-        <h2 className="text-2xl font-semibold text-primary mb-4">📘 Your Quests</h2>
-        {loadingQuests ? (
-          <Spinner />
-        ) : (
-          <>
-            <Board
-              boardId="my-quests"
-              board={userQuestBoard}
-              layout="grid"
-              user={castUser}
-              showCreate
-            />
-            {userQuestBoard?.enrichedItems?.length === 0 && (
-              <div className="text-secondary text-center py-8">
-                You haven't created any quests yet.
-              </div>
-            )}
-          </>
-        )}
-      </section>
-
       <section className="mb-12">
         <ActiveQuestBoard />
       </section>

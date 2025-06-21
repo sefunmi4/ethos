@@ -67,10 +67,6 @@ const HomePage: React.FC = () => {
       </section>
 
       <section>
-        <ActiveQuestBoard />
-      </section>
-
-      <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
         <ActivityFeed />
       </section>
