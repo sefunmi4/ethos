@@ -22,6 +22,7 @@ module.exports = {
           'soft-dark': 'var(--color-soft-dark)',
           background: 'var(--color-background)',
           surface: 'var(--color-surface)',
+          'accent-muted': 'var(--color-accent-muted)',
           'info-background': 'var(--info-background)',
         },
         borderRadius: {

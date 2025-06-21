@@ -37,7 +37,7 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
       : null;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface dark:bg-background p-4 sm:p-6 rounded-lg shadow mb-6">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-accent-muted p-4 sm:p-6 rounded-lg shadow mb-6">
       {/* Left: Name + Description */}
       <div className="flex flex-col gap-1 text-left max-w-2xl">
         <h1 className="text-2xl font-bold text-primary dark:text-primary">

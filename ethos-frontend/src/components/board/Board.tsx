@@ -275,8 +275,8 @@ const Board: React.FC<BoardProps> = ({
     return <div className="text-error p-4">Board not found.</div>;
   }
 
-  const containerBg = 'bg-surface';
-  const panelBg = 'bg-surface';
+  const containerBg = 'bg-accent-muted';
+  const panelBg = 'bg-accent-muted';
 
   return (
     <div className={`space-y-4 p-6 rounded-xl shadow-lg max-w-5xl mx-auto ${containerBg}`}>
