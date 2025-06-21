@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import ContributionCard from '../contribution/ContributionCard';
 import {
   DndContext,
@@ -21,7 +21,7 @@ type GridLayoutProps = {
   items: Post[];
   questId: string;
   user?: User;
-  layout?: 'vertical' | 'horizontal' | 'kanban';
+  layout?: 'vertical' | 'horizontal' | 'kanban' | 'paged';
   compact?: boolean;
   editable?: boolean;
   onEdit?: (id: string) => void;
@@ -91,6 +91,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
@@ -121,6 +122,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       scrollToIndex(index);
     }
   }, [layout, index, scrollToIndex]);
+  useEffect(() => {
+    if (layout !== 'paged') setPageIndex(0);
+  }, [layout, items.length]);
   useEffect(() => {
     const handler = (e: any) => {
       const id = e.detail?.taskId;
@@ -273,6 +277,64 @@ const GridLayout: React.FC<GridLayoutProps> = ({
           </>
         )}
         {loadingMore && <Spinner />}
+      </div>
+    );
+  }
+
+  /** 📌 Paged Grid Layout */
+  if (layout === 'paged') {
+    const pages = useMemo(() => {
+      const count = Math.ceil(items.length / 6);
+      return Array.from({ length: count }, (_, i) =>
+        items.slice(i * 6, i * 6 + 6)
+      );
+    }, [items]);
+
+    const pageCount = pages.length;
+    useEffect(() => {
+      if (pageIndex >= pageCount) setPageIndex(0);
+    }, [pageCount, pageIndex]);
+
+    return (
+      <div className="space-y-2">
+        <div className="overflow-hidden">
+          <div
+            className="flex transition-transform duration-300"
+            style={{ transform: `translateX(-${pageIndex * 100}%)` }}
+          >
+            {pages.map((group, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 flex-shrink-0 w-full"
+              >
+                {group.map(item => (
+                  <ContributionCard
+                    key={item.id}
+                    contribution={item}
+                    user={user}
+                    compact={compact}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        {pageCount > 1 && (
+          <div className="flex justify-center mt-2 gap-2">
+            {pages.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setPageIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  pageIndex === idx ? 'bg-accent' : 'bg-background'
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   }
