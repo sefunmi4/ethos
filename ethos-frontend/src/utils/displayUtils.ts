@@ -63,15 +63,33 @@ export const getDisplayTitle = (post: Post): string => {
 export const getPostSummary = (post: Post, questTitle?: string): string => {
   const parts: string[] = [];
   const title = questTitle || (post as any).questTitle;
-  if (title) parts.push(`Quest: ${title}`);
 
-  if (post.nodeId) {
-    parts.push(`Task:${post.nodeId}`);
-  } else if (post.type) {
-    parts.push(post.type.charAt(0).toUpperCase() + post.type.slice(1));
+  if (post.type === 'review') {
+    if (title) parts.push(`(Review: ${title})`);
+    if (post.subtype) parts.push(`(${post.subtype})`);
+    return parts.join(' ').trim();
   }
 
-  if (post.status) parts.push(post.status);
+  if (title) parts.push(`(Quest: ${title})`);
+
+  if (post.type === 'task' && post.nodeId) {
+    parts.push(`(Task: ${post.nodeId})`);
+  } else if (post.type === 'issue' && post.nodeId) {
+    parts.push(`(Issue: ${post.nodeId})`);
+  } else if (post.type === 'log') {
+    const suffix = post.id.slice(-4);
+    parts.push(`(Log: L${suffix})`);
+  } else if (post.type) {
+    parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
+  }
+
+  if (post.status && ['task', 'issue'].includes(post.type)) {
+    parts.push(`(${post.status})`);
+  }
+
+  if (post.type === 'free_speech') {
+    parts.push('(Free Speech)');
+  }
 
   return parts.join(' ').trim();
 };
