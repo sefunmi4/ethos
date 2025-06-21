@@ -70,14 +70,14 @@ exports.enrichUser = enrichUser;
 /**
  * Enrich a single post with author info.
  */
-const enrichPost = (post, { users = stores_1.usersStore.read(), currentUserId = null, } = {}) => {
-    return (0, exports.enrichPosts)([post], users, currentUserId)[0] || null;
+const enrichPost = (post, { users = stores_1.usersStore.read(), quests = stores_1.questsStore.read(), currentUserId = null, } = {}) => {
+    return (0, exports.enrichPosts)([post], users, quests, currentUserId)[0] || null;
 };
 exports.enrichPost = enrichPost;
 /**
  * Enrich multiple posts with author info and formatting.
  */
-const enrichPosts = (posts, users = stores_1.usersStore.read(), currentUserId = null) => {
+const enrichPosts = (posts, users = stores_1.usersStore.read(), quests = stores_1.questsStore.read(), currentUserId = null) => {
     const enriched = posts.map((post) => {
         const normalized = normalizePost(post);
         const author = users.find((u) => u.id === post.authorId);
@@ -103,6 +103,9 @@ const enrichPosts = (posts, users = stores_1.usersStore.read(), currentUserId = 
                 id: enrichedAuthor.id,
                 username: enrichedAuthor.username,
             },
+            questTitle: normalized.questId
+                ? quests.find((q) => q.id === normalized.questId)?.title
+                : undefined,
             enriched: true,
         };
     });
@@ -113,7 +116,7 @@ exports.enrichPosts = enrichPosts;
  * Enrich a quest with logs, tasks, and user references.
  */
 const enrichQuest = (quest, { posts = stores_1.postsStore.read(), users = stores_1.usersStore.read(), currentUserId = null, } = {}) => {
-    const allPosts = (0, exports.enrichPosts)(posts, users, currentUserId);
+    const allPosts = (0, exports.enrichPosts)(posts, users, stores_1.questsStore.read(), currentUserId);
     const normalizedQuest = normalizeQuest(quest);
     const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
     const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');

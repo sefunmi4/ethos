@@ -4,6 +4,8 @@ import type { Post, Quest, Board, User, GitRepoMeta, AppItem, GitCommit, GitFile
 export interface EnrichedPost extends Post {
   enrichedCollaborators?:  EnrichedCollaborator[];
 
+  questTitle?: string;
+
   renderedContent?: string; // Markdown, etc.
 
   mediaPreviews?: Array<{
