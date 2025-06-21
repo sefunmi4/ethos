@@ -1,4 +1,5 @@
 import type { Post } from '../types/postTypes';
+import { ROUTES } from '../constants/routes';
 
 /**
  * Builds a unique quest node ID display label for timeline/thread posts.
@@ -55,6 +56,65 @@ export const getDisplayTitle = (post: Post): string => {
   return content.length > 50 ? content.slice(0, 50) + '…' : content;
 };
 
+export interface SummaryTagData {
+  type:
+    | 'quest'
+    | 'task'
+    | 'issue'
+    | 'log'
+    | 'review'
+    | 'category'
+    | 'status'
+    | 'free_speech'
+    | 'type';
+  label: string;
+  link?: string;
+}
+
+/**
+ * Returns structured summary tags for a post.
+ * Each tag contains a label, type, and optional link.
+ */
+export const buildSummaryTags = (
+  post: Post,
+  questTitle?: string,
+  questId?: string
+): SummaryTagData[] => {
+  const tags: SummaryTagData[] = [];
+  const title = questTitle || (post as any).questTitle;
+
+  if (post.type === 'review') {
+    if (title) tags.push({ type: 'review', label: `Review: ${title}`, link: post.id ? ROUTES.POST(post.id) : undefined });
+    if (post.subtype) tags.push({ type: 'category', label: post.subtype });
+    return tags;
+  }
+
+  if (title) {
+    tags.push({ type: 'quest', label: `Quest: ${title}`, link: (questId || post.questId) ? ROUTES.QUEST(questId || post.questId!) : undefined });
+  }
+
+  if (post.type === 'task' && post.nodeId) {
+    tags.push({ type: 'task', label: `Task: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+  } else if (post.type === 'issue' && post.nodeId) {
+    tags.push({ type: 'issue', label: `Issue: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+  } else if (post.type === 'log') {
+    const suffix = post.id.slice(-4);
+    tags.push({ type: 'log', label: `Log: L${suffix}`, link: ROUTES.POST(post.id) });
+  } else if (post.type) {
+    tags.push({ type: 'type', label: post.type.charAt(0).toUpperCase() + post.type.slice(1), link: ROUTES.POST(post.id) });
+  }
+
+  if (post.status && ['task', 'issue'].includes(post.type)) {
+    tags.push({ type: 'status', label: post.status });
+  }
+
+  if (post.type === 'free_speech') {
+    tags.push({ type: 'free_speech', label: 'Free Speech' });
+  }
+
+  return tags;
+};
+
 /**
  * Builds a brief summary string for a post.
  * Format: "Quest: {title} Task:{nodeId} {status}".
@@ -63,15 +123,33 @@ export const getDisplayTitle = (post: Post): string => {
 export const getPostSummary = (post: Post, questTitle?: string): string => {
   const parts: string[] = [];
   const title = questTitle || (post as any).questTitle;
-  if (title) parts.push(`Quest: ${title}`);
 
-  if (post.nodeId) {
-    parts.push(`Task:${post.nodeId}`);
-  } else if (post.type) {
-    parts.push(post.type.charAt(0).toUpperCase() + post.type.slice(1));
+  if (post.type === 'review') {
+    if (title) parts.push(`(Review: ${title})`);
+    if (post.subtype) parts.push(`(${post.subtype})`);
+    return parts.join(' ').trim();
   }
 
-  if (post.status) parts.push(post.status);
+  if (title) parts.push(`(Quest: ${title})`);
+
+  if (post.type === 'task' && post.nodeId) {
+    parts.push(`(Task: ${post.nodeId})`);
+  } else if (post.type === 'issue' && post.nodeId) {
+    parts.push(`(Issue: ${post.nodeId})`);
+  } else if (post.type === 'log') {
+    const suffix = post.id.slice(-4);
+    parts.push(`(Log: L${suffix})`);
+  } else if (post.type) {
+    parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
+  }
+
+  if (post.status && ['task', 'issue'].includes(post.type)) {
+    parts.push(`(${post.status})`);
+  }
+
+  if (post.type === 'free_speech') {
+    parts.push('(Free Speech)');
+  }
 
   return parts.join(' ').trim();
 };
