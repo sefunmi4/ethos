@@ -36,6 +36,7 @@ router.get('/recent', authOptional, (req: Request<{}, any, any, { userId?: strin
       p.visibility === 'request_board' ||
       p.needsHelp === true
     )
+    .filter(p => p.type !== 'meta_system' && p.systemGenerated !== true)
     .filter((p) => (userId ? p.authorId !== userId : true))
     .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
     .slice(0, 20)
@@ -153,6 +154,13 @@ router.patch(
   const post = posts.find((p) => p.id === req.params.id);
   if (!post) {
     res.status(404).json({ error: 'Post not found' });
+    return;
+  }
+  if (
+    (post.type === 'meta_system' || post.systemGenerated === true) &&
+    req.user?.role !== 'admin'
+  ) {
+    res.status(403).json({ error: 'Cannot modify system post' });
     return;
   }
 
@@ -505,6 +513,13 @@ router.get('/:id', authOptional, (req: Request<{ id: string }>, res: Response): 
   const post = posts.find((p) => p.id === req.params.id);
   if (!post) {
     res.status(404).json({ error: 'Post not found' });
+    return;
+  }
+  if (
+    (post.type === 'meta_system' || post.systemGenerated === true) &&
+    (req as any).user?.role !== 'admin'
+  ) {
+    res.status(403).json({ error: 'Access denied' });
     return;
   }
   const users = usersStore.read();
