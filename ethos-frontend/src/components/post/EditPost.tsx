@@ -9,7 +9,7 @@ import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
-import { TextArea, Select, Button, Label, FormSection, Input } from '../ui';
+import { Select, Button, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import LinkControls from '../controls/LinkControls';
 import CollaberatorControls from '../controls/CollaberatorControls';
 
@@ -119,25 +119,22 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
               placeholder="Short task summary"
               required
             />
-            <Label htmlFor="details">Details (Markdown supported)</Label>
-            <TextArea
+            <Label htmlFor="details">Details</Label>
+            <MarkdownEditor
               id="details"
-              rows={8}
               value={details}
-              onChange={e => setDetails(e.target.value)}
+              onChange={setDetails}
               placeholder="Additional information"
             />
           </>
         ) : (
           <>
-            <Label htmlFor="content">Content (Markdown supported)</Label>
-            <TextArea
+            <Label htmlFor="content">Content</Label>
+            <MarkdownEditor
               id="content"
-              rows={8}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
               placeholder="Write your post..."
-              required
             />
           </>
         )}
