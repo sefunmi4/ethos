@@ -9,30 +9,12 @@ import React, {
 import { useAuth } from './AuthContext';
 import { fetchBoards as fetchBoardsAPI, updateBoard } from '../api/board';
 import type { BoardData } from '../types/boardTypes';
+import type {
+  BoardItem,
+  BoardMap,
+  BoardContextType,
+} from './BoardContextTypes';
 import type { GitFileNode, GitStatus } from '../types/gitTypes';
-
-export interface BoardItem {
-  id: string;
-  gitStatus?: GitStatus;
-  fileTree?: GitFileNode[];
-  [key: string]: any;
-}
-
-export type BoardMap = Record<string, BoardData>;
-
-export interface BoardContextType {
-  boards: BoardMap;
-  selectedBoard: string | null;
-  setSelectedBoard: React.Dispatch<React.SetStateAction<string | null>>;
-  loading: boolean;
-  refreshBoards: () => Promise<void>;
-  appendToBoard: (boardId: string, newItem: BoardItem) => void;
-  updateBoardItem: (boardId: string, updatedItem: BoardItem) => void;
-  removeItemFromBoard: (boardId: string, itemId: string) => void;
-  setBoardMeta: (meta: { id: string; title: string; layout: string }) => void;
-  updateBoardGitStatus: (boardId: string, status: GitStatus) => void;
-  setBoardFileTree: (boardId: string, tree: GitFileNode[]) => void;
-}
 
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
@@ -212,3 +194,4 @@ export const useBoardContextEnhanced = () => {
     userPostBoard,
   };
 };
+
