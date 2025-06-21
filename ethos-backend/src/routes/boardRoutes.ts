@@ -196,6 +196,15 @@ router.get(
     let boardItems = board.items;
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
+    } else if (board.id === 'timeline-board') {
+      boardItems = posts
+        .filter(
+          p =>
+            p.type !== 'meta_system' &&
+            p.visibility !== 'private'
+        )
+        .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+        .map(p => p.id);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts
         .filter(
@@ -248,6 +257,15 @@ router.get(
     let boardItems = board.items;
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
+    } else if (board.id === 'timeline-board') {
+      boardItems = posts
+        .filter(
+          p =>
+            p.type !== 'meta_system' &&
+            p.visibility !== 'private'
+        )
+        .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+        .map(p => p.id);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts
         .filter(
