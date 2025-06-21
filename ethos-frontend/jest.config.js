@@ -5,6 +5,7 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
     '^.+\\.[tj]sx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json', useESM: true, diagnostics: false }],
+    '^.+\\.mjs$': ['ts-jest', { tsconfig: 'tsconfig.test.json', useESM: true, diagnostics: false }],
   },
   transformIgnorePatterns: [
     '/node_modules/(?!(react-force-graph-2d|react-force-graph|three|force-graph)(/|$))'
