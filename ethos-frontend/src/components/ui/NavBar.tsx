@@ -39,9 +39,6 @@ const NavBar: React.FC = () => {
               <Link to="/profile" className="hover:text-accent transition">
                 Account
               </Link>
-              <Link to="/task-library" className="hover:text-accent transition">
-                Task Library
-              </Link>
               <button
                 onClick={logoutUser}
                 className="hover:underline text-left"
