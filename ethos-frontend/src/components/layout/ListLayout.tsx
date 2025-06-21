@@ -14,6 +14,7 @@ interface ListLayoutProps {
   onDelete?: (id: string) => void;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
+  headerOnly?: boolean;
 }
 
 const ListLayout: React.FC<ListLayoutProps> = ({
@@ -25,6 +26,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   onDelete,
   onScrollEnd,
   loadingMore = false,
+  headerOnly = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +64,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
           onEdit={onEdit}
           onDelete={onDelete}
           questId={questId}
+          headerOnly={headerOnly}
         />
       ))}
       {loadingMore && <Spinner />}

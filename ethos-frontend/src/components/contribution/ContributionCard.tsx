@@ -20,6 +20,8 @@ interface ContributionCardProps {
   questId?: string;
   /** Show status dropdowns for task posts when rendering PostCard */
   showStatusControl?: boolean;
+  /** Render only the post header */
+  headerOnly?: boolean;
 }
 
 const ContributionCard: React.FC<ContributionCardProps> = ({
@@ -30,6 +32,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   onDelete,
   questId,
   showStatusControl = true,
+  headerOnly = false,
 }) => {
   if (!contribution) return null;
 
@@ -40,7 +43,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     return null;
   }
 
-  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl };
+  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl, headerOnly };
 
   // ✅ Render Post types
   if ('type' in contribution) {
@@ -49,6 +52,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
         post={contribution as Post}
         questId={questId}
         {...sharedProps}
+        headerOnly={headerOnly}
       />
     );
   }

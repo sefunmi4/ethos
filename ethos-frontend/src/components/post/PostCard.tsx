@@ -39,6 +39,8 @@ interface PostCardProps {
   /** Show status dropdown controls for task posts */
   showStatusControl?: boolean;
   replyOverride?: { label: string; onClick: () => void };
+  /** Render only the post header and reaction controls */
+  headerOnly?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -50,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({
   questId,
   showStatusControl = true,
   replyOverride,
+  headerOnly = false,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -260,6 +263,42 @@ const PostCard: React.FC<PostCardProps> = ({
           setEditMode(false);
         }}
       />
+    );
+  }
+
+  if (headerOnly) {
+    return (
+      <div
+        id={post.id}
+        className="relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose mx-auto"
+      >
+        <div className="flex justify-between text-sm text-secondary">
+          <div className="flex items-center gap-2">
+            <PostTypeBadge type={post.type} />
+            {post.status && <StatusBadge status={post.status} />}
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  post.authorId === user?.id
+                    ? ROUTES.PROFILE
+                    : ROUTES.PUBLIC_PROFILE(post.authorId)
+                )
+              }
+              className="text-accent underline"
+            >
+              @{post.author?.username || post.authorId}
+            </button>
+            <span>{timestamp}</span>
+          </div>
+        </div>
+        {titleText && (
+          <h3 className="font-semibold text-lg mt-1 cursor-pointer" onClick={() => navigate(ROUTES.POST(post.id))}>
+            {titleText}
+          </h3>
+        )}
+        <ReactionControls post={post} user={user} onUpdate={onUpdate} replyOverride={replyOverride} />
+      </div>
     );
   }
 
