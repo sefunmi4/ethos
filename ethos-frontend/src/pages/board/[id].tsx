@@ -10,6 +10,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
 import BoardSearchFilter from '../../components/board/BoardSearchFilter';
 import { Spinner } from '../../components/ui';
+
 import { fetchQuestById } from '../../api/quest';
 
 import type { BoardData } from '../../types/boardTypes';
@@ -118,14 +119,18 @@ const BoardPage: React.FC = () => {
 
   const editable = canEditBoard(boardData.id);
 
+  const isTimeline = boardData.id === 'timeline-board';
+
   return (
     <main className="max-w-7xl mx-auto p-4 space-y-8 bg-soft dark:bg-soft-dark">
       <div className="flex flex-col md:flex-row gap-6">
-        <BoardSearchFilter
-          tags={availableTags}
-          className="md:w-64"
-          onChange={(f) => setView(f.view)}
-        />
+        {!isTimeline && (
+          <BoardSearchFilter
+            tags={availableTags}
+            className="md:w-64"
+            onChange={(f) => setView(f.view)}
+          />
+        )}
         <div className="flex-1">
           <div className="bg-soft dark:bg-soft-dark rounded-xl shadow-lg p-6 space-y-6">
             <div className="flex justify-between items-center">
@@ -137,17 +142,29 @@ const BoardPage: React.FC = () => {
               )}
             </div>
 
-            <Board
-              boardId={id}
-              board={boardData}
-              layout={view}
-              quest={quest || undefined}
-              editable={editable}
-              showCreate={editable}
-              hideControls
-              onScrollEnd={loadMore}
-              loading={loadingMore}
-            />
+            {isTimeline ? (
+              <Board
+                boardId={id}
+                board={boardData}
+                layout="list"
+                compact
+                hideControls
+                onScrollEnd={loadMore}
+                loading={loadingMore}
+              />
+            ) : (
+              <Board
+                boardId={id}
+                board={boardData}
+                layout={view}
+                quest={quest || undefined}
+                editable={editable}
+                showCreate={editable}
+                hideControls
+                onScrollEnd={loadMore}
+                loading={loadingMore}
+              />
+            )}
           </div>
         </div>
       </div>
