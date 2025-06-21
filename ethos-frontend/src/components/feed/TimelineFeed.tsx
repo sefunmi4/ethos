@@ -1,16 +1,16 @@
-import React, { useCallback, useState, Suspense, lazy } from 'react';
-import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
+import React, { useState, Suspense, lazy, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useBoard } from '../../hooks/useBoard';
-import { useSocketListener } from '../../hooks/useSocket';
-import { fetchBoard } from '../../api/board';
+import { fetchActiveQuests } from '../../api/quest';
+import {
+  fetchPostsByQuestId,
+  fetchPostsByBoardId,
+} from '../../api/post';
 import { Spinner } from '../ui';
+import CreatePost from '../post/CreatePost';
+import { Button } from '../ui';
 
-import type { BoardData } from '../../types/boardTypes';
 import type { Post } from '../../types/postTypes';
-import type { Quest } from '../../types/questTypes';
 
-const QuestCard = lazy(() => import('../quest/QuestCard'));
 const PostCard = lazy(() => import('../post/PostCard'));
 
 interface TimelineFeedProps {
@@ -19,54 +19,45 @@ interface TimelineFeedProps {
 
 const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' }) => {
   const { user } = useAuth();
-  const { board, setBoard } = useBoard(boardId);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
-  useSocketListener('board:update', payload => {
-    if (!boardId || payload.boardId !== boardId) return;
-    fetchBoard(boardId, { enrich: true, userId: user?.id }).then(setBoard);
-  });
-
-  const loadMore = useCallback(async () => {
-    if (!boardId || loading || !hasMore) return;
-    setLoading(true);
-    try {
-      const nextPage = page + 1;
-      const more: BoardData = await fetchBoard(boardId, {
-        page: nextPage,
-        limit: DEFAULT_PAGE_SIZE,
-        enrich: true,
-        userId: user?.id,
-      });
-      if (more.items?.length) {
-        setBoard(prev =>
-          prev
-            ? {
-                ...prev,
-                items: [...prev.items, ...more.items],
-                enrichedItems: [
-                  ...(prev.enrichedItems || []),
-                  ...(more.enrichedItems || []),
-                ],
-              }
-            : more
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const quests = await fetchActiveQuests(user.id);
+        const questPosts = await Promise.all(
+          quests.map(q => fetchPostsByQuestId(q.id))
         );
-        setPage(nextPage);
-      } else {
-        setHasMore(false);
+        const myPosts = await fetchPostsByBoardId('my-posts', user.id);
+        const combined = [
+          ...myPosts,
+          ...questPosts.flat(),
+        ];
+        const unique = Array.from(new Map(combined.map(p => [p.id, p])).values());
+        unique.sort((a, b) =>
+          (b.timestamp || '').localeCompare(a.timestamp || '')
+        );
+        setItems(unique);
+      } catch (err) {
+        console.warn('[TimelineFeed] Failed to load activity:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.warn('[TimelineFeed] Pagination error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [boardId, page, loading, hasMore, user?.id, setBoard]);
+    };
+    load();
+  }, [user]);
 
-  if (!board) return <Spinner />;
+  const handleAdd = async (post: Post) => {
+    setItems(prev => [post, ...prev]);
+    setShowForm(false);
+  };
 
-  const items = board.enrichedItems || [];
+  if (!user) return null;
+  if (loading) return <Spinner />;
 
   if (items.length === 0) {
     return (
@@ -74,36 +65,29 @@ const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' 
     );
   }
 
-  const handleScroll: React.UIEventHandler<HTMLDivElement> = e => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - 200) {
-      loadMore();
-    }
-  };
-
   return (
-    <div
-      onScroll={handleScroll}
-      className="grid gap-4 overflow-auto max-h-[65vh] snap-y snap-mandatory p-2"
-    >
-      <Suspense fallback={<Spinner />}>
-        {items.map(item =>
-          'type' in item ? (
-            <div key={item.id} className="snap-start">
-              <PostCard post={item as Post} user={user} />
-            </div>
-          ) : (
-            <div key={item.id} className="snap-start">
-              <QuestCard quest={item as Quest} user={user} compact />
-            </div>
-          )
-        )}
-      </Suspense>
-      {loading && (
-        <div className="flex justify-center py-4">
-          <Spinner />
-        </div>
+    <div className="space-y-4">
+      {showForm && (
+        <CreatePost
+          onSave={handleAdd}
+          onCancel={() => setShowForm(false)}
+          boardId={boardId}
+        />
       )}
+      <div className="text-right">
+        <Button variant="contrast" onClick={() => setShowForm(true)}>
+          + Add Post
+        </Button>
+      </div>
+      <div className="grid gap-4 overflow-auto max-h-[65vh] snap-y snap-mandatory p-2">
+        <Suspense fallback={<Spinner />}>
+          {items.map(item => (
+            <div key={item.id} className="snap-start">
+              <PostCard post={item} user={user} />
+            </div>
+          ))}
+        </Suspense>
+      </div>
     </div>
   );
 };
