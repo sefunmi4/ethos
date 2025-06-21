@@ -71,9 +71,6 @@ export interface DBQuest {
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
 
-  /** Whether this quest should appear on boards */
-  displayOnBoard?: boolean;
-
   headPostId: string;
   linkedPosts: LinkedItem[];
   collaborators: { userId?: string; roles?: string[] }[];
