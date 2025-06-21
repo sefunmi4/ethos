@@ -8,7 +8,9 @@
     "details": "",
     "visibility": "public",
     "timestamp": "2025-06-21T20:03:18.319Z",
-    "tags": [],
+    "tags": [
+      "archived"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,

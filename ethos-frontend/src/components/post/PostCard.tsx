@@ -12,7 +12,7 @@ import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import CreatePost from './CreatePost';
-import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner, Select, Button } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
