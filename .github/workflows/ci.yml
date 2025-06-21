@@ -9,22 +9,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install dependencies
-        run: |
-          cd ethos-backend
-          npm ci
-      - name: Type check
-        run: |
-          cd ethos-backend
-          npx tsc --noEmit
-      - name: Run tests
+      - name: Setup
+        run: ./setup.sh
+      - name: Type check backend
+        run: npx tsc -p ethos-backend/tsconfig.json
+      - name: Type check frontend
+        run: npx tsc -p ethos-frontend/tsconfig.json
+      - name: Run backend tests
         run: |
           cd ethos-backend
           npm test -- -w=1
       - name: Lint, test & build frontend
         run: |
           cd ethos-frontend
-          npm ci
           npm run lint
           npm test -- -w=1
           npm run build

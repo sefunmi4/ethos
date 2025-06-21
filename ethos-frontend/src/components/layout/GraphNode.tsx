@@ -240,6 +240,11 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           style={{ marginLeft: depth * 16 }}
           className="mb-6 flex items-start space-x-2 cursor-pointer"
           onClick={() => onSelect(node)}
+          onDoubleClick={() =>
+            window.dispatchEvent(
+              new CustomEvent('questTaskOpen', { detail: { taskId: node.id } })
+            )
+          }
         >
           <span className="text-xl select-none cursor-grab">
             {icon}

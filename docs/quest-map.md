@@ -18,13 +18,15 @@ Q:<quest-slug>:<segment><number>
   - `I` – issue
 - `<number>` – a zero‑padded counter starting at `00` for each segment within a quest.
 
-Example: the first task in the `Ethos` quest becomes `Q:ethos:T00`. A reply log on that task would be `Q:ethos:T00:L01`.
+Example: the first task in the `Ethos` quest becomes `Q:ethos:T01`. A reply log on that task would be `Q:ethos:T01:L01`.
 
 Node IDs are generated in [`nodeIdUtils.ts`](../ethos-backend/src/utils/nodeIdUtils.ts) when a post is created or its quest/link changes.
 
 ## Automatic root node
 
 Every quest has a hidden root node. When a quest is created without a `headPostId`, the map starts from this automatic root. If a `headPostId` is set, edges originate from that post instead. New tasks link from the root (or head post) so that the map always has a starting point.
+
+The first task created in a quest uses the node ID `T00`. Root logs or files should nest under this task, for example `Q:demo:T00:L00`.
 
 ## Posts and edges in the quest map
 

@@ -75,4 +75,20 @@ describe('ReactionControls', () => {
     fireEvent.click(expand);
     expect(await screen.findByText(/Quest ID/)).toBeInTheDocument();
   });
+
+  it('supports replyOverride prop', () => {
+    const handler = jest.fn();
+    render(
+      <BrowserRouter>
+        <ReactionControls
+          post={{ ...basePost, type: 'free_speech' } as Post}
+          user={{ id: 'u1' }}
+          replyOverride={{ label: 'Add Item', onClick: handler }}
+        />
+      </BrowserRouter>
+    );
+    const btn = screen.getByText('Add Item');
+    fireEvent.click(btn);
+    expect(handler).toHaveBeenCalled();
+  });
 });
