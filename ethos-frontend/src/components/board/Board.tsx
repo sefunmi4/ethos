@@ -47,6 +47,8 @@ const Board: React.FC<BoardProps> = ({
   const [items, setItems] = useState<Post[]>([]);
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
+  const isQuestBoard = (boardId || boardProp?.id || board?.id) === 'quest-board';
+
   const { canEditBoard } = usePermissions();
   const { setSelectedBoard, appendToBoard, boards } = useBoardContext();
   const [filterText, setFilterText] = useState('');
@@ -450,7 +452,7 @@ const Board: React.FC<BoardProps> = ({
           contributions={items}
           questId={quest?.id || ''}
           initialExpanded={initialExpanded}
-          headerOnly={headerOnly}
+          headerOnly={isQuestBoard || headerOnly}
           editable={editable}
           {...(resolvedStructure === 'graph' ||
             resolvedStructure === 'graph-condensed' ||
