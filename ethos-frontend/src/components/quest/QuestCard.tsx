@@ -53,7 +53,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [logs, setLogs] = useState<Post[]>([]);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [rootNode, setRootNode] = useState<Post | null>(null);
-  const [leftWidth, setLeftWidth] = useState(280);
+  const [leftWidth, setLeftWidth] = useState(240);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
@@ -108,7 +108,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     const startX = e.clientX;
     const startWidth = leftWidth;
     const onMove = (ev: MouseEvent) => {
-      const newWidth = Math.min(500, Math.max(200, startWidth + ev.clientX - startX));
+      const newWidth = Math.min(400, Math.max(240, startWidth + ev.clientX - startX));
       setLeftWidth(newWidth);
     };
     const onUp = () => {
@@ -207,13 +207,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
               onChange={(e) => setMapMode(e.target.value as "folder" | "graph")}
               options={mapOptions}
             />
-            <Select
-              value={activeTab}
-              onChange={(e) =>
-                setActiveTab(e.target.value as "status" | "logs" | "file")
-              }
-              options={tabOptions}
-            />
           </>
         )}
 
@@ -233,11 +226,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
     return (
       <>
-        {selectedNode && (
-          <div className="mb-2">
-            <PostCard post={selectedNode} user={user} questId={quest.id} />
-          </div>
-        )}
         {showTaskForm && (
           <div className="mb-4">
             <CreatePost
@@ -458,6 +446,22 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <PostCard post={selectedNode} user={user} questId={quest.id} />
           </div>
         )}
+        <hr className="border-secondary mb-2" />
+        <div className="border-b border-secondary flex text-sm">
+          {tabOptions.map((t) => (
+            <button
+              key={t.value}
+              onClick={() => setActiveTab(t.value as typeof activeTab)}
+              className={`px-3 py-1 -mb-px border-b-2 ${
+                activeTab === t.value
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-secondary hover:text-primary'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
         {panel}
       </>
     );
@@ -509,7 +513,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             {renderMap()}
           </div>
           <div
-            className="hidden md:block w-1 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+            className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
             onMouseDown={handleDividerMouseDown}
           />
           <div className="flex-1 md:pl-4 overflow-auto">{renderRightPanel()}</div>
