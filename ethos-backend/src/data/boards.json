@@ -18,8 +18,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "33c786a9-ef8d-4fca-9240-65bfcef9a2a2",
-      "c72eeb37-ee9e-48c0-859f-8d1851648df7",
+      "f833a58e-c1ea-4c56-851a-ea465e04ce17",
       "f6619e30-bb1c-4dd4-83b1-e701faa1ebad",
       "e4e9f841-9ba2-4ae4-83b2-44f9f9040cb3",
       "3cafe809-d24a-4788-96db-856ea80bd8c8",
@@ -40,7 +39,11 @@
       "89428589-e618-4c2d-899f-0eedbb1a2ace",
       "31fc4c36-0580-4cea-9edf-037063010bab",
       "9d831c2c-5793-4f45-904f-8c9b17c91387",
-      "47cd09d6-1c70-4a1c-8dd3-741b4bd478be"
+      "7332829d-d875-4b92-92cf-f0011c63004d",
+      "cd4337d2-2b90-4c88-8abf-eb0f132f148b",
+      "bf54270a-3137-4f44-af61-f69360a2dab8",
+      "bf48c967-6b42-40a7-ab73-e805a0e72eb9",
+      "ef5cc85a-6791-40ec-be74-7524eca2c662"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -96,15 +99,13 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "33c786a9-ef8d-4fca-9240-65bfcef9a2a2",
-      "c72eeb37-ee9e-48c0-859f-8d1851648df7",
+      "f833a58e-c1ea-4c56-851a-ea465e04ce17",
       "8402ee60-6cb2-4d7c-95e9-1e0f325b74d4",
       "224f1527-b0b6-4e9c-b18a-10d7c093e711",
       "fd9037d9-efa5-43e3-a2e5-1b3fa3532a6b",
       "89428589-e618-4c2d-899f-0eedbb1a2ace",
       "31fc4c36-0580-4cea-9edf-037063010bab",
-      "9d831c2c-5793-4f45-904f-8c9b17c91387",
-      "47cd09d6-1c70-4a1c-8dd3-741b4bd478be"
+      "9d831c2c-5793-4f45-904f-8c9b17c91387"
     ],
     "featured": true,
     "defaultFor": null,

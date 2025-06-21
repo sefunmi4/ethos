@@ -480,5 +480,22 @@
     "questId": "c21d1fab-05f5-49a2-b426-19cac3cfb571",
     "nodeId": "Q:testquest2:L00",
     "questNodeTitle": "test quest 2"
+  },
+  {
+    "id": "f833a58e-c1ea-4c56-851a-ea465e04ce17",
+    "authorId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "type": "request",
+    "content": "tetsing more request",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-21T15:28:28.992Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]
