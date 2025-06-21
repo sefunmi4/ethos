@@ -43,6 +43,15 @@ jest.mock('../src/models/stores', () => ({
   boardLogsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
+import {
+  boardsStore,
+  postsStore,
+  questsStore,
+  usersStore,
+  reactionsStore,
+  boardLogsStore,
+} from '../src/models/stores';
+
 const app = express();
 app.use(express.json());
 app.use('/boards', boardRoutes);
@@ -64,7 +73,7 @@ describe('route handlers', () => {
   });
 
   it('POST /quests creates quest with head post', async () => {
-    const { postsStore, questsStore } = require('../src/models/stores');
+    
     postsStore.read.mockReturnValue([]);
     questsStore.read.mockReturnValue([]);
     postsStore.write.mockClear();
@@ -122,7 +131,7 @@ describe('route handlers', () => {
   });
 
   it('GET /quests/:id/map returns nodes and edges', async () => {
-    const { postsStore, questsStore } = require('../src/models/stores');
+    
     postsStore.read.mockReturnValue([
       {
         id: 't1',
@@ -153,7 +162,7 @@ describe('route handlers', () => {
   });
 
   it('POST /quests/:id/link adds task edge with type and label', async () => {
-    const { postsStore, questsStore } = require('../src/models/stores');
+    
     const quest: any = {
       id: 'q1',
       authorId: 'u1',
@@ -192,7 +201,7 @@ describe('route handlers', () => {
   });
 
   it('POST /quests/:id/link links task to task when parentId provided', async () => {
-    const { postsStore, questsStore } = require('../src/models/stores');
+    
     const quest: any = {
       id: 'q1',
       authorId: 'u1',
@@ -234,7 +243,7 @@ describe('route handlers', () => {
   });
 
   it('POST /quests/:id/complete cascades solution', async () => {
-    const { questsStore, postsStore } = require('../src/models/stores');
+    
     const quest: any = {
       id: 'q1',
       authorId: 'u1',
@@ -281,7 +290,7 @@ describe('route handlers', () => {
   });
 
   it('GET /boards/:id/quests returns quests from board', async () => {
-    const { boardsStore, questsStore } = require('../src/models/stores');
+    
     boardsStore.read.mockReturnValue([
       { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
     ]);
@@ -304,7 +313,7 @@ describe('route handlers', () => {
   });
 
   it('GET /boards/:id/quests?enrich=true returns enriched quests', async () => {
-    const { boardsStore, questsStore, usersStore } = require('../src/models/stores');
+    
     boardsStore.read.mockReturnValue([
       { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
     ]);
@@ -327,7 +336,7 @@ describe('route handlers', () => {
   });
 
   it('PATCH /boards/:id creates board when not found', async () => {
-    const { boardsStore } = require('../src/models/stores');
+    
     const store: any[] = [];
     boardsStore.read.mockReturnValue(store);
 
@@ -342,7 +351,7 @@ describe('route handlers', () => {
   });
 
   it('POST /boards logs creation', async () => {
-    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    
     boardsStore.read.mockReturnValue([]);
     boardLogsStore.read.mockReturnValue([]);
     boardLogsStore.write.mockClear();
@@ -355,7 +364,7 @@ describe('route handlers', () => {
   });
 
   it('PATCH /boards/:id logs update', async () => {
-    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    
     boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
     boardLogsStore.read.mockReturnValue([]);
     boardLogsStore.write.mockClear();
@@ -366,7 +375,7 @@ describe('route handlers', () => {
   });
 
   it('DELETE /boards/:id logs deletion', async () => {
-    const { boardsStore, boardLogsStore } = require('../src/models/stores');
+    
     boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
     boardLogsStore.read.mockReturnValue([]);
     boardLogsStore.write.mockClear();
@@ -377,7 +386,7 @@ describe('route handlers', () => {
   });
   
   it('GET /boards/thread/:postId paginates replies', async () => {
-    const { postsStore } = require('../src/models/stores');
+    
     postsStore.read.mockReturnValue([
       {
         id: 'r1',

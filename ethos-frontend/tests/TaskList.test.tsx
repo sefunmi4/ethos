@@ -72,7 +72,7 @@ jest.mock(
 
 jest.mock('remark-gfm', () => () => ({}), { virtual: true });
 
-const { updatePost } = require('../src/api/post');
+import { updatePost } from '../src/api/post';
 
 describe('task list checkbox', () => {
   it('toggles checkbox and updates post', async () => {

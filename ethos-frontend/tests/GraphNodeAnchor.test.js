@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, act, within } = require('@testing-library/react');
+import React from 'react';
+import { render, act, within } from '@testing-library/react';
 
 let dragHandler;
 
@@ -36,7 +36,7 @@ jest.mock('../src/hooks/useGit', () => ({
   useGitDiff: () => ({ data: null, isLoading: false })
 }));
 
-const GraphLayout = require('../src/components/layout/GraphLayout').default;
+import GraphLayout from '../src/components/layout/GraphLayout';
 
 describe('GraphLayout anchor interaction', () => {
   it('creates a new child when dragging from anchor', async () => {

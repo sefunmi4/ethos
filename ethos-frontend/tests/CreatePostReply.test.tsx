@@ -21,9 +21,9 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const CreatePost = require('../src/components/post/CreatePost').default;
+import CreatePost from '../src/components/post/CreatePost';
 
-const { addPost } = require('../src/api/post');
+import { addPost } from '../src/api/post';
 
 describe('CreatePost replying', () => {
   it('limits options to log when replying to a task', () => {

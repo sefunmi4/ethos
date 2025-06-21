@@ -23,7 +23,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
-const CreatePost = require('../src/components/post/CreatePost').default;
+import CreatePost from '../src/components/post/CreatePost';
 
 describe('CreatePost view filtering', () => {
   const getOptions = () => {
