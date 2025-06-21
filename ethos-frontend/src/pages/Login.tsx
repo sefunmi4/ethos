@@ -166,7 +166,7 @@ const Login: React.FC = () => {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-600 dark:placeholder-gray-300"
             required
           />
 
@@ -177,7 +177,7 @@ const Login: React.FC = () => {
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-600 dark:placeholder-gray-300"
               required
             />
           )}
@@ -189,7 +189,7 @@ const Login: React.FC = () => {
               placeholder="Confirm Password"
               value={form.confirm}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-600 dark:placeholder-gray-300"
               required
             />
           )}
