@@ -39,6 +39,7 @@ const Board: React.FC<BoardProps> = ({
   quest,
   gridLayout,
   initialExpanded = false,
+  headerOnly = false,
 }) => {
   const [board, setBoard] = useState<BoardData | null>(boardProp ?? null);
   const [loading, setLoading] = useState(true);
@@ -444,6 +445,7 @@ const Board: React.FC<BoardProps> = ({
           contributions={items}
           questId={quest?.id || ''}
           initialExpanded={initialExpanded}
+          headerOnly={headerOnly}
           editable={editable}
           {...(resolvedStructure === 'graph' ||
             resolvedStructure === 'graph-condensed' ||

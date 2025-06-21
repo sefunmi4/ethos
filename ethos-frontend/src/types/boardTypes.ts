@@ -90,6 +90,8 @@ export interface BoardProps {
   gridLayout?: 'vertical' | 'horizontal' | 'kanban' | 'paged';
   /** Expand all posts when rendering nested replies */
   initialExpanded?: boolean;
+  /** Render contributions as header-only cards */
+  headerOnly?: boolean;
 }
 
 /** Props for the EditBoard component */

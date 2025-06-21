@@ -90,6 +90,7 @@ const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
       onScrollEnd={loadMore}
       loading={loading}
       user={user}
+      headerOnly
     />
   );
 };
