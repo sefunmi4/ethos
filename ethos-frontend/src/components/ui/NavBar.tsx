@@ -22,9 +22,9 @@ const NavBar: React.FC = () => {
       <div className="w-full max-w-[1440px] px-4 sm:px-6 lg:px-12 xl:px-24 mx-auto flex items-center justify-between flex-wrap gap-4">
 
         {/* Logo or brand name linking to home */}
-        <Link to="/" className="text-xl font-bold tracking-tight text-accent">
+        <a href="/" className="text-xl font-bold tracking-tight text-accent">
           Ethos
-        </Link>
+        </a>
 
         {/* Navigation links – vary by user auth state */}
         <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base">

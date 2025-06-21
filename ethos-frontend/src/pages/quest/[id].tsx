@@ -11,7 +11,6 @@ import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
 import { Spinner } from '../../components/ui';
 import ReviewForm from '../../components/ReviewForm';
-import { createMockBoard } from '../../utils/boardUtils';
 import { fetchUserById } from '../../api/auth';
 
 import type { User } from '../../types/userTypes';
@@ -111,12 +110,6 @@ const QuestPage: React.FC = () => {
           <Spinner />
         )}
       </section>
-
-      <Board
-        board={createMockBoard(`quest-${quest.id}`, 'Quest Overview', [quest])}
-        editable={false}
-        compact={false}
-      />
 
       {/* 📜 Quest Log Section */}
       <section>
