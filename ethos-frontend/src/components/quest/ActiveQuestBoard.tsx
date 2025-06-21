@@ -99,7 +99,7 @@ const ActiveQuestBoard: React.FC = () => {
           → See all
         </Link>
       </div>
-      <Board board={board} layout="grid" hideControls compact />
+      <Board board={board} layout="horizontal" hideControls />
     </div>
   );
 };
