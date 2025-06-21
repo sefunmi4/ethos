@@ -18,6 +18,7 @@ const HomePage: React.FC = () => {
   const [postType, setPostType] = useState('');
 
   const questBoard = boards['quest-board'];
+  const showSeeAll = (questBoard?.enrichedItems?.length || 0) > 6;
   const postTypes = useMemo(() => {
     if (!questBoard?.enrichedItems) return [] as string[];
     const types = new Set<string>();
@@ -55,15 +56,18 @@ const HomePage: React.FC = () => {
           boardId="quest-board"
           title="🗺️ Quest Board"
           layout="grid"
+          gridLayout="paged"
           user={user as User}
           hideControls
           filter={postType ? { postType } : {}}
         />
-        <div className="text-right">
-          <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
-            → See all
-          </Link>
-        </div>
+        {showSeeAll && (
+          <div className="text-right">
+            <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
+              → See all
+            </Link>
+          </div>
+        )}
       </section>
 
       <section>
