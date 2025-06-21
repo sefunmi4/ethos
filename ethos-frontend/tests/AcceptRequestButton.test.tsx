@@ -15,6 +15,7 @@ jest.mock('../src/api/post', () => ({
   removeRepost: jest.fn(() => Promise.resolve()),
   requestHelp: jest.fn(() => Promise.resolve({})),
   acceptRequest: jest.fn(() => Promise.resolve({})),
+  unacceptRequest: jest.fn(() => Promise.resolve({})),
 }));
 
 jest.mock('../src/api/quest', () => ({
@@ -46,7 +47,7 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-const { acceptRequest } = require('../src/api/post');
+const { acceptRequest, unacceptRequest } = require('../src/api/post');
 
 describe('accept request button', () => {
   const post = {
@@ -78,5 +79,19 @@ describe('accept request button', () => {
     );
     fireEvent.click(screen.getByText('Accept'));
     expect(acceptRequest).toHaveBeenCalledWith('p1');
+  });
+
+  it('toggles pending state on second click', async () => {
+    render(
+      <BrowserRouter>
+        <PostCard post={post} user={{ id: 'u1' }} />
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByText('Accept'));
+    await screen.findByText('Pending');
+
+    fireEvent.click(screen.getByText('Pending'));
+    expect(unacceptRequest).toHaveBeenCalledWith('p1');
+    await screen.findByText('Accept');
   });
 });
