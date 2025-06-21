@@ -12,7 +12,6 @@ interface MarkdownRendererProps {
 }
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onToggleTask }) => {
-  if (!content) return null;
   let checkboxIndex = -1;
   const components = {
     input: ({ checked, type, ...props }: React.InputHTMLAttributes<HTMLInputElement>) => {
@@ -30,10 +29,14 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onToggleTa
     },
   };
   useEffect(() => {
+    if (!content) return;
     document.querySelectorAll('pre code').forEach(block => {
       hljs.highlightElement(block as HTMLElement);
     });
   }, [content]);
+
+  if (!content) return null;
+
   return (
     <div className="prose prose-sm max-w-none">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{content}</ReactMarkdown>
