@@ -89,6 +89,7 @@ const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
       hideControls
       onScrollEnd={loadMore}
       loading={loading}
+      user={user}
     />
   );
 };
