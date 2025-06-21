@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
-import QuestSummaryCard from './QuestSummaryCard';
 import QuestCard from './QuestCard';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
@@ -20,7 +19,6 @@ const ActiveQuestBoard: React.FC = () => {
   const [quests, setQuests] = useState<QuestWithLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
-  const [expanded, setExpanded] = useState<QuestWithLog | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -113,21 +111,7 @@ const ActiveQuestBoard: React.FC = () => {
                 idx === index ? '' : 'opacity-80'
               }`}
             >
-              <div className="w-full">
-                <QuestSummaryCard quest={q} />
-                <div className="text-right mt-1">
-                  <button
-                    type="button"
-                    className="text-xs underline"
-                    onClick={() => {
-                      setExpanded(q);
-                      setIndex(idx);
-                    }}
-                  >
-                    {expanded?.id === q.id ? 'Collapse' : 'Expand'}
-                  </button>
-                </div>
-              </div>
+              <QuestCard quest={q} />
             </div>
           ))}
         </div>
@@ -151,11 +135,6 @@ const ActiveQuestBoard: React.FC = () => {
         )}
       </div>
 
-      {expanded && (
-        <div className="mt-4">
-          <QuestCard quest={expanded} defaultExpanded />
-        </div>
-      )}
 
       {showSeeAll && (
         <div className="text-right">

@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest, archivePost } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -94,7 +94,15 @@ const PostCard: React.FC<PostCardProps> = ({
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
-  const { selectedBoard, updateBoardItem, appendToBoard } = useBoardContext() || {};
+  const {
+    selectedBoard,
+    updateBoardItem,
+    appendToBoard,
+    removeItemFromBoard,
+  } = useBoardContext() || {};
+
+  const isQuestBoardRequest =
+    post.type === 'request' && selectedBoard === 'quest-board';
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -140,6 +148,15 @@ const PostCard: React.FC<PostCardProps> = ({
       console.error('[PostCard] Failed to accept request:', err);
     } finally {
       setAccepting(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    try {
+      await archivePost(post.id);
+      if (selectedBoard) removeItemFromBoard(selectedBoard, post.id);
+    } catch (err) {
+      console.error('[PostCard] Failed to mark complete:', err);
     }
   };
 
@@ -335,6 +352,25 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   if (headerOnly) {
+    const collaboratorCount = post.collaborators?.filter(c => c.userId).length || 0;
+    if (isQuestBoardRequest) {
+      return (
+        <div
+          id={post.id}
+          className={clsx(
+            'border border-secondary rounded bg-surface p-4 space-y-2 text-primary',
+            className
+          )}
+        >
+          {titleText && <h3 className="font-semibold text-lg">{titleText}</h3>}
+          <div className="text-sm text-secondary">{collaboratorCount} collaborators</div>
+          <Button variant="ghost" size="sm" onClick={handleComplete}>
+            Mark Complete
+          </Button>
+        </div>
+      );
+    }
+
     return (
       <div
         id={post.id}
@@ -376,7 +412,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </h3>
         )}
         <ReactionControls post={post} user={user} onUpdate={onUpdate} replyOverride={replyOverride} />
-        {post.type === 'request' && (
+        {post.type === 'request' && !isQuestBoardRequest && (
           <button
             className="text-accent underline text-xs ml-2"
             onClick={handleAccept}
@@ -405,8 +441,11 @@ const PostCard: React.FC<PostCardProps> = ({
             <SummaryTag key={idx} {...tag} />
           ))}
           <PostTypeBadge type={post.type} />
-          {post.status && <StatusBadge status={post.status} />}
-          {canEdit && ['task', 'request', 'issue'].includes(post.type) && showStatusControl && (
+          {!isQuestBoardRequest && post.status && <StatusBadge status={post.status} />}
+          {!isQuestBoardRequest &&
+            canEdit &&
+            ['task', 'request', 'issue'].includes(post.type) &&
+            showStatusControl && (
             <div className="ml-1 w-28">
               <Select
                 value={post.status || 'To Do'}
@@ -430,7 +469,6 @@ const PostCard: React.FC<PostCardProps> = ({
               @{post.author?.username || post.authorId}
             </button>
           )}
-          <span>{timestamp}</span>
         </div>
         <ActionMenu
           id={post.id}
@@ -445,7 +483,7 @@ const PostCard: React.FC<PostCardProps> = ({
         />
       </div>
 
-      {post.linkedNodeId && post.author?.username && (
+      {post.linkedNodeId && post.author?.username && !isQuestBoardRequest && (
         <div className="text-xs text-secondary italic">
           @{post.author.username} committed changes to <strong>{post.linkedNodeId}</strong> {timestamp}
         </div>
@@ -617,7 +655,7 @@ const PostCard: React.FC<PostCardProps> = ({
         onUpdate={onUpdate}
         replyOverride={replyOverride}
       />
-      {post.type === 'request' && (
+      {post.type === 'request' && !isQuestBoardRequest && (
         <button
           className="text-accent underline text-xs ml-2"
           onClick={handleAccept}
