@@ -120,7 +120,7 @@ const PostPage: React.FC = () => {
       )}
 
       <section>
-        <PostCard post={post} />
+        <PostCard post={post} showDetails />
         {showReplyForm && (
           <div className="mt-4">
             <CreatePost

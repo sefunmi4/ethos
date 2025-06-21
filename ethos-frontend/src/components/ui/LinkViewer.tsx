@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import type { LinkedItem } from '../../types/postTypes';
+import type { LinkedItem, Post } from '../../types/postTypes';
 import { fetchQuestById } from '../../api/quest';
 import { fetchPostById } from '../../api/post';
+import { getQuestLinkLabel } from '../../utils/displayUtils';
 
 interface LinkViewerProps {
   items: LinkedItem[];
+  /** Post to resolve parent chain for */
+  post?: Post;
+  /** Fetch and show reply chain */
+  showReplyChain?: boolean;
 }
 
-const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
+const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) => {
   const [open, setOpen] = useState(false);
   const [resolved, setResolved] = useState<LinkedItem[]>(items);
+  const [chain, setChain] = useState<Post[]>([]);
 
   useEffect(() => {
     const resolve = async () => {
@@ -38,7 +44,31 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
     resolve();
   }, [items]);
 
-  if (!resolved || resolved.length === 0) return null;
+  useEffect(() => {
+    const loadChain = async () => {
+      if (!showReplyChain || !post?.replyTo) {
+        setChain([]);
+        return;
+      }
+      const visited = new Set<string>();
+      const posts: Post[] = [];
+      let current = post.replyTo;
+      while (current && !visited.has(current)) {
+        try {
+          const p = await fetchPostById(current);
+          posts.push(p);
+          visited.add(current);
+          current = p.replyTo ?? undefined;
+        } catch {
+          break;
+        }
+      }
+      setChain(posts);
+    };
+    loadChain();
+  }, [post, showReplyChain]);
+
+  if (resolved.length === 0 && chain.length === 0) return null;
 
   const grouped = resolved.reduce<Record<string, LinkedItem[]>>((acc, item) => {
     const key = item.linkType || 'other';
@@ -53,7 +83,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
         onClick={() => setOpen((o) => !o)}
         className="text-blue-600 underline"
       >
-        {open ? 'Hide Links' : `Links (${items.length})`}
+        {open ? 'Collapse Details' : 'Expand Details'}
       </button>
       {open && (
         <div className="mt-2 border rounded bg-background dark:bg-surface p-2 space-y-1">
@@ -70,6 +100,16 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items }) => {
               </ul>
             </div>
           ))}
+          {chain.length > 0 && (
+            <div>
+              <div className="font-semibold capitalize mb-1">reply chain</div>
+              <ul className="pl-4 list-disc space-y-1">
+                {Array.from(new Set(chain.map(p => getQuestLinkLabel(p)))).map((label, idx) => (
+                  <li key={idx}>{label}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
