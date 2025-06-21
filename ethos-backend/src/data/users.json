@@ -1,28 +1,2 @@
 [
-  {
-    "id": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "username": "wise_dragon_2965",
-    "email": "testerbot1@ethos.com",
-    "password": "$2b$10$K9/zTqe0u4ZdGJSxZLdHAegdUWVDu4fuqSkRd1TK.ZVyzkds2hcxO",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "experienceTimeline": [
-      {
-        "datetime": "2025-06-20T16:43:41.892Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  }
 ]

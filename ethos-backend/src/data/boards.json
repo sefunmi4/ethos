@@ -18,32 +18,6 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "f833a58e-c1ea-4c56-851a-ea465e04ce17",
-      "f6619e30-bb1c-4dd4-83b1-e701faa1ebad",
-      "e4e9f841-9ba2-4ae4-83b2-44f9f9040cb3",
-      "3cafe809-d24a-4788-96db-856ea80bd8c8",
-      "3ba6f1bd-a710-4723-b2f7-80d76ddac78b",
-      "5cfed02e-9695-4ccc-83a9-c57f06999e19",
-      "6d6c39ae-dc73-43b5-a3d8-7d5c59006b22",
-      "59687208-c91b-4562-9d39-5d7181c4623b",
-      "755d3dc2-cba4-4414-8391-16c4327019a5",
-      "69c94051-37d6-42b6-81a1-f560dbedb8f8",
-      "f116d807-dd25-447e-b965-1abd3969676d",
-      "63657925-62c9-4f69-aeae-ccf17a01071f",
-      "86f7346d-50dd-4161-a6f7-447e3f09f6fc",
-      "8402ee60-6cb2-4d7c-95e9-1e0f325b74d4",
-      "224f1527-b0b6-4e9c-b18a-10d7c093e711",
-      "31b44cb5-24ae-46ff-81c5-48f2b70aec26",
-      "6b8a599d-078e-4bd4-bb15-b0b7608ad7ff",
-      "fd9037d9-efa5-43e3-a2e5-1b3fa3532a6b",
-      "89428589-e618-4c2d-899f-0eedbb1a2ace",
-      "31fc4c36-0580-4cea-9edf-037063010bab",
-      "9d831c2c-5793-4f45-904f-8c9b17c91387",
-      "7332829d-d875-4b92-92cf-f0011c63004d",
-      "cd4337d2-2b90-4c88-8abf-eb0f132f148b",
-      "bf54270a-3137-4f44-af61-f69360a2dab8",
-      "bf48c967-6b42-40a7-ab73-e805a0e72eb9",
-      "ef5cc85a-6791-40ec-be74-7524eca2c662"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -57,13 +31,6 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "c21d1fab-05f5-49a2-b426-19cac3cfb571",
-      "91544b2a-a2c0-408f-b21b-15845869a23b",
-      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
-      "2c3512f0-c26a-4655-b051-e76e319a9d35",
-      "0f239e42-e795-45f9-b279-1d7a4ccc7207",
-      "930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
-      "557031bf-dac9-4fce-b69b-fc9b28f86c76"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -77,14 +44,6 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "d78fd6e3-3357-4009-a15b-dfa47022840c",
-      "8dcab4d0-207c-4bfe-b84f-155688f46be0",
-      "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
-      "41f1e562-2389-4717-a9c4-15abb17ded27",
-      "91544b2a-a2c0-408f-b21b-15845869a23b",
-      "95645920-ec0c-4030-b368-8070336c0d22",
-      "49765216-fe00-4217-93f4-e54049cb7dab",
-      "99aec9c4-a8f6-404a-86ee-3ce2676ab03e"
     ],
     "featured": true,
     "defaultFor": null,
@@ -99,13 +58,6 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "f833a58e-c1ea-4c56-851a-ea465e04ce17",
-      "8402ee60-6cb2-4d7c-95e9-1e0f325b74d4",
-      "224f1527-b0b6-4e9c-b18a-10d7c093e711",
-      "fd9037d9-efa5-43e3-a2e5-1b3fa3532a6b",
-      "89428589-e618-4c2d-899f-0eedbb1a2ace",
-      "31fc4c36-0580-4cea-9edf-037063010bab",
-      "9d831c2c-5793-4f45-904f-8c9b17c91387"
     ],
     "featured": true,
     "defaultFor": null,
@@ -120,223 +72,11 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "d78fd6e3-3357-4009-a15b-dfa47022840c",
-      "8dcab4d0-207c-4bfe-b84f-155688f46be0",
-      "8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
-      "41f1e562-2389-4717-a9c4-15abb17ded27",
-      "95645920-ec0c-4030-b368-8070336c0d22"
     ],
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
-  },
-  {
-    "id": "map-95645920-ec0c-4030-b368-8070336c0d22",
-    "title": "Ethos Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "d041e2f5-717d-4494-9445-e1903c98e67a",
-      "1f61b896-c477-4ea4-88e3-3b211792c2e7",
-      "bca44e5a-9b95-42bc-91a8-2628c2c93893"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T17:43:31.001Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "95645920-ec0c-4030-b368-8070336c0d22"
-  },
-  {
-    "id": "map-91544b2a-a2c0-408f-b21b-15845869a23b",
-    "title": "Ethos Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "755d3dc2-cba4-4414-8391-16c4327019a5",
-      "59687208-c91b-4562-9d39-5d7181c4623b",
-      "6d6c39ae-dc73-43b5-a3d8-7d5c59006b22",
-      "3ba6f1bd-a710-4723-b2f7-80d76ddac78b",
-      "3cafe809-d24a-4788-96db-856ea80bd8c8",
-      "e4e9f841-9ba2-4ae4-83b2-44f9f9040cb3"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T18:36:38.095Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "91544b2a-a2c0-408f-b21b-15845869a23b"
-  },
-  {
-    "id": "map-41f1e562-2389-4717-a9c4-15abb17ded27",
-    "title": "Graduate Applications Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "5cfed02e-9695-4ccc-83a9-c57f06999e19"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T18:41:58.289Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "41f1e562-2389-4717-a9c4-15abb17ded27"
-  },
-  {
-    "id": "map-8c79bf6c-0620-443f-b884-9f2ea3a77ab9",
-    "title": "test quest Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "69c94051-37d6-42b6-81a1-f560dbedb8f8"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T20:13:38.886Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "8c79bf6c-0620-443f-b884-9f2ea3a77ab9"
-  },
-  {
-    "id": "map-8dcab4d0-207c-4bfe-b84f-155688f46be0",
-    "title": "another test Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "f116d807-dd25-447e-b965-1abd3969676d"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T20:13:46.973Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "8dcab4d0-207c-4bfe-b84f-155688f46be0"
-  },
-  {
-    "id": "map-d78fd6e3-3357-4009-a15b-dfa47022840c",
-    "title": "one more test Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "63657925-62c9-4f69-aeae-ccf17a01071f"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-20T20:13:53.566Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "d78fd6e3-3357-4009-a15b-dfa47022840c"
-  },
-  {
-    "id": "map-cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
-    "title": "Defeat the ender dragon Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "6b8a599d-078e-4bd4-bb15-b0b7608ad7ff"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T03:49:15.220Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
-  },
-  {
-    "id": "active-quests",
-    "title": "Untitled Board",
-    "description": "",
-    "boardType": "post",
-    "layout": "grid",
-    "items": [
-      "c21d1fab-05f5-49a2-b426-19cac3cfb571",
-      "557031bf-dac9-4fce-b69b-fc9b28f86c76",
-      "930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
-      "0f239e42-e795-45f9-b279-1d7a4ccc7207",
-      "2c3512f0-c26a-4655-b051-e76e319a9d35",
-      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
-    ],
-    "filters": {},
-    "featured": false,
-    "defaultFor": null,
-    "createdAt": "2025-06-21T03:49:15.231Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732"
-  },
-  {
-    "id": "map-2c3512f0-c26a-4655-b051-e76e319a9d35",
-    "title": "Test Quest Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "7332829d-d875-4b92-92cf-f0011c63004d"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T05:14:54.334Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "2c3512f0-c26a-4655-b051-e76e319a9d35"
-  },
-  {
-    "id": "map-0f239e42-e795-45f9-b279-1d7a4ccc7207",
-    "title": "Ethos pt 2 Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "cd4337d2-2b90-4c88-8abf-eb0f132f148b"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T05:47:18.746Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "0f239e42-e795-45f9-b279-1d7a4ccc7207"
-  },
-  {
-    "id": "map-930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
-    "title": "Test Quest Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "bf54270a-3137-4f44-af61-f69360a2dab8"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T05:47:33.270Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "930f05cd-d40b-4996-8afd-e7f3ee46e7dd"
-  },
-  {
-    "id": "map-557031bf-dac9-4fce-b69b-fc9b28f86c76",
-    "title": "Battle of The Bands Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "bf48c967-6b42-40a7-ab73-e805a0e72eb9"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T05:47:42.540Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "557031bf-dac9-4fce-b69b-fc9b28f86c76"
-  },
-  {
-    "id": "map-c21d1fab-05f5-49a2-b426-19cac3cfb571",
-    "title": "test quest 2 Map",
-    "description": "",
-    "boardType": "map",
-    "layout": "graph",
-    "items": [
-      "ef5cc85a-6791-40ec-be74-7524eca2c662"
-    ],
-    "filters": {},
-    "featured": false,
-    "createdAt": "2025-06-21T05:47:55.764Z",
-    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
-    "questId": "c21d1fab-05f5-49a2-b426-19cac3cfb571"
   }
 ]
