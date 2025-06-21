@@ -34,7 +34,6 @@ type CreatePostProps = {
    * Optional active board view. When provided and the board is a quest board
    * this limits the available post types to those relevant for the view.
    */
-  currentView?: 'map' | 'log' | 'file-change';
 };
 
 const CreatePost: React.FC<CreatePostProps> = ({
@@ -47,7 +46,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
   initialGitFilePath,
   initialLinkedNodeId,
-  currentView,
 }) => {
   const restrictedReply =
     replyTo && ['task', 'log', 'commit', 'issue'].includes(replyTo.type);

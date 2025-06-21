@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const userData = await fetchCurrentUser();
         setUser(userData);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await apiLogin(email, password);
       const userData = await fetchCurrentUser();
       setUser(userData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login failed:', err);
       setError('Login failed');
     }
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await apiRegister(email, password);
       const userData = await fetchCurrentUser();
       setUser(userData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration failed:', err);
       setError('Registration failed');
     }

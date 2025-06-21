@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
+import { fetchPostsByQuestId } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 
 jest.mock('../../api/post', () => ({

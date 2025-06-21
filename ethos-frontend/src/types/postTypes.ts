@@ -122,6 +122,11 @@ export interface Reaction {
  */
 export type ReactionCountMap = Record<ReactionType, number>;
 
+export interface Reaction {
+  userId: string;
+  type: ReactionType;
+}
+
 /**
  * Raw user reactions.
  */

@@ -1,6 +1,6 @@
 // src/api/auth.ts
 
-import { axiosWithAuth, setAccessToken, refreshAccessToken } from '../utils/authUtils';
+import { axiosWithAuth, setAccessToken } from '../utils/authUtils';
 import type { User } from '../types/userTypes';
 
 /**

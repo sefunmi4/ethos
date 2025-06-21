@@ -42,9 +42,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   post,
   user,
   onUpdate,
-  replyCount,
-  showReplies,
-  onToggleReplies,
   replyOverride,
   isTimeline,
 }) => {
