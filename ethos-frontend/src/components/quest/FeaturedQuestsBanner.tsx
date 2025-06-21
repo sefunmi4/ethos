@@ -23,7 +23,7 @@ const FeaturedQuestsBanner: React.FC<FeaturedQuestsBannerProps> = ({ quests }) =
   const statusLabel = (q: Quest) => (q.status === 'active' ? 'Open' : 'Closed');
 
   return (
-    <div className="bg-soft dark:bg-soft-dark p-4 rounded-lg shadow">
+    <div className="bg-accent-muted p-4 rounded-lg shadow">
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {featured.map((q) => (
           <Link
