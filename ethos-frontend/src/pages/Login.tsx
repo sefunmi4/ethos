@@ -129,7 +129,7 @@ const Login: React.FC = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-soft dark:bg-soft-dark px-4 text-primary">
-      <section className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+      <section className="w-full max-w-md bg-surface dark:bg-surface p-8 rounded-lg shadow-lg">
         <header className="mb-6 text-center">
           <h1 className="text-3xl font-bold text-primary">
             {showReset
