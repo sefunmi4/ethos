@@ -139,6 +139,7 @@ const BoardPage: React.FC = () => {
               quest={quest || undefined}
               editable={editable}
               showCreate={editable}
+              hideControls
               onScrollEnd={loadMore}
               loading={loadingMore}
             />
