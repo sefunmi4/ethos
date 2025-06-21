@@ -10,7 +10,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
 import BoardSearchFilter from '../../components/board/BoardSearchFilter';
 import { Spinner } from '../../components/ui';
-import ActivityList from '../../components/feed/ActivityList';
+
 import { fetchQuestById } from '../../api/quest';
 
 import type { BoardData } from '../../types/boardTypes';
@@ -31,7 +31,6 @@ const BoardPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [tab, setTab] = useState<'board' | 'activity'>('board');
 
   const loadQuest = useCallback(async (questId: string) => {
     try {
@@ -120,10 +119,12 @@ const BoardPage: React.FC = () => {
 
   const editable = canEditBoard(boardData.id);
 
+  const isTimeline = boardData.id === 'timeline-board';
+
   return (
     <main className="max-w-7xl mx-auto p-4 space-y-8 bg-soft dark:bg-soft-dark">
       <div className="flex flex-col md:flex-row gap-6">
-        {tab === 'board' && (
+        {!isTimeline && (
           <BoardSearchFilter
             tags={availableTags}
             className="md:w-64"
@@ -141,22 +142,17 @@ const BoardPage: React.FC = () => {
               )}
             </div>
 
-            <div className="flex gap-4 border-b border-secondary pb-2">
-              <button
-                className={`pb-1 ${tab === 'board' ? 'border-b-2 border-accent' : ''}`}
-                onClick={() => setTab('board')}
-              >
-                Quest Board
-              </button>
-              <button
-                className={`pb-1 ${tab === 'activity' ? 'border-b-2 border-accent' : ''}`}
-                onClick={() => setTab('activity')}
-              >
-                Recent Activity
-              </button>
-            </div>
-
-            {tab === 'board' ? (
+            {isTimeline ? (
+              <Board
+                boardId={id}
+                board={boardData}
+                layout="list"
+                compact
+                hideControls
+                onScrollEnd={loadMore}
+                loading={loadingMore}
+              />
+            ) : (
               <Board
                 boardId={id}
                 board={boardData}
@@ -168,8 +164,6 @@ const BoardPage: React.FC = () => {
                 onScrollEnd={loadMore}
                 loading={loadingMore}
               />
-            ) : (
-              <ActivityList />
             )}
           </div>
         </div>

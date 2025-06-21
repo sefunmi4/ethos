@@ -4,7 +4,7 @@ import { useBoardContext } from '../contexts/BoardContext';
 import Board from '../components/board/Board';
 import PostTypeFilter from '../components/board/PostTypeFilter';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
-import ActivityFeed from '../components/feed/ActivityFeed';
+import RecentActivityBoard from '../components/feed/RecentActivityBoard';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { Spinner } from '../components/ui';
@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
           filter={postType ? { postType } : {}}
         />
         <div className="text-right">
-          <Link to="/board/quests" className="text-blue-600 underline text-sm">
+          <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
             → See all
           </Link>
         </div>
@@ -68,7 +68,12 @@ const HomePage: React.FC = () => {
 
       <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
-        <ActivityFeed />
+        <RecentActivityBoard />
+        <div className="text-right">
+          <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
+            → See all
+          </Link>
+        </div>
       </section>
 
     </main>
