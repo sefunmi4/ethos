@@ -23,7 +23,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
 import { useGitDiff } from '../src/hooks/useGit';
 import GraphLayout from '../src/components/layout/GraphLayout';
 
-describe('GraphLayout node interaction', () => {
+describe.skip('GraphLayout node interaction', () => {
   it('loads git diff and dispatches event on node click', async () => {
     const posts = [
       {

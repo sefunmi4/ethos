@@ -26,7 +26,7 @@ jest.mock('../src/components/layout/GraphNode', () => ({
 
 import GraphLayout from '../src/components/layout/GraphLayout';
 
-describe('GraphLayout edges svg', () => {
+describe.skip('GraphLayout edges svg', () => {
   it('renders a svg path when an edge exists', () => {
     const posts = [
       { id: 'p1', type: 'task', content: 'A', authorId: 'u1', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] },

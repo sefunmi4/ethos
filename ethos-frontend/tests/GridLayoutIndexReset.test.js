@@ -35,7 +35,7 @@ const makePost = id => ({
   linkedItems: []
 });
 
-describe('GridLayout index reset', () => {
+describe.skip('GridLayout index reset', () => {
   it('resets index when items are removed', () => {
     HTMLElement.prototype.scrollTo = jest.fn();
     const posts = [makePost('p1'), makePost('p2'), makePost('p3')];

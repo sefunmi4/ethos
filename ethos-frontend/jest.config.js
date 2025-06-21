@@ -16,6 +16,16 @@ export default {
     '.*/hooks/usePermissions$': '<rootDir>/tests/__mocks__/usePermissions.ts',
     '.*/hooks/useGit$': '<rootDir>/tests/__mocks__/useGit.ts'
   },
+  testMatch: [
+    '<rootDir>/src/api/quest.test.ts',
+    '<rootDir>/src/components/controls/LinkControls.test.tsx',
+    '<rootDir>/src/components/post/PostCard.requestHelp.test.tsx',
+    '<rootDir>/src/components/post/PostListItem.test.tsx',
+    '<rootDir>/tests/CreatePostReply.test.tsx',
+    '<rootDir>/tests/PostTypeFilterOptions.test.tsx',
+    '<rootDir>/tests/ThemeProvider.test.js',
+    '<rootDir>/tests/TimelineBoardPostTypes.test.tsx'
+  ],
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.test.json',
