@@ -58,15 +58,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
-  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
-  const [taskCardOpen, setTaskCardOpen] = useState(true);
-  const [showAddItemForm, setShowAddItemForm] = useState(false);
   const navigate = useNavigate();
 
-  const mapOptions = [
-    { value: 'folder', label: 'Folder Map' },
-    { value: 'graph', label: 'Task Graph' },
-  ];
   const tabOptions = [
     { value: 'status', label: 'Status' },
     { value: 'logs', label: 'Logs' },
@@ -146,16 +139,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     fetchData();
   }, [quest.id, expanded]);
 
-  useEffect(() => {
-    const handler = (e: any) => {
-      const id = e.detail?.taskId;
-      if (!id) return;
-      setOpenTaskId(id);
-      setTaskCardOpen(true);
-    };
-    window.addEventListener('questTaskOpen', handler);
-    return () => window.removeEventListener('questTaskOpen', handler);
-  }, []);
+
 
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
@@ -227,10 +211,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
     const canvas =
       mapMode === 'graph' ? (
-        <MapGraphLayout items={logs as any} edges={questData.taskGraph} />
+        <MapGraphLayout items={logs} edges={questData.taskGraph} />
       ) : (
         <GraphLayout
-          items={logs as any}
+          items={logs}
           user={user}
           edges={questData.taskGraph}
           condensed
@@ -463,7 +447,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               )}
             </div>
             <GraphLayout
-              items={logs as any}
+              items={logs}
               user={user}
               edges={questData.taskGraph}
               condensed

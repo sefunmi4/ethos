@@ -24,7 +24,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [boards, setBoards] = useState<BoardMap>({});
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [boardMeta, setBoardMetaState] = useState<{ id: string; title: string; layout: string } | null>(null);
+  const [, setBoardMetaState] = useState<{ id: string; title: string; layout: string } | null>(null);
 
   const setBoardMeta = (meta: { id: string; title: string; layout: string }) => {
     setBoardMetaState(meta);
@@ -165,14 +165,17 @@ export const useBoardContext = (): BoardContextType => {
 export const useBoardContextEnhanced = () => {
   const context = useBoardContext();
 
-  const convertToBoardData = (raw: any): BoardData => ({
-    id: raw.id,
-    title: raw.name || 'Untitled',
-    createdAt: raw.createdAt || new Date().toISOString(),
-    boardType: raw.boardType || 'post',
-    layout: raw.layout as BoardData['layout'],
-    items: (raw.enrichedItems || []).map((item: any) => item?.id ?? null),
-  });
+  const convertToBoardData = (raw: unknown): BoardData => {
+    const r = raw as Record<string, unknown>;
+    return {
+      id: r.id,
+      title: r.name || 'Untitled',
+      createdAt: r.createdAt || new Date().toISOString(),
+      boardType: r.boardType || 'post',
+      layout: r.layout as BoardData['layout'],
+      items: (r.enrichedItems || []).map((item: unknown) => (item as { id?: string }).id ?? null),
+    };
+  };
 
   const userQuestBoard = useMemo<BoardData | undefined>(() => {
     const found = Object.values(context.boards).find((b) =>

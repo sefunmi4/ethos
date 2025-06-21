@@ -48,19 +48,8 @@ describe('PostCard request help', () => {
     tags: [],
     collaborators: [],
     linkedItems: [],
-  } as any;
+  } as unknown as Post;
 
-  const freeSpeechPost: Post = {
-    id: 'fs1',
-    authorId: 'u2',
-    type: 'free_speech',
-    content: 'hello',
-    visibility: 'public',
-    timestamp: '',
-    tags: [],
-    collaborators: [],
-    linkedItems: [],
-  } as any;
 
   it('calls endpoint and appends to board', async () => {
     render(

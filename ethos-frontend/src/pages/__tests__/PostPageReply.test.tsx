@@ -18,8 +18,8 @@ const fetchReplyBoard = jest.fn(() => Promise.resolve({ id: 'thread-p1', items: 
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
-  fetchPostById: (...args: any[]) => fetchPostById(...args),
-  fetchReplyBoard: (...args: any[]) => fetchReplyBoard(...args),
+  fetchPostById: (...args: unknown[]) => fetchPostById(...args),
+  fetchReplyBoard: (...args: unknown[]) => fetchReplyBoard(...args),
 }));
 
 jest.mock('../../components/board/Board', () => ({

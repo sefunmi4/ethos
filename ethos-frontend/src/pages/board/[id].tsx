@@ -31,7 +31,6 @@ const BoardPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [tab, setTab] = useState<'board' | 'activity'>('board');
 
   const loadQuest = useCallback(async (questId: string) => {
     try {
@@ -74,8 +73,8 @@ const BoardPage: React.FC = () => {
         setQuest(null);
       }
       const tagSet = new Set<string>();
-      (boardData.enrichedItems || []).forEach((it: any) => {
-        (it.tags || []).forEach((t: string) => tagSet.add(t));
+      (boardData.enrichedItems || []).forEach((it: unknown) => {
+        ((it as { tags?: string[] }).tags || []).forEach((t: string) => tagSet.add(t));
       });
       setAvailableTags(Array.from(tagSet));
     }

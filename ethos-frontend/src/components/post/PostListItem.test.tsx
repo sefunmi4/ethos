@@ -25,7 +25,7 @@ const basePost: Post = {
   tags: [],
   collaborators: [],
   linkedItems: [],
-} as any;
+} as unknown as Post;
 
 describe('PostListItem', () => {
   it('navigates to post page on click', () => {

@@ -25,7 +25,7 @@ jest.mock('../../api/post', () => ({
         replyTo: 'p1',
         questId: 'q1',
         nodeId: 'T02',
-      } as any,
+      } as unknown as Post,
       p1: {
         id: 'p1',
         authorId: 'u1',
@@ -39,7 +39,7 @@ jest.mock('../../api/post', () => ({
         replyTo: null,
         questId: 'q1',
         nodeId: 'T01',
-      } as any,
+      } as unknown as Post,
     };
     return Promise.resolve(chain[id]);
   }),
@@ -63,7 +63,7 @@ describe('LinkViewer', () => {
     replyTo: 'p2',
     questId: 'q1',
     nodeId: 'T03',
-  } as any;
+  } as unknown as Post;
 
   it('toggles label text', () => {
     render(<LinkViewer items={items} />);

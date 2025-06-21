@@ -16,6 +16,8 @@ jest.mock('../src/models/stores', () => ({
 
 import { reviewsStore } from '../src/models/stores';
 
+const reviewsStoreMock = reviewsStore as jest.Mocked<any>;
+
 const app = express();
 app.use(express.json());
 app.use('/reviews', reviewRoutes);
@@ -26,7 +28,7 @@ describe('review routes', () => {
       .post('/reviews')
       .send({ targetType: 'quest', rating: 5, feedback: 'great' });
     expect(res.status).toBe(201);
-    expect(reviewsStore.write).toHaveBeenCalled();
+    expect(reviewsStoreMock.write).toHaveBeenCalled();
     expect(res.body.rating).toBe(5);
   });
 
@@ -35,7 +37,7 @@ describe('review routes', () => {
       { id: 'r1', reviewerId: 'u1', targetType: 'quest', rating: 2, createdAt: '1' },
       { id: 'r2', reviewerId: 'u1', targetType: 'ai_app', rating: 5, createdAt: '2' },
     ];
-    reviewsStore.read.mockReturnValue(data);
+    reviewsStoreMock.read.mockReturnValue(data);
 
     const res = await request(app).get('/reviews?type=quest&sort=highest');
     expect(res.status).toBe(200);

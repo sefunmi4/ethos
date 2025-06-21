@@ -6,6 +6,7 @@ import LogThreadPanel from './LogThreadPanel';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS } from '../../constants/options';
+import type { option } from '../../constants/options';
 
 interface QuestNodeInspectorProps {
   questId: string;
@@ -43,7 +44,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({ questId, node, 
           id="task-type"
           value={type}
           onChange={handleChange}
-          options={TASK_TYPE_OPTIONS as any}
+          options={TASK_TYPE_OPTIONS as option[]}
         />
       )}
       {showLogs && <LogThreadPanel questId={questId} node={node} user={user} />}

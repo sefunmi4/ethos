@@ -53,8 +53,8 @@ export const useBoard = (
         });
         setBoard(result);
         return result;
-      } catch (err: any) {
-        if (err?.response?.status === 404) {
+        } catch (err: unknown) {
+          if ((err as { response?: { status?: number } })?.response?.status === 404) {
           console.info(`[useBoard] Board ${id} not found`);
         } else {
           console.error(`[useBoard] Failed to load board ${id}:`, err);

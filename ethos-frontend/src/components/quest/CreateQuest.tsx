@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addQuest } from '../../api/quest';
 import { updateBoard } from '../../api/board';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 import { Button, Input, TextArea, Label, FormSection } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import { useSyncGitRepo } from '../../hooks/useGit';
@@ -71,14 +72,14 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
       }
 
       if (selectedBoard) {
-        appendToBoard(selectedBoard, newQuest as any);
+        appendToBoard(selectedBoard, newQuest as BoardItem);
         const items = [newQuest.id, ...(boards?.[selectedBoard]?.items || [])];
         updateBoard(selectedBoard, { items }).catch((err) =>
           console.error('[CreateQuest] Failed to persist board items:', err)
         );
       }
       if (boards?.['my-quests'] && selectedBoard !== 'my-quests') {
-        appendToBoard('my-quests', newQuest as any);
+        appendToBoard('my-quests', newQuest as BoardItem);
         const myItems = [newQuest.id, ...(boards['my-quests'].items || [])];
         updateBoard('my-quests', { items: myItems }).catch((err) =>
           console.error('[CreateQuest] Failed to update my-quests board:', err)
