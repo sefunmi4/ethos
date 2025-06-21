@@ -28,6 +28,8 @@ type GridLayoutProps = {
   onDelete?: (id: string) => void;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
+  /** Expand replies for all posts */
+  initialExpanded?: boolean;
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Blocked', 'Done'];
@@ -38,7 +40,8 @@ const DraggableCard: React.FC<{
   compact: boolean;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-}> = ({ item, user, compact, onEdit, onDelete }) => {
+  initialExpanded?: boolean;
+}> = ({ item, user, compact, onEdit, onDelete, initialExpanded }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -60,6 +63,7 @@ const DraggableCard: React.FC<{
         compact={compact}
         onEdit={onEdit}
         onDelete={onDelete}
+        initialShowReplies={initialExpanded}
       />
     </div>
   );
@@ -236,6 +240,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                 compact={compact || idx !== index}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                initialShowReplies={initialExpanded}
               />
             </div>
           ))}
@@ -332,6 +337,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                   compact={compact}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  initialShowReplies={initialExpanded}
                 />
               ))}
             </div>
@@ -378,6 +384,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               compact={compact}
               onEdit={onEdit}
               onDelete={onDelete}
+              initialShowReplies={initialExpanded}
             />
           ))}
           {loadingMore && <Spinner />}
@@ -419,6 +426,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             compact={compact}
             onEdit={onEdit}
             onDelete={onDelete}
+            initialShowReplies={initialExpanded}
           />
         </div>
       ))}

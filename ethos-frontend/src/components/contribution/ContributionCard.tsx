@@ -22,6 +22,8 @@ interface ContributionCardProps {
   showStatusControl?: boolean;
   /** Render only the post header */
   headerOnly?: boolean;
+  /** Expand replies when rendering PostCard */
+  initialShowReplies?: boolean;
 }
 
 const ContributionCard: React.FC<ContributionCardProps> = ({
@@ -33,6 +35,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   questId,
   showStatusControl = true,
   headerOnly = false,
+  initialShowReplies = false,
 }) => {
   if (!contribution) return null;
 
@@ -43,7 +46,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     return null;
   }
 
-  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl, headerOnly };
+  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl, headerOnly, initialShowReplies };
 
   // ✅ Render Post types
   if ('type' in contribution) {

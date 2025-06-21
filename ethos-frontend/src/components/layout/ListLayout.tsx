@@ -15,6 +15,8 @@ interface ListLayoutProps {
   onScrollEnd?: () => void;
   loadingMore?: boolean;
   headerOnly?: boolean;
+  /** Expand replies for all posts */
+  initialExpanded?: boolean;
 }
 
 const ListLayout: React.FC<ListLayoutProps> = ({
@@ -27,6 +29,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   onScrollEnd,
   loadingMore = false,
   headerOnly = false,
+  initialExpanded = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +68,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
           onDelete={onDelete}
           questId={questId}
           headerOnly={headerOnly}
+          initialShowReplies={initialExpanded}
         />
       ))}
       {loadingMore && <Spinner />}
