@@ -54,9 +54,13 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "2c3512f0-c26a-4655-b051-e76e319a9d35",
+      "c21d1fab-05f5-49a2-b426-19cac3cfb571",
       "91544b2a-a2c0-408f-b21b-15845869a23b",
-      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
+      "cbeeaee9-bf5f-40d3-8ad9-046071410e9a",
+      "2c3512f0-c26a-4655-b051-e76e319a9d35",
+      "0f239e42-e795-45f9-b279-1d7a4ccc7207",
+      "930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
+      "557031bf-dac9-4fce-b69b-fc9b28f86c76"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -246,6 +250,10 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "c21d1fab-05f5-49a2-b426-19cac3cfb571",
+      "557031bf-dac9-4fce-b69b-fc9b28f86c76",
+      "930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
+      "0f239e42-e795-45f9-b279-1d7a4ccc7207",
       "2c3512f0-c26a-4655-b051-e76e319a9d35",
       "cbeeaee9-bf5f-40d3-8ad9-046071410e9a"
     ],
@@ -269,5 +277,65 @@
     "createdAt": "2025-06-21T05:14:54.334Z",
     "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
     "questId": "2c3512f0-c26a-4655-b051-e76e319a9d35"
+  },
+  {
+    "id": "map-0f239e42-e795-45f9-b279-1d7a4ccc7207",
+    "title": "Ethos pt 2 Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "cd4337d2-2b90-4c88-8abf-eb0f132f148b"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T05:47:18.746Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "0f239e42-e795-45f9-b279-1d7a4ccc7207"
+  },
+  {
+    "id": "map-930f05cd-d40b-4996-8afd-e7f3ee46e7dd",
+    "title": "Test Quest Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "bf54270a-3137-4f44-af61-f69360a2dab8"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T05:47:33.270Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "930f05cd-d40b-4996-8afd-e7f3ee46e7dd"
+  },
+  {
+    "id": "map-557031bf-dac9-4fce-b69b-fc9b28f86c76",
+    "title": "Battle of The Bands Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "bf48c967-6b42-40a7-ab73-e805a0e72eb9"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T05:47:42.540Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "557031bf-dac9-4fce-b69b-fc9b28f86c76"
+  },
+  {
+    "id": "map-c21d1fab-05f5-49a2-b426-19cac3cfb571",
+    "title": "test quest 2 Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "ef5cc85a-6791-40ec-be74-7524eca2c662"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-21T05:47:55.764Z",
+    "userId": "u_41eb992a-b0ee-48ce-ad06-c08d3b766732",
+    "questId": "c21d1fab-05f5-49a2-b426-19cac3cfb571"
   }
 ]
