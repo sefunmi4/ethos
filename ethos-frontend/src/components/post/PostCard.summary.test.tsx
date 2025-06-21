@@ -43,6 +43,6 @@ describe('PostCard summary text', () => {
         <PostCard post={post} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(screen.getByText('Quest: Quest A Task:T1 In Progress')).toBeInTheDocument();
+    expect(screen.getByText('(Quest: Quest A) (Task: T1) (In Progress)')).toBeInTheDocument();
   });
 });

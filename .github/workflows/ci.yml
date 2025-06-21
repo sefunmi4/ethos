@@ -12,9 +12,13 @@ jobs:
       - name: Setup
         run: ./setup.sh
       - name: Type check backend
-        run: npx tsc -p ethos-backend/tsconfig.json
+        run: |
+          cd ethos-backend
+          tsc -p tsconfig.json
       - name: Type check frontend
-        run: npx tsc -p ethos-frontend/tsconfig.json
+        run: |
+          cd ethos-frontend
+          tsc -p tsconfig.json
       - name: Run backend tests
         run: |
           cd ethos-backend
