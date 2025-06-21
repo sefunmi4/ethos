@@ -12,7 +12,6 @@ import type { AuthenticatedRequest } from '../types/express';
 
 // Only request posts should appear on the quest board. Other post types can
 // generate request posts, but the board itself shows requests only.
-const QUEST_BOARD_TYPES = ['request'];
 const getQuestBoardItems = (
   posts: ReturnType<typeof postsStore.read>
 ) => {
