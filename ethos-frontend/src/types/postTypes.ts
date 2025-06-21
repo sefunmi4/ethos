@@ -116,6 +116,11 @@ export type ReactionType = 'like' | 'heart' | 'repost';
  */
 export type ReactionCountMap = Record<ReactionType, number>;
 
+export interface Reaction {
+  userId: string;
+  type: ReactionType;
+}
+
 /**
  * Raw user reactions.
  */

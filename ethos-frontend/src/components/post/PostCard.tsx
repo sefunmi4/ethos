@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
 
-import type { Post, PostType } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest } from '../../api/post';
@@ -556,7 +556,11 @@ const PostCard: React.FC<PostCardProps> = ({
                   <select
                     className="border rounded px-1 py-0.5 text-xs w-full"
                     value={edgeType}
-                    onChange={e => setEdgeType(e.target.value as any)}
+                    onChange={e =>
+                      setEdgeType(
+                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split'
+                      )
+                    }
                   >
                     <option value="sub_problem">sub_problem</option>
                     <option value="solution_branch">solution_branch</option>

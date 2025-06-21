@@ -38,7 +38,7 @@ const FeaturedQuestBoard: React.FC = () => {
   const visibleIndices = useMemo(() => {
     const total = quests.length;
     const count = Math.min(maxDots, total);
-    let start = Math.max(0, Math.min(current - Math.floor(count / 2), total - count));
+    const start = Math.max(0, Math.min(current - Math.floor(count / 2), total - count));
     return Array.from({ length: count }, (_, i) => start + i);
   }, [current, quests]);
 
