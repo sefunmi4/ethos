@@ -33,7 +33,6 @@ const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
 const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
-const TaskLibrary = lazy(() => import('./pages/TaskLibrary'));
 
 /**
  * The root App component of the application.
