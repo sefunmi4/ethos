@@ -31,6 +31,8 @@ interface ReactionControlsProps {
   replyCount?: number;
   showReplies?: boolean;
   onToggleReplies?: () => void;
+  /** Override default reply behavior */
+  replyOverride?: { label: string; onClick: () => void };
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -40,6 +42,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   replyCount,
   showReplies,
   onToggleReplies,
+  replyOverride,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -159,7 +162,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             post.type !== 'task' && post.type !== 'commit' && showReplyPanel && 'text-green-600'
           )}
           onClick={() => {
-            if (post.type === 'task' && post.questId) {
+            if (replyOverride) {
+              replyOverride.onClick();
+            } else if (post.type === 'task' && post.questId) {
               navigate(ROUTES.BOARD(`log-${post.questId}`));
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
@@ -169,7 +174,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           }}
         >
           <FaReply />{' '}
-          {post.type === 'task'
+          {replyOverride
+            ? replyOverride.label
+            : post.type === 'task'
             ? 'Quest Log'
             : post.type === 'commit'
             ? 'File Change View'
@@ -186,7 +193,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
       </div>
 
-      {showReplyPanel && (
+      {showReplyPanel && !replyOverride && (
         <div className="mt-3">
           <CreatePost
             replyTo={post}
