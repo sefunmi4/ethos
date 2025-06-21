@@ -43,15 +43,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (mql.addEventListener) {
         mql.addEventListener('change', handler);
       } else {
-        // deprecated but for older browsers/tests
-        // @ts-ignore
+        // @ts-expect-error addListener is deprecated but required for older browsers/tests
         mql.addListener(handler);
       }
       return () => {
         if (mql.removeEventListener) {
           mql.removeEventListener('change', handler);
         } else {
-          // @ts-ignore
+          // @ts-expect-error removeListener is deprecated but required for older browsers/tests
           mql.removeListener(handler);
         }
       };
