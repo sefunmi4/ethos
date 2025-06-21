@@ -79,12 +79,6 @@ const ActiveQuestBoard: React.FC = () => {
     load();
   }, [user]);
 
-  if (!user) return null;
-  if (loading) return <Spinner />;
-  if (quests.length === 0) return null;
-
-  const showSeeAll = quests.length > BOARD_PREVIEW_LIMIT;
-
   const scrollToIndex = (i: number) => {
     const el = containerRef.current;
     if (!el) return;
@@ -98,6 +92,12 @@ const ActiveQuestBoard: React.FC = () => {
   useEffect(() => {
     scrollToIndex(index);
   }, [index]);
+
+  if (!user) return null;
+  if (loading) return <Spinner />;
+  if (quests.length === 0) return null;
+
+  const showSeeAll = quests.length > BOARD_PREVIEW_LIMIT;
 
   return (
     <div className="space-y-4">
