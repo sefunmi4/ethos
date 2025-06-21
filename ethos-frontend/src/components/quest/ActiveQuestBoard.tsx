@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestSummaryCard from './QuestSummaryCard';
-import QuestStatusList from './QuestStatusList';
+import QuestCard from './QuestCard';
 import { Spinner } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
@@ -152,8 +152,8 @@ const ActiveQuestBoard: React.FC = () => {
       </div>
 
       {expanded && (
-        <div className="border rounded-lg p-4 bg-surface">
-          <QuestStatusList quest={expanded} />
+        <div className="mt-4">
+          <QuestCard quest={expanded} defaultExpanded />
         </div>
       )}
 
