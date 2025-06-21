@@ -106,7 +106,9 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         visibility: 'public',
         linkedItems: autoLinkItems,
         helpRequest: type === 'request' || helpRequest || undefined,
-        ...(type === 'task' ? { status } : {}),
+        ...(type === 'task' || type === 'request' || type === 'issue'
+          ? { status }
+          : {}),
         ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
         ...(targetBoard ? { boardId: targetBoard } : {}),
         ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
@@ -163,7 +165,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             onChange={(e) => {
               const val = e.target.value as PostType;
               setType(val);
-              if (val === 'task') setStatus('To Do');
+              if (['task', 'request', 'issue'].includes(val)) setStatus('To Do');
             }}
             options={allowedPostTypes.map((t) => {
               const opt = POST_TYPES.find((o) => o.value === t)!;
@@ -201,7 +203,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           onChange={(e) => {
             const val = e.target.value as PostType;
             setType(val);
-            if (val === 'task') setStatus('To Do');
+            if (['task', 'request', 'issue'].includes(val)) setStatus('To Do');
           }}
           options={allowedPostTypes.map((t) => {
             const opt = POST_TYPES.find((o) => o.value === t)!;
@@ -209,7 +211,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           })}
         />
 
-        {type === 'task' && (
+        {['task', 'request', 'issue'].includes(type) && (
           <>
             <Label htmlFor="task-status">Status</Label>
             <Select

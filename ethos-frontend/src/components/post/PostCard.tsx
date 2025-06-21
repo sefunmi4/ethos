@@ -268,7 +268,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
           {post.status && <StatusBadge status={post.status} />}
-          {canEdit && post.type === 'task' && showStatusControl && (
+          {canEdit && ['task', 'request', 'issue'].includes(post.type) && showStatusControl && (
             <div className="ml-1 w-28">
               <Select
                 value={post.status || 'To Do'}
