@@ -17,8 +17,8 @@ jest.mock('../src/models/stores', () => ({
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-const { postsStore, questsStore, usersStore, reactionsStore } = require('../src/models/stores');
-const { generateNodeId } = require('../src/utils/nodeIdUtils');
+import { postsStore, questsStore, usersStore, reactionsStore } from '../src/models/stores';
+import { generateNodeId } from '../src/utils/nodeIdUtils';
 
 const app = express();
 app.use(express.json());

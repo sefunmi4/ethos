@@ -1,5 +1,5 @@
-const React = require('react');
-const { render, fireEvent, screen } = require('@testing-library/react');
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 // Mock ESM-only deps used deep in GridLayout to avoid Jest ESM parsing issues
 jest.mock('react-markdown', () => () => null, { virtual: true });
@@ -21,7 +21,7 @@ jest.mock('../src/contexts/BoardContext', () => ({
   })
 }));
 
-const GridLayout = require('../src/components/layout/GridLayout').default;
+import GridLayout from '../src/components/layout/GridLayout';
 
 const makePost = id => ({
   id,

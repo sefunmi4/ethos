@@ -47,7 +47,7 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-const { acceptRequest, unacceptRequest } = require('../src/api/post');
+import { acceptRequest, unacceptRequest } from '../src/api/post';
 
 describe('accept request button', () => {
   const post = {
