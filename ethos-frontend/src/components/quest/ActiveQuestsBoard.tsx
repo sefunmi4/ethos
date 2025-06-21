@@ -55,7 +55,7 @@ const ActiveQuestsBoard: React.FC = () => {
         if (posts.length) {
           setBoard({
             id: 'active',
-            title: 'Active Quests',
+            title: '🧭 Active Quests',
             boardType: 'post',
             layout: 'grid',
             items: posts.map(p => p.id),

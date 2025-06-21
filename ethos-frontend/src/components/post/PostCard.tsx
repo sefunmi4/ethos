@@ -7,7 +7,7 @@ import type { Post, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelpForTask } from '../../api/post';
-import { linkPostToQuest } from '../../api/quest';
+import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import CreatePost from './CreatePost';
@@ -66,6 +66,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
   const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
+  const [headPostId, setHeadPostId] = useState<string | null>(null);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -99,10 +100,9 @@ const PostCard: React.FC<PostCardProps> = ({
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : 'Unknown time';
 
-  const content = post.renderedContent || post.details || post.content;
-  const isLong = (post.type === 'task'
-    ? (post.details || '').length
-    : content.length) > PREVIEW_LIMIT;
+  const content = post.renderedContent || post.content;
+  const isLong = content.length > PREVIEW_LIMIT;
+  const allowDelete = !headPostId || post.id !== headPostId;
 
   useEffect(() => {
     if (!post.replyTo) {
@@ -122,6 +122,14 @@ const PostCard: React.FC<PostCardProps> = ({
         );
     }
   }, [showLinkEditor, questId, post.questId]);
+
+  useEffect(() => {
+    const qid = questId || post.questId;
+    if (!qid) return;
+    fetchQuestById(qid)
+      .then((q) => setHeadPostId(q.headPostId))
+      .catch(() => {});
+  }, [questId, post.questId]);
   const toggleReplies = async () => {
     if (!repliesLoaded) {
       setLoadingReplies(true);
@@ -289,6 +297,7 @@ const PostCard: React.FC<PostCardProps> = ({
           onEdit={() => setEditMode(true)}
           onEditLinks={() => setShowLinkEditor(true)}
           onDelete={() => onDelete?.(post.id)}
+          allowDelete={allowDelete}
           content={post.content}
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />

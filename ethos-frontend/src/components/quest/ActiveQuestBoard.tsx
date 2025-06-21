@@ -66,7 +66,7 @@ const ActiveQuestBoard: React.FC = () => {
         if (enriched.length) {
           setBoard({
             id: 'active-quests',
-            title: 'Active Quests',
+            title: '🧭 Active Quests',
             boardType: 'quest',
             layout: 'grid',
             items: enriched.map(q => q.id),
@@ -93,8 +93,8 @@ const ActiveQuestBoard: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
+      <Board board={board} layout="grid" hideControls compact />
+      <div className="text-right">
         <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
           → See all
         </Link>
