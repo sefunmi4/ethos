@@ -54,3 +54,24 @@ export const getDisplayTitle = (post: Post): string => {
   const content = post.content?.trim() || '';
   return content.length > 50 ? content.slice(0, 50) + '…' : content;
 };
+
+/**
+ * Builds a brief summary string for a post.
+ * Format: "Quest: {title} Task:{nodeId} {status}".
+ * Quest title may be provided via optional param or `post.questTitle` field.
+ */
+export const getPostSummary = (post: Post, questTitle?: string): string => {
+  const parts: string[] = [];
+  const title = questTitle || (post as any).questTitle;
+  if (title) parts.push(`Quest: ${title}`);
+
+  if (post.nodeId) {
+    parts.push(`Task:${post.nodeId}`);
+  } else if (post.type) {
+    parts.push(post.type.charAt(0).toUpperCase() + post.type.slice(1));
+  }
+
+  if (post.status) parts.push(post.status);
+
+  return parts.join(' ').trim();
+};

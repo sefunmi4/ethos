@@ -23,6 +23,7 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
+import { getPostSummary } from '../../utils/displayUtils';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -38,6 +39,7 @@ interface PostCardProps {
   onDelete?: (id: string) => void;
   compact?: boolean;
   questId?: string;
+  questTitle?: string;
   /** Show status dropdown controls for task posts */
   showStatusControl?: boolean;
   replyOverride?: { label: string; onClick: () => void };
@@ -58,6 +60,7 @@ const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   compact = false,
   questId,
+  questTitle,
   showStatusControl = true,
   replyOverride,
   headerOnly = false,
@@ -142,6 +145,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
+  const summaryText = getPostSummary(post, questTitle);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -326,6 +330,9 @@ const PostCard: React.FC<PostCardProps> = ({
           className
         )}
       >
+        {summaryText && (
+          <div className="text-sm font-semibold text-secondary">{summaryText}</div>
+        )}
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex items-center gap-2">
             <PostTypeBadge type={post.type} />
@@ -374,6 +381,9 @@ const PostCard: React.FC<PostCardProps> = ({
         className
       )}
     >
+      {summaryText && (
+        <div className="text-sm font-semibold text-secondary">{summaryText}</div>
+      )}
       <div className="flex justify-between text-sm text-secondary">
         <div className="flex items-center gap-2">
           <PostTypeBadge type={post.type} />
