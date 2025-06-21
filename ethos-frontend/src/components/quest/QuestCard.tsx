@@ -16,7 +16,7 @@ import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import QuestNodeInspector from './QuestNodeInspector';
-import PostCard from '../post/PostCard';
+import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
 import LogThreadPanel from './LogThreadPanel';
@@ -230,7 +230,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         <>
           {selectedNode && (
             <div className="mb-2">
-              <PostCard post={selectedNode} user={user} questId={quest.id} />
+              <TaskPreviewCard post={selectedNode} />
             </div>
           )}
           <Select
@@ -247,7 +247,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <>
         {selectedNode && (
           <div className="mb-2">
-            <PostCard post={selectedNode} user={user} questId={quest.id} />
+            <TaskPreviewCard post={selectedNode} />
           </div>
         )}
         <Select
@@ -296,15 +296,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
                         onCancel={() => setShowAddItemForm(false)}
                       />
                     )}
-                    <PostCard
-                      post={task}
-                      user={user}
-                      questId={quest.id}
-                      replyOverride={{
-                        label: 'Add Item',
-                        onClick: () => setShowAddItemForm(true),
-                      }}
-                    />
+                    <TaskPreviewCard post={task} />
+                    <div className="text-right">
+                      <button
+                        className="text-accent underline text-xs"
+                        onClick={() => setShowAddItemForm(true)}
+                      >
+                        Add Item
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
