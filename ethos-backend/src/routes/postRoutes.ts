@@ -570,7 +570,33 @@ router.post(
     postsStore.write(posts);
 
     const users = usersStore.read();
-    res.json({ post: enrichPost(post, { users }), quest });
+  res.json({ post: enrichPost(post, { users }), quest });
+  }
+);
+
+//
+// ✅ POST /api/posts/:id/unaccept – Cancel a help request acceptance
+// Removes the pending tag for the current user
+//
+router.post(
+  '/:id/unaccept',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    const userId = req.user!.id;
+    post.tags = (post.tags || []).filter(t => t !== `pending:${userId}`);
+
+    postsStore.write(posts);
+
+    const users = usersStore.read();
+    res.json({ post: enrichPost(post, { users }) });
   }
 );
 

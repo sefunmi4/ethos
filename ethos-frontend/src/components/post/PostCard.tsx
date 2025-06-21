@@ -356,9 +356,9 @@ const PostCard: React.FC<PostCardProps> = ({
           <button
             className="text-accent underline text-xs ml-2"
             onClick={handleAccept}
-            disabled={accepting || accepted}
+            disabled={accepting}
           >
-            {accepted || accepting ? 'Pending…' : 'Accept'}
+            {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
           </button>
         )}
       </div>
@@ -592,9 +592,9 @@ const PostCard: React.FC<PostCardProps> = ({
         <button
           className="text-accent underline text-xs ml-2"
           onClick={handleAccept}
-          disabled={accepting || accepted}
+          disabled={accepting}
         >
-          {accepted || accepting ? 'Pending…' : 'Accept'}
+          {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
         </button>
       )}
 

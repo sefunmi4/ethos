@@ -50,6 +50,18 @@ describe('PostCard request help', () => {
     linkedItems: [],
   } as any;
 
+  const freeSpeechPost: Post = {
+    id: 'fs1',
+    authorId: 'u2',
+    type: 'free_speech',
+    content: 'hello',
+    visibility: 'public',
+    timestamp: '',
+    tags: [],
+    collaborators: [],
+    linkedItems: [],
+  } as any;
+
   it('calls endpoint and appends to board', async () => {
     render(
       <BrowserRouter>
