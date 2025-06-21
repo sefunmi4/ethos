@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -104,7 +104,9 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const [accepting, setAccepting] = useState(false);
-  const [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(
+    !!user && post.tags?.includes(`pending:${user.id}`)
+  );
 
   const handleRequestHelp = async () => {
     try {
@@ -119,8 +121,13 @@ const PostCard: React.FC<PostCardProps> = ({
   const handleAccept = async () => {
     try {
       setAccepting(true);
-      await acceptRequest(post.id);
-      setAccepted(true);
+      if (accepted) {
+        await unacceptRequest(post.id);
+        setAccepted(false);
+      } else {
+        await acceptRequest(post.id);
+        setAccepted(true);
+      }
     } catch (err) {
       console.error('[PostCard] Failed to accept request:', err);
     } finally {
@@ -666,7 +673,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type !== 'request' && (
+      {post.type !== 'request' && post.type !== 'free_speech' && (
         <label className="flex items-center gap-1 text-xs mt-1">
           <input
             type="checkbox"

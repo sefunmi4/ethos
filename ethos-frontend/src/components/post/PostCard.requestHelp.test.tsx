@@ -62,4 +62,14 @@ describe('PostCard request help', () => {
     await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1'));
     expect(appendMock).toHaveBeenCalled();
   });
+
+  it('does not show checkbox for free speech posts', () => {
+    render(
+      <BrowserRouter>
+        <PostCard post={{ ...post, type: 'free_speech' }} />
+      </BrowserRouter>
+    );
+
+    expect(screen.queryByText(/Request Help/i)).toBeNull();
+  });
 });

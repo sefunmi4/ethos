@@ -229,6 +229,16 @@ export const acceptRequest = async (
 };
 
 /**
+ * ⏪ Undo accepting a help request
+ */
+export const unacceptRequest = async (
+  postId: string
+): Promise<{ post: Post }> => {
+  const res = await axiosWithAuth.post(`/posts/${postId}/unaccept`);
+  return res.data;
+};
+
+/**
  * 🔗 Get all posts linked to a post (e.g. solutions, duplicates, references)
  * @param postId - Post ID
  */
