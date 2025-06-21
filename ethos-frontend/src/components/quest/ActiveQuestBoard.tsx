@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
@@ -79,7 +79,7 @@ const ActiveQuestBoard: React.FC = () => {
     load();
   }, [user]);
 
-  const scrollToIndex = useCallback((i: number) => {
+  const scrollToIndex = (i: number) => {
     const el = containerRef.current;
     if (!el) return;
     const card = el.children[i] as HTMLElement | undefined;
@@ -87,11 +87,11 @@ const ActiveQuestBoard: React.FC = () => {
       const offset = card.offsetLeft - el.clientWidth / 2 + card.clientWidth / 2;
       el.scrollTo({ left: offset, behavior: 'smooth' });
     }
-  }, []);
+  };
 
   useEffect(() => {
     scrollToIndex(index);
-  }, [index, scrollToIndex]);
+  }, [index]);
 
   if (!user) return null;
   if (loading) return <Spinner />;
@@ -110,7 +110,9 @@ const ActiveQuestBoard: React.FC = () => {
             <div
               key={q.id}
               className={`snap-center flex-shrink-0 transition-all ${
-                idx === index ? 'w-full sm:w-[640px]' : 'w-64 sm:w-[300px] opacity-80'
+                idx === index
+                  ? 'w-[80%] sm:w-[640px]'
+                  : 'w-64 sm:w-[300px] opacity-80'
               }`}
             >
               <div className="w-full">
