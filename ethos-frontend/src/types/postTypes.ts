@@ -57,6 +57,9 @@ export interface Post {
 
   /** Whether this request still needs help */
   needsHelp?: boolean;
+
+  /** UI hint used when a post is part of a highlighted task path */
+  highlight?: boolean;
 }
 
 /**

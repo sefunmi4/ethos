@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import { getDisplayTitle } from '../../utils/displayUtils';
@@ -18,7 +19,10 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
 
   return (
     <div
-      className="border-b border-secondary text-primary cursor-pointer py-2"
+      className={clsx(
+        'border-b border-secondary text-primary cursor-pointer py-2',
+        post.highlight && 'bg-infoBackground'
+      )}
       onClick={() => navigate(ROUTES.POST(post.id))}
     >
       <div className="flex justify-between items-center">

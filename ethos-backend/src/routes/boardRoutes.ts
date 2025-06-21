@@ -192,17 +192,56 @@ router.get(
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
     let boardItems = board.items;
+    let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
     } else if (board.id === 'timeline-board') {
-      boardItems = posts
+      const userQuestIds = userId
+        ? quests
+            .filter(
+              q =>
+                q.authorId === userId ||
+                (q.collaborators || []).some(c => c.userId === userId) ||
+                posts.some(p => p.questId === q.id && p.authorId === userId)
+            )
+            .map(q => q.id)
+        : [];
+      const userTaskIds = userId
+        ? posts
+            .filter(p => p.authorId === userId && p.type === 'task')
+            .map(p => p.id)
+        : [];
+
+      const withMeta = posts
         .filter(
           p =>
             p.type !== 'meta_system' &&
             p.visibility !== 'private'
         )
-        .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-        .map(p => p.id);
+        .map(p => {
+          let weight = 0;
+          let highlight = false;
+          if (userId) {
+            if (p.questId && userQuestIds.includes(p.questId)) {
+              weight = 2;
+              if (p.type === 'task') highlight = true;
+            } else if (
+              p.linkedItems?.some(
+                li =>
+                  (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                  (li.itemType === 'post' && userTaskIds.includes(li.itemId))
+              )
+            ) {
+              weight = 1;
+              highlight = true;
+            }
+          }
+          return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+        })
+        .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+
+      highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
+      boardItems = withMeta.map(it => it.id);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts
         .filter(
@@ -224,6 +263,12 @@ router.get(
       result = {
         ...enriched,
         layout: board.layout ?? 'grid',
+        enrichedItems: enriched.enrichedItems.map(item => {
+          if ('id' in item && highlightMap[item.id]) {
+            (item as any).highlight = true;
+          }
+          return item;
+        }),
       } as EnrichedBoard;
     }
 
@@ -253,17 +298,56 @@ router.get(
     }
 
     let boardItems = board.items;
+    let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
       boardItems = getQuestBoardItems(posts);
     } else if (board.id === 'timeline-board') {
-      boardItems = posts
+      const userQuestIds = userId
+        ? quests
+            .filter(
+              q =>
+                q.authorId === userId ||
+                (q.collaborators || []).some(c => c.userId === userId) ||
+                posts.some(p => p.questId === q.id && p.authorId === userId)
+            )
+            .map(q => q.id)
+        : [];
+      const userTaskIds = userId
+        ? posts
+            .filter(p => p.authorId === userId && p.type === 'task')
+            .map(p => p.id)
+        : [];
+
+      const withMeta = posts
         .filter(
           p =>
             p.type !== 'meta_system' &&
             p.visibility !== 'private'
         )
-        .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-        .map(p => p.id);
+        .map(p => {
+          let weight = 0;
+          let highlight = false;
+          if (userId) {
+            if (p.questId && userQuestIds.includes(p.questId)) {
+              weight = 2;
+              if (p.type === 'task') highlight = true;
+            } else if (
+              p.linkedItems?.some(
+                li =>
+                  (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                  (li.itemType === 'post' && userTaskIds.includes(li.itemId))
+              )
+            ) {
+              weight = 1;
+              highlight = true;
+            }
+          }
+          return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+        })
+        .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+
+      highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
+      boardItems = withMeta.map(it => it.id);
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts
         .filter(
@@ -279,7 +363,13 @@ router.get(
 
     if (enrich === 'true') {
       const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
-      res.json(enriched.enrichedItems);
+      const items = enriched.enrichedItems.map(item => {
+        if ('id' in item && highlightMap[item.id]) {
+          (item as any).highlight = true;
+        }
+        return item;
+      });
+      res.json(items);
       return;
     }
 

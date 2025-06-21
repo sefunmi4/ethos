@@ -338,6 +338,7 @@ const PostCard: React.FC<PostCardProps> = ({
         className={clsx(
           'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
           depth === 0 ? 'mx-auto' : '',
+          post.highlight && 'border-accent bg-infoBackground',
           className
         )}
       >
@@ -389,6 +390,7 @@ const PostCard: React.FC<PostCardProps> = ({
       className={clsx(
         'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
         depth === 0 ? 'mx-auto' : '',
+        post.highlight && 'border-accent bg-infoBackground',
         className
       )}
     >
