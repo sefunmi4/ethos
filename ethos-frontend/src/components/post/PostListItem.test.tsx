@@ -70,7 +70,11 @@ describe('PostListItem', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Review: Quest B')).toBeInTheDocument();
+    expect(
+      screen.getAllByText((_, element) =>
+        element?.textContent === 'Review: Quest B @u1'
+      ).length
+    ).toBeGreaterThan(0);
   });
 
   it('renders generic review tag when quest title missing', () => {
@@ -86,6 +90,10 @@ describe('PostListItem', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Review')).toBeInTheDocument();
+    expect(
+      screen.getAllByText((_, element) =>
+        element?.textContent === 'Review @u1'
+      ).length
+    ).toBeGreaterThan(0);
   });
 });
