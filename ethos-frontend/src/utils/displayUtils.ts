@@ -111,7 +111,11 @@ export const buildSummaryTags = (
       }
     } else {
       const user = post.author?.username || post.authorId;
-      tags.push({ type: 'request', label: `Request: @${user}` });
+      tags.push({
+        type: 'request',
+        label: `Request: @${user}`,
+        link: ROUTES.POST(post.id),
+      });
     }
     return tags;
   }
@@ -150,7 +154,11 @@ export const buildSummaryTags = (
 
   if (post.type === 'free_speech') {
     const user = post.author?.username || post.authorId;
-    tags.push({ type: 'free_speech', label: `Free Speech: @${user}` });
+    tags.push({
+      type: 'free_speech',
+      label: `Free Speech: @${user}`,
+      link: ROUTES.PUBLIC_PROFILE(post.authorId),
+    });
   }
 
   // Remove duplicate entries by label in case of redundant inputs
