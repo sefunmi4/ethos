@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import ForceGraph2D, { ForceGraphMethods } from 'react-force-graph-2d';
+import ForceGraph2D, { type ForceGraphMethods } from 'react-force-graph-2d';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
