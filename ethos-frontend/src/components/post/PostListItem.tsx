@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
-import { getDisplayTitle } from '../../utils/displayUtils';
+import { getDisplayTitle, buildSummaryTags } from '../../utils/displayUtils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import SummaryTag from '../ui/SummaryTag';
@@ -17,10 +17,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : '';
   const header = getDisplayTitle(post);
-  const questTag =
-    post.questId && post.questTitle
-      ? { type: 'quest' as const, label: `Quest: ${post.questTitle}`, link: ROUTES.QUEST(post.questId) }
-      : null;
+  const summaryTags = buildSummaryTags(post);
 
   return (
     <div
@@ -35,7 +32,11 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
           {header}
           <span className="text-xs text-secondary ml-2">{timestamp}</span>
         </div>
-        {questTag && <SummaryTag {...questTag} />}
+        <div className="flex flex-wrap gap-1 ml-2">
+          {summaryTags.map((tag, idx) => (
+            <SummaryTag key={idx} {...tag} />
+          ))}
+        </div>
       </div>
     </div>
   );
