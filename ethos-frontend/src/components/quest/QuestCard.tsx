@@ -287,8 +287,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
         )}
         <hr className="border-secondary" />
         <div className="flex justify-between items-center text-sm">
-          <span className="font-semibold">Folder or Map Layout</span>
           <div className="flex gap-1">
+            <span className="font-semibold">View: </span>
             <button
               className={`px-2 py-1 rounded text-xs border ${
                 mapMode === 'folder'
@@ -562,18 +562,18 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
         {expanded && (
           <div className="flex flex-col md:flex-row gap-4 max-h-[420px] overflow-y-auto">
-            <div className="flex-1 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 overflow-auto max-h-[420px]">
-              {renderRightPanel()}
-            </div>
-            <div
-              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
-              onMouseDown={handleDividerMouseDown}
-            />
             <div
               className="overflow-auto md:pl-4 max-h-[420px]"
               style={{ width: mapWidth }}
             >
               {renderMap()}
+            </div>
+            <div
+              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+              onMouseDown={handleDividerMouseDown}
+            />
+            <div className="flex-1 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 overflow-auto max-h-[420px]">
+              {renderRightPanel()}
             </div>
           </div>
         )}
