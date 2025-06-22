@@ -83,7 +83,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: null,
-                nodeId: 'Q:firstquest:T00',
+                nodeId: 'Q:first_quest:T00',
             },
         ];
         postsStore.read.mockReturnValue(posts);
@@ -114,7 +114,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: null,
-                nodeId: 'Q:firstquest:T00',
+                nodeId: 'Q:first_quest:T00',
             },
             {
                 id: 't2',
@@ -125,7 +125,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q2',
                 replyTo: null,
-                nodeId: 'Q:secondquest:T00',
+                nodeId: 'Q:second_quest:T00',
             },
         ];
         postsStore.read.mockReturnValue(posts);
@@ -156,7 +156,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: null,
-                nodeId: 'Q:firstquest:T00',
+                nodeId: 'Q:first_quest:T00',
             },
             {
                 id: 'p2',
@@ -167,7 +167,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: null,
-                nodeId: 'Q:firstquest:T01',
+                nodeId: 'Q:first_quest:T01',
             },
             {
                 id: 'l1',
@@ -178,7 +178,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: 'p1',
-                nodeId: 'Q:firstquest:T00:L00',
+                nodeId: 'Q:first_quest:T00:L00',
             },
         ];
         postsStore.read.mockReturnValue(posts);
@@ -208,7 +208,7 @@ describe('post routes', () => {
                 timestamp: '',
                 questId: 'q1',
                 replyTo: null,
-                nodeId: 'Q:firstquest:T00',
+                nodeId: 'Q:first_quest:T00',
             },
         ];
         postsStore.read.mockReturnValue(posts);

@@ -1,7 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateNodeId = void 0;
-const slugify = (str) => str.toLowerCase().replace(/[^a-z0-9]+/g, '').replace(/^-+|-+$/g, '');
+const slugify = (str) => str
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]+/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
+    .replace(/^_+|_+$/g, '');
 const zeroPad = (num) => num.toString().padStart(2, '0');
 const typeMap = {
     quest: 'T',

@@ -5,7 +5,13 @@ export type NodeIdParams = {
   parentPost?: { id: string; nodeId?: string } | null;
 };
 
-const slugify = (str: string): string => str.toLowerCase().replace(/[^a-z0-9]+/g, '').replace(/^-+|-+$/g, '');
+const slugify = (str: string): string =>
+  str
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]+/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
+    .replace(/^_+|_+$/g, '');
 const zeroPad = (num: number): string => num.toString().padStart(2, '0');
 
 const typeMap: Record<string, string> = {
