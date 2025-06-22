@@ -442,4 +442,21 @@ describe('route handlers', () => {
     expect(res2.body.items).toEqual(['r3']);
 
   });
+
+  it('GET /boards/quest-board/items excludes archived requests', async () => {
+
+    boardsStoreMock.read.mockReturnValue([
+      { id: 'quest-board', title: 'QB', boardType: 'post', description: '', layout: 'grid', items: [] }
+    ]);
+    postsStoreMock.read.mockReturnValue([
+      { id: 'req1', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: ['archived'], collaborators: [], linkedItems: [] },
+      { id: 'req2', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+    ]);
+
+    const res = await request(app).get('/boards/quest-board/items');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].id).toBe('req2');
+  });
 });

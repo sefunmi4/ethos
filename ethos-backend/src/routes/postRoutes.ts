@@ -467,6 +467,9 @@ router.post(
       needsHelp: true,
     };
 
+    task.helpRequest = true;
+    task.needsHelp = true;
+
     posts.push(requestPost);
     postsStore.write(posts);
     const users = usersStore.read();
