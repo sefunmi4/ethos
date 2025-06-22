@@ -4,8 +4,7 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import LogThreadPanel from './LogThreadPanel';
 import FileEditorPanel from './FileEditorPanel';
-import StatusBoardPanel from './StatusBoardPanel';
-import TeamPanel from './TeamPanel';
+import TaskKanbanBoard from './TaskKanbanBoard';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS } from '../../constants/options';
@@ -27,14 +26,14 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   showLogs = true,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
-  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'team' | 'file'>('status');
+  const [activeTab, setActiveTab] = useState<'logs' | 'file'>('logs');
 
   useEffect(() => {
     setType(node?.taskType || 'abstract');
   }, [node?.taskType]);
 
   useEffect(() => {
-    setActiveTab('status');
+    setActiveTab('logs');
   }, [node?.id]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -52,9 +51,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
 
   const tabs = [
-    { value: 'status', label: 'Status' },
     ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
-    { value: 'team', label: 'Team' },
     {
       value: 'file',
       label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
@@ -71,21 +68,26 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     case 'logs':
       panel = <LogThreadPanel questId={questId} node={node} user={user} />;
       break;
-    case 'team':
-      panel = <TeamPanel questId={questId} node={node} />;
-      break;
     case 'file':
       panel = (
-        <FileEditorPanel
-          questId={questId}
-          filePath={node.gitFilePath || 'file.txt'}
-          content={node.content}
-        />
+        <div className="space-y-2">
+          <TaskKanbanBoard
+            questId={questId}
+            linkedNodeId={node.id}
+            user={user}
+          />
+          {type === 'file' && (
+            <FileEditorPanel
+              questId={questId}
+              filePath={node.gitFilePath || 'file.txt'}
+              content={node.content}
+            />
+          )}
+        </div>
       );
       break;
-    case 'status':
     default:
-      panel = <StatusBoardPanel questId={questId} linkedNodeId={node.id} />;
+      panel = null;
   }
 
   return (
