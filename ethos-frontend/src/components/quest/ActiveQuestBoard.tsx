@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
 import CreateQuest from './CreateQuest';
 import { Spinner, Button } from '../ui';
-import { ROUTES } from '../../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
@@ -185,14 +183,8 @@ const ActiveQuestBoard: React.FC = () => {
           });
         })()}
       </div>
-      {showSeeAll && (
-        <div className="text-right">
-          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-            → See all
-          </Link>
-        </div>
-      )}
     </div>
+
   );
 };
 

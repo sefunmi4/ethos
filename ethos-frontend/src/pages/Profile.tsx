@@ -3,6 +3,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useBoard } from '../hooks/useBoard';
 import { useSocketListener } from '../hooks/useSocket';
 
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../constants/routes';
+
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 import BoardSearchFilter from '../components/board/BoardSearchFilter';
@@ -58,7 +61,14 @@ const ProfilePage: React.FC = () => {
       {/* 📘 Your Quests */}
       <section className="mb-12">
         <ActiveQuestBoard />
+
+        <div className="text-right">
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        </div>
       </section>
+      
 
       {/* 📝 Post History */}
       <section>
