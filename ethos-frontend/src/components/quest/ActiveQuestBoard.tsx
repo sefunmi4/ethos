@@ -121,7 +121,7 @@ const ActiveQuestBoard: React.FC = () => {
     return () => {
       el.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [quests]);
 
   const handleCreateSave = (quest: Quest) => {
     setQuests(q => [quest, ...q]);
