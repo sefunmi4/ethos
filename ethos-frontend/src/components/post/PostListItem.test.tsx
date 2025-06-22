@@ -38,4 +38,20 @@ describe('PostListItem', () => {
     fireEvent.click(screen.getByText(/hello world/));
     expect(navMock).toHaveBeenCalledWith(ROUTES.POST('p1'));
   });
+
+  it('renders quest tag when quest info is provided', () => {
+    const questPost: Post = {
+      ...basePost,
+      questId: 'q1',
+      questTitle: 'Quest A',
+    } as Post;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={questPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
+  });
 });
