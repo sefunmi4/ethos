@@ -107,7 +107,7 @@ const ActiveQuestBoard: React.FC = () => {
           {quests.map((q, idx) => (
             <div
               key={q.id}
-              className={`snap-center flex-shrink-0 w-[85%] sm:w-[768px] transition-opacity ${
+              className={`snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-opacity ${
                 idx === index ? '' : 'opacity-80'
               }`}
             >

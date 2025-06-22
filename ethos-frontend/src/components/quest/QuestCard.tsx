@@ -149,6 +149,19 @@ const QuestCard: React.FC<QuestCardProps> = ({
     fetchData();
   }, [quest.id, expanded]);
 
+  useEffect(() => {
+    const handleTaskOpen = (e: Event) => {
+      const evt = e as CustomEvent<{ taskId: string }>;
+      const node = logs.find((p) => p.id === evt.detail.taskId);
+      if (node) {
+        setSelectedNode(node);
+        setActiveTab('status');
+      }
+    };
+    window.addEventListener('questTaskOpen', handleTaskOpen);
+    return () => window.removeEventListener('questTaskOpen', handleTaskOpen);
+  }, [logs]);
+
 
 
   const renderHeader = () => (
@@ -543,9 +556,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
         )}
       </div>
       {expanded && (
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 max-h-[480px] overflow-y-auto">
           <div
-            className="overflow-auto md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700"
+            className="overflow-auto md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 max-h-[480px]"
             style={{ width: leftWidth }}
           >
             {renderMap()}
@@ -554,7 +567,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
             onMouseDown={handleDividerMouseDown}
           />
-          <div className="flex-1 md:pl-4 overflow-auto">{renderRightPanel()}</div>
+          <div className="flex-1 md:pl-4 overflow-auto max-h-[480px]">{renderRightPanel()}</div>
         </div>
       )}
     </div>

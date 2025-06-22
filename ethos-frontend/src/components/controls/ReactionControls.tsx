@@ -12,6 +12,9 @@ import {
   FaHandsHelping,
   FaExpand,
   FaCompress,
+  FaStepForward,
+  FaCheckSquare,
+  FaRegCheckSquare,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -56,6 +59,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
