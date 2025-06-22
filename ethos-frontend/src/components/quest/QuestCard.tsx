@@ -4,7 +4,7 @@ import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, SummaryTag } from '../ui';
-import { POST_TYPE_LABELS } from '../../utils/displayUtils';
+import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
@@ -173,7 +173,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             to={ROUTES.QUEST(quest.id)}
             className="text-xl font-bold text-primary underline"
           >
-            {questData.title}
+            {toTitleCase(questData.title)}
           </Link>
         </div>
         <div className="flex items-center gap-2 text-sm text-secondary">

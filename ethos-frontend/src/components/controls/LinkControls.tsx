@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Spinner } from '../ui';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
+import { toTitleCase } from '../../utils/displayUtils';
 import { fetchAllPosts } from '../../api/post';
 import type { LinkedItem, Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
@@ -142,7 +143,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
     ...(itemTypes.includes('quest')
       ? quests.map((q) => ({
           value: `quest:${q.id}`,
-          label: `🧭 Quest: ${q.title}`,
+          label: `🧭 Quest: ${toTitleCase(q.title)}`,
           nodeId: q.title,
           type: 'quest',
         }))

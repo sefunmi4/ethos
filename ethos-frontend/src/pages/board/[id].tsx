@@ -10,6 +10,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
 import BoardSearchFilter from '../../components/board/BoardSearchFilter';
 import { Spinner } from '../../components/ui';
+import { toTitleCase } from '../../utils/displayUtils';
 
 import { fetchQuestById } from '../../api/quest';
 
@@ -134,7 +135,7 @@ const BoardPage: React.FC = () => {
         <div className="flex-1">
           <div className="bg-board-bg rounded-xl shadow-lg p-6 space-y-6">
             <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold text-primary dark:text-primary">{boardData.title}</h1>
+              <h1 className="text-3xl font-bold text-primary dark:text-primary">{toTitleCase(boardData.title)}</h1>
               {editable && (
                 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                   Edit Board
