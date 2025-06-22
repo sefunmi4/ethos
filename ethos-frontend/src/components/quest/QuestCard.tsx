@@ -155,12 +155,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
       const node = logs.find((p) => p.id === evt.detail.taskId);
       if (node) {
         setSelectedNode(node);
-        setActiveTab('status');
+        if (rootNode && node.id === rootNode.id) {
+          setActiveTab('logs');
+        } else {
+          setActiveTab('status');
+        }
       }
     };
     window.addEventListener('questTaskOpen', handleTaskOpen);
     return () => window.removeEventListener('questTaskOpen', handleTaskOpen);
-  }, [logs]);
+  }, [logs, rootNode]);
 
 
 
