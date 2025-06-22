@@ -33,6 +33,7 @@ interface GraphNodeProps {
   diffLoading: boolean;
   registerNode?: (id: string, el: HTMLDivElement | null) => void;
   onRemoveEdge?: (edge: TaskEdge) => void;
+  boardId?: string;
 }
 
 const GraphNode: React.FC<GraphNodeProps> = ({
@@ -51,6 +52,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   diffLoading,
   registerNode,
   onRemoveEdge,
+  boardId,
 }) => {
   const isFolder = node.type === 'quest' || node.tags.includes('quest');
   const icon = isFolder ? '📁' : '📄';
@@ -267,6 +269,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             user={user}
             compact={compact}
             showStatusControl={showStatus}
+            boardId={boardId}
           />
           <span
             data-testid={`move-${node.id}`}

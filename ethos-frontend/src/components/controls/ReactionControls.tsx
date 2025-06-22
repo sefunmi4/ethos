@@ -44,6 +44,8 @@ interface ReactionControlsProps {
   replyOverride?: { label: string; onClick: () => void };
   /** Treat reply action as coming from the timeline board */
   isTimeline?: boolean;
+  /** Board ID used for context-specific actions */
+  boardId?: string;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -52,6 +54,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   onUpdate,
   replyOverride,
   isTimeline,
+  boardId,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -64,8 +67,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
-  const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
-  const isQuestRequest = selectedBoard === 'quest-board' && post.type === 'request';
+  const ctxBoardId = boardId || selectedBoard;
+  const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
+  const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
 
   useEffect(() => {

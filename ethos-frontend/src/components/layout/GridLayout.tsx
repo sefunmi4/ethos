@@ -28,6 +28,8 @@ type GridLayoutProps = {
   loadingMore?: boolean;
   /** Expand replies for all posts */
   initialExpanded?: boolean;
+  /** Board ID for context */
+  boardId?: string;
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Blocked', 'Done'];
@@ -62,6 +64,7 @@ const DraggableCard: React.FC<{
         onEdit={onEdit}
         onDelete={onDelete}
         initialShowReplies={initialExpanded}
+        boardId={boardId}
       />
     </div>
   );
@@ -89,6 +92,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   onDelete,
   loadingMore = false,
   initialExpanded = false,
+  boardId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -296,6 +300,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 initialShowReplies={initialExpanded}
+                boardId={boardId}
               />
             </div>
           ))}
@@ -369,6 +374,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                   onEdit={onEdit}
                   onDelete={onDelete}
                   initialShowReplies={initialExpanded}
+                  boardId={boardId}
                 />
               ))}
             </div>
@@ -435,6 +441,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               onEdit={onEdit}
               onDelete={onDelete}
               initialShowReplies={initialExpanded}
+              boardId={boardId}
             />
           ))}
           {loadingMore && <Spinner />}
@@ -477,6 +484,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             onEdit={onEdit}
             onDelete={onDelete}
             initialShowReplies={initialExpanded}
+            boardId={boardId}
           />
         </div>
       ))}

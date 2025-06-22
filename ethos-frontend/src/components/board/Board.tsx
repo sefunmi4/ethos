@@ -452,6 +452,7 @@ const Board: React.FC<BoardProps> = ({
           loadingMore={loadingMore}
           contributions={items}
           questId={quest?.id || ''}
+          boardId={board?.id}
           initialExpanded={initialExpanded}
           headerOnly={isQuestBoard || headerOnly}
           editable={editable}

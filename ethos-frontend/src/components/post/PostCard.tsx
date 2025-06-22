@@ -55,6 +55,8 @@ interface PostCardProps {
   initialShowReplies?: boolean;
   /** Show detailed view including reply chain */
   showDetails?: boolean;
+  /** Board ID where this post is being rendered */
+  boardId?: string;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -72,6 +74,7 @@ const PostCard: React.FC<PostCardProps> = ({
   className = '',
   initialShowReplies = false,
   showDetails = false,
+  boardId,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -100,18 +103,20 @@ const PostCard: React.FC<PostCardProps> = ({
     appendToBoard,
   } = useBoardContext() || {};
 
+  const ctxBoardId = boardId || selectedBoard;
+
   const isQuestBoardRequest =
-    post.type === 'request' && selectedBoard === 'quest-board';
-  const isTimelineRequest = post.type === 'request' && selectedBoard === 'timeline-board';
+    post.type === 'request' && ctxBoardId === 'quest-board';
+  const isTimelineRequest = post.type === 'request' && ctxBoardId === 'timeline-board';
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
     const optimistic = { ...post, status: newStatus };
-    if (selectedBoard) updateBoardItem(selectedBoard, optimistic);
+    if (ctxBoardId) updateBoardItem(ctxBoardId, optimistic);
     onUpdate?.(optimistic);
     try {
       const updated = await updatePost(post.id, { status: newStatus });
-      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      if (ctxBoardId) updateBoardItem(ctxBoardId, updated);
       onUpdate?.(updated);
     } catch (err) {
       console.error('[PostCard] Failed to update status:', err);
@@ -388,7 +393,13 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <ReactionControls post={post} user={user} onUpdate={onUpdate} replyOverride={replyOverride} />
+        <ReactionControls
+          post={post}
+          user={user}
+          onUpdate={onUpdate}
+          replyOverride={replyOverride}
+          boardId={ctxBoardId || undefined}
+        />
         {post.type === 'request' && !isQuestBoardRequest && !isTimelineRequest && (
           <button
             className="text-accent underline text-xs ml-2"
@@ -638,6 +649,7 @@ const PostCard: React.FC<PostCardProps> = ({
         user={user}
         onUpdate={onUpdate}
         replyOverride={replyOverride}
+        boardId={ctxBoardId || undefined}
       />
       {post.type === 'request' && !isQuestBoardRequest && (
         <button
