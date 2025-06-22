@@ -5,6 +5,7 @@ import React, {
   useEffect,
   type ReactNode,
   useMemo,
+  useCallback,
 } from 'react';
 import { useAuth } from './AuthContext';
 import { fetchBoards as fetchBoardsAPI, updateBoard } from '../api/board';
@@ -26,9 +27,12 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [loading, setLoading] = useState<boolean>(true);
   const [, setBoardMetaState] = useState<{ id: string; title: string; layout: string } | null>(null);
 
-  const setBoardMeta = (meta: { id: string; title: string; layout: string }) => {
-    setBoardMetaState(meta);
-  };
+  const setBoardMeta = useCallback(
+    (meta: { id: string; title: string; layout: string }) => {
+      setBoardMetaState(meta);
+    },
+    []
+  );
 
   useEffect(() => {
     if (authLoading) return;
