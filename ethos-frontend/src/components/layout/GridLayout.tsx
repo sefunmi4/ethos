@@ -167,8 +167,24 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     if (idx !== pageIndex) setPageIndex(idx);
   }, [pageIndex]);
 
+  const handlePrevPage = useCallback(() => {
+    const el = pagedContainerRef.current;
+    if (!el) return;
+    const next = (pageIndex - 1 + pageCount) % pageCount;
+    setPageIndex(next);
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+  }, [pageIndex, pageCount]);
+
+  const handleNextPage = useCallback(() => {
+    const el = pagedContainerRef.current;
+    if (!el) return;
+    const next = (pageIndex + 1) % pageCount;
+    setPageIndex(next);
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+  }, [pageIndex, pageCount]);
+
   const visibleDots = useMemo(() => {
-    const limit = Math.min(pageCount, 4);
+    const limit = Math.min(pageCount, 5);
     const start = Math.min(
       Math.max(0, pageIndex - Math.floor(limit / 2)),
       Math.max(0, pageCount - limit)
@@ -322,17 +338,18 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   if (layout === 'paged') {
     return (
       <div className="space-y-2">
-        <div
-          ref={pagedContainerRef}
-          onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
-        >
-          {pages.map((group, idx) => (
-            <div
-              key={idx}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 flex-shrink-0 w-full snap-center"
-            >
-              {group.map(item => (
+        <div className="relative">
+          <div
+            ref={pagedContainerRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
+          >
+            {pages.map((group, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 flex-shrink-0 w-full snap-center"
+              >
+                {group.map(item => (
                 <ContributionCard
                   key={item.id}
                   contribution={item}
@@ -345,6 +362,25 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               ))}
             </div>
           ))}
+          </div>
+          {pageCount > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={handlePrevPage}
+                className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
+              >
+                ◀
+              </button>
+              <button
+                type="button"
+                onClick={handleNextPage}
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
+              >
+                ▶
+              </button>
+            </>
+          )}
         </div>
         {pageCount > 1 && (
           <div className="flex justify-center mt-2 gap-2">
@@ -358,7 +394,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                   setPageIndex(i);
                   el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
                 }}
-                className={`w-2 h-2 rounded-full transition-colors ${
+                className={`w-3 h-1 rounded-sm transition-colors ${
                   pageIndex === i ? 'bg-accent' : 'bg-background'
                 }`}
               />
