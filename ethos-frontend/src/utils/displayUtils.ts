@@ -92,6 +92,9 @@ export interface SummaryTagData {
     | 'solved';
   label: string;
   link?: string;
+  username?: string;
+  usernameLink?: string;
+  detailLink?: string;
 }
 
 /**
@@ -136,8 +139,10 @@ export const buildSummaryTags = (
       const user = post.author?.username || post.authorId;
       tags.push({
         type: 'request',
-        label: `Request: @${user}`,
-        link: ROUTES.POST(post.id),
+        label: 'Request:',
+        detailLink: ROUTES.POST(post.id),
+        username: user,
+        usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
       });
     }
     return tags;
@@ -156,8 +161,10 @@ export const buildSummaryTags = (
     // Link log tags to the author's public profile for quick context
     tags.push({
       type: 'log',
-      label: `Log: @${user}`,
-      link: ROUTES.PUBLIC_PROFILE(post.authorId)
+      label: 'Log:',
+      detailLink: ROUTES.POST(post.id),
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   } else if (post.type === 'commit') {
     tags.push({ type: 'commit', label: 'Commit' });
@@ -174,8 +181,10 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     tags.push({
       type: 'log',
-      label: `Log: @${user}`,
-      link: ROUTES.PUBLIC_PROFILE(post.authorId)
+      label: 'Log:',
+      detailLink: ROUTES.POST(post.id),
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   }
 

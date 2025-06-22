@@ -37,6 +37,12 @@ export interface SummaryTagData {
   type: SummaryTagType;
   label: string;
   link?: string;
+  /** Optional username displayed after the label */
+  username?: string;
+  /** Link for the username, typically the user profile */
+  usernameLink?: string;
+  /** Separate link for the label itself (e.g. post detail page) */
+  detailLink?: string;
 }
 
 const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> = {
@@ -74,15 +80,37 @@ const colors: Record<SummaryTagType, string> = {
 };
 
 
-const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({ type, label, link, className }) => {
+const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
+  type,
+  label,
+  link,
+  className,
+  username,
+  usernameLink,
+  detailLink,
+}) => {
   const Icon = icons[type] || FaStickyNote;
   const colorClass = colors[type] || colors.type;
+
+  if (username && usernameLink && detailLink) {
+    return (
+      <span className={clsx(TAG_BASE, colorClass, className)}>
+        <Icon className="w-3 h-3" />
+        <Link to={detailLink} className="underline">
+          {label}
+        </Link>{' '}
+        <Link to={usernameLink}>@{username}</Link>
+      </span>
+    );
+  }
+
   const content = (
     <>
       <Icon className="w-3 h-3" />
       {label}
     </>
   );
+
   if (link) {
     return (
       <Link to={link} className={clsx(TAG_BASE, colorClass, className)}>
@@ -90,6 +118,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({ type, l
       </Link>
     );
   }
+
   return <span className={clsx(TAG_BASE, colorClass, className)}>{content}</span>;
 };
 
