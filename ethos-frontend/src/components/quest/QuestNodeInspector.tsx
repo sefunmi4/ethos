@@ -5,6 +5,8 @@ import type { User } from '../../types/userTypes';
 import LogThreadPanel from './LogThreadPanel';
 import FileEditorPanel from './FileEditorPanel';
 import TaskKanbanBoard from './TaskKanbanBoard';
+import QuickTaskForm from '../post/QuickTaskForm';
+import { useGraph } from '../../hooks/useGraph';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS } from '../../constants/options';
@@ -27,6 +29,8 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'logs' | 'file'>('logs');
+  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const { loadGraph } = useGraph();
 
   useEffect(() => {
     setType(node?.taskType || 'abstract');
@@ -59,8 +63,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   ];
 
   const handleAddSubtask = () => {
-    // Placeholder handler for adding a subtask
-    console.log('Add subtask for', node.id);
+    setShowSubtaskForm((p) => !p);
   };
 
   let panel: React.ReactNode = null;
@@ -123,6 +126,20 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
             + Add Item
           </button>
         </div>
+        {showSubtaskForm && (
+          <div className="mt-2">
+            <QuickTaskForm
+              questId={questId}
+              parentId={node.id}
+              boardId={`map-${questId}`}
+              onSave={() => {
+                setShowSubtaskForm(false);
+                loadGraph(questId);
+              }}
+              onCancel={() => setShowSubtaskForm(false)}
+            />
+          </div>
+        )}
         <div className="mt-2">{panel}</div>
       </div>
     </div>

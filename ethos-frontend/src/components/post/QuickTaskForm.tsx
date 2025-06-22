@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { addPost } from '../../api/post';
+import { linkPostToQuest } from '../../api/quest';
 import { Input, Select, Button } from '../ui';
 import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -8,7 +9,8 @@ import type { Post } from '../../types/postTypes';
 interface QuickTaskFormProps {
   questId: string;
   status?: string;
-  boardId: string;
+  boardId?: string;
+  parentId?: string;
   onSave?: (post: Post) => void;
   onCancel: () => void;
 }
@@ -17,6 +19,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
   questId,
   status,
   boardId,
+  parentId,
   onSave,
   onCancel,
 }) => {
@@ -39,9 +42,24 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         questId,
         status: taskStatus,
         taskType,
-        boardId,
+        ...(boardId ? { boardId } : {}),
       });
-      appendToBoard?.(boardId, newPost);
+      if (boardId) appendToBoard?.(boardId, newPost);
+      if (parentId) {
+        try {
+          const makeHeader = (content: string): string => {
+            const text = content.trim();
+            return text.length <= 50 ? text : text.slice(0, 50) + '…';
+          };
+          await linkPostToQuest(questId, {
+            postId: newPost.id,
+            parentId,
+            title: newPost.questNodeTitle || makeHeader(newPost.content),
+          });
+        } catch (err) {
+          console.error('[QuickTaskForm] Failed to link task to quest:', err);
+        }
+      }
       onSave?.(newPost);
     } catch (err) {
       console.error('[QuickTaskForm] Failed to create task:', err);
