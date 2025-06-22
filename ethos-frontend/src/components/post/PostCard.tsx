@@ -407,26 +407,32 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <ReactionControls
-          post={post}
-          user={user}
-          onUpdate={onUpdate}
-          replyOverride={replyOverride}
-          boardId={ctxBoardId || undefined}
-        />
-        {post.type === 'request' &&
-          !isQuestBoardRequest &&
-          !isTimelineRequest &&
-          ctxBoardId !== 'my-posts' && (
-            <button
-              className="text-accent underline text-xs ml-2"
-              onClick={handleAccept}
-              disabled={accepting}
-            >
-              {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
-            </button>
-          )}
-        <div className="text-xs text-secondary text-right">{timestamp}</div>
+        <div className="flex items-center justify-between gap-2">
+          <ReactionControls
+            post={post}
+            user={user}
+            onUpdate={onUpdate}
+            replyOverride={replyOverride}
+            boardId={ctxBoardId || undefined}
+          />
+          <div className="flex items-center gap-2">
+            {post.type === 'request' &&
+              !isQuestBoardRequest &&
+              !isTimelineRequest &&
+              ctxBoardId !== 'my-posts' && (
+                <button
+                  className="text-accent underline text-xs"
+                  onClick={handleAccept}
+                  disabled={accepting}
+                >
+                  {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
+                </button>
+              )}
+            {!isQuestBoardRequest && (
+              <span className="text-xs text-secondary">{timestamp}</span>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -452,7 +458,6 @@ const PostCard: React.FC<PostCardProps> = ({
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
-          <span>{timestamp}</span>
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&
@@ -684,15 +689,20 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type === 'request' && !isQuestBoardRequest && ctxBoardId !== 'my-posts' && (
-        <button
-          className="text-accent underline text-xs ml-2"
-          onClick={handleAccept}
-          disabled={accepting}
-        >
-          {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
-        </button>
-      )}
+      <div className="flex items-center justify-between mt-1">
+        {post.type === 'request' && !isQuestBoardRequest && ctxBoardId !== 'my-posts' && (
+          <button
+            className="text-accent underline text-xs"
+            onClick={handleAccept}
+            disabled={accepting}
+          >
+            {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
+          </button>
+        )}
+        {!isQuestBoardRequest && (
+          <span className="text-xs text-secondary">{timestamp}</span>
+        )}
+      </div>
 
       {post.type === 'task' && post.linkedNodeId && post.questId && (
         <>
