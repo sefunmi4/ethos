@@ -31,7 +31,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
   const timestamp = post.timestamp
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : '';
-  const header = getDisplayTitle(post);
+  const header = getDisplayTitle(post, post.questTitle);
   const summaryTags = buildSummaryTags(post);
 
   return (
