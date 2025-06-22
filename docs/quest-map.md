@@ -9,8 +9,7 @@ A node ID has three parts:
 ```
 Q:<quest-slug>:<segment><number>
 ```
-
-- `<quest-slug>` – a lowercase slug made from the quest title (`Ethos` → `ethos`).
+- `<quest-slug>` – the quest title in lowercase with underscores for spaces (`Demo Quest` → `demo_quest`).
 - `<segment>` – one letter describing the post type:
   - `T` – task or quest node
   - `L` – log entry

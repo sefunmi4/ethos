@@ -14,7 +14,8 @@ export default {
     'react-markdown': '<rootDir>/tests/__mocks__/react-markdown.tsx',
     'remark-gfm': '<rootDir>/tests/__mocks__/remark-gfm.ts',
     '.*/hooks/usePermissions$': '<rootDir>/tests/__mocks__/usePermissions.ts',
-    '.*/hooks/useGit$': '<rootDir>/tests/__mocks__/useGit.ts'
+    '.*/hooks/useGit$': '<rootDir>/tests/__mocks__/useGit.ts',
+    'react-force-graph-2d': '<rootDir>/tests/__mocks__/react-force-graph-2d.tsx'
   },
   testMatch: [
     '<rootDir>/src/api/quest.test.ts',
