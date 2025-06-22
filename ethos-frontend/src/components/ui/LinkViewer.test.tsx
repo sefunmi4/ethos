@@ -45,7 +45,7 @@ jest.mock('../../api/post', () => ({
   }),
 }));
 
-describe.skip('LinkViewer', () => {
+describe('LinkViewer', () => {
   const items: LinkedItem[] = [
     { itemId: 'q1', itemType: 'quest', linkType: 'related' },
   ];
