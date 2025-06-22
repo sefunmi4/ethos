@@ -18,6 +18,8 @@ import {
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
 import QuestNodeInspector from '../quest/QuestNodeInspector';
+import QuestCard from '../quest/QuestCard';
+import { fetchQuestById } from '../../api/quest';
 import {
   updateReaction,
   addRepost,
@@ -32,6 +34,7 @@ import {
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import type { Quest } from '../../types/questTypes';
 
 interface ReactionControlsProps {
   post: Post;
@@ -65,6 +68,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
+  const [questData, setQuestData] = useState<Quest | null>(null);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
@@ -192,6 +196,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (expanded && post.type === 'quest' && post.questId && !questData) {
+      fetchQuestById(post.questId)
+        .then(setQuestData)
+        .catch(err => console.error('[ReactionControls] Failed to fetch quest:', err));
+    }
+  }, [expanded, post.type, post.questId, questData]);
+
   return (
     <>
       <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400">
@@ -276,7 +288,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {(post.type === 'task' || post.type === 'commit') && (
+        {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') && (
           <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
             {expanded ? <FaCompress /> : <FaExpand />} {expanded ? 'Collapse View' : 'Expand View'}
           </button>
@@ -317,6 +329,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             <pre className="whitespace-pre-wrap overflow-x-auto bg-gray-50 p-2 border text-xs">
               {post.gitDiff}
             </pre>
+          )}
+        </div>
+      )}
+
+      {expanded && post.type === 'quest' && post.questId && (
+        <div className="mt-3">
+          {questData ? (
+            <QuestCard quest={questData} user={user} defaultExpanded />
+          ) : (
+            <div className="text-sm">Loading...</div>
           )}
         </div>
       )}
