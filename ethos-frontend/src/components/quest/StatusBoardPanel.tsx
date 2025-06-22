@@ -92,6 +92,7 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
           <QuickTaskForm
             questId={questId}
             boardId={`log-${questId}`}
+            parentId={linkedNodeId}
             onSave={(p) => {
               setItems((prev) => [...prev, p]);
               setShowForm(false);
