@@ -353,24 +353,7 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   if (headerOnly) {
-    const collaboratorCount = post.collaborators?.filter(c => c.userId).length || 0;
-    if (isQuestBoardRequest) {
-      return (
-        <div
-          id={post.id}
-          className={clsx(
-            'border border-secondary rounded bg-surface p-4 space-y-2 text-primary',
-            className
-          )}
-        >
-          {titleText && <h3 className="font-semibold text-lg">{titleText}</h3>}
-          <div className="text-sm text-secondary">{collaboratorCount} collaborators</div>
-          <Button variant="ghost" size="sm" onClick={handleComplete}>
-            Mark Complete
-          </Button>
-        </div>
-      );
-    }
+
 
     return (
       <div
