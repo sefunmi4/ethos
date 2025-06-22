@@ -95,6 +95,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [linkExpanded, setLinkExpanded] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -269,6 +271,8 @@ const PostCard: React.FC<PostCardProps> = ({
         items={post.linkedItems || []}
         post={post}
         showReplyChain={showDetails}
+        open={linkExpanded}
+        onToggle={() => setLinkExpanded(o => !o)}
       />
     );
   };
@@ -516,7 +520,32 @@ const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {renderCommitDiff()}
+
+      <ReactionControls
+        post={post}
+        user={user}
+        onUpdate={onUpdate}
+        replyOverride={replyOverride}
+        boardId={ctxBoardId || undefined}
+        onReplyToggle={
+          post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
+        }
+      />
+
       {renderLinkSummary()}
+
+      {showReplyForm && (
+        <div className="mt-2">
+          <CreatePost
+            replyTo={post}
+            onSave={(r) => {
+              onUpdate?.(r);
+              setShowReplyForm(false);
+            }}
+            onCancel={() => setShowReplyForm(false)}
+          />
+        </div>
+      )}
 
       {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
         <div className="text-xs text-secondary space-y-1">
@@ -610,13 +639,6 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      <ReactionControls
-        post={post}
-        user={user}
-        onUpdate={onUpdate}
-        replyOverride={replyOverride}
-        boardId={ctxBoardId || undefined}
-      />
       {post.type === 'request' && !isQuestBoardRequest && (
         <button
           className="text-accent underline text-xs ml-2"
