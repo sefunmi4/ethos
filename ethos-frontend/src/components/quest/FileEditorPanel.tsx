@@ -9,35 +9,87 @@ interface FileEditorPanelProps {
 
 const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, content }) => {
   const [expandedLine, setExpandedLine] = useState<number | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(content);
+  const [commitMsg, setCommitMsg] = useState('Update file');
   const lines = content.split('\n');
 
-  return (
-    <pre className="relative bg-background p-2 rounded border border-secondary text-sm font-mono overflow-x-auto">
-      {lines.map((line, idx) => (
-        <div key={idx} className="relative pl-8">
-          <span className="absolute left-0 w-6 text-right pr-1 text-secondary select-none">
-            {idx + 1}
-          </span>
-          {line}
-          <button
-            className="ml-2 text-accent underline text-xs"
-            onClick={() => setExpandedLine(expandedLine === idx + 1 ? null : idx + 1)}
-          >
-            {expandedLine === idx + 1 ? 'Hide' : 'History'}
+  const handleSave = () => {
+    // Placeholder save handler
+    console.log('Save file', filePath, commitMsg);
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="space-y-2">
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          className="w-full border border-secondary rounded p-2 font-mono text-sm"
+          rows={Math.max(8, draft.split('\n').length + 2)}
+        />
+        <input
+          type="text"
+          value={commitMsg}
+          onChange={(e) => setCommitMsg(e.target.value)}
+          className="w-full border border-secondary rounded px-2 py-1 text-sm"
+          placeholder="Commit message"
+        />
+        <div className="flex gap-2">
+          <button onClick={handleSave} className="bg-accent text-white text-xs px-2 py-1 rounded">
+            Save
           </button>
-          {expandedLine === idx + 1 && (
-            <div className="mt-1">
-              <LineVersionThread
-                questId={questId}
-                filePath={filePath}
-                lineNumber={idx + 1}
-                onClose={() => setExpandedLine(null)}
-              />
-            </div>
-          )}
+          <button onClick={() => setEditing(false)} className="text-xs underline">
+            Cancel
+          </button>
         </div>
-      ))}
-    </pre>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <pre className="relative bg-background p-2 rounded border border-secondary text-sm font-mono overflow-x-auto">
+        {lines.map((line, idx) => (
+          <div key={idx} className="relative pl-8">
+            <span className="absolute left-0 w-6 text-right pr-1 text-secondary select-none">
+              {idx + 1}
+            </span>
+            {line}
+            <button
+              className="ml-2 text-accent underline text-xs"
+              onClick={() => setExpandedLine(expandedLine === idx + 1 ? null : idx + 1)}
+            >
+              {expandedLine === idx + 1 ? 'Hide' : 'History'}
+            </button>
+            <button
+              className="ml-1 text-accent underline text-xs"
+              onClick={() => {
+                setEditing(true);
+                const allLines = draft.split('\n');
+                setDraft(allLines.map((l, i) => (i === idx ? line : l)).join('\n'));
+              }}
+            >
+              Edit
+            </button>
+            {expandedLine === idx + 1 && (
+              <div className="mt-1">
+                <LineVersionThread
+                  questId={questId}
+                  filePath={filePath}
+                  lineNumber={idx + 1}
+                  onClose={() => setExpandedLine(null)}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </pre>
+      <button onClick={() => setEditing(true)} className="mt-2 text-accent underline text-sm">
+        Edit File
+      </button>
+    </div>
   );
 };
 
