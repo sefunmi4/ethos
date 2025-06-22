@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
@@ -67,12 +67,16 @@ describe('PostCard request help', () => {
 
     const btn = await screen.findByText(/Request Help/i);
     await waitFor(() => expect(btn).not.toBeDisabled());
-    fireEvent.click(btn);
+    await act(async () => {
+      fireEvent.click(btn);
+    });
 
     await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1'));
     expect(appendMock).toHaveBeenCalled();
 
-    fireEvent.click(screen.getByText(/Cancel Help/i));
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Cancel Help/i));
+    });
     await waitFor(() => expect(updatePost).toHaveBeenCalledWith('t1', { helpRequest: false, needsHelp: false }));
   });
 

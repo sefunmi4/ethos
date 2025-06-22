@@ -148,7 +148,7 @@ describe.skip('GraphLayout node interaction', () => {
     expect(screen.getByText('Create Post')).toBeInTheDocument();
   });
 
-  it('dispatches event on node double click', () => {
+  it('dispatches event on node click', () => {
     const posts = [
       {
         id: 'p1',
@@ -168,7 +168,7 @@ describe.skip('GraphLayout node interaction', () => {
 
     render(React.createElement(GraphLayout, { items: posts, questId: 'q1' }));
 
-    fireEvent.doubleClick(screen.getAllByText('Task')[1]);
+    fireEvent.click(screen.getAllByText('Task')[1]);
 
     expect(listener).toHaveBeenCalled();
   });

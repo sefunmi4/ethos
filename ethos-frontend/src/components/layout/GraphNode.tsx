@@ -236,7 +236,12 @@ const GraphNode: React.FC<GraphNodeProps> = ({
         <div
           style={{ marginLeft: depth * 16 }}
           className="mb-6 flex items-start space-x-2 cursor-pointer"
-          onClick={() => onSelect(node)}
+          onClick={() => {
+            onSelect(node);
+            window.dispatchEvent(
+              new CustomEvent('questTaskOpen', { detail: { taskId: node.id } })
+            );
+          }}
           onDoubleClick={() => {
             onSelect(node);
             window.dispatchEvent(
