@@ -21,6 +21,7 @@ import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
 import QuestNodeInspector from '../quest/QuestNodeInspector';
 import QuestCard from '../quest/QuestCard';
+import TaskGraphSidePanel from '../quest/TaskGraphSidePanel';
 import { fetchQuestById } from '../../api/quest';
 import {
   updateReaction,
@@ -77,6 +78,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [showTaskGraph, setShowTaskGraph] = useState(false);
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(
@@ -333,8 +335,30 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
 
         {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') && (
-          <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
-            {expanded ? <FaCompress /> : <FaExpand />} {expanded ? 'Collapse View' : 'Expand View'}
+          <button
+            className="flex items-center gap-1"
+            onClick={() => {
+              if (post.type === 'task') {
+                setShowTaskGraph((p) => !p);
+              } else {
+                setExpanded((prev) => !prev);
+              }
+            }}
+          >
+            {post.type === 'task'
+              ? showTaskGraph
+                ? <FaCompress />
+                : <FaExpand />
+              : expanded
+              ? <FaCompress />
+              : <FaExpand />}{' '}
+            {post.type === 'task'
+              ? showTaskGraph
+                ? 'Collapse View'
+                : 'Expand View'
+              : expanded
+              ? 'Collapse View'
+              : 'Expand View'}
           </button>
         )}
 
@@ -357,16 +381,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </div>
       )}
 
-      {expanded && post.type === 'task' && post.questId && (
-        <div className="mt-3">
-          <QuestNodeInspector
-            questId={post.questId}
-            node={post}
-            user={user}
-            showPost={false}
-          />
-        </div>
+      {showTaskGraph && post.type === 'task' && post.questId && (
+        <TaskGraphSidePanel
+          task={post}
+          questId={post.questId}
+          user={user}
+          onClose={() => setShowTaskGraph(false)}
+        />
       )}
+
 
       {expanded && post.type === 'commit' && (
         <div className="mt-3 text-sm">

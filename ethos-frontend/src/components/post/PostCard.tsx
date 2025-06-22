@@ -166,8 +166,9 @@ const PostCard: React.FC<PostCardProps> = ({
 
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
-  const timestamp = post.timestamp
-    ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
+  const ts = post.timestamp || post.createdAt;
+  const timestamp = ts
+    ? formatDistanceToNow(new Date(ts), { addSuffix: true })
     : 'Unknown time';
 
   const content = post.renderedContent || post.content;
