@@ -66,7 +66,7 @@
       }
     ],
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
-    "taskType": "abstract",
+    "taskType": "folder",
     "status": "To Do",
     "helpRequest": false,
     "nodeId": "Q::T01",
@@ -605,6 +605,28 @@
     "linkedItems": [
       {
         "itemId": "e4b67780-2fe9-4105-b23a-334aa58ae76f",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "63dea7ee-b12d-4d46-9773-d341fd7d122d",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "testing multiple sub task",
+    "visibility": "public",
+    "timestamp": "2025-06-22T03:12:48.864Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "09931dad-a5b5-4d99-9085-a7a593246173",
         "itemType": "post",
         "linkType": "reference"
       }
