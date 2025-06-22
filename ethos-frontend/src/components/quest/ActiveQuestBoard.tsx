@@ -83,8 +83,7 @@ const ActiveQuestBoard: React.FC = () => {
     if (!el) return;
     const card = el.children[i] as HTMLElement | undefined;
     if (card) {
-      const offset = card.offsetLeft - el.clientWidth / 2 + card.clientWidth / 2;
-      el.scrollTo({ left: offset, behavior: 'smooth' });
+      card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
   };
 
