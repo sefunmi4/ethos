@@ -15,7 +15,8 @@ const GitFileBrowser: React.FC<GitFileBrowserProps> = ({ questId, onClose }) => 
   const [currentPath, setCurrentPath] = useState<string>('');
   const [editingFile, setEditingFile] = useState<GitFile | null>(null);
   const [content, setContent] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Commit change');
+  const [issueId, setIssueId] = useState('');
   const [saving, setSaving] = useState(false);
 
   const files = (tree || []).filter((f) => f.path.startsWith(currentPath));
@@ -32,8 +33,8 @@ const GitFileBrowser: React.FC<GitFileBrowserProps> = ({ questId, onClose }) => 
     } else {
       setEditingFile(f);
       setContent('');
-      setMessage('');
-    }
+      setMessage('Commit change');
+      }
   };
 
   const handleSave = async () => {
@@ -47,13 +48,15 @@ const GitFileBrowser: React.FC<GitFileBrowserProps> = ({ questId, onClose }) => 
         await createRepoFile(questId, editingFile.path, content);
       }
       const diff = await fetchGitDiff(questId, editingFile.path);
+      const commitMsg = message || `Update ${editingFile.path}`;
       await addPost({
         type: 'commit',
         questId,
-        content: message || `Update ${editingFile.path}`,
-        commitSummary: message || `Update ${editingFile.path}`,
+        content: issueId ? `${commitMsg} (Issue #${issueId})` : commitMsg,
+        commitSummary: issueId ? `${commitMsg} (Issue #${issueId})` : commitMsg,
         gitDiff: diff.diffMarkdown,
         linkedNodeId: editingFile.path,
+        ...(issueId ? { issueId } : {}),
         visibility: 'public',
         tags: [],
         collaborators: [],
@@ -74,6 +77,11 @@ const GitFileBrowser: React.FC<GitFileBrowserProps> = ({ questId, onClose }) => 
           <div className="space-y-2">
             <div className="font-semibold">{editingFile.path}</div>
             <Input
+              value={issueId}
+              onChange={(e) => setIssueId(e.target.value)}
+              placeholder="Issue ID"
+            />
+            <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Commit message"
@@ -81,7 +89,7 @@ const GitFileBrowser: React.FC<GitFileBrowserProps> = ({ questId, onClose }) => 
             <TextArea rows={10} value={content} onChange={(e) => setContent(e.target.value)} />
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : 'Save'}
+                {saving ? 'Saving...' : 'Commit Change'}
               </Button>
               <Button variant="ghost" onClick={() => setEditingFile(null)}>
                 Cancel
