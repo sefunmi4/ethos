@@ -1,2 +1,28 @@
 [
+  {
+    "id": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "username": "wise_falcon_3511",
+    "email": "testerbot1@ethos.com",
+    "password": "$2b$10$UObt3qsLQEEznq1gE59Nce/Gt8NPRZRKMaKgmq4dlc0FvIrYkMVEq",
+    "role": "user",
+    "tags": [
+      "explorer"
+    ],
+    "bio": "",
+    "links": {
+      "github": "",
+      "linkedin": "",
+      "tiktok": "",
+      "website": ""
+    },
+    "experienceTimeline": [
+      {
+        "datetime": "2025-06-22T06:48:07.214Z",
+        "title": "Journey begins",
+        "tags": [
+          "registered"
+        ]
+      }
+    ]
+  }
 ]

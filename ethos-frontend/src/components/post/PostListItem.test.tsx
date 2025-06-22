@@ -54,4 +54,22 @@ describe('PostListItem', () => {
 
     expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
   });
+
+  it('renders review summary tag', () => {
+    const reviewPost: Post = {
+      ...basePost,
+      id: 'r1',
+      type: 'review',
+      questId: 'q2',
+      questTitle: 'Quest B',
+    } as Post;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={reviewPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Review: Quest B')).toBeInTheDocument();
+  });
 });
