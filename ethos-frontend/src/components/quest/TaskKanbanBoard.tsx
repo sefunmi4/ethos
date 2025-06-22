@@ -32,6 +32,7 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
         <QuickTaskForm
           questId={questId}
           boardId={`task-${linkedNodeId}`}
+          parentId={linkedNodeId}
           onSave={(p) => {
             setTasks((prev) => [...prev, p]);
             setShowForm(false);

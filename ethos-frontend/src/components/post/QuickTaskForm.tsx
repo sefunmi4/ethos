@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { addPost } from '../../api/post';
+import { linkPostToQuest } from '../../api/quest';
 import { Input, Select, Button } from '../ui';
 import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -9,6 +10,7 @@ interface QuickTaskFormProps {
   questId: string;
   status?: string;
   boardId: string;
+  parentId?: string;
   onSave?: (post: Post) => void;
   onCancel: () => void;
 }
@@ -17,6 +19,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
   questId,
   status,
   boardId,
+  parentId,
   onSave,
   onCancel,
 }) => {
@@ -40,7 +43,9 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         status: taskStatus,
         taskType,
         boardId,
+        ...(parentId ? { replyTo: parentId } : {}),
       });
+      await linkPostToQuest(questId, { postId: newPost.id, parentId });
       appendToBoard?.(boardId, newPost);
       onSave?.(newPost);
     } catch (err) {
