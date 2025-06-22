@@ -61,6 +61,9 @@ export interface DBPost {
   questNodeTitle?: string;
   nodeId?: string;
 
+  /** Optional rating value for review posts */
+  rating?: number;
+
   reactionCounts?: ReactionCountMap;
 }
 
