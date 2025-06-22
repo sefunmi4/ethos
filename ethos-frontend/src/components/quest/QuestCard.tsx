@@ -561,17 +561,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
         {expanded && (
           <div className="flex flex-col md:flex-row gap-4 max-h-[420px] overflow-y-auto">
-            <div className="flex-1 md:pr-4 overflow-auto max-h-[420px]">{renderRightPanel()}</div>
             <div
-              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
-              onMouseDown={handleDividerMouseDown}
-            />
-            <div
-              className="overflow-auto md:pl-4 md:border-l md:border-gray-300 dark:md:border-gray-700 max-h-[420px]"
+              className="overflow-auto md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 max-h-[420px]"
               style={{ width: mapWidth }}
             >
               {renderMap()}
             </div>
+            <div
+              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+              onMouseDown={handleDividerMouseDown}
+            />
+            <div className="flex-1 md:pl-4 overflow-auto max-h-[420px]">{renderRightPanel()}</div>
           </div>
         )}
     </div>

@@ -55,7 +55,7 @@ Tab labels reflect the selected type: selecting **file** shows a *File* tab, **f
 
 ## Expanded Quest Card Layout
 
-When a quest card is expanded, the left side shows the status, log and file tabs while the right panel renders the quest map. The map defaults to the force‑directed graph but can switch to a folder layout when the selected task is a folder. Clicking nodes navigates between tasks and dragging allows attaching or detaching subtasks.
+When a quest card is expanded, the **left panel** renders the quest map while the **right side** displays the Status, Log and File tabs. The map defaults to the force‑directed graph but can switch to a folder layout when the selected task is a folder. Clicking nodes navigates between tasks and dragging allows attaching or detaching subtasks.
 
 The status board lists both issues and subtasks for the active node. Use the *All*, *Issues*, and *Tasks* buttons to filter the board.
 
