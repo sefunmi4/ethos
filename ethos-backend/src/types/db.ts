@@ -39,7 +39,7 @@ export interface DBPost {
   status?: QuestTaskStatus;
   /** Optional classification for task posts */
   taskType?: 'file' | 'folder' | 'abstract';
-  collaborators?: { userId: string; roles?: string[] }[];
+  collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
   linkedItems?: LinkedItem[];
 
   systemGenerated?: boolean;
@@ -77,7 +77,7 @@ export interface DBQuest {
 
   headPostId: string;
   linkedPosts: LinkedItem[];
-  collaborators: { userId?: string; roles?: string[] }[];
+  collaborators: { userId?: string; roles?: string[]; pending?: string[] }[];
 
   gitRepo?: {
     repoId: string;

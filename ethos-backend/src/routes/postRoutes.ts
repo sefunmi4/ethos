@@ -470,10 +470,39 @@ router.post(
     task.helpRequest = true;
     task.needsHelp = true;
 
-    posts.push(requestPost);
+    const quests = questsStore.read();
+    const quest = task.questId ? quests.find(q => q.id === task.questId) : null;
+    const openRoles = [
+      ...(task.collaborators || []),
+      ...(quest?.collaborators || [])
+    ].filter(c => !c.userId);
+
+    const subRequests: DBPost[] = openRoles.map(role => ({
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'request',
+      content: `Role needed: ${(role.roles || []).join(', ')}`,
+      visibility: task.visibility,
+      timestamp: new Date().toISOString(),
+      tags: [],
+      collaborators: [role],
+      replyTo: requestPost.id,
+      repostedFrom: null,
+      linkedItems: [
+        { itemId: task.id, itemType: 'post', linkType: 'reference' },
+      ],
+      questId: task.questId || null,
+      helpRequest: true,
+      needsHelp: true,
+    }));
+
+    posts.push(requestPost, ...subRequests);
     postsStore.write(posts);
     const users = usersStore.read();
-    res.status(201).json(enrichPost(requestPost, { users }));
+    res.status(201).json({
+      request: enrichPost(requestPost, { users }),
+      subRequests: subRequests.map(p => enrichPost(p, { users })),
+    });
   }
 );
 
@@ -516,7 +545,10 @@ router.post(
     posts.push(requestPost);
     postsStore.write(posts);
     const users = usersStore.read();
-    res.status(201).json(enrichPost(requestPost, { users }));
+    res.status(201).json({
+      request: enrichPost(requestPost, { users }),
+      subRequests: [],
+    });
   }
 );
 

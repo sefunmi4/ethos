@@ -225,8 +225,20 @@ export const solvePost = async (postId: string): Promise<{ success: boolean }> =
 /**
  * 🤝 Request help for any post
  */
-export const requestHelp = async (postId: string): Promise<Post> => {
-  const res = await axiosWithAuth.post(`/posts/${postId}/request-help`);
+export interface RequestHelpResult {
+  request: Post;
+  subRequests: Post[];
+}
+
+export const requestHelp = async (
+  postId: string,
+  type?: string
+): Promise<RequestHelpResult> => {
+  const url =
+    type === 'task'
+      ? `/posts/tasks/${postId}/request-help`
+      : `/posts/${postId}/request-help`;
+  const res = await axiosWithAuth.post(url);
   return res.data;
 };
 

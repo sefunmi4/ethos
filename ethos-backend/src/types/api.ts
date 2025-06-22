@@ -205,8 +205,10 @@ export interface CollaberatorRoles {
   /**
    * Roles requested or assigned. When `userId` is omitted this
    * represents an open role that any user may request to fill.
-   */
+  */
   roles?: string[];
+  /** List of userIds that have applied for this role */
+  pending?: string[];
 }
 
 // types/api.ts
