@@ -7,12 +7,12 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest, archivePost, unarchivePost } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import CreatePost from './CreatePost';
-import { PostTypeBadge, StatusBadge, Spinner, Select, Button } from '../ui';
+import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
@@ -98,7 +98,6 @@ const PostCard: React.FC<PostCardProps> = ({
     selectedBoard,
     updateBoardItem,
     appendToBoard,
-    removeItemFromBoard,
   } = useBoardContext() || {};
 
   const isQuestBoardRequest =
@@ -142,18 +141,6 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
-  const handleComplete = async () => {
-    try {
-      if (post.tags?.includes('archived')) {
-        await unarchivePost(post.id);
-      } else {
-        await archivePost(post.id);
-        if (selectedBoard) removeItemFromBoard(selectedBoard, post.id);
-      }
-    } catch (err) {
-      console.error('[PostCard] Failed to toggle complete:', err);
-    }
-  };
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const timestamp = post.timestamp
