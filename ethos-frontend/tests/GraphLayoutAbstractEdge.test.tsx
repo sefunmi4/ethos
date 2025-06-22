@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
 
-let dragHandler: any;
+let dragHandler: unknown;
 
 jest.mock('react-router-dom', () => {
   const actual = jest.requireActual('react-router-dom');
@@ -36,7 +36,7 @@ jest.mock('@dnd-kit/core', () => ({
   }),
   useDroppable: () => ({ setNodeRef: jest.fn(), isOver: false }),
   useSensor: jest.fn(),
-  useSensors: (...s: any[]) => s,
+  useSensors: (...s: unknown[]) => s,
   PointerSensor: jest.fn(),
   closestCenter: jest.fn(),
 }), { virtual: true });
