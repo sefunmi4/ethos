@@ -5,7 +5,6 @@ import { useSocketListener } from '../hooks/useSocket';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
-import BoardSearchFilter from '../components/board/BoardSearchFilter';
 import { Spinner } from '../components/ui';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 
@@ -26,7 +25,6 @@ const ProfilePage: React.FC = () => {
     isLoading: loadingPosts,
   } = useBoard('my-posts', { pageSize: 1000 });
 
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (!updatedBoard || !user) return;
@@ -34,14 +32,6 @@ const ProfilePage: React.FC = () => {
     if (updatedBoard.id === userPostBoard?.id) setUserPostBoard(updatedBoard);
   });
 
-  useEffect(() => {
-    if (!userPostBoard) return;
-    const tagSet = new Set<string>();
-    (userPostBoard.enrichedItems || []).forEach((it: unknown) => {
-      ((it as { tags?: string[] }).tags || []).forEach((t: string) => tagSet.add(t));
-    });
-    setAvailableTags(Array.from(tagSet));
-  }, [userPostBoard]);
 
   if (authLoading) {
     return (
@@ -73,24 +63,22 @@ const ProfilePage: React.FC = () => {
         {loadingPosts ? (
           <Spinner />
         ) : (
-          <div className="flex flex-col md:flex-row gap-6">
-            <BoardSearchFilter tags={availableTags} className="md:w-64" />
-            <div className="flex-1">
-              <Board
-                boardId="my-posts"
-                board={userPostBoard}
-                layout="list"
-                user={castUser}
-                showCreate
-                hideControls
-              />
-              {userPostBoard?.enrichedItems?.length === 0 && (
-                <div className="text-secondary text-center py-8">
-                  You haven't posted anything yet.
-                </div>
-              )}
-            </div>
-          </div>
+          <>
+            <Board
+              boardId="my-posts"
+              board={userPostBoard}
+              layout="list"
+              user={castUser}
+              compact
+              hideControls
+              headerOnly
+            />
+            {userPostBoard?.enrichedItems?.length === 0 && (
+              <div className="text-secondary text-center py-8">
+                You haven't posted anything yet.
+              </div>
+            )}
+          </>
         )}
       </section>
     </main>
