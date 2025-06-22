@@ -23,15 +23,20 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   onEdgesChange,
 }) => {
   const fgRef = useRef<ForceGraphMethods>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
   useEffect(() => {
     setEdgeList(edges);
   }, [edges]);
 
+  useEffect(() => {
+    fgRef.current?.zoomToFit(200, 20);
+  }, [items, edgeList]);
+
   const data = useMemo(
     () => ({
-      nodes: items.map((p) => ({ ...p, id: p.id })),
+      nodes: items.map((p) => ({ ...p, id: p.id, val: 4 })),
       links: edgeList.map((e) => ({ source: e.from, target: e.to })),
     }),
     [items, edgeList],
@@ -119,14 +124,21 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
       if (updated !== prev) emitEdges(updated);
       return updated;
     });
+    fgRef.current?.zoomToFit(200, 20);
   };
 
   return (
-    <div style={{ height: '70vh' }}>
+    <div
+      ref={containerRef}
+      style={{ height: '70vh', border: '1px solid #ccc', overflow: 'hidden' }}
+    >
       <ForceGraph2D
         ref={fgRef}
+        width={containerRef.current?.clientWidth || undefined}
+        height={containerRef.current?.clientHeight || undefined}
         graphData={data}
         nodeId="id"
+        nodeRelSize={6}
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
         nodeLabel={(node: unknown) => getDisplayTitle(node as Post)}
