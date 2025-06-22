@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { addReview } from '../api/review';
 import { Button, Input, TextArea, Label, FormSection } from './ui';
 import type { ReviewTargetType, Review } from '../types/reviewTypes';
@@ -10,6 +11,9 @@ interface ReviewFormProps {
   repoUrl?: string;
   modelId?: string;
   onSubmitted?: (review: Review) => void;
+  initialRating?: number;
+  initialTags?: string[];
+  initialFeedback?: string;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -19,10 +23,13 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   repoUrl,
   modelId,
   onSubmitted,
+  initialRating = 0,
+  initialTags = [],
+  initialFeedback = '',
 }) => {
-  const [rating, setRating] = useState(0);
-  const [tags, setTags] = useState('');
-  const [feedback, setFeedback] = useState('');
+  const [rating, setRating] = useState(initialRating);
+  const [tags, setTags] = useState(initialTags.join(', '));
+  const [feedback, setFeedback] = useState(initialFeedback);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -69,21 +76,24 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection title="Rating">
         <div className="flex space-x-1">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <button
-              type="button"
-              key={n}
-              onClick={() => setRating(n)}
-              className={
-                'text-2xl focus:outline-none ' +
-                (rating >= n
-                  ? 'text-yellow-400'
-                  : 'text-gray-300 dark:text-gray-600')
-              }
-            >
-              ★
-            </button>
-          ))}
+          {[1, 2, 3, 4, 5].map((n) => {
+            const full = rating >= n;
+            const half = !full && rating >= n - 0.5;
+            return (
+              <button
+                type="button"
+                key={n}
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const isHalf = e.clientX - rect.left < rect.width / 2;
+                  setRating(isHalf ? n - 0.5 : n);
+                }}
+                className="text-2xl focus:outline-none text-yellow-400"
+              >
+                {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
+              </button>
+            );
+          })}
         </div>
       </FormSection>
       <FormSection title="Tags">

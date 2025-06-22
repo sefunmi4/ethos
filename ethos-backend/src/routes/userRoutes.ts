@@ -27,8 +27,8 @@ router.get('/:id', authOptional, (req: Request<{ id: string }>, res: Response): 
   }
 
   // Return only public fields
-  const { id, username, tags, bio, links, experienceTimeline } = user as any;
-  res.json({ id, username, tags, bio, links, experienceTimeline });
+  const { id, username, tags, bio, links, experienceTimeline, xp } = user as any;
+  res.json({ id, username, tags, bio, links, experienceTimeline, xp });
 });
 
 export default router;

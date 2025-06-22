@@ -16,6 +16,11 @@ export interface User {
   tags: string[];
   location?: string;
 
+  /**
+   * Total experience points accumulated by the user.
+   */
+  xp?: number;
+
   gitAccounts?: GitAccount[];
 
   // Public-facing links and portfolio sites

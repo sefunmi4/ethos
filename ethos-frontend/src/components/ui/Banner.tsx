@@ -1,6 +1,7 @@
 import React from 'react';
 import { TAG_BASE } from '../../constants/styles';
 import type { User } from '../../types/userTypes';
+import { getRank } from '../../utils/rankUtils';
 import type { Quest } from '../../types/questTypes';
 import type { CollaberatorRoles } from '../../types/postTypes';
 
@@ -46,6 +47,11 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
           {user ? displayName : `📜 ${displayName}`}
         </h1>
         <p className="text-sm text-gray-800 dark:text-gray-400">{description}</p>
+        {user && (
+          <p className="text-xs text-secondary">
+            XP: {user.xp ?? 0} (Rank: {getRank(user.xp ?? 0)})
+          </p>
+        )}
         {creatorDisplay && (
           <p className="text-xs text-secondary mt-1">{creatorDisplay}</p>
         )}

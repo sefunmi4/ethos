@@ -11,10 +11,12 @@ interface QuestSummaryCardProps {
 
 const QuestSummaryCard: React.FC<QuestSummaryCardProps> = ({ quest }) => {
   const rankTag = quest.tags?.find(t => t.toLowerCase().startsWith('rank:'));
+  const difficultyTag = quest.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
   const rewardTag = quest.tags?.find(t => t.toLowerCase().startsWith('reward:'));
   const roleTags = quest.tags?.filter(t => t.toLowerCase().startsWith('role:')) || [];
 
   const rank = rankTag ? rankTag.split(':')[1] : 'Unrated';
+  const difficulty = difficultyTag ? difficultyTag.split(':')[1] : 'Unknown';
   const reward = rewardTag ? rewardTag.split(':')[1] : 'Unknown';
   const roles = roleTags.map(t => t.split(':')[1]).join(', ');
 
@@ -27,6 +29,7 @@ const QuestSummaryCard: React.FC<QuestSummaryCardProps> = ({ quest }) => {
       {shortDesc && <p className="text-sm text-secondary">{shortDesc}</p>}
       <div className="text-xs text-secondary space-y-0.5">
         <div>Rank: {rank}</div>
+        <div>Difficulty: {difficulty}</div>
         <div>Reward: {reward}</div>
         {roles && <div>Roles Needed: {roles}</div>}
       </div>

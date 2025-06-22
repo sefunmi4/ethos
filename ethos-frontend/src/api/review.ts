@@ -7,3 +7,13 @@ export const addReview = async (data: Partial<Review>): Promise<Review> => {
   const res = await axiosWithAuth.post(BASE_URL, data);
   return res.data;
 };
+
+export const fetchReviews = async (params: {
+  type: string;
+  questId?: string;
+  postId?: string;
+  sort?: string;
+}): Promise<Review[]> => {
+  const res = await axiosWithAuth.get(BASE_URL, { params });
+  return res.data;
+};

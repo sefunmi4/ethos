@@ -384,6 +384,9 @@ export interface User {
   tags: string[];
   location?: string;
 
+  /** Total experience points accumulated */
+  xp?: number;
+
   gitAccounts?: GitAccount[];
 
   links: {
