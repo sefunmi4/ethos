@@ -30,6 +30,8 @@ type GridLayoutProps = {
   initialExpanded?: boolean;
   /** Board ID for context */
   boardId?: string;
+  /** Quest ID when rendering quest tasks */
+  questId?: string;
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Blocked', 'Done'];
@@ -122,6 +124,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
    */
   const { selectedBoard, updateBoardItem, removeItemFromBoard } =
     useBoardContext();
+
 
   useEffect(() => {
     if (layout === 'horizontal') {
@@ -251,7 +254,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               key={col}
               className="min-w-[280px] w-[320px] flex-shrink-0 bg-surface border border-secondary rounded-lg p-4 shadow-sm"
             >
-              <h3 className="text-sm font-bold text-secondary mb-4">{col}</h3>
+              <h3 className="text-sm font-bold text-secondary mb-2">{col}</h3>
               <DroppableColumn id={col}>
                 {grouped[col].map((item) => (
                   <DraggableCard

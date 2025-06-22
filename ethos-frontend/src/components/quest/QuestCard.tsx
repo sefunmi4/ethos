@@ -19,6 +19,7 @@ import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
 import LogThreadPanel from './LogThreadPanel';
+import QuickTaskForm from '../post/QuickTaskForm';
 
 
 /**
@@ -409,11 +410,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
           panel = (
             <>
               {showTaskForm && (
-                <div className="mb-4">
-                  <CreatePost
-                    initialType="task"
+                <div className="mb-2">
+                  <QuickTaskForm
                     questId={quest.id}
-                    boardId={`map-${quest.id}`}
+                    boardId={`log-${quest.id}`}
                     onSave={(p) => {
                       setLogs((prev) => [...prev, p]);
                       setShowTaskForm(false);
@@ -422,16 +422,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   />
                 </div>
               )}
-              <GridLayout
-                questId={quest.id}
-                items={logs}
-                user={user}
-                layout="kanban"
-                editable={canEdit}
-                compact
-                boardId={`log-${quest.id}`}
-              />
-              <div className="text-right mt-2">
+              <div className="text-right mb-2">
                 {canEdit ? (
                   <Button size="sm" variant="contrast" onClick={() => setShowTaskForm(true)}>
                     + Add Item
@@ -442,6 +433,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   </Button>
                 )}
               </div>
+              <GridLayout
+                questId={quest.id}
+                items={logs}
+                user={user}
+                layout="kanban"
+                editable={canEdit}
+                compact
+                boardId={`log-${quest.id}`}
+              />
             </>
           );
         } else {
@@ -452,9 +452,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
         panel = (
           <>
             {showTaskForm && (
-              <div className="mb-4">
-                <CreatePost
-                  initialType="task"
+              <div className="mb-2">
+                <QuickTaskForm
                   questId={quest.id}
                   boardId={`map-${quest.id}`}
                   onSave={(p) => {
