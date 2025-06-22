@@ -2,6 +2,7 @@ import React from 'react';
 import { TAG_BASE } from '../../constants/styles';
 import type { User } from '../../types/userTypes';
 import type { Quest } from '../../types/questTypes';
+import type { CollaberatorRoles } from '../../types/postTypes';
 
 interface BannerProps {
   user?: User;
@@ -57,14 +58,16 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
             {Array.from(new Set(tags.filter(t => typeof t === 'string') as string[])).map((tag) => (
               <span key={tag} className={TAG_BASE}>#{tag}</span>
             ))}
-            {(tags.filter(t => typeof t !== 'string') as any[]).map((tag, index) => (
-              <span
-                key={index}
-                className="text-xs font-medium bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300"
-              >
-                @{tag.username || tag.userId}
-              </span>
-            ))}
+            {tags
+              .filter((t): t is CollaberatorRoles => typeof t !== 'string')
+              .map((tag, index) => (
+                <span
+                  key={index}
+                  className="text-xs font-medium bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300"
+                >
+                  @{tag.username || tag.userId}
+                </span>
+              ))}
           </>
         ) : (
           <span className="text-xs text-gray-400 dark:text-gray-500 italic">
