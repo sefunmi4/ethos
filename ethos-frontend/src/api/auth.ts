@@ -126,3 +126,19 @@ export const fetchUserById = async (userId: string): Promise<User> => {
   const res = await axiosWithAuth.get(`/users/${userId}`);
   return res.data;
 };
+
+/**
+ * @function searchUsers
+ * 🔍 Fetch users matching the query string
+ * @param query - Username search term
+ * @returns Array of minimal user records
+ */
+export const searchUsers = async (
+  query: string
+): Promise<{ id: string; username: string }[]> => {
+  const params = new URLSearchParams();
+  if (query) params.set('search', query);
+  const url = `/users${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await axiosWithAuth.get(url);
+  return res.data;
+};
