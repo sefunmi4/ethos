@@ -18,6 +18,11 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
+  const handleAddLog = () => {
+    // Placeholder handler for adding a log entry
+    console.log('Add log for node', node?.id);
+  };
+
   useEffect(() => {
     if (!node) return;
     setLoading(true);
@@ -42,10 +47,25 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
 
   if (!node) return null;
   if (loading) return <Spinner />;
-  if (entries.length === 0) return <div className="text-sm text-secondary">No log entries.</div>;
+  if (entries.length === 0)
+    return (
+      <div className="space-y-2">
+        <div className="text-right">
+          <button onClick={handleAddLog} className="text-xs text-accent underline">
+            + Add Log
+          </button>
+        </div>
+        <div className="text-sm text-secondary">No log entries.</div>
+      </div>
+    );
 
   return (
     <div className="space-y-2">
+      <div className="text-right">
+        <button onClick={handleAddLog} className="text-xs text-accent underline">
+          + Add Log
+        </button>
+      </div>
       {entries.map((entry) => {
         const isOpen = !!expanded[entry.id];
         return (

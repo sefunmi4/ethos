@@ -19,6 +19,11 @@ const statusIcons: Record<string, string> = {
 const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNodeId }) => {
   const [issues, setIssues] = useState<Post[]>([]);
 
+  const handleAddIssue = (status: string) => {
+    // Placeholder handler for adding an issue in the given status
+    console.log('Add issue for status', status);
+  };
+
   useEffect(() => {
     if (!questId) return;
     fetchPostsByQuestId(questId)
@@ -65,6 +70,12 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
               </div>
             ))
           )}
+          <button
+            onClick={() => handleAddIssue(value)}
+            className="text-xs text-accent underline"
+          >
+            + Add Issue
+          </button>
         </div>
       ))}
     </div>
