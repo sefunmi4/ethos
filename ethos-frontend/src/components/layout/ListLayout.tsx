@@ -17,6 +17,8 @@ interface ListLayoutProps {
   headerOnly?: boolean;
   /** Expand replies for all posts */
   initialExpanded?: boolean;
+  /** Board ID for context */
+  boardId?: string;
 }
 
 const ListLayout: React.FC<ListLayoutProps> = ({
@@ -30,6 +32,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   loadingMore = false,
   headerOnly = false,
   initialExpanded = false,
+  boardId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +72,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
           questId={questId}
           headerOnly={headerOnly}
           initialShowReplies={initialExpanded}
+          boardId={boardId}
         />
       ))}
       {loadingMore && <Spinner />}

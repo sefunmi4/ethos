@@ -31,6 +31,7 @@ interface GraphLayoutProps {
   onSelectNode?: (n: Post) => void;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
+  boardId?: string;
 }
 
 interface NodeChild {
@@ -64,6 +65,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   onSelectNode,
   onScrollEnd,
   loadingMore = false,
+  boardId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -348,6 +350,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             registerNode={(id, el) => {
               nodeRefs.current[id] = el;
             }}
+            boardId={boardId}
           />
         ))}
         {loadingMore && (

@@ -245,6 +245,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           showStatus={false}
           onSelectNode={setSelectedNode}
           showInspector={false}
+          boardId={`map-${quest.id}`}
         />
       );
 
@@ -375,6 +376,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 user={user}
                 layout="vertical"
                 editable={canEdit}
+                boardId={`log-${quest.id}`}
               />
               <div className="text-right mt-2">
                 {canEdit ? (
@@ -421,6 +423,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 layout="kanban"
                 editable={canEdit}
                 compact
+                boardId={`log-${quest.id}`}
               />
               <div className="text-right mt-2">
                 {canEdit ? (
@@ -475,6 +478,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               edges={questData.taskGraph}
               condensed
               showInspector={false}
+              boardId={`map-${quest.id}`}
             />
           </>
         );
