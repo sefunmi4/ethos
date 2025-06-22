@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { Quest } from '../../types/questTypes';
+import type { Quest, TaskEdge } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, SummaryTag } from '../ui';
@@ -10,7 +10,7 @@ import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import CreatePost from '../post/CreatePost';
-import { fetchQuestById, updateQuestById } from '../../api/quest';
+import { fetchQuestById, updateQuestById, updateQuestTaskGraph } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
@@ -245,9 +245,22 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderMap = () => {
     if (!expanded) return null;
 
+    const handleEdgesSave = async (edges: TaskEdge[]) => {
+      try {
+        await updateQuestTaskGraph(quest.id, edges);
+        setQuestData((prev) => ({ ...prev, taskGraph: edges }));
+      } catch (err) {
+        console.error('[QuestCard] Failed to save quest map', err);
+      }
+    };
+
     const canvas =
       mapMode === 'graph' ? (
-        <MapGraphLayout items={logs} edges={questData.taskGraph} />
+        <MapGraphLayout
+          items={logs}
+          edges={questData.taskGraph}
+          onEdgesChange={handleEdgesSave}
+        />
       ) : (
         <GraphLayout
           items={logs}
@@ -257,6 +270,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           questId={quest.id}
           showStatus={false}
           onSelectNode={setSelectedNode}
+          onEdgesChange={handleEdgesSave}
           showInspector={false}
           boardId={`map-${quest.id}`}
         />

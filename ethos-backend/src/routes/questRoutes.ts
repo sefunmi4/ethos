@@ -6,7 +6,7 @@ import { boardsStore, questsStore, postsStore, usersStore } from '../models/stor
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
-import type { Quest, LinkedItem, Visibility } from '../types/api';
+import type { Quest, LinkedItem, Visibility, TaskEdge } from '../types/api';
 import type { DBQuest, DBPost } from '../types/db';
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -326,6 +326,37 @@ router.get(
 
     res.json({ nodes, edges: quest.taskGraph || [] });
   }
+);
+
+// PATCH update task graph edges for a quest
+router.patch(
+  '/:id/map',
+  authMiddleware,
+  (
+    req: AuthRequest<{ id: string }, any, { edges: TaskEdge[] }>,
+    res: Response,
+  ): void => {
+    const { id } = req.params;
+    const { edges } = req.body;
+
+    if (!Array.isArray(edges)) {
+      res.status(400).json({ error: 'Invalid edges' });
+      return;
+    }
+
+    const quests = questsStore.read();
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    quest.taskGraph = edges;
+    questsStore.write(quests);
+
+    res.json({ success: true, edges: quest.taskGraph });
+  },
 );
 
 // GET enriched quest
