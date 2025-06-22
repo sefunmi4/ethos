@@ -43,10 +43,10 @@
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
     "taskType": "abstract",
     "status": "To Do",
-    "helpRequest": true,
+    "helpRequest": false,
     "nodeId": "Q::T00",
     "questNodeTitle": "testing adding a task",
-    "needsHelp": true
+    "needsHelp": false
   },
   {
     "id": "09931dad-a5b5-4d99-9085-a7a593246173",
