@@ -12,7 +12,6 @@ import {
   FaHandsHelping,
   FaExpand,
   FaCompress,
-  FaStepForward,
   FaCheckSquare,
   FaRegCheckSquare,
 } from 'react-icons/fa';
