@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
+import ForceGraph2D, { ForceGraphMethods } from 'react-force-graph-2d';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
@@ -13,22 +13,125 @@ interface MapGraphLayoutProps {
   compact?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
+  /** Notify parent when the edge list updates */
+  onEdgesChange?: (edges: TaskEdge[]) => void;
 }
 
-const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({ items, edges = [] }) => {
-  const data = useMemo(() => ({
-    nodes: items.map((p) => ({ ...p, id: p.id })),
-    links: edges.map((e) => ({ source: e.from, target: e.to })),
-  }), [items, edges]);
+const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
+  items,
+  edges = [],
+  onEdgesChange,
+}) => {
+  const fgRef = useRef<ForceGraphMethods>();
+  const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
+
+  useEffect(() => {
+    setEdgeList(edges);
+  }, [edges]);
+
+  const data = useMemo(
+    () => ({
+      nodes: items.map((p) => ({ ...p, id: p.id })),
+      links: edgeList.map((e) => ({ source: e.from, target: e.to })),
+    }),
+    [items, edgeList],
+  );
+
+  const emitEdges = (updated: TaskEdge[]) => {
+    if (onEdgesChange) {
+      onEdgesChange(updated);
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('questGraphUpdate', { detail: { edges: updated } }),
+      );
+    }
+  };
+
+  const isDescendant = (parentId: string, childId: string): boolean => {
+    const visited = new Set<string>();
+    const stack = [parentId];
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (current === childId) return true;
+      edgeList
+        .filter((e) => e.from === current)
+        .forEach((e) => {
+          if (!visited.has(e.to)) {
+            visited.add(e.to);
+            stack.push(e.to);
+          }
+        });
+    }
+    return false;
+  };
+
+  const handleNodeClick = (node: unknown) => {
+    const n = node as Post;
+    window.dispatchEvent(
+      new CustomEvent('questTaskOpen', { detail: { taskId: n.id } }),
+    );
+  };
+
+  const handleNodeDragEnd = (node: unknown) => {
+    const dragged = node as Post & { x?: number; y?: number };
+    const nodes = fgRef.current?.graphData().nodes || [];
+    let targetId: string | null = null;
+    let minDist = Infinity;
+    nodes.forEach((n) => {
+      const { id, x = 0, y = 0 } = n as Post & { x?: number; y?: number };
+      if (id === dragged.id) return;
+      const dx = (dragged.x ?? 0) - x;
+      const dy = (dragged.y ?? 0) - y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < minDist) {
+        minDist = dist;
+        targetId = id as string;
+      }
+    });
+
+    if (minDist > 40) targetId = null;
+
+    const nodeId = dragged.id;
+
+    if (!targetId) {
+      setEdgeList((prev) => {
+        const updated = prev.filter((e) => e.to !== nodeId);
+        if (updated !== prev) emitEdges(updated);
+        return updated;
+      });
+      return;
+    }
+
+    if (nodeId === targetId) return;
+
+    if (isDescendant(nodeId, targetId)) {
+      return;
+    }
+
+    setEdgeList((prev) => {
+      const filtered = prev.filter((e) => e.to !== nodeId);
+      const exists = filtered.some(
+        (e) => e.from === targetId && e.to === nodeId,
+      );
+      const updated = exists
+        ? filtered
+        : [...filtered, { from: targetId as string, to: nodeId }];
+      if (updated !== prev) emitEdges(updated);
+      return updated;
+    });
+  };
 
   return (
     <div style={{ height: '70vh' }}>
       <ForceGraph2D
+        ref={fgRef}
         graphData={data}
         nodeId="id"
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
         nodeLabel={(node: unknown) => getDisplayTitle(node as Post)}
+        onNodeClick={handleNodeClick}
+        onNodeDragEnd={handleNodeDragEnd}
       />
     </div>
   );
