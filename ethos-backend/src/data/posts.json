@@ -119,5 +119,21 @@
     "linkedItems": [],
     "questId": null,
     "helpRequest": false
+  },
+  {
+    "id": "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "log",
+    "content": "Test Quest",
+    "visibility": "public",
+    "timestamp": "2025-06-22T17:27:02.670Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "86f55e22-76f2-4d7b-a672-173a362eed1d",
+    "nodeId": "Q:test_quest:L00",
+    "questNodeTitle": "Test Quest"
   }
 ]
