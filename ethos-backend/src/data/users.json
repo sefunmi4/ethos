@@ -1,28 +1,2 @@
 [
-  {
-    "id": "u_b7f8a113-069f-477d-b704-ae575288246b",
-    "username": "brave_wizard_7258",
-    "email": "testerbot1@ethos.com",
-    "password": "$2b$10$MUdiAiWuVN474iNbGeH2EedmXn2QF60J6OsXpSifxz65tjPHh06Xm",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "experienceTimeline": [
-      {
-        "datetime": "2025-06-21T20:03:02.556Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  }
 ]
