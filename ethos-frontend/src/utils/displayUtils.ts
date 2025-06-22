@@ -1,6 +1,9 @@
 import type { Post, PostType } from '../types/postTypes';
 import { ROUTES } from '../constants/routes';
 
+export const toTitleCase = (str: string): string =>
+  str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
+
 export const POST_TYPE_LABELS: Record<PostType, string> = {
   free_speech: 'Free Speech',
   request: 'Request',
@@ -68,7 +71,8 @@ export const getDisplayTitle = (post: Post): string => {
   }
 
   const content = post.content?.trim() || '';
-  return content.length > 50 ? content.slice(0, 50) + '…' : content;
+  const text = content.length > 50 ? content.slice(0, 50) + '…' : content;
+  return toTitleCase(text);
 };
 
 export interface SummaryTagData {

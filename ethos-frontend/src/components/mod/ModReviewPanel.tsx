@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Quest } from '../../types/questTypes';
 import { moderateQuest } from '../../api/quest';
 import { Select, Button } from '../ui';
+import { toTitleCase } from '../../utils/displayUtils';
 
 interface ModReviewPanelProps {
   quest: Quest;
@@ -39,7 +40,7 @@ const ModReviewPanel: React.FC<ModReviewPanelProps> = ({ quest, onUpdated }) => 
 
   return (
     <div className="space-y-2 border p-3 rounded bg-surface dark:bg-background">
-      <div className="font-semibold">{quest.title}</div>
+      <div className="font-semibold">{toTitleCase(quest.title)}</div>
       <div className="flex gap-2">
         <Select value={visibility} onChange={e => setVisibility(e.target.value as Quest['visibility'])} options={visibilityOptions} />
         <Select value={approval} onChange={e => setApproval(e.target.value as Quest['approvalStatus'])} options={approvalOptions} />

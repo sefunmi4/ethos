@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useSocketListener } from '../../hooks/useSocket';
-import { getDisplayTitle } from '../../utils/displayUtils';
+import { getDisplayTitle, toTitleCase } from '../../utils/displayUtils';
 import { getRenderableBoardItems } from '../../utils/boardUtils';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
@@ -291,7 +291,7 @@ const Board: React.FC<BoardProps> = ({
       {/* Board Header */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <h2 className="text-xl font-semibold text-primary dark:text-primary">
-          {forcedTitle || board.title || 'Board'}
+          {toTitleCase(forcedTitle || board.title || 'Board')}
         </h2>
 
         <div className="flex gap-2 flex-wrap items-center">

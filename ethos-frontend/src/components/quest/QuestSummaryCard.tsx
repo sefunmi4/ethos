@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
+import { toTitleCase } from '../../utils/displayUtils';
 import type { Quest } from '../../types/questTypes';
 import Button from '../ui/Button';
 
@@ -22,7 +23,7 @@ const QuestSummaryCard: React.FC<QuestSummaryCardProps> = ({ quest }) => {
 
   return (
     <div className="border border-secondary rounded bg-surface p-4 space-y-2 shadow">
-      <h3 className="text-lg font-bold text-primary">{quest.title}</h3>
+      <h3 className="text-lg font-bold text-primary">{toTitleCase(quest.title)}</h3>
       {shortDesc && <p className="text-sm text-secondary">{shortDesc}</p>}
       <div className="text-xs text-secondary space-y-0.5">
         <div>Rank: {rank}</div>

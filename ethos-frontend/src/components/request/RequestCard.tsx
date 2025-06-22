@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Post } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
-import { POST_TYPE_LABELS } from '../../utils/displayUtils';
+import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { FaUserPlus, FaUserCheck } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { acceptRequest, unacceptRequest } from '../../api/post';
@@ -51,7 +51,9 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           <SummaryTag type="quest" label={post.questNodeTitle || post.questTitle || 'Quest'} />
         )}
       </div>
-      {post.title && <h3 className="font-semibold text-lg">{post.title}</h3>}
+      {post.title && (
+        <h3 className="font-semibold text-lg">{toTitleCase(post.title)}</h3>
+      )}
       {post.content && <p className="text-sm text-primary">{post.content}</p>}
       <div className="flex items-center gap-2 text-xs text-secondary">
         <AvatarStack users={collaboratorUsers} />

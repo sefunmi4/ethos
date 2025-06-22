@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import type { Quest } from '../../types/questTypes';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
+import { toTitleCase } from '../../utils/displayUtils';
 import { Spinner } from '../ui';
 
 interface QuestWithScore extends Quest {
@@ -84,7 +85,7 @@ const FeaturedQuestBoard: React.FC = () => {
             >
               <div className="p-4 border rounded bg-surface dark:bg-background w-full">
                 <Link to={ROUTES.QUEST(q.id)} className="font-semibold text-blue-600 underline">
-                  {q.title}
+                  {toTitleCase(q.title)}
                 </Link>
                 {typeof q.popularity === 'number' && (
                   <div className="text-sm text-secondary mt-1">Score: {q.popularity}</div>

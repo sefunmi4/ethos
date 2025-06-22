@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Quest } from '../../types/questTypes';
+import { toTitleCase } from '../../utils/displayUtils';
 
 interface FeaturedQuestsBannerProps {
   /** Array of public quest objects */
@@ -32,7 +33,7 @@ const FeaturedQuestsBanner: React.FC<FeaturedQuestsBannerProps> = ({ quests }) =
             className="block hover:shadow-lg transition-shadow"
           >
             <div className="h-full border border-secondary rounded-md bg-surface dark:bg-background p-4 flex flex-col">
-              <h3 className="font-semibold text-primary text-lg mb-1">{q.title}</h3>
+              <h3 className="font-semibold text-primary text-lg mb-1">{toTitleCase(q.title)}</h3>
               <div className="text-sm text-secondary mb-2">@{q.authorId}</div>
               <span className="text-xs font-medium text-secondary mb-2">
                 {statusLabel(q)}
