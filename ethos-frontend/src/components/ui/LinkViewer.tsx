@@ -3,7 +3,10 @@ import type { LinkedItem, Post } from '../../types/postTypes';
 import { fetchQuestById } from '../../api/quest';
 import { fetchPostById } from '../../api/post';
 import { getQuestLinkLabel } from '../../utils/displayUtils';
+import { ROUTES } from '../../constants/routes';
 import { FaExpand, FaCompress } from 'react-icons/fa';
+import SummaryTag from './SummaryTag';
+import type { SummaryTagType } from './SummaryTag';
 
 interface LinkViewerProps {
   items: LinkedItem[];
@@ -78,6 +81,20 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
     return acc;
   }, {});
 
+  const getTagType = (p: Post): SummaryTagType => {
+    if (p.type === 'quest_log') return 'log';
+    return (p.type as SummaryTagType) || 'type';
+  };
+
+  const uniqueChain = chain.reduce<Array<{ post: Post; label: string }>>(
+    (acc, p) => {
+      const label = getQuestLinkLabel(p);
+      if (!acc.some((u) => u.label === label)) acc.push({ post: p, label });
+      return acc;
+    },
+    []
+  );
+
   return (
     <div className="text-xs text-primary dark:text-primary">
       <button
@@ -101,14 +118,19 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
               </ul>
             </div>
           ))}
-          {chain.length > 0 && (
+          {uniqueChain.length > 0 && (
             <div>
               <div className="font-semibold capitalize mb-1">reply chain</div>
-              <ul className="pl-4 list-disc space-y-1">
-                {Array.from(new Set(chain.map(p => getQuestLinkLabel(p)))).map((label, idx) => (
-                  <li key={idx}>{label}</li>
+              <div className="flex flex-wrap gap-1">
+                {uniqueChain.map(({ post: p, label }) => (
+                  <SummaryTag
+                    key={p.id}
+                    type={getTagType(p)}
+                    label={label}
+                    link={ROUTES.POST(p.id)}
+                  />
                 ))}
-              </ul>
+              </div>
             </div>
           )}
         </div>
