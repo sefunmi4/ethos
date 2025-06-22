@@ -507,6 +507,9 @@ router.post(
       needsHelp: true,
     };
 
+    original.helpRequest = true;
+    original.needsHelp = true;
+
     posts.push(requestPost);
     postsStore.write(posts);
     const users = usersStore.read();

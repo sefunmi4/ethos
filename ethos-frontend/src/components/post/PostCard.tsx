@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, requestHelp, acceptRequest, unacceptRequest, archivePost } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest, archivePost } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -119,21 +119,11 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
-  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const [accepting, setAccepting] = useState(false);
   const [accepted, setAccepted] = useState(
     !!user && post.tags?.includes(`pending:${user.id}`)
   );
 
-  const handleRequestHelp = async () => {
-    try {
-      const reqPost = await requestHelp(post.id);
-      appendToBoard?.('quest-board', reqPost);
-      setHelpRequested(true);
-    } catch (err) {
-      console.error('[PostCard] Failed to request help:', err);
-    }
-  };
 
   const handleAccept = async () => {
     try {
@@ -741,19 +731,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type !== 'request' && post.type !== 'free_speech' && (
-        <label className="flex items-center gap-1 text-xs mt-1">
-          <input
-            type="checkbox"
-            checked={helpRequested}
-            onChange={() => !helpRequested && handleRequestHelp()}
-          />
-          Request Help
-          {helpRequested && (
-            <span className="ml-1 text-secondary">tracking</span>
-          )}
-        </label>
-      )}
+
 
       {(initialReplies > 0 || replies.length > 0) && (
         <button
