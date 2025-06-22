@@ -17,6 +17,7 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
+import QuestNodeInspector from '../quest/QuestNodeInspector';
 import {
   updateReaction,
   addRepost,
@@ -235,8 +236,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           onClick={() => {
             if (replyOverride) {
               replyOverride.onClick();
-            } else if (post.type === 'task' && post.questId) {
-              navigate(ROUTES.BOARD(`log-${post.questId}`));
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
             } else if (isTimelineBoard) {
@@ -249,8 +248,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <FaReply />{' '}
           {replyOverride
             ? replyOverride.label
-            : post.type === 'task'
-            ? 'Quest Log'
             : post.type === 'commit'
             ? 'File Change View'
             : showReplyPanel
@@ -285,10 +282,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </div>
       )}
 
-      {expanded && post.type === 'task' && (
-        <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-          {post.questId && <div>Quest ID: {post.questId}</div>}
-          {post.status && <div>Status: {post.status}</div>}
+      {expanded && post.type === 'task' && post.questId && (
+        <div className="mt-3">
+          <QuestNodeInspector
+            questId={post.questId}
+            node={post}
+            user={user}
+            showPost={false}
+          />
         </div>
       )}
 
