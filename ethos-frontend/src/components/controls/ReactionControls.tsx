@@ -59,7 +59,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [completed, setCompleted] = useState(false);
+  const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
@@ -147,6 +147,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       try {
         const reqPost = await requestHelp(post.id);
         appendToBoard?.('quest-board', reqPost);
+        appendToBoard?.('timeline-board', reqPost);
         setHelpRequested(true);
       } catch (err) {
         console.error('[ReactionControls] Failed to request help:', err);
@@ -158,6 +159,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       } catch (err) {
         console.error('[ReactionControls] Failed to cancel help request:', err);
       }
+    }
+  };
+
+  const handleMarkComplete = async () => {
+    if (!user || user.id !== post.authorId || completed) return;
+    try {
+      await archivePost(post.id);
+      setCompleted(true);
+    } catch (err) {
+      console.error('[ReactionControls] Failed to mark request complete:', err);
     }
   };
 
@@ -197,6 +208,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             disabled={loading || !user}
           >
             <FaHandsHelping /> {helpRequested ? 'Cancel Help' : 'Request Help'}
+          </button>
+        )}
+
+        {post.type === 'request' && user?.id === post.authorId && (
+          <button
+            className={clsx('flex items-center gap-1', completed && 'text-green-600')}
+            onClick={handleMarkComplete}
+            disabled={completed}
+          >
+            {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
           </button>
         )}
 

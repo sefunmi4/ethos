@@ -96,6 +96,26 @@ export const buildSummaryTags = (
     return tags;
   }
 
+  if (post.type === 'request') {
+    if (post.questId && title) {
+      tags.push({
+        type: 'request',
+        label: `Request: ${title}`,
+        link: ROUTES.QUEST(post.questId),
+      });
+      if (post.nodeId) {
+        tags.push({ type: 'task', label: `Task: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+      }
+      if (post.status && post.status !== 'To Do') {
+        tags.push({ type: 'status', label: post.status });
+      }
+    } else {
+      const user = post.author?.username || post.authorId;
+      tags.push({ type: 'request', label: `Request: @${user}` });
+    }
+    return tags;
+  }
+
   if (!multipleSources && title) {
     tags.push({ type: 'quest', label: `Quest: ${title}`, link: (questId || post.questId) ? ROUTES.QUEST(questId || post.questId!) : undefined });
   }
