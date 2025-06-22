@@ -11,6 +11,9 @@ import {
   FaRetweet,
   FaExpand,
   FaCompress,
+  FaStepForward,
+  FaCheckSquare,
+  FaRegCheckSquare,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -21,6 +24,7 @@ import {
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
+  archivePost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -53,10 +57,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const navigate = useNavigate();
-  const { selectedBoard } = useBoardContext() || {};
+  const { selectedBoard, removeItemFromBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
   const isQuestRequest = selectedBoard === 'quest-board' && post.type === 'request';
+  const isTimelineRequest = isTimelineBoard && post.type === 'request';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +139,18 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
+  const handleComplete = async () => {
+    if (!isTimelineRequest || completed) return;
+    try {
+      await archivePost(post.id);
+      setCompleted(true);
+      if (selectedBoard) removeItemFromBoard?.(selectedBoard, post.id);
+      onUpdate?.({ id: post.id, removed: true });
+    } catch (err) {
+      console.error('[ReactionControls] Failed to mark complete:', err);
+    }
+  };
+
   return (
     <>
       <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400">
@@ -152,7 +170,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
         </button>
 
-        {!isQuestRequest && (
+        {!isQuestRequest && !isTimelineRequest && (
           <button
             className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
             onClick={handleRepost}
@@ -160,6 +178,21 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           >
             <FaRetweet /> {counts.repost || ''}
           </button>
+        )}
+
+        {isTimelineRequest && (
+          <button
+            className="flex items-center gap-1"
+            onClick={() => navigate(ROUTES.POST(post.id))}
+          >
+            <FaStepForward /> Next
+          </button>
+        )}
+
+        {isTimelineRequest && (
+          <label className="flex items-center gap-1 cursor-pointer" onClick={handleComplete}>
+            {completed ? <FaCheckSquare /> : <FaRegCheckSquare />}
+          </label>
         )}
 
         <button
