@@ -153,9 +153,12 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   // that the hook order remains stable when the layout changes at runtime.
   const pagedContainerRef = useRef<HTMLDivElement>(null);
   const pages = useMemo(() => {
-    const count = Math.ceil(items.length / 6);
+    const perPage = 6; // show 6 posts at a time
+    const step = 3; // move one column (3 posts) at a time
+    if (items.length <= perPage) return [items];
+    const count = Math.ceil((items.length - perPage) / step) + 1;
     return Array.from({ length: count }, (_, i) =>
-      items.slice(i * 6, i * 6 + 6)
+      items.slice(i * step, i * step + perPage)
     );
   }, [items]);
 
