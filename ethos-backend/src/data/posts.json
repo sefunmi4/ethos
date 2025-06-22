@@ -43,10 +43,10 @@
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
     "taskType": "abstract",
     "status": "To Do",
-    "helpRequest": false,
+    "helpRequest": true,
     "nodeId": "Q::T00",
     "questNodeTitle": "testing adding a task",
-    "needsHelp": false
+    "needsHelp": true
   },
   {
     "id": "09931dad-a5b5-4d99-9085-a7a593246173",
@@ -84,7 +84,9 @@
     "details": "",
     "visibility": "public",
     "timestamp": "2025-06-21T20:28:13.352Z",
-    "tags": [],
+    "tags": [
+      "archived"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
@@ -147,7 +149,9 @@
     "content": "testing adding a task",
     "visibility": "public",
     "timestamp": "2025-06-21T20:33:24.888Z",
-    "tags": [],
+    "tags": [
+      "archived"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
@@ -579,6 +583,28 @@
     "linkedItems": [
       {
         "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "3546e4e1-f223-4e41-bf5c-df1694b65246",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "testing adding a task",
+    "visibility": "public",
+    "timestamp": "2025-06-22T01:04:01.563Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e4b67780-2fe9-4105-b23a-334aa58ae76f",
         "itemType": "post",
         "linkType": "reference"
       }
