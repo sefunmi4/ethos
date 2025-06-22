@@ -56,6 +56,11 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     { value: 'file', label: 'File/Folder' },
   ];
 
+  const handleAddSubtask = () => {
+    // Placeholder handler for adding a subtask
+    console.log('Add subtask for', node.id);
+  };
+
   let panel: React.ReactNode = null;
   switch (activeTab) {
     case 'logs':
@@ -87,7 +92,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
             options={TASK_TYPE_OPTIONS as option[]}
           />
         )}
-        <div className="border-b border-secondary flex text-sm overflow-x-auto whitespace-nowrap">
+        <div className="border-b border-secondary flex items-center text-sm overflow-x-auto whitespace-nowrap">
           {tabs.map((t) => (
             <button
               key={t.value}
@@ -101,6 +106,12 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               {t.label}
             </button>
           ))}
+          <button
+            onClick={handleAddSubtask}
+            className="ml-auto px-2 text-accent underline whitespace-nowrap"
+          >
+            + Add Subtask
+          </button>
         </div>
         <div className="mt-2">{panel}</div>
       </div>
