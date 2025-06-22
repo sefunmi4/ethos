@@ -26,6 +26,16 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
       });
   }, [questId, linkedNodeId]);
 
+  const refresh = () => {
+    fetchPostsByQuestId(questId)
+      .then((posts) => {
+        setTasks(posts.filter((p) => p.type === 'task' && p.replyTo === linkedNodeId));
+      })
+      .catch((err) => {
+        console.error('[TaskKanbanBoard] failed to load tasks', err);
+      });
+  };
+
   return (
     <div className="space-y-2">
       {showForm && (
@@ -36,6 +46,7 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
           onSave={(p) => {
             setTasks((prev) => [...prev, p]);
             setShowForm(false);
+            refresh();
           }}
           onCancel={() => setShowForm(false)}
         />
