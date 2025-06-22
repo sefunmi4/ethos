@@ -17,6 +17,7 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
+import TaskDetailModal from '../quest/TaskDetailModal';
 import {
   updateReaction,
   addRepost,
@@ -285,11 +286,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </div>
       )}
 
-      {expanded && post.type === 'task' && (
-        <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-          {post.questId && <div>Quest ID: {post.questId}</div>}
-          {post.status && <div>Status: {post.status}</div>}
-        </div>
+      {expanded && post.type === 'task' && post.questId && (
+        <TaskDetailModal
+          task={post}
+          questId={post.questId}
+          user={user}
+          onClose={() => setExpanded(false)}
+        />
       )}
 
       {expanded && post.type === 'commit' && (
