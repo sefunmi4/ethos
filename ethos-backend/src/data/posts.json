@@ -190,9 +190,10 @@
     "questId": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
     "taskType": "file",
     "status": "To Do",
-    "helpRequest": false,
+    "helpRequest": true,
     "nodeId": "Q:battle_of_the_bands:T00",
-    "questNodeTitle": "testing out task"
+    "questNodeTitle": "testing out task",
+    "needsHelp": true
   },
   {
     "id": "42a87c7f-996a-4e02-b715-de4a8af73507",
@@ -217,5 +218,27 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T00:L00",
     "questNodeTitle": ""
+  },
+  {
+    "id": "cd76ae9d-f34a-4f38-b245-2aeff761931d",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "request",
+    "content": "testing out task",
+    "visibility": "public",
+    "timestamp": "2025-06-22T19:00:46.499Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "982d317e-7ac9-44f1-ac3d-d9e77a84f465",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]
