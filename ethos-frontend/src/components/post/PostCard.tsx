@@ -365,8 +365,6 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   if (headerOnly) {
-
-
     return (
       <div
         id={post.id}
@@ -379,20 +377,33 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex flex-wrap items-center gap-2">
-          {summaryTags.map((tag, idx) => (
-            <React.Fragment key={idx}>
-              <SummaryTag {...tag} />
-            </React.Fragment>
-          ))}
-          {post.type === 'review' && post.rating && renderStars(post.rating)}
-          {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
-            <StatusBadge status={post.status} />
-          )}
-            <span>{timestamp}</span>
+            {summaryTags.map((tag, idx) => (
+              <React.Fragment key={idx}>
+                <SummaryTag {...tag} />
+              </React.Fragment>
+            ))}
+            {post.type === 'review' && post.rating && renderStars(post.rating)}
+            {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
+              <StatusBadge status={post.status} />
+            )}
           </div>
+          <ActionMenu
+            id={post.id}
+            type="post"
+            canEdit={canEdit}
+            onEdit={() => setEditMode(true)}
+            onEditLinks={() => setShowLinkEditor(true)}
+            onDelete={() => onDelete?.(post.id)}
+            allowDelete={allowDelete}
+            content={post.content}
+            permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+          />
         </div>
         {titleText && (
-          <h3 className="font-semibold text-lg mt-1 cursor-pointer" onClick={() => navigate(ROUTES.POST(post.id))}>
+          <h3
+            className="font-semibold text-lg mt-1 cursor-pointer"
+            onClick={() => navigate(ROUTES.POST(post.id))}
+          >
             {titleText}
           </h3>
         )}
@@ -403,15 +414,19 @@ const PostCard: React.FC<PostCardProps> = ({
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
         />
-        {post.type === 'request' && !isQuestBoardRequest && !isTimelineRequest && ctxBoardId !== 'my-posts' && (
-          <button
-            className="text-accent underline text-xs ml-2"
-            onClick={handleAccept}
-            disabled={accepting}
-          >
-            {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
-          </button>
-        )}
+        {post.type === 'request' &&
+          !isQuestBoardRequest &&
+          !isTimelineRequest &&
+          ctxBoardId !== 'my-posts' && (
+            <button
+              className="text-accent underline text-xs ml-2"
+              onClick={handleAccept}
+              disabled={accepting}
+            >
+              {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
+            </button>
+          )}
+        <div className="text-xs text-secondary text-right">{timestamp}</div>
       </div>
     );
   }
