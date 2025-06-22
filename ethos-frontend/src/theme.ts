@@ -14,6 +14,7 @@ export const colors: Record<string, Palette> = {
   background: { light: '#f9fafb', dark: '#1f2937' },
   surface: { light: '#ffffff', dark: '#374151' },
   accentMuted: { light: '#f0f0f0', dark: '#323c4e' },
+  boardBg: { light: '#f3f4f6', dark: '#324a38' },
   infoBackground: { light: '#bfdbfe', dark: '#1e40af' },
 };
 
