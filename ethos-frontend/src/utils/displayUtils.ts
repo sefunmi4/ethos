@@ -134,6 +134,16 @@ export const buildSummaryTags = (
     });
   }
 
+  // Include author log reference on task and issue posts for quick context
+  if (['task', 'issue'].includes(post.type)) {
+    const user = post.author?.username || post.authorId;
+    tags.push({
+      type: 'log',
+      label: `Log: @${user}`,
+      link: ROUTES.PUBLIC_PROFILE(post.authorId)
+    });
+  }
+
   if (post.status && ['task', 'issue'].includes(post.type)) {
     tags.push({ type: 'status', label: post.status });
   }
