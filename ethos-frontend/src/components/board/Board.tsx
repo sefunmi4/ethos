@@ -116,6 +116,7 @@ const Board: React.FC<BoardProps> = ({
       setItems((boardProp.enrichedItems || []) as Post[]);
       setLoading(false);
     } else {
+      if (boardId) setSelectedBoard(boardId); // set early to avoid flicker
       loadBoard();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
