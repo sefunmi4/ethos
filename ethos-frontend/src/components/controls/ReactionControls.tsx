@@ -49,6 +49,8 @@ interface ReactionControlsProps {
   isTimeline?: boolean;
   /** Board ID used for context-specific actions */
   boardId?: string;
+  /** Notify parent when reply panel toggles */
+  onReplyToggle?: (open: boolean) => void;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -58,6 +60,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   replyOverride,
   isTimeline,
   boardId,
+  onReplyToggle,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -268,7 +271,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             } else if (isTimelineBoard) {
               navigate(ROUTES.POST(post.id) + '?reply=1');
             } else {
-              setShowReplyPanel(prev => !prev);
+              setShowReplyPanel(prev => {
+                const next = !prev;
+                onReplyToggle?.(next);
+                return next;
+              });
             }
           }}
         >
@@ -296,7 +303,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
       </div>
 
-      {showReplyPanel && !replyOverride && (
+      {showReplyPanel && !replyOverride && !onReplyToggle && (
         <div className="mt-3">
           <CreatePost
             replyTo={post}

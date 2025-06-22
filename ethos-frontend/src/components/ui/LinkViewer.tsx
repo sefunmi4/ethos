@@ -14,10 +14,16 @@ interface LinkViewerProps {
   post?: Post;
   /** Fetch and show reply chain */
   showReplyChain?: boolean;
+  /** Controlled open state */
+  open?: boolean;
+  /** Toggle handler when using controlled open state */
+  onToggle?: () => void;
 }
 
-const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) => {
-  const [open, setOpen] = useState(false);
+const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, open: openProp, onToggle }) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : internalOpen;
   const [resolved, setResolved] = useState<LinkedItem[]>(items);
   const [chain, setChain] = useState<Post[]>([]);
 
@@ -104,7 +110,13 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
   return (
     <div className="text-xs text-primary dark:text-primary">
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          if (controlled) {
+            onToggle?.();
+          } else {
+            setInternalOpen(o => !o);
+          }
+        }}
         className="flex items-center gap-1 text-blue-600 underline"
       >
         {open ? <FaCompress /> : <FaExpand />} {open ? 'Collapse Details' : 'Expand Details'}
