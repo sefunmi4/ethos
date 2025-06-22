@@ -55,6 +55,8 @@ interface ReactionControlsProps {
   boardId?: string;
   /** Notify parent when reply panel toggles */
   onReplyToggle?: (open: boolean) => void;
+  /** Optional timestamp to display */
+  timestamp?: string;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -65,6 +67,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   isTimeline,
   boardId,
   onReplyToggle,
+  timestamp,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -333,6 +336,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
             {expanded ? <FaCompress /> : <FaExpand />} {expanded ? 'Collapse View' : 'Expand View'}
           </button>
+        )}
+
+        {timestamp && (
+          <span className="ml-auto text-xs text-secondary">{timestamp}</span>
         )}
 
       </div>
