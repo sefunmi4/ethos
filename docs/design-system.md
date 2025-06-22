@@ -72,3 +72,20 @@ Posts and quests are annotated with small tags that reuse the same color palette
 | free_speech | `bg-gray-100 text-gray-700` / `dark:bg-gray-700 dark:text-gray-200` |
 
 All tags share the `TAG_BASE` style which sets padding, font size and border radius.
+
+### Tag summary format
+
+Summary tags combine the quest title with the post's node ID and author handle.
+For task-oriented posts the username appears alongside the node ID:
+
+```
+[Quest: Demo Quest] [Task - Q:demo:T01:@alice]
+[Quest: Demo Quest] [Issue - Q:demo:T01:I00:@bob]
+[Quest: Demo Quest] [Commit - Q:demo:T01:C00:@carol]
+```
+Logs and other post types show the author with a `Log` label. These concise tags
+help identify who created each node at a glance.
+
+If a log, issue or commit references more than one task the node ID is omitted
+to avoid confusion. Likewise, when a post spans multiple quests the `Quest`
+prefix is not shown.
