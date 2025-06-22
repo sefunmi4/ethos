@@ -34,8 +34,8 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
   const tags = user?.tags || quest?.collaborators || [];
 
   const creatorDisplay =
-    quest && (creatorName || quest.authorId)
-      ? `Created by @${creatorName || quest.authorId}`
+    quest && (creatorName || quest.author?.username || quest.authorId)
+      ? `Created by @${creatorName || quest.author?.username || quest.authorId}`
       : null;
 
   return (
