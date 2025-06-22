@@ -25,6 +25,7 @@ import {
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
+  updatePost,
   requestHelp,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
@@ -141,13 +142,22 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   };
 
   const handleRequestHelp = async () => {
-    if (!user?.id || helpRequested) return;
-    try {
-      const reqPost = await requestHelp(post.id);
-      appendToBoard?.('quest-board', reqPost);
-      setHelpRequested(true);
-    } catch (err) {
-      console.error('[ReactionControls] Failed to request help:', err);
+    if (!user?.id) return;
+    if (!helpRequested) {
+      try {
+        const reqPost = await requestHelp(post.id);
+        appendToBoard?.('quest-board', reqPost);
+        setHelpRequested(true);
+      } catch (err) {
+        console.error('[ReactionControls] Failed to request help:', err);
+      }
+    } else {
+      try {
+        await updatePost(post.id, { helpRequest: false, needsHelp: false });
+        setHelpRequested(false);
+      } catch (err) {
+        console.error('[ReactionControls] Failed to cancel help request:', err);
+      }
     }
   };
 
@@ -184,9 +194,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button
             className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
             onClick={handleRequestHelp}
-            disabled={loading || helpRequested || !user}
+            disabled={loading || !user}
           >
-            <FaHandsHelping /> {helpRequested ? 'Requested' : 'Request Help'}
+            <FaHandsHelping /> {helpRequested ? 'Cancel Help' : 'Request Help'}
           </button>
         )}
 
