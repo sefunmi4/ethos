@@ -40,7 +40,7 @@ export interface Quest {
 export interface TaskEdge {
   from: string; // Node ID
   to: string;   // Node ID
-  type?: 'sub_problem' | 'solution_branch' | 'folder_split'; // Describes edge purpose
+  type?: 'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'; // Describes edge purpose
   label?: string;
 }
 

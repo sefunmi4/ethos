@@ -84,7 +84,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [linkDraft, setLinkDraft] = useState(post.linkedItems || []);
   const [initialReplies, setInitialReplies] = useState<number>(0);
   const [parentId, setParentId] = useState('');
-  const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split'>('sub_problem');
+  const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'>('sub_problem');
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
   const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
@@ -580,13 +580,14 @@ const PostCard: React.FC<PostCardProps> = ({
                     value={edgeType}
                     onChange={e =>
                       setEdgeType(
-                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split'
+                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'
                       )
                     }
                   >
                     <option value="sub_problem">sub_problem</option>
                     <option value="solution_branch">solution_branch</option>
                     <option value="folder_split">folder_split</option>
+                    <option value="abstract">abstract</option>
                   </select>
                   <label className="text-xs text-secondary">Edge Label</label>
                   <input
