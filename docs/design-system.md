@@ -83,6 +83,9 @@ For task-oriented posts the username appears alongside the node ID:
 [Quest: Demo Quest] [Issue - Q:demo:T01:I00:@bob]
 [Quest: Demo Quest] [Commit - Q:demo:T01:C00:@carol]
 ```
-
 Logs and other post types show the author with a `Log` label. These concise tags
 help identify who created each node at a glance.
+
+If a log, issue or commit references more than one task the node ID is omitted
+to avoid confusion. Likewise, when a post spans multiple quests the `Quest`
+prefix is not shown.
