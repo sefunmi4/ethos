@@ -186,7 +186,7 @@ export const buildSummaryTags = (
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
     const label = title
-      ? getQuestLinkLabel(post, title, false)
+      ? `Task - ${getQuestLinkLabel(post, title, false)}`
       : `Task - ${post.nodeId}`;
     tags.push({
       type: 'task',
@@ -211,7 +211,7 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     const label = post.nodeId && !multipleSources
       ? title
-        ? getQuestLinkLabel(post, title, false)
+        ? `Log - ${getQuestLinkLabel(post, title, false)}`
         : `Log - ${post.nodeId}`
       : 'Log';
     tags.push({
@@ -294,7 +294,7 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
     if (title) {
-      parts.push(`(${getQuestLinkLabel(post, title, false)} @${user})`);
+      parts.push(`(Task - ${getQuestLinkLabel(post, title, false)} @${user})`);
     } else {
       parts.push(`(Task - ${post.nodeId} @${user})`);
     }
@@ -309,7 +309,7 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
       if (title) {
-        parts.push(`(${getQuestLinkLabel(post, title, false)} @${user})`);
+        parts.push(`(Log - ${getQuestLinkLabel(post, title, false)} @${user})`);
       } else {
         parts.push(`(Log - ${post.nodeId} @${user})`);
       }
