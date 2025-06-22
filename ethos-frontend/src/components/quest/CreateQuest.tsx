@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addQuest } from '../../api/quest';
 import { updateBoard } from '../../api/board';
+import { fetchPostById } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
 import { Button, Input, TextArea, Label, FormSection } from '../ui';
@@ -84,6 +85,32 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
         updateBoard('my-quests', { items: myItems }).catch((err) =>
           console.error('[CreateQuest] Failed to update my-quests board:', err)
         );
+      }
+
+      // 📝 Update post boards with the quest's head post
+      try {
+        const headPost = await fetchPostById(newQuest.headPostId);
+
+        if (boards?.['my-posts']) {
+          appendToBoard('my-posts', headPost as unknown as BoardItem);
+          const postItems = [headPost.id, ...(boards['my-posts'].items || [])];
+          updateBoard('my-posts', { items: postItems }).catch((err) =>
+            console.error('[CreateQuest] Failed to update my-posts board:', err)
+          );
+        }
+
+        if (boards?.['timeline-board']) {
+          appendToBoard('timeline-board', headPost as unknown as BoardItem);
+          const timelineItems = [
+            headPost.id,
+            ...(boards['timeline-board'].items || []),
+          ];
+          updateBoard('timeline-board', { items: timelineItems }).catch((err) =>
+            console.error('[CreateQuest] Failed to update timeline board:', err)
+          );
+        }
+      } catch (err) {
+        console.error('[CreateQuest] Failed to fetch head post:', err);
       }
 
       onSave?.(newQuest);
