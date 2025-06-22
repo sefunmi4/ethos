@@ -319,6 +319,8 @@ describe('post routes', () => {
     expect(store).toHaveLength(2);
     expect(store[1].type).toBe('request');
     expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
+    expect(store[0].helpRequest).toBe(true);
+    expect(store[0].needsHelp).toBe(true);
   });
 
   it('POST /:id/request-help creates request post', async () => {
@@ -345,6 +347,8 @@ describe('post routes', () => {
     expect(store).toHaveLength(2);
     expect(store[1].type).toBe('request');
     expect((store[1].linkedItems as any[])[0].itemId).toBe('p2');
+    expect(store[0].helpRequest).toBe(true);
+    expect(store[0].needsHelp).toBe(true);
   });
 
   it('rejects non-request posts on quest board', async () => {

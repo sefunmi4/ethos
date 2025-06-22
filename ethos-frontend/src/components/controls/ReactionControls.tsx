@@ -9,6 +9,7 @@ import {
   FaRegHeart,
   FaReply,
   FaRetweet,
+  FaHandsHelping,
   FaExpand,
   FaCompress,
 } from 'react-icons/fa';
@@ -21,6 +22,7 @@ import {
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
+  requestHelp,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -54,9 +56,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
-  const { selectedBoard } = useBoardContext() || {};
+  const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
   const isQuestRequest = selectedBoard === 'quest-board' && post.type === 'request';
+  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +136,17 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
+  const handleRequestHelp = async () => {
+    if (!user?.id || helpRequested) return;
+    try {
+      const reqPost = await requestHelp(post.id);
+      appendToBoard?.('quest-board', reqPost);
+      setHelpRequested(true);
+    } catch (err) {
+      console.error('[ReactionControls] Failed to request help:', err);
+    }
+  };
+
   return (
     <>
       <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400">
@@ -152,13 +166,23 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
         </button>
 
-        {!isQuestRequest && (
+        {!isQuestRequest && post.type === 'free_speech' && (
           <button
             className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
             onClick={handleRepost}
             disabled={loading || repostLoading || !user}
           >
             <FaRetweet /> {counts.repost || ''}
+          </button>
+        )}
+
+        {!isQuestRequest && ['quest', 'task', 'issue'].includes(post.type) && (
+          <button
+            className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
+            onClick={handleRequestHelp}
+            disabled={loading || helpRequested || !user}
+          >
+            <FaHandsHelping /> {helpRequested ? 'Requested' : 'Request Help'}
           </button>
         )}
 

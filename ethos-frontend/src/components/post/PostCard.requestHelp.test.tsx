@@ -20,12 +20,18 @@ jest.mock('../../api/post', () => ({
       linkedItems: [],
     })
   ),
+  updateReaction: jest.fn(() => Promise.resolve()),
+  addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
+  removeRepost: jest.fn(() => Promise.resolve()),
+  fetchReactions: jest.fn(() => Promise.resolve([])),
+  fetchRepostCount: jest.fn(() => Promise.resolve({ count: 0 })),
+  fetchUserRepost: jest.fn(() => Promise.resolve(null)),
 }));
 
 const appendMock = jest.fn();
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
-  useBoardContext: () => ({ appendToBoard: appendMock }),
+  useBoardContext: () => ({ appendToBoard: appendMock, selectedBoard: null }),
 }));
 
 jest.mock('react-router-dom', () => {
@@ -58,7 +64,9 @@ describe('PostCard request help', () => {
       </BrowserRouter>
     );
 
-    fireEvent.click(screen.getByText(/Request Help/i));
+    const btn = await screen.findByText(/Request Help/i);
+    await waitFor(() => expect(btn).not.toBeDisabled());
+    fireEvent.click(btn);
 
     await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1'));
     expect(appendMock).toHaveBeenCalled();
