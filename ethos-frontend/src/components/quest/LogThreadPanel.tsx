@@ -5,6 +5,7 @@ import { Spinner } from '../ui';
 import { fetchPostsByQuestId } from '../../api/post';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import CreatePost from '../post/CreatePost';
 
 interface LogThreadPanelProps {
   questId: string;
@@ -17,10 +18,10 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
   const [entries, setEntries] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [showForm, setShowForm] = useState(false);
 
   const handleAddLog = () => {
-    // Placeholder handler for adding a log entry
-    console.log('Add log for node', node?.id);
+    setShowForm(true);
   };
 
   useEffect(() => {
@@ -50,6 +51,18 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
   if (entries.length === 0)
     return (
       <div className="space-y-2">
+        {showForm && (
+          <CreatePost
+            initialType="log"
+            questId={questId}
+            replyTo={node}
+            onSave={(p) => {
+              setEntries((prev) => [...prev, p]);
+              setShowForm(false);
+            }}
+            onCancel={() => setShowForm(false)}
+          />
+        )}
         <div className="text-right">
           <button onClick={handleAddLog} className="text-xs text-accent underline">
             + Add Log
@@ -61,6 +74,18 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
 
   return (
     <div className="space-y-2">
+      {showForm && (
+        <CreatePost
+          initialType="log"
+          questId={questId}
+          replyTo={node}
+          onSave={(p) => {
+            setEntries((prev) => [...prev, p]);
+            setShowForm(false);
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
       <div className="text-right">
         <button onClick={handleAddLog} className="text-xs text-accent underline">
           + Add Log
