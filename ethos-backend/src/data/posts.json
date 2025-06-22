@@ -56,7 +56,19 @@
     "visibility": "public",
     "timestamp": "2025-06-21T20:22:08.735Z",
     "tags": [],
-    "collaborators": [],
+    "collaborators": [
+      {
+        "roles": [
+          "Tester"
+        ]
+      },
+      {
+        "roles": [
+          "Strategist",
+          "Analyst"
+        ]
+      }
+    ],
     "replyTo": "79455e9d-596b-47e5-9fff-a526f9695955",
     "repostedFrom": null,
     "linkedItems": [
@@ -66,7 +78,7 @@
       }
     ],
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
-    "taskType": "abstract",
+    "taskType": "file",
     "status": "To Do",
     "helpRequest": false,
     "nodeId": "Q::T01",
