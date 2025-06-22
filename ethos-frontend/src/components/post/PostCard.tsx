@@ -103,6 +103,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const isQuestBoardRequest =
     post.type === 'request' && selectedBoard === 'quest-board';
+  const isTimelineRequest = post.type === 'request' && selectedBoard === 'timeline-board';
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -412,7 +413,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </h3>
         )}
         <ReactionControls post={post} user={user} onUpdate={onUpdate} replyOverride={replyOverride} />
-        {post.type === 'request' && !isQuestBoardRequest && (
+        {post.type === 'request' && !isQuestBoardRequest && !isTimelineRequest && (
           <button
             className="text-accent underline text-xs ml-2"
             onClick={handleAccept}
