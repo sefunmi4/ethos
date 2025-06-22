@@ -159,9 +159,7 @@ const PostCard: React.FC<PostCardProps> = ({
     const user = post.author?.username || post.authorId;
     summaryTags = [{ type: 'request', label: `Request: @${user}` }];
   }
-  const showAuthor =
-    !isQuestBoardRequest &&
-    !summaryTags.some(t => t.type === 'log' || t.type === 'free_speech');
+  const showAuthor = !isQuestBoardRequest;
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -365,7 +363,7 @@ const PostCard: React.FC<PostCardProps> = ({
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-            {post.type !== 'log' && !isQuestBoardRequest && (
+            {!isQuestBoardRequest && (
               <PostTypeBadge
                 type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
               />
@@ -431,7 +429,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
-          {post.type !== 'log' && !isQuestBoardRequest && (
+          {!isQuestBoardRequest && (
             <PostTypeBadge
               type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
             />
