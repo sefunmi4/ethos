@@ -23,6 +23,7 @@ module.exports = {
           background: 'var(--color-background)',
           surface: 'var(--color-surface)',
           'accent-muted': 'var(--color-accent-muted)',
+          'board-bg': 'var(--color-board-bg)',
           'info-background': 'var(--info-background)',
         },
         borderRadius: {

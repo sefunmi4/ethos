@@ -1,5 +1,20 @@
-import type { Post } from '../types/postTypes';
+import type { Post, PostType } from '../types/postTypes';
 import { ROUTES } from '../constants/routes';
+
+export const POST_TYPE_LABELS: Record<PostType, string> = {
+  free_speech: 'Free Speech',
+  request: 'Request',
+  log: 'Log',
+  quest_log: 'Log',
+  task: 'Task',
+  quest: 'Quest',
+  meta_system: 'System',
+  meta_announcement: 'Announcement',
+  commit: 'Commit',
+  issue: 'Issue',
+  review: 'Review',
+  solved: 'Solved',
+};
 
 /**
  * Builds a unique quest node ID display label for timeline/thread posts.
@@ -66,7 +81,11 @@ export interface SummaryTagData {
     | 'category'
     | 'status'
     | 'free_speech'
-    | 'type';
+    | 'type'
+    | 'commit'
+    | 'meta_system'
+    | 'meta_announcement'
+    | 'solved';
   label: string;
   link?: string;
 }
@@ -128,7 +147,7 @@ export const buildSummaryTags = (
     tags.push({ type: 'task', label: `Task: ${post.nodeId}`, link: ROUTES.POST(post.id) });
   } else if (post.type === 'issue' && post.nodeId) {
     tags.push({ type: 'issue', label: `Issue: ${post.nodeId}`, link: ROUTES.POST(post.id) });
-  } else if (post.type === 'log') {
+  } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     // Link log tags to the author's public profile for quick context
     tags.push({
@@ -136,6 +155,14 @@ export const buildSummaryTags = (
       label: `Log: @${user}`,
       link: ROUTES.PUBLIC_PROFILE(post.authorId)
     });
+  } else if (post.type === 'commit') {
+    tags.push({ type: 'commit', label: 'Commit' });
+  } else if (post.type === 'meta_system') {
+    tags.push({ type: 'meta_system', label: 'System' });
+  } else if (post.type === 'meta_announcement') {
+    tags.push({ type: 'meta_announcement', label: 'Announcement' });
+  } else if (post.type === 'solved') {
+    tags.push({ type: 'solved', label: 'Solved' });
   }
 
   // Include author log reference on task and issue posts for quick context
@@ -188,9 +215,17 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
     parts.push(`(Task: ${post.nodeId})`);
   } else if (post.type === 'issue' && post.nodeId) {
     parts.push(`(Issue: ${post.nodeId})`);
-  } else if (post.type === 'log') {
+  } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     parts.push(`(Log: @${user})`);
+  } else if (post.type === 'commit') {
+    parts.push('(Commit)');
+  } else if (post.type === 'meta_system') {
+    parts.push('(System)');
+  } else if (post.type === 'meta_announcement') {
+    parts.push('(Announcement)');
+  } else if (post.type === 'solved') {
+    parts.push('(Solved)');
   } else if (post.type) {
     parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
   }

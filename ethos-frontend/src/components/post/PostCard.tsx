@@ -12,7 +12,7 @@ import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import CreatePost from './CreatePost';
-import { PostTypeBadge, StatusBadge, Spinner, Select } from '../ui';
+import { StatusBadge, Spinner, Select, SummaryTag } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
@@ -23,8 +23,7 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
-import { buildSummaryTags } from '../../utils/displayUtils';
-import SummaryTag from '../ui/SummaryTag';
+import { buildSummaryTags, POST_TYPE_LABELS } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
 
 const PREVIEW_LIMIT = 240;
@@ -364,8 +363,9 @@ const PostCard: React.FC<PostCardProps> = ({
               <SummaryTag key={idx} {...tag} />
             ))}
             {!isQuestBoardRequest && (
-              <PostTypeBadge
-                type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
+              <SummaryTag
+                type={['task', 'issue'].includes(post.type) ? 'log' : (post.type as any)}
+                label={['task', 'issue'].includes(post.type) ? 'Log' : POST_TYPE_LABELS[post.type as PostType]}
               />
             )}
             {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
@@ -430,8 +430,9 @@ const PostCard: React.FC<PostCardProps> = ({
             <SummaryTag key={idx} {...tag} />
           ))}
           {!isQuestBoardRequest && (
-            <PostTypeBadge
-              type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
+            <SummaryTag
+              type={['task', 'issue'].includes(post.type) ? 'log' : (post.type as any)}
+              label={['task', 'issue'].includes(post.type) ? 'Log' : POST_TYPE_LABELS[post.type as PostType]}
             />
           )}
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (

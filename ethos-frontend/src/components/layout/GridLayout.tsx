@@ -154,7 +154,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   const pagedContainerRef = useRef<HTMLDivElement>(null);
   const pages = useMemo(() => {
     const perPage = 6; // show 6 posts at a time
-    const step = 3; // move one column (3 posts) at a time
+    const step = 1; // move one column at a time
     if (items.length <= perPage) return [items];
     const count = Math.ceil((items.length - perPage) / step) + 1;
     return Array.from({ length: count }, (_, i) =>

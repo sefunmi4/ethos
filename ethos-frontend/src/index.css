@@ -24,6 +24,7 @@
   --color-background: #f9fafb;
   --color-surface: #ffffff;
   --color-accent-muted: #e0e0e0;
+  --color-board-bg: #f3f4f6;
   --info-background: #bfdbfe;
   --bg-soft: var(--color-soft);
   --bg-soft-dark: #1f2937;
@@ -49,6 +50,7 @@
   --color-background: #1f2937;
   --color-surface: #374151;
   --color-accent-muted: #4b5563;
+  --color-board-bg: #324a38;
   --info-background: #1e40af;
   --bg-soft: var(--color-soft-dark);
   --bg-soft-dark: var(--color-soft-dark);

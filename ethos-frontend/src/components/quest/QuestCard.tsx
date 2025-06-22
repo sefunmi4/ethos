@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, PostTypeBadge } from '../ui';
+import { Button, SummaryTag } from '../ui';
+import { POST_TYPE_LABELS } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
@@ -11,7 +12,6 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
-import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
@@ -174,7 +174,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {questData.title}
         </h2>
         <div className="flex items-center gap-2 text-sm text-secondary">
-          <PostTypeBadge type="quest" />
+          <SummaryTag type="quest" label={POST_TYPE_LABELS.quest} />
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.gitRepo?.repoUrl && (
             <a
@@ -286,8 +286,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
         )}
         <hr className="border-secondary" />
         <div className="flex justify-between items-center text-sm">
-          <span className="font-semibold">Folder or Map Layout</span>
           <div className="flex gap-1">
+            <span className="font-semibold">View: </span>
             <button
               className={`px-2 py-1 rounded text-xs border ${
                 mapMode === 'folder'
@@ -555,24 +555,21 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </div>
           </div>
         )}
-        {questData.linkedPosts && questData.linkedPosts.length > 0 && (
-          <LinkViewer items={questData.linkedPosts} />
-        )}
       </div>
         {expanded && (
           <div className="flex flex-col md:flex-row gap-4 max-h-[420px] overflow-y-auto">
-            <div className="flex-1 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 overflow-auto max-h-[420px]">
-              {renderRightPanel()}
-            </div>
-            <div
-              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
-              onMouseDown={handleDividerMouseDown}
-            />
             <div
               className="overflow-auto md:pl-4 max-h-[420px]"
               style={{ width: mapWidth }}
             >
               {renderMap()}
+            </div>
+            <div
+              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+              onMouseDown={handleDividerMouseDown}
+            />
+            <div className="flex-1 md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 overflow-auto max-h-[420px]">
+              {renderRightPanel()}
             </div>
           </div>
         )}
