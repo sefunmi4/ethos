@@ -9,7 +9,13 @@
     "flagCount": 0,
     "status": "active",
     "headPostId": "79455e9d-596b-47e5-9fff-a526f9695955",
-    "linkedPosts": [],
+    "linkedPosts": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "title": ""
+      }
+    ],
     "collaborators": [
       {
         "userId": "u_b7f8a113-069f-477d-b704-ae575288246b"

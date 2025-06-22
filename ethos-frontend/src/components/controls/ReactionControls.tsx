@@ -9,6 +9,7 @@ import {
   FaRegHeart,
   FaReply,
   FaRetweet,
+  FaHandsHelping,
   FaExpand,
   FaCompress,
   FaStepForward,
@@ -24,7 +25,7 @@ import {
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
-  archivePost,
+  requestHelp,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -59,10 +60,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [completed, setCompleted] = useState(false);
   const navigate = useNavigate();
-  const { selectedBoard, removeItemFromBoard } = useBoardContext() || {};
+  const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const isTimelineBoard = isTimeline ?? selectedBoard === 'timeline-board';
   const isQuestRequest = selectedBoard === 'quest-board' && post.type === 'request';
-  const isTimelineRequest = isTimelineBoard && post.type === 'request';
+  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,15 +140,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
-  const handleComplete = async () => {
-    if (!isTimelineRequest || completed) return;
+  const handleRequestHelp = async () => {
+    if (!user?.id || helpRequested) return;
     try {
-      await archivePost(post.id);
-      setCompleted(true);
-      if (selectedBoard) removeItemFromBoard?.(selectedBoard, post.id);
-      onUpdate?.({ id: post.id, removed: true });
+      const reqPost = await requestHelp(post.id);
+      appendToBoard?.('quest-board', reqPost);
+      setHelpRequested(true);
     } catch (err) {
-      console.error('[ReactionControls] Failed to mark complete:', err);
+      console.error('[ReactionControls] Failed to request help:', err);
     }
   };
 
@@ -170,7 +170,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
         </button>
 
-        {!isQuestRequest && !isTimelineRequest && (
+        {!isQuestRequest && post.type === 'free_speech' && (
           <button
             className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
             onClick={handleRepost}
@@ -180,19 +180,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {isTimelineRequest && (
+        {!isQuestRequest && ['quest', 'task', 'issue'].includes(post.type) && (
           <button
-            className="flex items-center gap-1"
-            onClick={() => navigate(ROUTES.POST(post.id))}
+            className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
+            onClick={handleRequestHelp}
+            disabled={loading || helpRequested || !user}
           >
-            <FaStepForward /> Next
+            <FaHandsHelping /> {helpRequested ? 'Requested' : 'Request Help'}
           </button>
-        )}
-
-        {isTimelineRequest && (
-          <label className="flex items-center gap-1 cursor-pointer" onClick={handleComplete}>
-            {completed ? <FaCheckSquare /> : <FaRegCheckSquare />}
-          </label>
         )}
 
         <button
