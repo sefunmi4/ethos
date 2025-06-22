@@ -60,7 +60,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "63dea7ee-b12d-4d46-9773-d341fd7d122d",
+      "6ef9fb15-4e80-424e-b823-29025eae670c",
+      "d13f445e-85e6-4b6e-83c2-ed9d5bcc8d68",
       "79455e9d-596b-47e5-9fff-a526f9695955",
       "591e0339-484e-4574-8648-545d5f2183bf",
       "043d4111-3ce6-43e8-bb05-b359a065d62a",
@@ -75,7 +76,8 @@
       "e810f1e9-81e1-43b6-8251-035d4a5af35c",
       "26dc2ecc-e09e-42d4-8e80-0e2a18d9a3a3",
       "1a856fa5-59b9-48be-b6a1-796c24bfc15d",
-      "21f09810-9a04-45f0-bd06-8f1e2c429a88"
+      "21f09810-9a04-45f0-bd06-8f1e2c429a88",
+      "63dea7ee-b12d-4d46-9773-d341fd7d122d"
     ],
     "featured": true,
     "defaultFor": null,
@@ -90,6 +92,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "6ef9fb15-4e80-424e-b823-29025eae670c",
+      "d13f445e-85e6-4b6e-83c2-ed9d5bcc8d68",
       "63dea7ee-b12d-4d46-9773-d341fd7d122d",
       "3546e4e1-f223-4e41-bf5c-df1694b65246",
       "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",

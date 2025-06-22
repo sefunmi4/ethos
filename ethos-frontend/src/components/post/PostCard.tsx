@@ -363,15 +363,14 @@ const PostCard: React.FC<PostCardProps> = ({
             {summaryTags.map((tag, idx) => (
               <React.Fragment key={idx}>
                 <SummaryTag {...tag} />
-                {idx === 1 && <span>{timestamp}</span>}
               </React.Fragment>
             ))}
             {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
               <StatusBadge status={post.status} />
             )}
+            <span>{timestamp}</span>
           </div>
         </div>
-        <div className="text-xs text-secondary">{timestamp}</div>
         {titleText && (
           <h3 className="font-semibold text-lg mt-1 cursor-pointer" onClick={() => navigate(ROUTES.POST(post.id))}>
             {titleText}
@@ -412,13 +411,12 @@ const PostCard: React.FC<PostCardProps> = ({
           {summaryTags.map((tag, idx) => (
             <React.Fragment key={idx}>
               <SummaryTag {...tag} />
-              {idx === 1 && <span>{timestamp}</span>}
             </React.Fragment>
           ))}
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
-          {summaryTags.length < 2 && <span>{timestamp}</span>}
+          <span>{timestamp}</span>
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&
@@ -444,8 +442,6 @@ const PostCard: React.FC<PostCardProps> = ({
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />
       </div>
-
-      <div className="text-xs text-secondary mt-1">{timestamp}</div>
 
       {post.linkedNodeId && post.author?.username && !isQuestBoardRequest && (
         <div className="text-xs text-secondary italic">
