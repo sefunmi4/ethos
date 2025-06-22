@@ -153,7 +153,7 @@ const PostCard: React.FC<PostCardProps> = ({
     : 'Unknown time';
 
   const content = post.renderedContent || post.content;
-  const titleText = post.title || (post.type === 'task' ? post.content : '');
+  const titleText = post.title || makeHeader(post.content);
   let summaryTags = buildSummaryTags(post, questTitle, questId);
   if (isQuestBoardRequest) {
     const user = post.author?.username || post.authorId;
@@ -260,7 +260,10 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   const renderLinkSummary = () => {
-    if (!showDetails && (!post.linkedItems || post.linkedItems.length === 0)) {
+    if (
+      post.type === 'request' ||
+      (!showDetails && (!post.linkedItems || post.linkedItems.length === 0))
+    ) {
       return null;
     }
     return (
