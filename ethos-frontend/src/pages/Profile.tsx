@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBoard } from '../hooks/useBoard';
 import { useSocketListener } from '../hooks/useSocket';
