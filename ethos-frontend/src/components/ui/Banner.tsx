@@ -53,25 +53,19 @@ const Banner: React.FC<BannerProps> = ({ user, quest, creatorName }) => {
       {/* Right: Tags or Roles */}
       <div className="mt-4 sm:mt-0 flex flex-wrap justify-start sm:justify-end gap-2">
         {tags.length > 0 ? (
-          tags.map((tag, index) => {
-            if (typeof tag === 'string') {
-              return (
-                <span key={index} className={TAG_BASE}>
-                  #{tag}
-                </span>
-              );
-            } else {
-              // It's a CollaberatorRoles object
-              return (
-                <span
-                  key={index}
-                  className="text-xs font-medium bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300"
-                >
-                  @{tag.username || tag.userId}
-                </span>
-              );
-            }
-          })
+          <>
+            {Array.from(new Set(tags.filter(t => typeof t === 'string') as string[])).map((tag) => (
+              <span key={tag} className={TAG_BASE}>#{tag}</span>
+            ))}
+            {(tags.filter(t => typeof t !== 'string') as any[]).map((tag, index) => (
+              <span
+                key={index}
+                className="text-xs font-medium bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300"
+              >
+                @{tag.username || tag.userId}
+              </span>
+            ))}
+          </>
         ) : (
           <span className="text-xs text-gray-400 dark:text-gray-500 italic">
             {user ? 'No tags' : 'No collaborators'}

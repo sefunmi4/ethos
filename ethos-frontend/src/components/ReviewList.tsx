@@ -73,7 +73,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
               </div>
               {review.tags && review.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {review.tags.map(tag => (
+                  {Array.from(new Set(review.tags)).map((tag) => (
                     <span key={tag} className={TAG_BASE}>#{tag}</span>
                   ))}
                 </div>

@@ -45,7 +45,9 @@ const colors: Record<SummaryTagType, string> = {
   quest: 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200',
   task: 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-200',
   issue: 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-200',
-  log: 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+  // Align log events with the same palette used for experience entries
+  // to maintain a consistent look across timelines and logs.
+  log: 'bg-teal-100 text-teal-800 dark:bg-teal-800 dark:text-teal-200',
   review: 'bg-teal-100 text-teal-800 dark:bg-teal-800 dark:text-teal-200',
   category: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200',
   status: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
