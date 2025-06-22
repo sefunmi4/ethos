@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
-import { Spinner } from '../ui';
+import { Spinner, Button } from '../ui';
+import CreateQuest from './CreateQuest';
 import { ROUTES } from '../../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
@@ -19,6 +20,7 @@ const ActiveQuestBoard: React.FC = () => {
   const [quests, setQuests] = useState<QuestWithLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,12 +103,23 @@ const ActiveQuestBoard: React.FC = () => {
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
-        {showSeeAll && (
-          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-            → See all
-          </Link>
-        )}
+        <Button
+          variant="contrast"
+          size="sm"
+          onClick={() => setShowCreateForm(true)}
+        >
+          + Add Quest
+        </Button>
       </div>
+      {showCreateForm && (
+        <div className="border rounded-lg p-4 shadow bg-surface">
+          <CreateQuest
+            onSave={() => setShowCreateForm(false)}
+            onCancel={() => setShowCreateForm(false)}
+            boardId="quest-board"
+          />
+        </div>
+      )}
       <div className="relative">
         <div
           ref={containerRef}
@@ -169,6 +182,13 @@ const ActiveQuestBoard: React.FC = () => {
           });
         })()}
       </div>
+      {showSeeAll && (
+        <div className="text-right">
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
