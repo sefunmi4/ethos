@@ -366,9 +366,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         >
           {activeNode && (
             <QuestNodeInspector
+              questId={questId}
               node={activeNode}
               user={user}
-              onClose={() => setActiveNodeId(null)}
             />
           )}
         </div>
