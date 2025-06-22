@@ -243,7 +243,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   return (
     <>
-      <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex gap-4 items-center text-sm text-gray-500 dark:text-gray-400 w-full">
         <button
           className={clsx('flex items-center gap-1', reactions.like && 'text-blue-600')}
           onClick={() => handleToggleReaction('like')}

@@ -42,17 +42,21 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
       )}
       onClick={() => navigate(ROUTES.POST(post.id))}
     >
-      <div className="flex justify-between items-center">
-        <div className="text-sm font-semibold">
-          {header}
-          <span className="text-xs text-secondary ml-2">{timestamp}</span>
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="text-sm font-semibold">{header}</div>
+          <div className="flex flex-wrap gap-1 mt-1">
+            {summaryTags.map((tag, idx) => (
+              <SummaryTag key={idx} {...tag} />
+            ))}
+            {post.type === 'review' && post.rating && renderStars(post.rating)}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-1 ml-2">
-          {summaryTags.map((tag, idx) => (
-            <SummaryTag key={idx} {...tag} />
-          ))}
-          {post.type === 'review' && post.rating && renderStars(post.rating)}
-        </div>
+        {timestamp && (
+          <span className="text-xs text-secondary whitespace-nowrap ml-2">
+            {timestamp}
+          </span>
+        )}
       </div>
     </div>
   );
