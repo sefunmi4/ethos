@@ -14,6 +14,8 @@ import {
   FaCompress,
   FaCheckSquare,
   FaRegCheckSquare,
+  FaUserPlus,
+  FaUserCheck,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -29,6 +31,8 @@ import {
   fetchUserRepost,
   updatePost,
   requestHelp,
+  acceptRequest,
+  unacceptRequest,
   archivePost,
   unarchivePost,
 } from '../../api/post';
@@ -71,12 +75,19 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [repostLoading, setRepostLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
+  const [joining, setJoining] = useState(false);
+  const [joined, setJoined] = useState(
+    !!user && post.tags?.includes(`pending:${user.id}`)
+  );
   const [questData, setQuestData] = useState<Quest | null>(null);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard } = useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
   const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
+  const isRequestCard =
+    post.type === 'request' &&
+    ['quest-board', 'timeline-board', 'my-posts'].includes(ctxBoardId || '');
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
 
   useEffect(() => {
@@ -199,6 +210,24 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
+  const handleJoin = async () => {
+    if (!user) return;
+    try {
+      setJoining(true);
+      if (joined) {
+        await unacceptRequest(post.id);
+        setJoined(false);
+      } else {
+        await acceptRequest(post.id);
+        setJoined(true);
+      }
+    } catch (err) {
+      console.error('[ReactionControls] Failed to join request:', err);
+    } finally {
+      setJoining(false);
+    }
+  };
+
   useEffect(() => {
     if (expanded && post.type === 'quest' && post.questId && !questData) {
       fetchQuestById(post.questId)
@@ -246,14 +275,24 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {post.type === 'request' && user?.id === post.authorId && (
-          <button
-            className={clsx('flex items-center gap-1', completed && 'text-green-600')}
-            onClick={handleMarkComplete}
-            disabled={!user}
-          >
-            {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
-          </button>
+        {isRequestCard && (
+          user?.id === post.authorId ? (
+            <button
+              className={clsx('flex items-center gap-1', completed && 'text-green-600')}
+              onClick={handleMarkComplete}
+              disabled={!user}
+            >
+              {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
+            </button>
+          ) : (
+            <button
+              className="flex items-center gap-1"
+              onClick={handleJoin}
+              disabled={joining || !user}
+            >
+              {joining ? '...' : joined ? (<><FaUserCheck /> Joined</>) : (<><FaUserPlus /> {post.questId ? 'Join' : 'Apply'}</>)}
+            </button>
+          )
         )}
 
         <button
@@ -289,11 +328,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             : 'Reply'}
         </button>
 
-        {isQuestRequest && (
-          <button className="flex items-center gap-1">
-            {post.questId ? 'Join' : 'Apply'}
-          </button>
-        )}
 
         {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') && (
           <button className="flex items-center gap-1" onClick={() => setExpanded(prev => !prev)}>
