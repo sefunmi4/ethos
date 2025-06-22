@@ -28,8 +28,18 @@ export const POST_TYPE_LABELS: Record<PostType, string> = {
  * - Nested reply: Q:name:Tx1:Lx1:Lx2
  * - Forked task: Q:name:Tx1:Tx2
  */
-export const getQuestLinkLabel = (post: Post): string => {
-  const quest = 'Q';
+export const getQuestLinkLabel = (
+  post: Post,
+  questName?: string,
+  includeQuestName = false
+): string => {
+  let quest = 'Q';
+  if (questName !== undefined) {
+    quest += ':';
+    if (includeQuestName && questName) {
+      quest += questName;
+    }
+  }
   const node = post.nodeId?.trim();
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
@@ -65,9 +75,13 @@ export const getQuestLinkLabel = (post: Post): string => {
  * Fallback-friendly display title generator.
  * Used when a post isn’t specifically quest-linked.
  */
-export const getDisplayTitle = (post: Post): string => {
+export const getDisplayTitle = (
+  post: Post,
+  questName?: string,
+  includeQuestName = false
+): string => {
   if (post.nodeId || post.questId) {
-    return getQuestLinkLabel(post);
+    return getQuestLinkLabel(post, questName, includeQuestName);
   }
 
   const content = post.content?.trim() || '';
@@ -171,9 +185,12 @@ export const buildSummaryTags = (
 
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
+    const label = title
+      ? getQuestLinkLabel(post, title, false)
+      : `Task - ${post.nodeId}`;
     tags.push({
       type: 'task',
-      label: `Task - ${post.nodeId}`,
+      label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
@@ -192,7 +209,11 @@ export const buildSummaryTags = (
     });
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources ? `Log - ${post.nodeId}` : 'Log';
+    const label = post.nodeId && !multipleSources
+      ? title
+        ? getQuestLinkLabel(post, title, false)
+        : `Log - ${post.nodeId}`
+      : 'Log';
     tags.push({
       type: 'log',
       label,
@@ -272,7 +293,11 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
 
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
-    parts.push(`(Task - ${post.nodeId} @${user})`);
+    if (title) {
+      parts.push(`(${getQuestLinkLabel(post, title, false)} @${user})`);
+    } else {
+      parts.push(`(Task - ${post.nodeId} @${user})`);
+    }
   } else if (post.type === 'issue') {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
@@ -283,7 +308,11 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Log - ${post.nodeId} @${user})`);
+      if (title) {
+        parts.push(`(${getQuestLinkLabel(post, title, false)} @${user})`);
+      } else {
+        parts.push(`(Log - ${post.nodeId} @${user})`);
+      }
     } else {
       parts.push(`(Log @${user})`);
     }
