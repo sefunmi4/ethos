@@ -45,14 +45,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onCancel,
   defaultExpanded = false,
 }) => {
-  const [mapMode, setMapMode] = useState<'folder' | 'graph'>('folder');
+  const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
   const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'file' | 'map' | 'files'>('status');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [rootNode, setRootNode] = useState<Post | null>(null);
-  const [leftWidth, setLeftWidth] = useState(240);
+  const [mapWidth, setMapWidth] = useState(240);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
@@ -111,10 +111,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
-    const startWidth = leftWidth;
+    const startWidth = mapWidth;
     const onMove = (ev: MouseEvent) => {
       const newWidth = Math.min(400, Math.max(240, startWidth + ev.clientX - startX));
-      setLeftWidth(newWidth);
+      setMapWidth(newWidth);
     };
     const onUp = () => {
       document.removeEventListener('mousemove', onMove);
@@ -559,21 +559,21 @@ const QuestCard: React.FC<QuestCardProps> = ({
           <LinkViewer items={questData.linkedPosts} />
         )}
       </div>
-      {expanded && (
-        <div className="flex flex-col md:flex-row gap-4 max-h-[420px] overflow-y-auto">
-          <div
-            className="overflow-auto md:pr-4 md:border-r md:border-gray-300 dark:md:border-gray-700 max-h-[420px]"
-            style={{ width: leftWidth }}
-          >
-            {renderMap()}
+        {expanded && (
+          <div className="flex flex-col md:flex-row gap-4 max-h-[420px] overflow-y-auto">
+            <div className="flex-1 md:pr-4 overflow-auto max-h-[420px]">{renderRightPanel()}</div>
+            <div
+              className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
+              onMouseDown={handleDividerMouseDown}
+            />
+            <div
+              className="overflow-auto md:pl-4 md:border-l md:border-gray-300 dark:md:border-gray-700 max-h-[420px]"
+              style={{ width: mapWidth }}
+            >
+              {renderMap()}
+            </div>
           </div>
-          <div
-            className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize"
-            onMouseDown={handleDividerMouseDown}
-          />
-          <div className="flex-1 md:pl-4 overflow-auto max-h-[420px]">{renderRightPanel()}</div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
