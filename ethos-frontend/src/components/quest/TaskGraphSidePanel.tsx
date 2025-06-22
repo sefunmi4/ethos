@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
+import TaskPreviewCard from '../post/TaskPreviewCard';
+import QuestNodeInspector from './QuestNodeInspector';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
@@ -13,6 +15,7 @@ interface TaskGraphSidePanelProps {
 
 const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, user, onClose }) => {
   const { nodes, edges, loadGraph } = useGraph();
+  const [selected, setSelected] = useState<Post>(task);
 
   useEffect(() => {
     if (questId) {
@@ -43,20 +46,30 @@ const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, 
   const displayEdges = useMemo(() => edges.filter(e => subgraphIds.has(e.from) && subgraphIds.has(e.to)), [edges, subgraphIds]);
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md bg-surface shadow-xl z-50 flex flex-col">
-      <div className="p-2 border-b border-secondary text-right">
+    <div className="fixed inset-0 md:inset-y-0 md:right-0 w-full md:max-w-3xl bg-surface shadow-xl z-50 flex flex-col">
+      <div className="p-2 border-b border-secondary flex justify-between items-center">
+        <span className="font-semibold text-sm truncate">{task.content}</span>
         <button className="text-xs underline" onClick={onClose}>Close</button>
       </div>
-      <div className="flex-1 overflow-auto p-2">
-        <GraphLayout
-          items={displayNodes}
-          edges={displayEdges}
-          user={user}
-          questId={questId}
-          condensed
-          showInspector={false}
-          showStatus={false}
-        />
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 overflow-auto p-2 border-r border-secondary space-y-2">
+          <TaskPreviewCard post={selected} />
+          <div className="h-80 md:h-auto overflow-auto" data-testid="task-graph">
+            <GraphLayout
+              items={displayNodes}
+              edges={displayEdges}
+              user={user}
+              questId={questId}
+              condensed
+              showInspector={false}
+              showStatus={false}
+              onSelectNode={setSelected}
+            />
+          </div>
+        </div>
+        <div className="w-full md:w-80 overflow-auto">
+          <QuestNodeInspector questId={questId} node={selected} user={user} showPost={false} />
+        </div>
       </div>
     </div>
   );

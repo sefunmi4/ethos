@@ -14,7 +14,6 @@ import { fetchQuestById, updateQuestById, updateQuestTaskGraph } from '../../api
 import { fetchPostsByQuestId } from '../../api/post';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
-import GitFileBrowser from '../git/GitFileBrowser';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
@@ -50,7 +49,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   defaultExpanded = false,
 }) => {
   const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
-  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'file' | 'map' | 'files'>('status');
+  const [activeTab, setActiveTab] = useState<'logs' | 'file'>('logs');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -78,9 +77,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const userRank = getRank(user?.xp ?? 0);
 
   const tabOptions = [
-    { value: 'status', label: 'Status' },
     { value: 'logs', label: 'Logs' },
-    { value: 'file', label: 'File/Folder' },
+    {
+      value: 'file',
+      label:
+        selectedNode?.taskType === 'file'
+          ? 'File'
+          : selectedNode?.taskType === 'folder'
+          ? 'Folder'
+          : 'Planner',
+    },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -162,11 +168,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       const node = logs.find((p) => p.id === evt.detail.taskId);
       if (node) {
         setSelectedNode(node);
-        if (rootNode && node.id === rootNode.id) {
-          setActiveTab('logs');
-        } else {
-          setActiveTab('status');
-        }
+        setActiveTab('logs');
       }
     };
     window.addEventListener('questTaskOpen', handleTaskOpen);
@@ -210,8 +212,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
               setExpanded(false);
             } else {
               setExpanded(true);
-              setActiveTab("status");
-              setMapMode("folder");
+              setActiveTab('logs');
+              setMapMode('folder');
             }
           }}
         >
@@ -424,92 +426,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
         break;
       case 'file':
         panel = renderFileView();
-        break;
-      case 'status':
-        if (!selectedNode) {
-          panel = (
-            <>
-              {showTaskForm && (
-                <div className="mb-2">
-                  <QuickTaskForm
-                    questId={quest.id}
-                    boardId={`log-${quest.id}`}
-                    onSave={(p) => {
-                      setLogs((prev) => [...prev, p]);
-                      setShowTaskForm(false);
-                    }}
-                    onCancel={() => setShowTaskForm(false)}
-                  />
-                </div>
-              )}
-              <div className="text-right mb-2">
-                {canEdit ? (
-                  <Button size="sm" variant="contrast" onClick={() => setShowTaskForm(true)}>
-                    + Add Item
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-                    Request to Join
-                  </Button>
-                )}
-              </div>
-              <GridLayout
-                questId={quest.id}
-                items={logs}
-                user={user}
-                layout="kanban"
-                editable={canEdit}
-                compact
-                boardId={`log-${quest.id}`}
-              />
-            </>
-          );
-        } else {
-          panel = <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />;
-        }
-        break;
-      case 'map':
-        panel = (
-          <>
-            {showTaskForm && (
-              <div className="mb-2">
-                <QuickTaskForm
-                  questId={quest.id}
-                  boardId={`map-${quest.id}`}
-                  onSave={(p) => {
-                    setLogs((prev) => [...prev, p]);
-                    setShowTaskForm(false);
-                  }}
-                  onCancel={() => setShowTaskForm(false)}
-                />
-              </div>
-            )}
-            <div className="text-right mb-2">
-              {canEdit ? (
-                <Button size="sm" variant="contrast" onClick={() => setShowTaskForm(true)}>
-                  + Add Item
-                </Button>
-              ) : (
-                !hasJoined && (
-                  <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-                    Request to Join
-                  </Button>
-                )
-              )}
-            </div>
-            <GraphLayout
-              items={logs}
-              user={user}
-              edges={questData.taskGraph}
-              condensed
-              showInspector={false}
-              boardId={`map-${quest.id}`}
-            />
-          </>
-        );
-        break;
-      case 'files':
-        panel = <GitFileBrowser questId={quest.id} onClose={() => setActiveTab('map')} />;
         break;
       default:
         panel = null;
