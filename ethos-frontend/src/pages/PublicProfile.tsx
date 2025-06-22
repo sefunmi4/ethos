@@ -112,15 +112,18 @@ const PublicProfilePage: React.FC = () => {
       {/* 🧭 Public Posts */}
       <section className="mt-12">
         <h2 className="text-2xl font-semibold mb-4 text-primary">🧭 Public Posts</h2>
-        {postBoard ? (
-          postBoard.enrichedItems?.length ? (
-            <Board
-              board={postBoard}
-              layout="grid" // for post history
-              user={profile}
-              readOnly
-            />
-          ) : (
+          {postBoard ? (
+            postBoard.enrichedItems?.length ? (
+              <Board
+                board={postBoard}
+                layout="grid" // for post history
+                compact
+                hideControls
+                headerOnly
+                user={profile}
+                readOnly
+              />
+            ) : (
             <div className="text-secondary text-center py-8">No public posts found.</div>
           )
         ) : (
