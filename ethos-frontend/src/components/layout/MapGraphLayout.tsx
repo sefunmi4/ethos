@@ -130,7 +130,8 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   return (
     <div
       ref={containerRef}
-      style={{ height: '70vh', border: '1px solid #ccc', overflow: 'hidden' }}
+      className="overflow-auto w-full h-full p-2 max-w-7xl mx-auto"
+      style={{ minHeight: '60vh', maxHeight: '80vh', border: '1px solid #ccc', position: 'relative' }}
     >
       <ForceGraph2D
         ref={fgRef}
