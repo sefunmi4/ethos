@@ -45,9 +45,11 @@ Boards may use a force-directed layout by setting their layout to `map-graph`. Q
 
 Tasks may optionally declare a `taskType`:
 
-- `file` – represents a single file in the repo
-- `folder` – groups subtasks and usually contains a main file
-- `abstract` – a generic task without a direct file mapping
+- `file` – represents a single file in the repo and unlocks line‑level editing and diff history.
+- `folder` – groups subtasks and shows a folder browser where you can create files or subfolders.
+- `planner` – a markdown document for jotting down notes or outlining sub‑tasks.
 
-The inspector sidebar lets you change the task type. Changing from `file` to `folder` automatically creates a file subtask and reassigns existing children to it. Converting a folder back to a file removes the intermediate node and promotes its children.
+The inspector sidebar lets you change the task type. Changing from `file` to `folder` automatically creates a file subtask and reassigns existing children to it. Converting a folder back to a file removes the intermediate node and promotes its children. When a node is set to **planner** the content field becomes a text editor for documentation.
+
+Tab labels reflect the selected type: selecting **file** shows a *File* tab, **folder** shows a *Folder* tab, and **planner** displays a *Planner* tab.
 

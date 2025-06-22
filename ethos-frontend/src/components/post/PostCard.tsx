@@ -668,7 +668,7 @@ const PostCard: React.FC<PostCardProps> = ({
             onClick={() => setShowBrowser(true)}
             className="text-accent underline text-xs mt-1"
           >
-            View File/Folder
+            View {post.taskType === 'file' ? 'File' : post.taskType === 'folder' ? 'Folder' : 'Planner'}
           </button>
           {showBrowser && (
             <GitFileBrowser

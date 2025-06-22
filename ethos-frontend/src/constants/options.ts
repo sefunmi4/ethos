@@ -46,7 +46,7 @@ export const STATUS_OPTIONS = [
 ] as const;
 
 export const TASK_TYPE_OPTIONS = [
-  { value: 'abstract', label: 'Abstract' },
+  { value: 'abstract', label: 'Planner' },
   { value: 'file', label: 'File' },
   { value: 'folder', label: 'Folder' },
 ] as const;
