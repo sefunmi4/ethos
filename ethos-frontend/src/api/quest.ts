@@ -128,7 +128,7 @@ export const linkPostToQuest = async (
   data: {
     postId: string;
     parentId?: string;
-    edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split';
+    edgeType?: 'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract';
     edgeLabel?: string;
     title?: string;
   }

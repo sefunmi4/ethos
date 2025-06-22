@@ -67,7 +67,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [paths, setPaths] = useState<{ key: string; d: string }[]>([]);
+  const [paths, setPaths] = useState<{ key: string; d: string; type?: string }[]>([]);
 
   const [localItems, setLocalItems] = useState<Post[]>(items);
   const [rootNodes, setRootNodes] = useState<
@@ -95,7 +95,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     const container = containerRef.current;
     if (!container) return;
     const containerRect = container.getBoundingClientRect();
-    const newPaths: { key: string; d: string }[] = [];
+    const newPaths: { key: string; d: string; type?: string }[] = [];
     edgeList.forEach((edge) => {
       const fromEl = nodeRefs.current[edge.from];
       const toEl = nodeRefs.current[edge.to];
@@ -118,6 +118,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         newPaths.push({
           key: `${edge.from}-${edge.to}`,
           d: `M ${startX} ${startY} L ${endX} ${endY}`,
+          type: edge.type,
         });
       }
     });
@@ -148,8 +149,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     });
 
     if (edgeList && edgeList.length > 0) {
-      const toIds = new Set(edgeList.map((e) => e.to));
-      edgeList.forEach((edge) => {
+      const hierarchical = edgeList.filter((e) => e.type !== 'abstract');
+      const toIds = new Set(hierarchical.map((e) => e.to));
+      hierarchical.forEach((edge) => {
         const fromNode = nodeMap[edge.from];
         const toNode = nodeMap[edge.to];
         if (fromNode && toNode) {
@@ -216,7 +218,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
       const current = stack.pop()!;
       if (current === childId) return true;
       edgeList
-        .filter((e) => e.from === current)
+        .filter((e) => e.from === current && e.type !== 'abstract')
         .forEach((e) => {
           if (!visited.has(e.to)) {
             visited.add(e.to);
@@ -269,6 +271,13 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     if (nodeId === targetId) return;
 
     if (isDescendant(nodeId, targetId)) {
+      setEdgeList((prev) => {
+        const exists = prev.some(
+          (e) => e.from === targetId && e.to === nodeId && e.type === 'abstract'
+        );
+        if (exists) return prev;
+        return [...prev, { from: targetId, to: nodeId, type: 'abstract' }];
+      });
       return;
     }
 
@@ -313,7 +322,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             <path
               key={p.key}
               d={p.d}
-              stroke="#aaa"
+              stroke={p.type === 'abstract' ? '#f97316' : '#aaa'}
+              strokeDasharray={p.type === 'abstract' ? '4 2' : undefined}
               fill="none"
               markerEnd="url(#arrow)"
             />
