@@ -9,15 +9,18 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   requestHelp: jest.fn(() =>
     Promise.resolve({
-      id: 'r1',
-      authorId: 'u1',
-      type: 'request',
-      content: 'Task',
-      visibility: 'public',
-      timestamp: '',
-      tags: [],
-      collaborators: [],
-      linkedItems: [],
+      request: {
+        id: 'r1',
+        authorId: 'u1',
+        type: 'request',
+        content: 'Task',
+        visibility: 'public',
+        timestamp: '',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+      },
+      subRequests: [],
     })
   ),
   updatePost: jest.fn(() => Promise.resolve({})),
@@ -71,7 +74,9 @@ describe('PostCard request help', () => {
       fireEvent.click(btn);
     });
 
-    await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1'));
+    await waitFor(() =>
+      expect(requestHelp).toHaveBeenCalledWith('t1', 'task')
+    );
     expect(appendMock).toHaveBeenCalled();
 
     await act(async () => {

@@ -361,12 +361,15 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex flex-wrap items-center gap-2">
             {summaryTags.map((tag, idx) => (
-              <SummaryTag key={idx} {...tag} />
+              <React.Fragment key={idx}>
+                <SummaryTag {...tag} />
+                {idx === 1 && <span>{timestamp}</span>}
+              </React.Fragment>
             ))}
             {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
               <StatusBadge status={post.status} />
             )}
-            <span>{timestamp}</span>
+            {summaryTags.length < 2 && <span>{timestamp}</span>}
           </div>
         </div>
         {titleText && (
@@ -407,11 +410,15 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="flex justify-between text-sm text-secondary">
         <div className="flex flex-wrap items-center gap-2">
           {summaryTags.map((tag, idx) => (
-            <SummaryTag key={idx} {...tag} />
+            <React.Fragment key={idx}>
+              <SummaryTag {...tag} />
+              {idx === 1 && <span>{timestamp}</span>}
+            </React.Fragment>
           ))}
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
+          {summaryTags.length < 2 && <span>{timestamp}</span>}
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&
