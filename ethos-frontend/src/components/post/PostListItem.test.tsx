@@ -72,4 +72,20 @@ describe('PostListItem', () => {
 
     expect(screen.getByText('Review: Quest B')).toBeInTheDocument();
   });
+
+  it('renders generic review tag when quest title missing', () => {
+    const reviewPost: Post = {
+      ...basePost,
+      id: 'r2',
+      type: 'review',
+    } as Post;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={reviewPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Review')).toBeInTheDocument();
+  });
 });
