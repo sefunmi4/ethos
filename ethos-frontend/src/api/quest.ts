@@ -82,8 +82,8 @@ export const updateQuestById = async (id: string, updates: Partial<Quest>): Prom
  * @function fetchQuestById  
  * @was getQuestById  
  */
-export const fetchQuestById = async (id: string): Promise<Quest> => {
-  const res = await axiosWithAuth.get(`${BASE_URL}/${id}`);
+export const fetchQuestById = async (id: string): Promise<EnrichedQuest> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${id}?enrich=true`);
   return res.data;
 };
 

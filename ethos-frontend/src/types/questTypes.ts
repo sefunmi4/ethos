@@ -50,6 +50,8 @@ export interface TaskEdge {
  * Used for rendering UIs or dashboards.
  */
 export interface EnrichedQuest extends Quest {
+  /** Basic author reference */
+  author?: { id: string; username?: string };
   /** Resolved post objects (instead of just headPostId) */
   headPost?: Post;
 

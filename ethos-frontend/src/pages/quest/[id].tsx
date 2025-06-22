@@ -41,6 +41,10 @@ const QuestPage: React.FC = () => {
   // Fetch quest creator name once quest is loaded
   useEffect(() => {
     if (!quest) return;
+    if (quest.author && quest.author.username) {
+      setCreatorName(quest.author.username);
+      return;
+    }
     fetchUserById(quest.authorId)
       .then((u) => setCreatorName(u.username || u.id))
       .catch(() => setCreatorName(quest.authorId));

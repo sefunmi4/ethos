@@ -31,7 +31,7 @@ function isQuest(obj: unknown): obj is Quest {
  * Custom hook for quest-related data operations.
  */
 export const useQuest = (questId?: string) => {
-  const [quest, setQuest] = useState<Quest | null>(null);
+  const [quest, setQuest] = useState<EnrichedQuest | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(!!questId);
 

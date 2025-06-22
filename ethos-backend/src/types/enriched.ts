@@ -20,6 +20,8 @@ export interface EnrichedPost extends Post {
 }
 
 export interface EnrichedQuest extends Omit<Quest, 'collaborators'> {
+  /** Basic author reference */
+  author?: { id: string; username?: string };
   headPost?: Post; // Head/intro post
   linkedPostsResolved?: Post[]; // All posts linked
 
