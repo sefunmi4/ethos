@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import { updateQuestById, fetchQuestById } from '../../api/quest';
 import { updatePost } from '../../api/post';
+import { AvatarStack } from '../ui';
+import { ROUTES } from '../../constants/routes';
 import type { CollaberatorRoles, Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
@@ -45,6 +48,21 @@ const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node }) => {
 
   return (
     <div className="space-y-2">
+      {quest && (
+        <div className="flex items-center justify-between">
+          <AvatarStack
+            users={(quest.collaborators || [])
+              .filter(c => c.userId)
+              .map(c => ({ avatarUrl: (c as any).avatarUrl, username: c.username }))}
+          />
+          <Link
+            to={ROUTES.TEAM_BOARD(quest.id)}
+            className="text-xs text-blue-600 underline"
+          >
+            View All
+          </Link>
+        </div>
+      )}
       <CollaberatorControls value={roles} onChange={setRoles} />
       <button
         onClick={handleSave}
