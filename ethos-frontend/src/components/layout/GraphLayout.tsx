@@ -29,6 +29,8 @@ interface GraphLayoutProps {
   showInspector?: boolean;
   /** Notify parent when a node is selected */
   onSelectNode?: (n: Post) => void;
+  /** Notify parent when edges change */
+  onEdgesChange?: (edges: TaskEdge[]) => void;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
   boardId?: string;
@@ -63,6 +65,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   showStatus = true,
   showInspector = true,
   onSelectNode,
+  onEdgesChange,
   onScrollEnd,
   loadingMore = false,
   boardId,
@@ -232,9 +235,11 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   };
 
   const handleRemoveEdge = (edge: TaskEdge) => {
-    setEdgeList((prev) =>
-      prev.filter((e) => !(e.from === edge.from && e.to === edge.to)),
-    );
+    setEdgeList((prev) => {
+      const updated = prev.filter((e) => !(e.from === edge.from && e.to === edge.to));
+      if (updated !== prev) onEdgesChange?.(updated);
+      return updated;
+    });
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -257,7 +262,11 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
         linkedItems: [],
       };
       setLocalItems((prev) => [...prev, newNode]);
-      setEdgeList((prev) => [...prev, { from: parentId, to: newId }]);
+      setEdgeList((prev) => {
+        const updated = [...prev, { from: parentId, to: newId }];
+        onEdgesChange?.(updated);
+        return updated;
+      });
       return;
     }
 
@@ -266,7 +275,11 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
     const nodeId = id.startsWith("move-") ? id.slice(5) : id;
 
     if (!targetId) {
-      setEdgeList((prev) => prev.filter((e) => e.to !== nodeId));
+      setEdgeList((prev) => {
+        const updated = prev.filter((e) => e.to !== nodeId);
+        if (updated !== prev) onEdgesChange?.(updated);
+        return updated;
+      });
       return;
     }
 
@@ -278,7 +291,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           (e) => e.from === targetId && e.to === nodeId && e.type === 'abstract'
         );
         if (exists) return prev;
-        return [...prev, { from: targetId, to: nodeId, type: 'abstract' }];
+        const updated = [...prev, { from: targetId, to: nodeId, type: 'abstract' }];
+        onEdgesChange?.(updated);
+        return updated;
       });
       return;
     }
@@ -288,8 +303,9 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
       const exists = filtered.some(
         (e) => e.from === targetId && e.to === nodeId,
       );
-      if (!exists) filtered.push({ from: targetId, to: nodeId });
-      return filtered;
+      const updated = exists ? filtered : [...filtered, { from: targetId, to: nodeId }];
+      if (updated !== prev) onEdgesChange?.(updated);
+      return updated;
     });
   };
 

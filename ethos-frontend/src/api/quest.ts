@@ -137,6 +137,14 @@ export const linkPostToQuest = async (
   return res.data;
 };
 
+export const updateQuestTaskGraph = async (
+  questId: string,
+  edges: TaskEdge[],
+): Promise<{ success: boolean; edges: TaskEdge[] }> => {
+  const res = await axiosWithAuth.patch(`${BASE_URL}/${questId}/map`, { edges });
+  return res.data;
+};
+
 /**
  * Fetch quests linked to a board  
  * @function fetchQuestsByBoardId  
