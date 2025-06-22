@@ -407,29 +407,32 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <ReactionControls
-          post={post}
-          user={user}
-          onUpdate={onUpdate}
-          replyOverride={replyOverride}
-          boardId={ctxBoardId || undefined}
-          timestamp={timestamp}
-        />
-        {post.type === 'request' &&
-          !isQuestBoardRequest &&
-          !isTimelineRequest &&
-          ctxBoardId !== 'my-posts' && (
-            <button
-              className="text-accent underline text-xs ml-2"
-              onClick={handleAccept}
-              disabled={accepting}
-            >
-              {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
-            </button>
-          )}
-        {!isQuestBoardRequest && (
-          <div className="text-xs text-secondary text-right">{timestamp}</div>
-        )}
+        <div className="flex items-center justify-between gap-2">
+          <ReactionControls
+            post={post}
+            user={user}
+            onUpdate={onUpdate}
+            replyOverride={replyOverride}
+            boardId={ctxBoardId || undefined}
+          />
+          <div className="flex items-center gap-2">
+            {post.type === 'request' &&
+              !isQuestBoardRequest &&
+              !isTimelineRequest &&
+              ctxBoardId !== 'my-posts' && (
+                <button
+                  className="text-accent underline text-xs"
+                  onClick={handleAccept}
+                  disabled={accepting}
+                >
+                  {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
+                </button>
+              )}
+            {!isQuestBoardRequest && (
+              <span className="text-xs text-secondary">{timestamp}</span>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -661,15 +664,20 @@ const PostCard: React.FC<PostCardProps> = ({
                         });
                         loadGraph(questId || post.questId!);
                       }
-                      setShowLinkEditor(false);
-                      onUpdate?.(updated);
-                    } catch (err) {
-                      console.error('[PostCard] Failed to update links:', err);
-                    }
-                  }}
-                >
-                  Save
-                </button>
+      <div className="flex items-center justify-between mt-1">
+        {post.type === 'request' && !isQuestBoardRequest && ctxBoardId !== 'my-posts' && (
+          <button
+            className="text-accent underline text-xs"
+            onClick={handleAccept}
+            disabled={accepting}
+          >
+            {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
+          </button>
+        )}
+        {!isQuestBoardRequest && (
+          <span className="text-xs text-secondary">{timestamp}</span>
+        )}
+      </div>
                 <button
                   className="text-xs underline"
                   onClick={() => {
