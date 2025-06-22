@@ -17,7 +17,8 @@ const statusIcons: Record<string, string> = {
 };
 
 const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNodeId }) => {
-  const [issues, setIssues] = useState<Post[]>([]);
+  const [items, setItems] = useState<Post[]>([]);
+  const [filter, setFilter] = useState<'all' | 'issues' | 'tasks'>('all');
 
   const handleAddIssue = (status: string) => {
     // Placeholder handler for adding an issue in the given status
@@ -28,9 +29,11 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
     if (!questId) return;
     fetchPostsByQuestId(questId)
       .then((posts) => {
-        setIssues(
+        setItems(
           posts.filter(
-            (p) => p.type === 'issue' && p.linkedNodeId === linkedNodeId,
+            (p) =>
+              (p.type === 'issue' && p.linkedNodeId === linkedNodeId) ||
+              (p.type === 'task' && p.replyTo === linkedNodeId),
           ),
         );
       })
@@ -39,18 +42,51 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
       });
   }, [questId, linkedNodeId]);
 
+  const filtered = items.filter((i) => {
+    if (filter === 'issues') return i.type === 'issue';
+    if (filter === 'tasks') return i.type === 'task';
+    return true;
+  });
+
   const grouped = STATUS_OPTIONS.reduce<Record<string, Post[]>>((acc, opt) => {
-    acc[opt.value] = issues.filter((i) => i.status === opt.value);
+    acc[opt.value] = filtered.filter((i) => i.status === opt.value);
     return acc;
   }, {});
 
   return (
-    <div className="flex overflow-auto space-x-2">
-      {STATUS_OPTIONS.map(({ value }) => (
-        <div
-          key={value}
-          className="min-w-[80px] w-28 flex-shrink-0 bg-surface border border-secondary rounded-lg p-2 space-y-2"
+    <div>
+      <div className="flex gap-2 mb-2 text-xs">
+        <button
+          className={`px-2 py-0.5 rounded border ${
+            filter === 'all' ? 'bg-accent text-white border-accent' : 'border-secondary'
+          }`}
+          onClick={() => setFilter('all')}
         >
+          All
+        </button>
+        <button
+          className={`px-2 py-0.5 rounded border ${
+            filter === 'issues' ? 'bg-accent text-white border-accent' : 'border-secondary'
+          }`}
+          onClick={() => setFilter('issues')}
+        >
+          Issues
+        </button>
+        <button
+          className={`px-2 py-0.5 rounded border ${
+            filter === 'tasks' ? 'bg-accent text-white border-accent' : 'border-secondary'
+          }`}
+          onClick={() => setFilter('tasks')}
+        >
+          Tasks
+        </button>
+      </div>
+      <div className="flex overflow-auto space-x-2">
+        {STATUS_OPTIONS.map(({ value }) => (
+          <div
+            key={value}
+            className="min-w-[80px] w-28 flex-shrink-0 bg-surface border border-secondary rounded-lg p-2 space-y-2"
+          >
           <h4 className="text-sm font-semibold flex items-center gap-1">
             <span>{statusIcons[value] || '➡️'}</span>
             {value}
@@ -78,6 +114,7 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
           </button>
         </div>
       ))}
+      </div>
     </div>
   );
 };
