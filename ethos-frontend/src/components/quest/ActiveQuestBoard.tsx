@@ -99,6 +99,14 @@ const ActiveQuestBoard: React.FC = () => {
 
   return (
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
+        {showSeeAll && (
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        )}
+      </div>
       <div className="relative">
         <div
           ref={containerRef}
@@ -134,15 +142,26 @@ const ActiveQuestBoard: React.FC = () => {
           </>
         )}
       </div>
-
-
-      {showSeeAll && (
-        <div className="text-right">
-          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-            → See all
-          </Link>
-        </div>
-      )}
+      <div className="flex justify-center mt-2">
+        {(() => {
+          const dots = quests.length > 3 ? [index - 1, index, index + 1] : quests.map((_, i) => i);
+          return dots.map((i, idx) => {
+            const actual = ((i % quests.length) + quests.length) % quests.length;
+            const isActive = actual === index;
+            const isEdge = idx === 0 || idx === dots.length - 1;
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setIndex(actual)}
+                className={`mx-1 w-4 h-1 rounded transition-transform duration-200 ${
+                  isActive ? 'bg-accent scale-x-125' : 'bg-background'
+                } ${isEdge && !isActive ? 'opacity-50' : ''}`}
+              />
+            );
+          });
+        })()}
+      </div>
     </div>
   );
 };
