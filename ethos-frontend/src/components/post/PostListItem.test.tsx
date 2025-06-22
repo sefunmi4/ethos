@@ -54,4 +54,38 @@ describe('PostListItem', () => {
 
     expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
   });
+
+  it('renders review summary tag', () => {
+    const reviewPost: Post = {
+      ...basePost,
+      id: 'r1',
+      type: 'review',
+      questId: 'q2',
+      questTitle: 'Quest B',
+    } as Post;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={reviewPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Review: Quest B')).toBeInTheDocument();
+  });
+
+  it('renders generic review tag when quest title missing', () => {
+    const reviewPost: Post = {
+      ...basePost,
+      id: 'r2',
+      type: 'review',
+    } as Post;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={reviewPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Review')).toBeInTheDocument();
+  });
 });
