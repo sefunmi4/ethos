@@ -88,6 +88,15 @@ const ActiveQuestBoard: React.FC = () => {
     }
   };
 
+  const updateIndex = (delta: number) => {
+    setIndex(prev => {
+      const next = (prev + delta + quests.length) % quests.length;
+      scrollToIndex(next);
+      indexRef.current = next;
+      return next;
+    });
+  };
+
   useEffect(() => {
     scrollToIndex(index);
     indexRef.current = index;
@@ -178,14 +187,14 @@ const ActiveQuestBoard: React.FC = () => {
           <>
             <button
               type="button"
-              onClick={() => setIndex(i => (i - 1 + quests.length) % quests.length)}
+              onClick={() => updateIndex(-1)}
               className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
             >
               ◀
             </button>
             <button
               type="button"
-              onClick={() => setIndex(i => (i + 1) % quests.length)}
+              onClick={() => updateIndex(1)}
               className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
             >
               ▶
