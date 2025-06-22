@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import type { Post } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
+import { getRank } from '../../utils/rankUtils';
 import { FaUserPlus, FaUserCheck } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { acceptRequest, unacceptRequest } from '../../api/post';
+
+const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 import CreatePost from '../post/CreatePost';
 
 interface RequestCardProps {
@@ -22,6 +25,14 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   const [joined, setJoined] = useState(
     !!user && post.tags?.includes(`pending:${user.id}`)
   );
+
+  const rankTag = post.tags?.find(t => t.toLowerCase().startsWith('min_rank:'));
+  const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
+  const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
+  const minRank = rankTag ? rankTag.split(':')[1] : undefined;
+  const role = roleTag ? roleTag.split(':')[1] : undefined;
+  const difficulty = difficultyTag ? difficultyTag.split(':')[1] : undefined;
+  const userRank = getRank(user?.xp ?? 0);
 
   const handleJoin = async () => {
     if (!user) return;
@@ -59,6 +70,16 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         <AvatarStack users={collaboratorUsers} />
         <span>{collaboratorCount} collaborators</span>
       </div>
+      {(role || minRank || difficulty) && (
+        <div className="text-xs text-secondary space-y-0.5">
+          {role && <div>Required Role: {role}</div>}
+          {minRank && <div>Min Rank: {minRank}</div>}
+          {difficulty && <div>Difficulty: {difficulty}</div>}
+          {minRank && RANK_ORDER[userRank] < (RANK_ORDER[minRank] ?? 0) && (
+            <div className="text-red-500">Your rank {userRank} is below requirement.</div>
+          )}
+        </div>
+      )}
       <div className="flex gap-2">
         <Button variant="ghost" size="sm" onClick={() => setShowReply(r => !r)}>
           {showReply ? 'Cancel' : 'Reply'}

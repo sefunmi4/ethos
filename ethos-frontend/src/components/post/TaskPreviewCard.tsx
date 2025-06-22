@@ -12,6 +12,12 @@ interface TaskPreviewCardProps {
 const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
+  const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
+  const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
+  const rankTag = post.tags?.find(t => t.toLowerCase().startsWith('min_rank:'));
+  const difficulty = difficultyTag ? difficultyTag.split(':')[1] : undefined;
+  const role = roleTag ? roleTag.split(':')[1] : undefined;
+  const minRank = rankTag ? rankTag.split(':')[1] : undefined;
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value as QuestTaskStatus;
     setStatus(val);
@@ -52,6 +58,13 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
           <button className="text-accent underline text-xs">Organize Dependencies</button>
         )}
       </div>
+      {(role || minRank || difficulty) && (
+        <div className="space-y-0.5">
+          {role && <div>Role: {role}</div>}
+          {minRank && <div>Min Rank: {minRank}</div>}
+          {difficulty && <div>Difficulty: {difficulty}</div>}
+        </div>
+      )}
     </div>
   );
 };

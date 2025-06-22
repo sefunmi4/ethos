@@ -181,6 +181,11 @@ export interface DBUser {
   tags: string[];
   location?: string;
 
+  /**
+   * Total experience points accumulated.
+   */
+  xp?: number;
+
   links?: Record<string, string>; // generic key-value links
   featuredPosts?: Array<{
     title: string;
