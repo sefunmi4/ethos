@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -167,14 +167,16 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
-        <h2
-          className="text-xl font-bold text-primary cursor-pointer underline"
-          onClick={() => navigate(ROUTES.QUEST(quest.id))}
-        >
-          {questData.title}
-        </h2>
-        <div className="flex items-center gap-2 text-sm text-secondary">
+        <div className="flex items-center gap-2">
           <SummaryTag type="quest" label={POST_TYPE_LABELS.quest} />
+          <Link
+            to={ROUTES.QUEST(quest.id)}
+            className="text-xl font-bold text-primary underline"
+          >
+            {questData.title}
+          </Link>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-secondary">
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.gitRepo?.repoUrl && (
             <a
