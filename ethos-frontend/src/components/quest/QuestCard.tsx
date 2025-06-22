@@ -11,7 +11,6 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
-import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
@@ -554,9 +553,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
               </button>
             </div>
           </div>
-        )}
-        {questData.linkedPosts && questData.linkedPosts.length > 0 && (
-          <LinkViewer items={questData.linkedPosts} />
         )}
       </div>
         {expanded && (
