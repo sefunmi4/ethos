@@ -153,9 +153,23 @@ export const buildSummaryTags = (
   }
 
   if (post.type === 'task' && post.nodeId) {
-    tags.push({ type: 'task', label: `Task: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+    const user = post.author?.username || post.authorId;
+    tags.push({
+      type: 'task',
+      label: `Task - ${post.nodeId}`,
+      detailLink: ROUTES.POST(post.id),
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
+    });
   } else if (post.type === 'issue' && post.nodeId) {
-    tags.push({ type: 'issue', label: `Issue: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+    const user = post.author?.username || post.authorId;
+    tags.push({
+      type: 'issue',
+      label: `Issue - ${post.nodeId}`,
+      detailLink: ROUTES.POST(post.id),
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
+    });
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     // Link log tags to the author's public profile for quick context
@@ -167,7 +181,14 @@ export const buildSummaryTags = (
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   } else if (post.type === 'commit') {
-    tags.push({ type: 'commit', label: 'Commit' });
+    const user = post.author?.username || post.authorId;
+    tags.push({
+      type: 'commit',
+      label: post.nodeId ? `Commit - ${post.nodeId}` : 'Commit',
+      detailLink: ROUTES.POST(post.id),
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
+    });
   } else if (post.type === 'meta_system') {
     tags.push({ type: 'meta_system', label: 'System' });
   } else if (post.type === 'meta_announcement') {
@@ -176,17 +197,6 @@ export const buildSummaryTags = (
     tags.push({ type: 'solved', label: 'Solved' });
   }
 
-  // Include author log reference on task and issue posts for quick context
-  if (['task', 'issue'].includes(post.type)) {
-    const user = post.author?.username || post.authorId;
-    tags.push({
-      type: 'log',
-      label: 'Log:',
-      detailLink: ROUTES.POST(post.id),
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-    });
-  }
 
   if (post.status && ['task', 'issue'].includes(post.type)) {
     tags.push({ type: 'status', label: post.status });
@@ -225,14 +235,21 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   if (title) parts.push(`(Quest: ${title})`);
 
   if (post.type === 'task' && post.nodeId) {
-    parts.push(`(Task: ${post.nodeId})`);
+    const user = post.author?.username || post.authorId;
+    parts.push(`(Task - ${post.nodeId}:@${user})`);
   } else if (post.type === 'issue' && post.nodeId) {
-    parts.push(`(Issue: ${post.nodeId})`);
+    const user = post.author?.username || post.authorId;
+    parts.push(`(Issue - ${post.nodeId}:@${user})`);
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     parts.push(`(Log: @${user})`);
   } else if (post.type === 'commit') {
-    parts.push('(Commit)');
+    const user = post.author?.username || post.authorId;
+    if (post.nodeId) {
+      parts.push(`(Commit - ${post.nodeId}:@${user})`);
+    } else {
+      parts.push(`(Commit: @${user})`);
+    }
   } else if (post.type === 'meta_system') {
     parts.push('(System)');
   } else if (post.type === 'meta_announcement') {
