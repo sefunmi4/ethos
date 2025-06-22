@@ -397,6 +397,8 @@ const Board: React.FC<BoardProps> = ({
                 ? '+ Add Quest'
                 : board?.id === 'quest-board'
                 ? '+ Add Request'
+                : ['timeline-board', 'my-posts'].includes(board?.id || '')
+                ? '+ Add Post'
                 : '+ Add Item'}
             </Button>
           )}
