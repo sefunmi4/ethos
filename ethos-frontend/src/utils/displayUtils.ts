@@ -160,7 +160,7 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     tags.push({
       type: 'task',
-      label: `Task - ${post.nodeId}:@${user}`,
+      label: `Task - ${post.nodeId}`,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
@@ -168,8 +168,8 @@ export const buildSummaryTags = (
   } else if (post.type === 'issue') {
     const user = post.author?.username || post.authorId;
     const label = post.nodeId && !multipleSources
-      ? `Issue - ${post.nodeId}:@${user}`
-      : `Issue: @${user}`;
+      ? `Issue - ${post.nodeId}`
+      : 'Issue';
     tags.push({
       type: 'issue',
       label,
@@ -179,9 +179,7 @@ export const buildSummaryTags = (
     });
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources
-      ? `Log - ${post.nodeId}:@${user}`
-      : `Log: @${user}`;
+    const label = post.nodeId && !multipleSources ? `Log - ${post.nodeId}` : 'Log';
     tags.push({
       type: 'log',
       label,
@@ -191,9 +189,7 @@ export const buildSummaryTags = (
     });
   } else if (post.type === 'commit') {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources
-      ? `Commit - ${post.nodeId}:@${user}`
-      : `Commit: @${user}`;
+    const label = post.nodeId && !multipleSources ? `Commit - ${post.nodeId}` : 'Commit';
     tags.push({
       type: 'commit',
       label,
@@ -249,27 +245,27 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
 
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
-    parts.push(`(Task - ${post.nodeId}:@${user})`);
+    parts.push(`(Task - ${post.nodeId} @${user})`);
   } else if (post.type === 'issue') {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Issue - ${post.nodeId}:@${user})`);
+      parts.push(`(Issue - ${post.nodeId} @${user})`);
     } else {
-      parts.push(`(Issue: @${user})`);
+      parts.push(`(Issue @${user})`);
     }
   } else if (post.type === 'log' || post.type === 'quest_log') {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Log - ${post.nodeId}:@${user})`);
+      parts.push(`(Log - ${post.nodeId} @${user})`);
     } else {
-      parts.push(`(Log: @${user})`);
+      parts.push(`(Log @${user})`);
     }
   } else if (post.type === 'commit') {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Commit - ${post.nodeId}:@${user})`);
+      parts.push(`(Commit - ${post.nodeId} @${user})`);
     } else {
-      parts.push(`(Commit: @${user})`);
+      parts.push(`(Commit @${user})`);
     }
   } else if (post.type === 'meta_system') {
     parts.push('(System)');
