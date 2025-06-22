@@ -20,6 +20,7 @@ const ActiveQuestBoard: React.FC = () => {
   const [index, setIndex] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const indexRef = useRef(0);
 
   useEffect(() => {
     if (!user) return;
@@ -89,7 +90,38 @@ const ActiveQuestBoard: React.FC = () => {
 
   useEffect(() => {
     scrollToIndex(index);
+    indexRef.current = index;
   }, [index]);
+
+  // Update index when user scrolls manually
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, clientWidth } = el;
+      let closestIdx = 0;
+      let closestDiff = Infinity;
+      Array.from(el.children).forEach((child, i) => {
+        const node = child as HTMLElement;
+        const center = node.offsetLeft + node.clientWidth / 2;
+        const diff = Math.abs(center - scrollLeft - clientWidth / 2);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestIdx = i;
+        }
+      });
+      if (closestIdx !== indexRef.current) {
+        indexRef.current = closestIdx;
+        setIndex(closestIdx);
+      }
+    };
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleCreateSave = (quest: Quest) => {
     setQuests(q => [quest, ...q]);
@@ -146,14 +178,14 @@ const ActiveQuestBoard: React.FC = () => {
           <>
             <button
               type="button"
-              onClick={() => setIndex(i => Math.max(0, i - 1))}
+              onClick={() => setIndex(i => (i - 1 + quests.length) % quests.length)}
               className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
             >
               ◀
             </button>
             <button
               type="button"
-              onClick={() => setIndex(i => Math.min(quests.length - 1, i + 1))}
+              onClick={() => setIndex(i => (i + 1) % quests.length)}
               className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
             >
               ▶
