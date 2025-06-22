@@ -86,14 +86,20 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
     return (p.type as SummaryTagType) || 'type';
   };
 
-  const uniqueChain = chain.reduce<Array<{ post: Post; label: string }>>(
-    (acc, p) => {
-      const label = getQuestLinkLabel(p);
-      if (!acc.some((u) => u.label === label)) acc.push({ post: p, label });
-      return acc;
-    },
-    []
-  );
+  const uniqueChain = chain.reduce<
+    Array<{
+      post: Post;
+      label: string;
+      username: string;
+    }>
+  >((acc, p) => {
+    const label = getQuestLinkLabel(p);
+    if (!acc.some((u) => u.label === label)) {
+      const username = p.author?.username || p.authorId;
+      acc.push({ post: p, label, username });
+    }
+    return acc;
+  }, []);
 
   return (
     <div className="text-xs text-primary dark:text-primary">
@@ -122,12 +128,14 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain }) 
             <div>
               <div className="font-semibold capitalize mb-1">reply chain</div>
               <div className="flex flex-wrap gap-1">
-                {uniqueChain.map(({ post: p, label }) => (
+                {uniqueChain.map(({ post: p, label, username }) => (
                   <SummaryTag
                     key={p.id}
                     type={getTagType(p)}
                     label={label}
-                    link={ROUTES.POST(p.id)}
+                    detailLink={ROUTES.POST(p.id)}
+                    username={username}
+                    usernameLink={ROUTES.PUBLIC_PROFILE(p.authorId)}
                   />
                 ))}
               </div>

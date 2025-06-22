@@ -78,6 +78,7 @@ describe('LinkViewer', () => {
     await waitFor(() => {
       expect(screen.getByText('Q:T02')).toBeInTheDocument();
       expect(screen.getByText('Q:T01')).toBeInTheDocument();
+      expect(screen.getAllByText('@u1')[0]).toBeInTheDocument();
     });
   });
 });
