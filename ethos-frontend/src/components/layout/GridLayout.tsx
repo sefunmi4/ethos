@@ -16,6 +16,7 @@ import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Spinner } from '../ui';
+import QuickTaskForm from '../post/QuickTaskForm';
 
 type GridLayoutProps = {
   items: Post[];

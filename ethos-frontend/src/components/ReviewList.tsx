@@ -3,6 +3,9 @@ import { TAG_BASE } from '../constants/styles';
 import { fetchReviews } from '../api/review';
 import type { Review, ReviewTargetType } from '../types/reviewTypes';
 import { Select, Spinner } from './ui';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
+import ReviewForm from './ReviewForm';
 
 interface ReviewListProps {
   type: ReviewTargetType;
@@ -15,32 +18,38 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
   const [reviews, setReviews] = useState<Review[]>([]);
   const [sort, setSort] = useState<'recent' | 'highest'>('recent');
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Review | null>(null);
+  const { user } = useAuth();
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchReviews({ type, questId, postId, sort });
+      setReviews(data || []);
+    } catch (err) {
+      console.error('[ReviewList] Failed to fetch reviews:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchReviews({ type, questId, postId, sort });
-        setReviews(data || []);
-      } catch (err) {
-        console.error('[ReviewList] Failed to fetch reviews:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     load();
   }, [type, questId, postId, sort]);
 
-  const renderStars = (count: number) => {
-    return (
-      <span className="text-yellow-500">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span key={i}>{i < count ? '★' : '☆'}</span>
-        ))}
-      </span>
-    );
-  };
+  const renderStars = (count: number) => (
+    <span className="text-yellow-500 flex">
+      {[1, 2, 3, 4, 5].map((n) => {
+        const full = count >= n;
+        const half = !full && count >= n - 0.5;
+        return (
+          <span key={n} className="mr-0.5">
+            {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
+          </span>
+        );
+      })}
+    </span>
+  );
 
   return (
     <div className={className}>
@@ -70,6 +79,14 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {new Date(review.createdAt).toLocaleDateString()}
                 </span>
+                {user?.id === review.reviewerId && (
+                  <button
+                    onClick={() => setEditing(review)}
+                    className="text-xs text-accent underline ml-2"
+                  >
+                    Rewrite
+                  </button>
+                )}
               </div>
               {review.tags && review.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -82,6 +99,24 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
                 <p className="text-sm mt-2 text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
                   {review.feedback}
                 </p>
+              )}
+              {editing?.id === review.id && (
+                <div className="mt-3">
+                  <ReviewForm
+                    targetType={review.targetType}
+                    questId={review.questId}
+                    postId={review.postId}
+                    repoUrl={review.repoUrl}
+                    modelId={review.modelId}
+                    initialRating={review.rating}
+                    initialTags={review.tags}
+                    initialFeedback={review.feedback}
+                    onSubmitted={() => {
+                      setEditing(null);
+                      load();
+                    }}
+                  />
+                </div>
               )}
             </li>
           ))}

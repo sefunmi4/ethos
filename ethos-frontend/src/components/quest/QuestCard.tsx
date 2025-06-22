@@ -18,6 +18,9 @@ import GitFileBrowser from '../git/GitFileBrowser';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
+import { getRank } from '../../utils/rankUtils';
+
+const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 import LogThreadPanel from './LogThreadPanel';
 import QuickTaskForm from '../post/QuickTaskForm';
 
@@ -62,14 +65,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const navigate = useNavigate();
 
   const rankTag = questData.tags?.find(t => t.toLowerCase().startsWith('rank:'));
+  const difficultyTag = questData.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
   const rewardTag = questData.tags?.find(t => t.toLowerCase().startsWith('reward:'));
   const roleTags = questData.tags?.filter(t => t.toLowerCase().startsWith('role:')) || [];
 
   const rank = rankTag ? rankTag.split(':')[1] : 'Unrated';
+  const difficulty = difficultyTag ? difficultyTag.split(':')[1] : 'Unknown';
   const reward = rewardTag ? rewardTag.split(':')[1] : 'Unknown';
   const roles = roleTags.map(t => t.split(':')[1]).join(', ');
   const desc = questData.description || '';
   const shortDesc = desc.length > 120 ? desc.slice(0, 117) + '…' : desc;
+  const userRank = getRank(user?.xp ?? 0);
 
   const tabOptions = [
     { value: 'status', label: 'Status' },
@@ -525,9 +531,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {shortDesc && <p>{shortDesc}</p>}
           <div className="text-xs space-y-0.5">
             <div>Rank: {rank}</div>
+            <div>Difficulty: {difficulty}</div>
             <div>Reward: {reward}</div>
             {roles && <div>Roles Needed: {roles}</div>}
           </div>
+          {user && RANK_ORDER[userRank] < (RANK_ORDER[rank] ?? 0) && (
+            <div className="text-red-500 text-xs">Requires {rank} rank. Your rank: {userRank}. Level up to join.</div>
+          )}
         </div>
       )}
       <div className="text-xs text-secondary space-y-1 mb-2">

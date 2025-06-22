@@ -387,7 +387,7 @@ const PostCard: React.FC<PostCardProps> = ({
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
         />
-        {post.type === 'request' && !isQuestBoardRequest && !isTimelineRequest && (
+        {post.type === 'request' && !isQuestBoardRequest && !isTimelineRequest && ctxBoardId !== 'my-posts' && (
           <button
             className="text-accent underline text-xs ml-2"
             onClick={handleAccept}
@@ -652,7 +652,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {post.type === 'request' && !isQuestBoardRequest && (
+      {post.type === 'request' && !isQuestBoardRequest && ctxBoardId !== 'my-posts' && (
         <button
           className="text-accent underline text-xs ml-2"
           onClick={handleAccept}

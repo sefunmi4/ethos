@@ -37,5 +37,22 @@
     "displayOnBoard": true,
     "taskGraph": [],
     "helpRequest": true
+  },
+  {
+    "id": "86f55e22-76f2-4d7b-a672-173a362eed1d",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "title": "Test Quest",
+    "description": "",
+    "displayOnBoard": true,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0,
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
+    "taskGraph": [],
+    "helpRequest": true
   }
 ]
