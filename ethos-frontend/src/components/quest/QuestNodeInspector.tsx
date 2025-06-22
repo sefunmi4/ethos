@@ -53,7 +53,10 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   const tabs = [
     { value: 'status', label: 'Status' },
     ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
-    { value: 'file', label: 'File/Folder' },
+    {
+      value: 'file',
+      label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
+    },
   ];
 
   const handleAddSubtask = () => {
