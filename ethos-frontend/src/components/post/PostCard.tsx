@@ -413,6 +413,7 @@ const PostCard: React.FC<PostCardProps> = ({
           onUpdate={onUpdate}
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
+          timestamp={timestamp}
         />
         {post.type === 'request' &&
           !isQuestBoardRequest &&
@@ -426,7 +427,6 @@ const PostCard: React.FC<PostCardProps> = ({
               {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
             </button>
           )}
-        <div className="text-xs text-secondary text-right">{timestamp}</div>
       </div>
     );
   }
@@ -452,7 +452,6 @@ const PostCard: React.FC<PostCardProps> = ({
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
-          <span>{timestamp}</span>
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&
@@ -572,6 +571,7 @@ const PostCard: React.FC<PostCardProps> = ({
         onUpdate={onUpdate}
         replyOverride={replyOverride}
         boardId={ctxBoardId || undefined}
+        timestamp={timestamp}
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }
