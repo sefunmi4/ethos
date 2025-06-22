@@ -115,9 +115,14 @@ const ActiveQuestBoard: React.FC = () => {
           {quests.map((q, idx) => (
             <div
               key={q.id}
-              className={`snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-opacity ${
-                idx === index ? '' : 'opacity-80'
-              }`}
+              className={
+                'snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-transform duration-300 ' +
+                (idx === index
+                  ? 'scale-100'
+                  : Math.abs(idx - index) === 1
+                  ? 'scale-95 opacity-80'
+                  : 'scale-90 opacity-50')
+              }
             >
               <QuestCard quest={q} />
             </div>
@@ -154,9 +159,11 @@ const ActiveQuestBoard: React.FC = () => {
                 key={idx}
                 type="button"
                 onClick={() => setIndex(actual)}
-                className={`mx-1 w-4 h-1 rounded transition-transform duration-200 ${
-                  isActive ? 'bg-accent scale-x-125' : 'bg-background'
-                } ${isEdge && !isActive ? 'opacity-50' : ''}`}
+                className={
+                  'mx-1 w-2 h-2 rounded-full transition-all ' +
+                  (isActive ? 'bg-accent opacity-100' : 'bg-secondary/40 opacity-70') +
+                  (isEdge && !isActive ? ' scale-75' : '')
+                }
               />
             );
           });

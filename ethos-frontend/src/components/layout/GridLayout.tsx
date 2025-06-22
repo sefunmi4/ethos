@@ -280,7 +280,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
           {items.map((item, idx) => (
             <div
               key={item.id}
-              className={`snap-center flex-shrink-0 transition-all ${idx === index ? 'w-full sm:w-[640px]' : 'w-64 sm:w-[300px] opacity-80'}`}
+              className={
+                'snap-center flex-shrink-0 w-64 sm:w-[300px] transition-transform duration-300 ' +
+                (idx === index
+                  ? 'scale-100'
+                  : Math.abs(idx - index) === 1
+                  ? 'scale-95 opacity-80'
+                  : 'scale-90 opacity-50')
+              }
             >
               <ContributionCard
                 contribution={item}
@@ -321,7 +328,11 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                       key={idx}
                       type="button"
                       onClick={() => setIndex(actual)}
-                      className={`mx-1 w-2 h-2 rounded-full ${isActive ? 'bg-accent' : 'bg-background'} ${isEdge && !isActive ? 'opacity-50' : ''} focus:outline-none`}
+                      className={
+                        'mx-1 w-2 h-2 rounded-full transition-all ' +
+                        (isActive ? 'bg-accent opacity-100' : 'bg-secondary/40 opacity-70') +
+                        (isEdge && !isActive ? ' scale-75' : '')
+                      }
                     />
                   );
                 });
