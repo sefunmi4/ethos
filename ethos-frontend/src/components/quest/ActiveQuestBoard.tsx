@@ -4,7 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
-import { Spinner } from '../ui';
+import CreateQuest from './CreateQuest';
+import { Spinner, Button } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
@@ -19,6 +20,7 @@ const ActiveQuestBoard: React.FC = () => {
   const [quests, setQuests] = useState<QuestWithLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
+  const [showCreate, setShowCreate] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -91,6 +93,11 @@ const ActiveQuestBoard: React.FC = () => {
     scrollToIndex(index);
   }, [index]);
 
+  const handleCreateSave = (quest: Quest) => {
+    setQuests(q => [quest, ...q]);
+    setShowCreate(false);
+  };
+
   if (!user) return null;
   if (loading) return <Spinner />;
   if (quests.length === 0) return null;
@@ -101,12 +108,21 @@ const ActiveQuestBoard: React.FC = () => {
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
-        {showSeeAll && (
-          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
-            → See all
-          </Link>
+        {user && (
+          <Button variant="contrast" size="sm" onClick={() => setShowCreate(true)}>
+            + Add Quest
+          </Button>
         )}
       </div>
+      {showCreate && (
+        <div className="border rounded-lg p-4 shadow">
+          <CreateQuest
+            onSave={handleCreateSave}
+            onCancel={() => setShowCreate(false)}
+            boardId="quest-board"
+          />
+        </div>
+      )}
       <div className="relative">
         <div
           ref={containerRef}
@@ -169,6 +185,13 @@ const ActiveQuestBoard: React.FC = () => {
           });
         })()}
       </div>
+      {showSeeAll && (
+        <div className="text-right">
+          <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
+            → See all
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
