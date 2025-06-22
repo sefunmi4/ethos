@@ -27,6 +27,9 @@ export interface Post {
   questNodeTitle?: string;
   nodeId?: string;
 
+  /** Optional rating value for review posts */
+  rating?: number;
+
   tags: PostTag[];
   status?: QuestTaskStatus;
   /** Optional classification for task posts */

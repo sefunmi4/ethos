@@ -130,6 +130,7 @@ router.post(
       taskType = 'abstract',
       helpRequest = false,
       needsHelp = undefined,
+      rating,
     } = req.body;
 
     const finalStatus =
@@ -165,6 +166,7 @@ router.post(
       linkedItems,
       questId,
       ...(type === 'task' ? { taskType } : {}),
+      ...(type === 'review' && rating ? { rating: Math.min(5, Math.max(0, Number(rating))) } : {}),
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
       needsHelp: type === 'request' ? needsHelp ?? true : undefined,
@@ -225,6 +227,10 @@ router.patch(
   const originalType = post.type;
 
   Object.assign(post, req.body);
+
+  if (post.type === 'review' && typeof post.rating === 'number') {
+    post.rating = Math.min(5, Math.max(0, post.rating));
+  }
 
   if (post.type === 'task') {
     post.title = post.content;

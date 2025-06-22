@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
@@ -61,6 +62,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [helpRequest, setHelpRequest] = useState(boardId === 'quest-board');
+  const [rating, setRating] = useState(0);
 
 const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
@@ -102,6 +104,12 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       }
     }
 
+    if (type === 'review' && rating === 0) {
+      alert('Please provide a rating.');
+      setIsSubmitting(false);
+      return;
+    }
+
     const autoLinkItems = [...linkedItems];
     if (questIdFromBoard && !autoLinkItems.some((l) => l.itemId === questIdFromBoard)) {
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
@@ -136,6 +144,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         ...(requiresQuestRoles(type) && { collaborators }),
         ...(type === 'commit' && initialGitFilePath ? { gitFilePath: initialGitFilePath } : {}),
         ...(type === 'commit' && initialLinkedNodeId ? { linkedNodeId: initialLinkedNodeId } : {}),
+        ...(type === 'review' && rating ? { rating } : {}),
       };
 
     try {
@@ -253,6 +262,31 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
               onChange={(e) => setTitle(e.target.value)}
               required={type !== 'free_speech'}
             />
+            {type === 'review' && (
+              <div className="mt-2">
+                <Label>Rating</Label>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((n) => {
+                    const full = rating >= n;
+                    const half = !full && rating >= n - 0.5;
+                    return (
+                      <button
+                        type="button"
+                        key={n}
+                        onClick={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const isHalf = e.clientX - rect.left < rect.width / 2;
+                          setRating(isHalf ? n - 0.5 : n);
+                        }}
+                        className="text-xl focus:outline-none text-yellow-400"
+                      >
+                        {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </>
         )}
 

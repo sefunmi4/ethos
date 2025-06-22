@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -32,6 +33,20 @@ const makeHeader = (content: string): string => {
   // TODO: replace with AI-generated summaries
   return text.length <= 50 ? text : text.slice(0, 50) + '…';
 };
+
+const renderStars = (count: number) => (
+  <span aria-label={`Rating: ${count}`} className="text-yellow-500 flex">
+    {[1, 2, 3, 4, 5].map((n) => {
+      const full = count >= n;
+      const half = !full && count >= n - 0.5;
+      return (
+        <span key={n} className="mr-0.5">
+          {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
+        </span>
+      );
+    })}
+  </span>
+);
 
 interface PostCardProps {
   post: Post;
@@ -364,14 +379,15 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         <div className="flex justify-between text-sm text-secondary">
           <div className="flex flex-wrap items-center gap-2">
-            {summaryTags.map((tag, idx) => (
-              <React.Fragment key={idx}>
-                <SummaryTag {...tag} />
-              </React.Fragment>
-            ))}
-            {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
-              <StatusBadge status={post.status} />
-            )}
+          {summaryTags.map((tag, idx) => (
+            <React.Fragment key={idx}>
+              <SummaryTag {...tag} />
+            </React.Fragment>
+          ))}
+          {post.type === 'review' && post.rating && renderStars(post.rating)}
+          {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
+            <StatusBadge status={post.status} />
+          )}
             <span>{timestamp}</span>
           </div>
         </div>
@@ -417,6 +433,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <SummaryTag {...tag} />
             </React.Fragment>
           ))}
+          {post.type === 'review' && post.rating && renderStars(post.rating)}
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}

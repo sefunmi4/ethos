@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
@@ -6,6 +7,20 @@ import { getDisplayTitle, buildSummaryTags } from '../../utils/displayUtils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import SummaryTag from '../ui/SummaryTag';
+
+const renderStars = (count: number) => (
+  <span aria-label={`Rating: ${count}`} className="text-yellow-500 flex">
+    {[1, 2, 3, 4, 5].map((n) => {
+      const full = count >= n;
+      const half = !full && count >= n - 0.5;
+      return (
+        <span key={n} className="mr-0.5">
+          {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
+        </span>
+      );
+    })}
+  </span>
+);
 
 interface PostListItemProps {
   post: Post;
@@ -36,6 +51,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
+          {post.type === 'review' && post.rating && renderStars(post.rating)}
         </div>
       </div>
     </div>
