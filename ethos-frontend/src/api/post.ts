@@ -120,6 +120,17 @@ export const archivePost = async (id: string): Promise<{ success: boolean }> => 
 };
 
 /**
+ * ♻️ Unarchive a post by ID
+ * @param id - Post ID
+ */
+export const unarchivePost = async (
+  id: string
+): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.delete(`${BASE_URL}/${id}/archive`);
+  return res.data;
+};
+
+/**
  * ❌ Remove a post by ID
  * @param id - Post ID
  */

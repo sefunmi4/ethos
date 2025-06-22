@@ -668,6 +668,26 @@ router.post(
 );
 
 //
+// ✅ DELETE /api/posts/:id/archive – Remove archived tag
+//
+router.delete(
+  '/:id/archive',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const post = posts.find((p) => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    post.tags = (post.tags || []).filter((t) => t !== 'archived');
+    postsStore.write(posts);
+    res.json({ success: true });
+  }
+);
+
+//
 // ✅ DELETE /api/posts/:id – Permanently remove a post
 //
 router.delete(

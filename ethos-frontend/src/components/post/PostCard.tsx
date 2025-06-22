@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest, archivePost } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest, archivePost, unarchivePost } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -144,10 +144,14 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleComplete = async () => {
     try {
-      await archivePost(post.id);
-      if (selectedBoard) removeItemFromBoard(selectedBoard, post.id);
+      if (post.tags?.includes('archived')) {
+        await unarchivePost(post.id);
+      } else {
+        await archivePost(post.id);
+        if (selectedBoard) removeItemFromBoard(selectedBoard, post.id);
+      }
     } catch (err) {
-      console.error('[PostCard] Failed to mark complete:', err);
+      console.error('[PostCard] Failed to toggle complete:', err);
     }
   };
 

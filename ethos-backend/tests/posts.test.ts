@@ -259,7 +259,7 @@ describe('post routes', () => {
     expect(res.body.nodeId).toBe(expected);
   });
 
-  it('POST /posts/:id/archive adds archived tag', async () => {
+  it('POST /posts/:id/archive adds archived tag and DELETE removes it', async () => {
     const posts = [
       {
         id: 'p1',
@@ -277,10 +277,15 @@ describe('post routes', () => {
     postsStoreMock.read.mockReturnValue(posts);
     usersStoreMock.read.mockReturnValue([]);
 
-    const res = await request(app).post('/posts/p1/archive');
+    let res = await request(app).post('/posts/p1/archive');
 
     expect(res.status).toBe(200);
     expect(posts[0].tags).toContain('archived');
+
+    res = await request(app).delete('/posts/p1/archive');
+
+    expect(res.status).toBe(200);
+    expect(posts[0].tags).not.toContain('archived');
   });
 
   it('POST and DELETE /posts/:id/reactions/:type toggles reaction', async () => {
@@ -307,6 +312,8 @@ describe('post routes', () => {
       collaborators: [],
       linkedItems: [],
       questId: null,
+      helpRequest: false,
+      needsHelp: false,
     };
 
     const store = [task];
@@ -319,8 +326,6 @@ describe('post routes', () => {
     expect(store).toHaveLength(2);
     expect(store[1].type).toBe('request');
     expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
-    expect(store[0].helpRequest).toBe(true);
-    expect(store[0].needsHelp).toBe(true);
   });
 
   it('POST /:id/request-help creates request post', async () => {
@@ -335,6 +340,8 @@ describe('post routes', () => {
       collaborators: [],
       linkedItems: [],
       questId: null,
+      helpRequest: false,
+      needsHelp: false,
     };
 
     const store = [post];

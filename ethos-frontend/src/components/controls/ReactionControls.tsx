@@ -27,6 +27,8 @@ import {
   fetchUserRepost,
   updatePost,
   requestHelp,
+  archivePost,
+  unarchivePost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -163,12 +165,17 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   };
 
   const handleMarkComplete = async () => {
-    if (!user || user.id !== post.authorId || completed) return;
+    if (!user || user.id !== post.authorId) return;
     try {
-      await archivePost(post.id);
-      setCompleted(true);
+      if (completed) {
+        await unarchivePost(post.id);
+        setCompleted(false);
+      } else {
+        await archivePost(post.id);
+        setCompleted(true);
+      }
     } catch (err) {
-      console.error('[ReactionControls] Failed to mark request complete:', err);
+      console.error('[ReactionControls] Failed to toggle request completion:', err);
     }
   };
 
@@ -215,7 +222,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button
             className={clsx('flex items-center gap-1', completed && 'text-green-600')}
             onClick={handleMarkComplete}
-            disabled={completed}
+            disabled={!user}
           >
             {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
           </button>
