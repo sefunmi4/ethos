@@ -60,7 +60,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "701641e4-19b8-45e5-b45c-0c4c90cd9448",
+      "f8e43fbb-4b2e-4e78-925c-a37ea61ea02b",
+      "92baa863-7b7b-47ee-8167-1d621f76cf20",
       "79455e9d-596b-47e5-9fff-a526f9695955",
       "54c13a7e-dd35-49e8-b90f-727899a2ea52",
       "591e0339-484e-4574-8648-545d5f2183bf",
@@ -69,7 +70,8 @@
       "9f2f2efd-5fda-4868-8a3f-bf54d74e2110",
       "fd516efb-2729-47cb-a281-4e40c0a59afe",
       "7b64f24a-f48f-40ce-bf59-2ede9350c2e2",
-      "da6a0e67-43ba-4d53-b2be-b64f1817fcd5"
+      "da6a0e67-43ba-4d53-b2be-b64f1817fcd5",
+      "701641e4-19b8-45e5-b45c-0c4c90cd9448"
     ],
     "featured": true,
     "defaultFor": null,
