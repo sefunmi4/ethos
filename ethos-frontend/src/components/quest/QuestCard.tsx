@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, PostTypeBadge } from '../ui';
+import { Button, SummaryTag } from '../ui';
+import { POST_TYPE_LABELS } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
@@ -174,7 +175,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           {questData.title}
         </h2>
         <div className="flex items-center gap-2 text-sm text-secondary">
-          <PostTypeBadge type="quest" />
+          <SummaryTag type="quest" label={POST_TYPE_LABELS.quest} />
           <span>{questData.createdAt?.slice(0, 10)}</span>
           {questData.gitRepo?.repoUrl && (
             <a

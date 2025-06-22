@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Post } from '../../types/postTypes';
-import { PostTypeBadge, Button, AvatarStack, SummaryTag } from '../ui';
+import { Button, AvatarStack, SummaryTag } from '../ui';
+import { POST_TYPE_LABELS } from '../../utils/displayUtils';
 import { FaUserPlus, FaUserCheck } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { acceptRequest, unacceptRequest } from '../../api/post';
@@ -45,7 +46,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   return (
     <div className={"border border-secondary rounded bg-surface p-4 space-y-2 " + (className || '')}>
       <div className="flex items-center gap-2 text-sm text-secondary">
-        <PostTypeBadge type="request" />
+        <SummaryTag type="request" label={POST_TYPE_LABELS.request} />
         {post.questId && (
           <SummaryTag type="quest" label={post.questNodeTitle || post.questTitle || 'Quest'} />
         )}
