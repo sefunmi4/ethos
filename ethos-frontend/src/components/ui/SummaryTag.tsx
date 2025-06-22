@@ -96,10 +96,10 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
     return (
       <span className={clsx(TAG_BASE, colorClass, className)}>
         <Icon className="w-3 h-3" />
-        <Link to={detailLink} className="underline">
+        <Link to={detailLink} className="underline text-inherit">
           {label}
         </Link>{' '}
-        <Link to={usernameLink}>@{username}</Link>
+        <Link to={usernameLink} className="text-inherit">@{username}</Link>
       </span>
     );
   }
