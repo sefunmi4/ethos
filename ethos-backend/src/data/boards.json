@@ -6,15 +6,18 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
-      "86f55e22-76f2-4d7b-a672-173a362eed1d",
+      "42a87c7f-996a-4e02-b715-de4a8af73507",
       "8e32cee7-ed0a-4c64-a4ff-79f59c1b8143",
       "67f73c9b-5d2e-4ba1-9480-6c490b77814c",
       "2e83f8a3-e2b0-4aaf-befb-d932b129a831",
       "4c75a71f-7705-4b5a-8a5b-e7210b685828",
       "e02abfd8-e4cf-4ab4-a6d9-1121bdbe2692",
       "ffdd8350-0ecc-472e-a487-36c95a647ff5",
-      "ad3084d8-a40e-4382-89e9-8c28f36e9b33"
+      "ad3084d8-a40e-4382-89e9-8c28f36e9b33",
+      "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
+      "603375d8-86ea-4732-a0d7-9d85649465ee",
+      "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30",
+      "982d317e-7ac9-44f1-ac3d-d9e77a84f465"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -28,9 +31,10 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "86f55e22-76f2-4d7b-a672-173a362eed1d",
+      "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
       "1dfa10c7-9ddd-4448-98d9-cfa2ae126f23",
-      "7d978e35-bef3-4686-b190-528e614f01fc"
+      "7d978e35-bef3-4686-b190-528e614f01fc",
+      "86f55e22-76f2-4d7b-a672-173a362eed1d"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -60,6 +64,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "42a87c7f-996a-4e02-b715-de4a8af73507",
+      "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30",
       "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
       "ad3084d8-a40e-4382-89e9-8c28f36e9b33",
       "ffdd8350-0ecc-472e-a487-36c95a647ff5",
@@ -133,6 +139,36 @@
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-22T17:36:05.830Z",
+    "userId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74"
+  },
+  {
+    "id": "map-3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "title": "Battle of The Bands Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-22T18:15:23.791Z",
+    "userId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "questId": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8"
+  },
+  {
+    "id": "log-3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "982d317e-7ac9-44f1-ac3d-d9e77a84f465"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-22T18:15:40.958Z",
     "userId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74"
   }
 ]

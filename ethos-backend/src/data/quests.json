@@ -59,5 +59,27 @@
     "headPostId": "7e124b48-f5bc-4c87-b349-1a4bee76d88c",
     "taskGraph": [],
     "helpRequest": true
+  },
+  {
+    "id": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "title": "Battle of The Bands",
+    "description": "",
+    "displayOnBoard": true,
+    "visibility": "public",
+    "approvalStatus": "approved",
+    "flagCount": 0,
+    "tags": [],
+    "linkedPosts": [],
+    "collaborators": [],
+    "status": "active",
+    "headPostId": "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30",
+    "taskGraph": [
+      {
+        "from": "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30",
+        "to": "982d317e-7ac9-44f1-ac3d-d9e77a84f465"
+      }
+    ],
+    "helpRequest": true
   }
 ]

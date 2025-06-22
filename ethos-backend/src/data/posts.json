@@ -156,5 +156,66 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T00",
     "questNodeTitle": "Test out the plaform"
+  },
+  {
+    "id": "1cf8afea-c5e0-49e3-aa03-e3186b6d6f30",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "log",
+    "content": "Battle of The Bands",
+    "visibility": "public",
+    "timestamp": "2025-06-22T18:15:23.790Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "nodeId": "Q:battle_of_the_bands:L00",
+    "questNodeTitle": "Battle of The Bands"
+  },
+  {
+    "id": "982d317e-7ac9-44f1-ac3d-d9e77a84f465",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "task",
+    "title": "testing out task",
+    "content": "testing out task",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T18:15:40.952Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "3354ee12-24ef-4daf-93a2-2de5b68d4cc8",
+    "taskType": "file",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:battle_of_the_bands:T00",
+    "questNodeTitle": "testing out task"
+  },
+  {
+    "id": "42a87c7f-996a-4e02-b715-de4a8af73507",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "log",
+    "title": "testing out log in task",
+    "content": "",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T18:17:06.488Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "603375d8-86ea-4732-a0d7-9d85649465ee",
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "1dfa10c7-9ddd-4448-98d9-cfa2ae126f23",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "1dfa10c7-9ddd-4448-98d9-cfa2ae126f23",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T00:L00",
+    "questNodeTitle": ""
   }
 ]
