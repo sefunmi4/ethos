@@ -151,10 +151,19 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     if (!user?.id) return;
     if (!helpRequested) {
       try {
-        const reqPost = await requestHelp(post.id);
+        const { request: reqPost, subRequests } = await requestHelp(
+          post.id,
+          post.type
+        );
         appendToBoard?.('quest-board', reqPost);
         appendToBoard?.('timeline-board', reqPost);
+        subRequests.forEach(sr => {
+          appendToBoard?.('quest-board', sr);
+          appendToBoard?.('timeline-board', sr);
+          onUpdate?.(sr);
+        });
         setHelpRequested(true);
+        onUpdate?.(reqPost);
       } catch (err) {
         console.error('[ReactionControls] Failed to request help:', err);
       }

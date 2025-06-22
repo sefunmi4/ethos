@@ -91,9 +91,10 @@ export interface EnrichedPost extends Post {
  * Users associated with a post.
  */
 export interface CollaberatorRoles {
-  userId: string;
+  userId?: string;
   username?: string;
   roles?: string[];
+  pending?: string[];
 }
 
 /**

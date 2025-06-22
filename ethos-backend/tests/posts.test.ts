@@ -300,7 +300,7 @@ describe('post routes', () => {
     expect(reactionsStoreMock.write).toHaveBeenCalledWith([]);
   });
 
-  it('POST /tasks/:id/request-help creates request post', async () => {
+  it('POST /tasks/:id/request-help creates request and role posts', async () => {
     const task = {
       id: 't1',
       authorId: 'u1',
@@ -309,23 +309,35 @@ describe('post routes', () => {
       visibility: 'public',
       timestamp: '',
       tags: [],
-      collaborators: [],
+      collaborators: [{ roles: ['dev'] }],
       linkedItems: [],
-      questId: null,
+      questId: 'q1',
       helpRequest: false,
       needsHelp: false,
-    };
+    } as any;
+
+    const quest = {
+      id: 'q1',
+      authorId: 'u1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: '',
+      linkedPosts: [],
+      collaborators: [{ roles: ['design'] }],
+    } as any;
 
     const store = [task];
     postsStoreMock.read.mockReturnValue(store);
+    questsStoreMock.read.mockReturnValue([quest]);
     usersStoreMock.read.mockReturnValue([]);
 
     const res = await request(app).post('/posts/tasks/t1/request-help');
 
     expect(res.status).toBe(201);
-    expect(store).toHaveLength(2);
+    expect(res.body.subRequests).toHaveLength(2);
+    expect(store).toHaveLength(4);
     expect(store[1].type).toBe('request');
-    expect((store[1].linkedItems as any[])[0].itemId).toBe('t1');
+    expect(store[2].replyTo).toBe(store[1].id);
   });
 
   it('POST /:id/request-help creates request post', async () => {
@@ -351,8 +363,9 @@ describe('post routes', () => {
     const res = await request(app).post('/posts/p2/request-help');
 
     expect(res.status).toBe(201);
+    expect(res.body.request.type).toBe('request');
     expect(store).toHaveLength(2);
-    expect(store[1].type).toBe('request');
+    expect(res.body.subRequests).toHaveLength(0);
     expect((store[1].linkedItems as any[])[0].itemId).toBe('p2');
     expect(store[0].helpRequest).toBe(true);
     expect(store[0].needsHelp).toBe(true);
