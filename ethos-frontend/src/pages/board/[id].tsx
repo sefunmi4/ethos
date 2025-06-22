@@ -122,7 +122,7 @@ const BoardPage: React.FC = () => {
   const isTimeline = boardData.id === 'timeline-board';
 
   return (
-    <main className="max-w-7xl mx-auto p-4 space-y-8 bg-accent-muted">
+    <main className="max-w-7xl mx-auto p-4 space-y-8 bg-board-bg">
       <div className="flex flex-col md:flex-row gap-6">
         {!isTimeline && (
           <BoardSearchFilter
@@ -132,7 +132,7 @@ const BoardPage: React.FC = () => {
           />
         )}
         <div className="flex-1">
-          <div className="bg-accent-muted rounded-xl shadow-lg p-6 space-y-6">
+          <div className="bg-board-bg rounded-xl shadow-lg p-6 space-y-6">
             <div className="flex justify-between items-center">
               <h1 className="text-3xl font-bold text-primary dark:text-primary">{boardData.title}</h1>
               {editable && (
