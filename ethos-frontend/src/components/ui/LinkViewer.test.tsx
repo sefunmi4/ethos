@@ -45,7 +45,7 @@ jest.mock('../../api/post', () => ({
   }),
 }));
 
-describe.skip('LinkViewer', () => {
+describe('LinkViewer', () => {
   const items: LinkedItem[] = [
     { itemId: 'q1', itemType: 'quest', linkType: 'related' },
   ];
@@ -78,6 +78,7 @@ describe.skip('LinkViewer', () => {
     await waitFor(() => {
       expect(screen.getByText('Q:T02')).toBeInTheDocument();
       expect(screen.getByText('Q:T01')).toBeInTheDocument();
+      expect(screen.getAllByText('@u1')[0]).toBeInTheDocument();
     });
   });
 });

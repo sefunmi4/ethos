@@ -67,13 +67,41 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   // 🧭 Render Quest
   if ('headPostId' in contribution) {
+    const quest = contribution as Quest;
+
+    // Display quests on the timeline board like regular posts for consistency
+    if (boardId === 'timeline-board') {
+      const headPost = (quest as any).headPost as Post | undefined;
+      const postLike = headPost ?? ({
+        id: quest.headPostId,
+        type: 'quest',
+        authorId: quest.authorId,
+        content: quest.title,
+        visibility: 'public',
+        timestamp: quest.createdAt || '',
+        tags: [],
+        collaborators: [],
+        linkedItems: [],
+        questId: quest.id,
+      } as Post);
+
+      return (
+        <PostCard
+          post={postLike}
+          questId={quest.id}
+          questTitle={quest.title}
+          {...sharedProps}
+        />
+      );
+    }
+
     return (
       <QuestCard
-        quest={contribution as Quest}
+        quest={quest}
         user={user}
         compact={compact}
-        onEdit={onEdit ? () => onEdit((contribution as Quest).id) : undefined}
-        onDelete={onDelete ? (quest) => onDelete(quest.id) : undefined}
+        onEdit={onEdit ? () => onEdit(quest.id) : undefined}
+        onDelete={onDelete ? (q) => onDelete(q.id) : undefined}
       />
     );
   }
