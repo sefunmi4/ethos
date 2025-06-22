@@ -577,6 +577,7 @@ const PostCard: React.FC<PostCardProps> = ({
         onUpdate={onUpdate}
         replyOverride={replyOverride}
         boardId={ctxBoardId || undefined}
+        timestamp={timestamp}
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }
