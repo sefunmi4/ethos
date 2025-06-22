@@ -40,16 +40,16 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
   }, [username]);
 
   const addCollaborator = () => {
-    if (!username.trim()) return;
-    const id =
-      selectedUser?.id ||
-      suggestions.find(s => s.username === username)?.id ||
-      crypto.randomUUID();
-    const newCollaborator: CollaberatorRoles = {
-      userId: id,
-      username,
-      roles: selectedRoles,
-    };
+    const trimmed = username.trim();
+    const newCollaborator: CollaberatorRoles = trimmed
+      ? {
+          userId: crypto.randomUUID(),
+          username: trimmed,
+          roles: selectedRoles,
+        }
+      : {
+          roles: selectedRoles,
+        };
     onChange([...value, newCollaborator]);
     setUsername('');
     setSelectedUser(null);
