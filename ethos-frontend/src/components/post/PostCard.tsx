@@ -548,7 +548,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <MediaPreview media={post.mediaPreviews} />
         {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
-            {post.tags.map(tag => (
+            {Array.from(new Set(post.tags)).map((tag) => (
               <span key={tag} className={TAG_BASE}>#{tag}</span>
             ))}
           </div>

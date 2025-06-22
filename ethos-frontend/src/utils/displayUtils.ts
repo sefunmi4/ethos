@@ -106,7 +106,12 @@ export const buildSummaryTags = (
     tags.push({ type: 'issue', label: `Issue: ${post.nodeId}`, link: ROUTES.POST(post.id) });
   } else if (post.type === 'log') {
     const user = post.author?.username || post.authorId;
-    tags.push({ type: 'log', label: `Log: @${user}`, link: ROUTES.POST(post.id) });
+    // Link log tags to the author's public profile for quick context
+    tags.push({
+      type: 'log',
+      label: `Log: @${user}`,
+      link: ROUTES.PUBLIC_PROFILE(post.authorId)
+    });
   }
 
   if (post.status && ['task', 'issue'].includes(post.type)) {
@@ -118,7 +123,10 @@ export const buildSummaryTags = (
     tags.push({ type: 'free_speech', label: `Free Speech: @${user}` });
   }
 
-  return tags;
+  // Remove duplicate entries by label in case of redundant inputs
+  return tags.filter((t, idx) =>
+    tags.findIndex((o) => o.label === t.label && o.type === t.type) === idx
+  );
 };
 
 /**
