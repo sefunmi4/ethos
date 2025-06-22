@@ -115,10 +115,13 @@ export const buildSummaryTags = (
   const multipleSources = (post.linkedItems || []).length > 1;
 
   if (post.type === 'review') {
+    const user = post.author?.username || post.authorId;
     tags.push({
       type: 'review',
       label: title ? `Review: ${title}` : 'Review',
-      link: post.id ? ROUTES.POST(post.id) : undefined,
+      detailLink: post.id ? ROUTES.POST(post.id) : undefined,
+      username: user,
+      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
     if (post.subtype) tags.push({ type: 'category', label: post.subtype });
     return tags;
@@ -238,7 +241,9 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   const multipleSources = (post.linkedItems || []).length > 1;
 
   if (post.type === 'review') {
+    const user = post.author?.username || post.authorId;
     if (title) parts.push(`(Review: ${title})`);
+    parts.push(`(@${user})`);
     if (post.subtype) parts.push(`(${post.subtype})`);
     return parts.join(' ').trim();
   }
