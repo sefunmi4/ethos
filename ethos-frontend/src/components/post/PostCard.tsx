@@ -377,7 +377,7 @@ const PostCard: React.FC<PostCardProps> = ({
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-            <PostTypeBadge type={post.type} />
+            <PostTypeBadge type={['task', 'issue'].includes(post.type) ? 'log' : post.type} />
             {post.status && <StatusBadge status={post.status} />}
             {showAuthor && (
               <button
@@ -431,7 +431,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
-          <PostTypeBadge type={post.type} />
+          <PostTypeBadge type={['task', 'issue'].includes(post.type) ? 'log' : post.type} />
           {!isQuestBoardRequest && post.status && <StatusBadge status={post.status} />}
           {!isQuestBoardRequest &&
             canEdit &&
