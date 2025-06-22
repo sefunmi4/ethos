@@ -35,7 +35,7 @@ describe('PostListItem', () => {
       </BrowserRouter>
     );
 
-    fireEvent.click(screen.getByText(/hello world/));
+    fireEvent.click(screen.getByText(/hello world/i));
     expect(navMock).toHaveBeenCalledWith(ROUTES.POST('p1'));
   });
 
