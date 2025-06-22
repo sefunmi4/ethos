@@ -17,7 +17,7 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
-import TaskDetailModal from '../quest/TaskDetailModal';
+import QuestNodeInspector from '../quest/QuestNodeInspector';
 import {
   updateReaction,
   addRepost,
@@ -236,8 +236,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           onClick={() => {
             if (replyOverride) {
               replyOverride.onClick();
-            } else if (post.type === 'task' && post.questId) {
-              navigate(ROUTES.BOARD(`log-${post.questId}`));
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
             } else if (isTimelineBoard) {
@@ -250,8 +248,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <FaReply />{' '}
           {replyOverride
             ? replyOverride.label
-            : post.type === 'task'
-            ? 'Quest Log'
             : post.type === 'commit'
             ? 'File Change View'
             : showReplyPanel
@@ -287,12 +283,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       )}
 
       {expanded && post.type === 'task' && post.questId && (
-        <TaskDetailModal
-          task={post}
-          questId={post.questId}
-          user={user}
-          onClose={() => setExpanded(false)}
-        />
+        <div className="mt-3">
+          <QuestNodeInspector
+            questId={post.questId}
+            node={post}
+            user={user}
+            showPost={false}
+          />
+        </div>
       )}
 
       {expanded && post.type === 'commit' && (
