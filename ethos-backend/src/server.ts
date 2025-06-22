@@ -1,10 +1,9 @@
 // src/server.ts
 
 import express, { Express } from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import type { CorsOptions } from 'cors';
+import type { Request, Response, NextFunction } from 'express';
 import { requestLogger, info } from './utils/logger';
 
 import authRoutes from './routes/authRoutes';
@@ -34,18 +33,28 @@ const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
  * CORS configuration.
  * Enables cookies and cross-origin support for the client.
  */
-const corsOptions: CorsOptions = {
-  origin: CLIENT_URL,
-  credentials: true,
-};
+function simpleCors(req: Request, res: Response, next: NextFunction): void {
+  res.header('Access-Control-Allow-Origin', CLIENT_URL);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+    return;
+  }
+  next();
+}
 
 /**
  * Middleware setup
- * @middleware cors - enable cross-origin resource sharing
+ * @middleware CORS - enable cross-origin resource sharing
  * @middleware express.json - parse incoming JSON payloads
  * @middleware cookieParser - parse cookie headers
  */
-app.use(cors(corsOptions));
+app.use(simpleCors);
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
