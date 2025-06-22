@@ -7,7 +7,8 @@ import {
   FaStickyNote,
   FaStar,
   FaCommentAlt,
-  FaUser
+  FaUser,
+  FaHandsHelping
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import { TAG_BASE } from '../../constants/styles';
@@ -21,7 +22,8 @@ export type SummaryTagType =
   | 'category'
   | 'status'
   | 'free_speech'
-  | 'type';
+  | 'type'
+  | 'request';
 
 export interface SummaryTagData {
   type: SummaryTagType;
@@ -39,6 +41,7 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
   status: FaStickyNote,
   free_speech: FaCommentAlt,
   type: FaUser,
+  request: FaHandsHelping,
 };
 
 const colors: Record<SummaryTagType, string> = {
@@ -53,6 +56,7 @@ const colors: Record<SummaryTagType, string> = {
   status: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
   free_speech: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
   type: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  request: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
 };
 
 
