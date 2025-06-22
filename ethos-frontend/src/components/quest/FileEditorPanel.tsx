@@ -10,14 +10,15 @@ interface FileEditorPanelProps {
 const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, content }) => {
   const [expandedLine, setExpandedLine] = useState<number | null>(null);
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(content);
+  const [draft, setDraft] = useState(content + '\n');
   const [commitMsg, setCommitMsg] = useState('Update file');
   const lines = content.split('\n');
 
   const handleSave = () => {
-    // Placeholder save handler
-    console.log('Save file', filePath, commitMsg);
-    setEditing(false);
+    if (window.confirm('Commit these changes?')) {
+      console.log('Save file', filePath, commitMsg, draft);
+      setEditing(false);
+    }
   };
 
   if (editing) {
@@ -67,8 +68,7 @@ const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, co
               className="ml-1 text-accent underline text-xs"
               onClick={() => {
                 setEditing(true);
-                const allLines = draft.split('\n');
-                setDraft(allLines.map((l, i) => (i === idx ? line : l)).join('\n'));
+                setDraft(lines.join('\n') + '\n');
               }}
             >
               Edit
@@ -86,7 +86,13 @@ const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, co
           </div>
         ))}
       </pre>
-      <button onClick={() => setEditing(true)} className="mt-2 text-accent underline text-sm">
+      <button
+        onClick={() => {
+          setEditing(true);
+          setDraft(content + '\n');
+        }}
+        className="mt-2 text-accent underline text-sm"
+      >
         Edit File
       </button>
     </div>

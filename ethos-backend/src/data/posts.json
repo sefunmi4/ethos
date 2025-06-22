@@ -226,7 +226,9 @@
     "content": "testing out task",
     "visibility": "public",
     "timestamp": "2025-06-22T19:00:46.499Z",
-    "tags": [],
+    "tags": [
+      "archived"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
