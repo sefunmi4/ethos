@@ -462,7 +462,12 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="text-sm text-primary">
         {post.type === 'task' ? (
           <>
-            <div className="font-semibold">{post.content}</div>
+            <div
+              className="font-semibold cursor-pointer"
+              onClick={() => navigate(ROUTES.POST(post.id))}
+            >
+              {post.content}
+            </div>
             {post.details && (
               isLong ? (
                 <>
