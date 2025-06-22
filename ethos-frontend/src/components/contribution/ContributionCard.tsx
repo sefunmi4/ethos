@@ -69,8 +69,8 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   if ('headPostId' in contribution) {
     const quest = contribution as Quest;
 
-    // Display quests on the timeline board like regular posts for consistency
-    if (boardId === 'timeline-board') {
+    // Display quests on timeline and post history boards like regular posts for consistency
+    if (boardId === 'timeline-board' || boardId === 'my-posts') {
       const headPost = (quest as any).headPost as Post | undefined;
       const postLike = headPost ?? ({
         id: quest.headPostId,
