@@ -82,6 +82,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
         tags: [],
         collaborators: [],
         linkedItems: [],
+        questId: quest.id,
       } as Post);
 
       return (

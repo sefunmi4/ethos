@@ -25,6 +25,6 @@ describe('Timeline quest formatting', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('Quest: Timeline Quest')).toBeInTheDocument();
-    expect(screen.queryByText(/Expand/)).toBeNull();
+    expect(screen.getByText('Expand View')).toBeInTheDocument();
   });
 });
