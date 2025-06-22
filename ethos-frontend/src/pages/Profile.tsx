@@ -5,6 +5,7 @@ import { useSocketListener } from '../hooks/useSocket';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
+import BoardSearchFilter from '../components/board/BoardSearchFilter';
 import { Spinner } from '../components/ui';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 
@@ -24,6 +25,8 @@ const ProfilePage: React.FC = () => {
     setBoard: setUserPostBoard,
     isLoading: loadingPosts,
   } = useBoard('my-posts', { pageSize: 1000 });
+
+  const [view, setView] = useState<'grid' | 'list'>('list');
 
 
   useSocketListener('board:update', (updatedBoard: BoardData) => {
@@ -63,22 +66,25 @@ const ProfilePage: React.FC = () => {
         {loadingPosts ? (
           <Spinner />
         ) : (
-          <>
-            <Board
-              boardId="my-posts"
-              board={userPostBoard}
-              layout="list"
-              user={castUser}
-              compact
-              hideControls
-              headerOnly
-            />
-            {userPostBoard?.enrichedItems?.length === 0 && (
-              <div className="text-secondary text-center py-8">
-                You haven't posted anything yet.
-              </div>
-            )}
-          </>
+          <div className="flex flex-col md:flex-row gap-6">
+            <BoardSearchFilter className="md:w-64" onChange={(f) => setView(f.view)} />
+            <div className="flex-1">
+              <Board
+                boardId="my-posts"
+                board={userPostBoard}
+                layout={view}
+                user={castUser}
+                compact
+                hideControls
+                headerOnly
+              />
+              {userPostBoard?.enrichedItems?.length === 0 && (
+                <div className="text-secondary text-center py-8">
+                  You haven't posted anything yet.
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </section>
     </main>

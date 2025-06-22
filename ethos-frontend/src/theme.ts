@@ -13,7 +13,7 @@ export const colors: Record<string, Palette> = {
   error: { light: '#EF4444', dark: '#fca5a5' },
   background: { light: '#f9fafb', dark: '#1f2937' },
   surface: { light: '#ffffff', dark: '#374151' },
-  accentMuted: { light: '#f3f4f6', dark: '#2a3442' },
+  accentMuted: { light: '#f0f0f0', dark: '#323c4e' },
   infoBackground: { light: '#bfdbfe', dark: '#1e40af' },
 };
 

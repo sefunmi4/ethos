@@ -162,8 +162,14 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || (post.type === 'task' ? post.content : '');
-  const summaryTags = buildSummaryTags(post, questTitle, questId);
-  const showAuthor = !summaryTags.some(t => t.type === 'log' || t.type === 'free_speech');
+  let summaryTags = buildSummaryTags(post, questTitle, questId);
+  if (isQuestBoardRequest) {
+    const user = post.author?.username || post.authorId;
+    summaryTags = [{ type: 'request', label: `Request: @${user}` }];
+  }
+  const showAuthor =
+    !isQuestBoardRequest &&
+    !summaryTags.some(t => t.type === 'log' || t.type === 'free_speech');
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -347,24 +353,7 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   if (headerOnly) {
-    const collaboratorCount = post.collaborators?.filter(c => c.userId).length || 0;
-    if (isQuestBoardRequest) {
-      return (
-        <div
-          id={post.id}
-          className={clsx(
-            'border border-secondary rounded bg-surface p-4 space-y-2 text-primary',
-            className
-          )}
-        >
-          {titleText && <h3 className="font-semibold text-lg">{titleText}</h3>}
-          <div className="text-sm text-secondary">{collaboratorCount} collaborators</div>
-          <Button variant="ghost" size="sm" onClick={handleComplete}>
-            Mark Complete
-          </Button>
-        </div>
-      );
-    }
+
 
     return (
       <div
@@ -381,12 +370,12 @@ const PostCard: React.FC<PostCardProps> = ({
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-            {post.type !== 'log' && (
+            {post.type !== 'log' && !isQuestBoardRequest && (
               <PostTypeBadge
                 type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
               />
             )}
-            {post.status && post.status !== 'To Do' && (
+            {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
               <StatusBadge status={post.status} />
             )}
             {showAuthor && (
@@ -441,7 +430,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
-          {post.type !== 'log' && (
+          {post.type !== 'log' && !isQuestBoardRequest && (
             <PostTypeBadge
               type={['task', 'issue'].includes(post.type) ? 'log' : post.type}
             />
