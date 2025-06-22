@@ -43,10 +43,10 @@
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
     "taskType": "abstract",
     "status": "To Do",
-    "helpRequest": true,
+    "helpRequest": false,
     "nodeId": "Q::T00",
     "questNodeTitle": "testing adding a task",
-    "needsHelp": true
+    "needsHelp": false
   },
   {
     "id": "09931dad-a5b5-4d99-9085-a7a593246173",
@@ -70,10 +70,10 @@
     "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
     "taskType": "abstract",
     "status": "To Do",
-    "helpRequest": true,
+    "helpRequest": false,
     "nodeId": "Q::T01",
     "questNodeTitle": "testing multiple sub task",
-    "needsHelp": true
+    "needsHelp": false
   },
   {
     "id": "54c13a7e-dd35-49e8-b90f-727899a2ea52",
@@ -430,7 +430,8 @@
     "status": "To Do",
     "helpRequest": false,
     "nodeId": "Q::I00",
-    "questNodeTitle": ""
+    "questNodeTitle": "",
+    "needsHelp": false
   },
   {
     "id": "92baa863-7b7b-47ee-8167-1d621f76cf20",
@@ -468,6 +469,116 @@
     "linkedItems": [
       {
         "itemId": "e4b67780-2fe9-4105-b23a-334aa58ae76f",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "8e219cf2-cf1b-4e4f-b835-3670281cd1ab",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:33:46.090Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "e810f1e9-81e1-43b6-8251-035d4a5af35c",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:33:47.327Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "26dc2ecc-e09e-42d4-8e80-0e2a18d9a3a3",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:33:49.650Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "1a856fa5-59b9-48be-b6a1-796c24bfc15d",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:33:51.105Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "21f09810-9a04-45f0-bd06-8f1e2c429a88",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "request",
+    "content": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:33:52.607Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
         "itemType": "post",
         "linkType": "reference"
       }
