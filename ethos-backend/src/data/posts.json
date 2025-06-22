@@ -404,5 +404,30 @@
     "questId": "d350e17b-f3cc-405e-881a-dabc5d2fde4d",
     "nodeId": "Q:testextraquest:L00",
     "questNodeTitle": "test extra quest"
+  },
+  {
+    "id": "59fa1271-eeb4-4fb5-9580-df3ab1eacaf1",
+    "authorId": "u_b7f8a113-069f-477d-b704-ae575288246b",
+    "type": "issue",
+    "title": "test issue",
+    "content": "",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T00:11:30.835Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "b84f4268-97f9-4045-96a4-7f2d62f743c6",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q::I00",
+    "questNodeTitle": ""
   }
 ]
