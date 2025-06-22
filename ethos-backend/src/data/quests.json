@@ -13,7 +13,12 @@
     "collaborators": [],
     "status": "active",
     "headPostId": "e02abfd8-e4cf-4ab4-a6d9-1121bdbe2692",
-    "taskGraph": [],
+    "taskGraph": [
+      {
+        "from": "e02abfd8-e4cf-4ab4-a6d9-1121bdbe2692",
+        "to": "603375d8-86ea-4732-a0d7-9d85649465ee"
+      }
+    ],
     "helpRequest": false
   },
   {

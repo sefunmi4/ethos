@@ -135,5 +135,26 @@
     "questId": "86f55e22-76f2-4d7b-a672-173a362eed1d",
     "nodeId": "Q:test_quest:L00",
     "questNodeTitle": "Test Quest"
+  },
+  {
+    "id": "603375d8-86ea-4732-a0d7-9d85649465ee",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "task",
+    "title": "Test out the plaform",
+    "content": "Test out the plaform",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T17:36:05.823Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "1dfa10c7-9ddd-4448-98d9-cfa2ae126f23",
+    "taskType": "file",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T00",
+    "questNodeTitle": "Test out the plaform"
   }
 ]
