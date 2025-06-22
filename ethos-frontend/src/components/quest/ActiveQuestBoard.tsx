@@ -148,8 +148,12 @@ const ActiveQuestBoard: React.FC = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">🧭 Active Quests</h2>
         {user && (
-          <Button variant="contrast" size="sm" onClick={() => setShowCreate(true)}>
-            + Add Quest
+          <Button
+            variant="contrast"
+            size="sm"
+            onClick={() => setShowCreate((p) => !p)}
+          >
+            {showCreate ? '- Cancel Quest' : '+ Add Quest'}
           </Button>
         )}
       </div>

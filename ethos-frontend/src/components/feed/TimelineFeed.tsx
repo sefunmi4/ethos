@@ -75,8 +75,8 @@ const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' 
         />
       )}
       <div className="text-right">
-        <Button variant="contrast" onClick={() => setShowForm(true)}>
-          + Add Post
+        <Button variant="contrast" onClick={() => setShowForm((p) => !p)}>
+          {showForm ? '- Cancel Post' : '+ Add Post'}
         </Button>
       </div>
       <div className="grid gap-4 overflow-auto max-h-[65vh] snap-y snap-mandatory p-2">
