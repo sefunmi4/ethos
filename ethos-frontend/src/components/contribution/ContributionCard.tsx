@@ -59,7 +59,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
         post={post}
         questId={questId}
         {...sharedProps}
-        headerOnly={headerOnly}
+        headerOnly={headerOnly || post.type === 'request'}
         boardId={boardId}
       />
     );

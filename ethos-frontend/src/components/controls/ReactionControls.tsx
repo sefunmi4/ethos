@@ -242,6 +242,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               replyOverride.onClick();
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
+            } else if (post.type === 'request') {
+              navigate(ROUTES.POST(post.id) + '?reply=1');
             } else if (isTimelineBoard) {
               navigate(ROUTES.POST(post.id) + '?reply=1');
             } else {
