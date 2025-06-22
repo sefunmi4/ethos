@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { addPost } from '../../api/post';
 import { Input, Select, Button } from '../ui';
-import { TASK_TYPE_OPTIONS } from '../../constants/options';
+import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { Post } from '../../types/postTypes';
 
 interface QuickTaskFormProps {
   questId: string;
-  status: string;
+  status?: string;
   boardId: string;
   onSave?: (post: Post) => void;
   onCancel: () => void;
 }
 
-const QuickTaskForm: React.FC<QuickTaskFormProps> = ({ questId, status, boardId, onSave, onCancel }) => {
+const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
+  questId,
+  status,
+  boardId,
+  onSave,
+  onCancel,
+}) => {
   const [title, setTitle] = useState('');
   const [taskType, setTaskType] = useState<'file' | 'folder'>('file');
+  const [taskStatus, setTaskStatus] = useState(status || 'To Do');
   const [submitting, setSubmitting] = useState(false);
   const { appendToBoard } = useBoardContext() || {};
 
@@ -30,7 +37,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({ questId, status, boardId,
         content: title,
         visibility: 'public',
         questId,
-        status,
+        status: taskStatus,
         taskType,
         boardId,
       });
@@ -56,6 +63,13 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({ questId, status, boardId,
         onChange={(e) => setTaskType(e.target.value as 'file' | 'folder')}
         options={TASK_TYPE_OPTIONS.filter((o) => o.value !== 'abstract')}
       />
+      {!status && (
+        <Select
+          value={taskStatus}
+          onChange={(e) => setTaskStatus(e.target.value)}
+          options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
+        />
+      )}
       <div className="flex justify-end gap-2">
         <Button type="button" size="sm" variant="ghost" onClick={onCancel}>
           Cancel

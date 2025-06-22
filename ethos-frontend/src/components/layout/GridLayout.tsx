@@ -126,7 +126,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   const { selectedBoard, updateBoardItem, removeItemFromBoard } =
     useBoardContext();
 
-  const [columnForm, setColumnForm] = useState<string | null>(null);
 
   useEffect(() => {
     if (layout === 'horizontal') {
@@ -256,28 +255,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               key={col}
               className="min-w-[280px] w-[320px] flex-shrink-0 bg-surface border border-secondary rounded-lg p-4 shadow-sm"
             >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-bold text-secondary">{col}</h3>
-                {editable && (
-                  <button
-                    className="text-xs text-accent underline"
-                    onClick={() => setColumnForm(columnForm === col ? null : col)}
-                  >
-                    {columnForm === col ? '- Cancel' : '+ Add Item'}
-                  </button>
-                )}
-              </div>
-              {columnForm === col && questId && boardId && (
-                <div className="mb-2">
-                  <QuickTaskForm
-                    questId={questId}
-                    status={col}
-                    boardId={boardId}
-                    onSave={() => setColumnForm(null)}
-                    onCancel={() => setColumnForm(null)}
-                  />
-                </div>
-              )}
+              <h3 className="text-sm font-bold text-secondary mb-2">{col}</h3>
               <DroppableColumn id={col}>
                 {grouped[col].map((item) => (
                   <DraggableCard
