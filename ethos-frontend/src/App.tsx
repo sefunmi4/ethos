@@ -28,6 +28,7 @@ const Quest = lazy(() => import('./pages/quest/[id]'));
 const Post = lazy(() => import('./pages/post/[id]'));
 const Board = lazy(() => import('./pages/board/[id]'));
 const BoardType = lazy(() => import('./pages/board/[boardType]'));
+const TeamBoard = lazy(() => import('./pages/board/team-[questId]'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
@@ -75,6 +76,7 @@ const App: React.FC = () => {
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
+                    <Route path={ROUTES.TEAM_BOARD()} element={<TeamBoard />} />
                     <Route path={ROUTES.BOARD_TYPE()} element={<BoardType />} />
                     <Route path={ROUTES.FLAGGED_QUESTS} element={<FlaggedQuests />} />
                     <Route path={ROUTES.BANNED_QUESTS} element={<BannedQuests />} />

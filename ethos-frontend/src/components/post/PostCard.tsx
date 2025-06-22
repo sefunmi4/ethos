@@ -23,7 +23,7 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowser from '../git/GitFileBrowser';
 import NestedReply from './NestedReply';
-import { buildSummaryTags, POST_TYPE_LABELS } from '../../utils/displayUtils';
+import { buildSummaryTags } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
 
 const PREVIEW_LIMIT = 240;
@@ -160,7 +160,6 @@ const PostCard: React.FC<PostCardProps> = ({
     const user = post.author?.username || post.authorId;
     summaryTags = [{ type: 'request', label: `Request: @${user}` }];
   }
-  const showAuthor = !isQuestBoardRequest;
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
@@ -364,29 +363,8 @@ const PostCard: React.FC<PostCardProps> = ({
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-            {!isQuestBoardRequest && (
-              <SummaryTag
-                type={['task', 'issue'].includes(post.type) ? 'log' : (post.type as any)}
-                label={['task', 'issue'].includes(post.type) ? 'Log' : POST_TYPE_LABELS[post.type as PostType]}
-              />
-            )}
             {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
               <StatusBadge status={post.status} />
-            )}
-            {showAuthor && (
-              <button
-                type="button"
-                onClick={() =>
-                  navigate(
-                    post.authorId === user?.id
-                      ? ROUTES.PROFILE
-                      : ROUTES.PUBLIC_PROFILE(post.authorId)
-                  )
-                }
-                className="text-accent underline"
-              >
-                @{post.author?.username || post.authorId}
-              </button>
             )}
             <span>{timestamp}</span>
           </div>
@@ -431,12 +409,6 @@ const PostCard: React.FC<PostCardProps> = ({
           {summaryTags.map((tag, idx) => (
             <SummaryTag key={idx} {...tag} />
           ))}
-          {!isQuestBoardRequest && (
-            <SummaryTag
-              type={['task', 'issue'].includes(post.type) ? 'log' : (post.type as any)}
-              label={['task', 'issue'].includes(post.type) ? 'Log' : POST_TYPE_LABELS[post.type as PostType]}
-            />
-          )}
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
@@ -451,21 +423,6 @@ const PostCard: React.FC<PostCardProps> = ({
                 options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
               />
             </div>
-          )}
-          {showAuthor && (
-            <button
-              type="button"
-              onClick={() =>
-                navigate(
-                  post.authorId === user?.id
-                    ? ROUTES.PROFILE
-                    : ROUTES.PUBLIC_PROFILE(post.authorId)
-                )
-              }
-              className="text-accent underline"
-            >
-              @{post.author?.username || post.authorId}
-            </button>
           )}
         </div>
         <ActionMenu

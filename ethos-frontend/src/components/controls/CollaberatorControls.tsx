@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { CollaberatorRoles } from '../../types/postTypes';
+import { searchUsers } from '../../api/auth';
 
 const ALL_ROLES = [
   'Leader',
@@ -21,17 +22,37 @@ type Props = {
 
 const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
   const [username, setUsername] = useState('');
+  const [selectedUser, setSelectedUser] = useState<{ id: string; username: string } | null>(null);
+  const [suggestions, setSuggestions] = useState<{ id: string; username: string }[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (username.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const t = setTimeout(() => {
+      searchUsers(username.trim())
+        .then(setSuggestions)
+        .catch(() => setSuggestions([]));
+    }, 300);
+    return () => clearTimeout(t);
+  }, [username]);
+
   const addCollaborator = () => {
-    if (!username.trim()) return;
-    const newCollaborator: CollaberatorRoles = {
-      userId: crypto.randomUUID(),
-      username,
-      roles: selectedRoles,
-    };
+    const trimmed = username.trim();
+    const newCollaborator: CollaberatorRoles = trimmed
+      ? {
+          userId: crypto.randomUUID(),
+          username: trimmed,
+          roles: selectedRoles,
+        }
+      : {
+          roles: selectedRoles,
+        };
     onChange([...value, newCollaborator]);
     setUsername('');
+    setSelectedUser(null);
     setSelectedRoles([]);
   };
 
@@ -54,13 +75,35 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             Collaborator Username
           </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md text-sm"
-            placeholder="e.g. alice, bob123"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setSelectedUser(null);
+              }}
+              className="w-full px-3 py-2 border rounded-md text-sm"
+              placeholder="e.g. alice, bob123"
+            />
+            {suggestions.length > 0 && (
+              <ul className="absolute z-10 mt-1 bg-surface border border-secondary rounded shadow w-full text-sm max-h-40 overflow-y-auto">
+                {suggestions.map((u) => (
+                  <li
+                    key={u.id}
+                    className="px-2 py-1 cursor-pointer hover:bg-background"
+                    onClick={() => {
+                      setUsername(u.username);
+                      setSelectedUser(u);
+                      setSuggestions([]);
+                    }}
+                  >
+                    @{u.username}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
         <button
           type="button"

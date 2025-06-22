@@ -59,6 +59,13 @@ export const ROUTES = {
     BOARD: (id = ':id') => `/boards/${id}`,
 
     /**
+     * Quest team page listing collaborators
+     * @param questId - Quest ID
+     * @returns Route like `/board/team-abc123`
+     */
+    TEAM_BOARD: (questId = ':questId') => `/board/team-${questId}`,
+
+    /**
      * Listing page for a board type
      * @param boardType - board category
      * @returns A route string like `/board/quests`

@@ -93,6 +93,10 @@ export interface EnrichedPost extends Post {
 export interface CollaberatorRoles {
   userId?: string;
   username?: string;
+  /**
+   * When `userId` is omitted this represents an open role
+   * available for anyone to claim.
+   */
   roles?: string[];
   pending?: string[];
 }
