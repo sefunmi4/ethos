@@ -426,7 +426,9 @@ const PostCard: React.FC<PostCardProps> = ({
               {accepting ? 'Pending…' : accepted ? 'Pending' : 'Accept'}
             </button>
           )}
-        <div className="text-xs text-secondary text-right">{timestamp}</div>
+        {!isQuestBoardRequest && (
+          <div className="text-xs text-secondary text-right">{timestamp}</div>
+        )}
       </div>
     );
   }
@@ -452,7 +454,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
             <StatusBadge status={post.status} />
           )}
-          <span>{timestamp}</span>
+          {!isQuestBoardRequest && <span>{timestamp}</span>}
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&

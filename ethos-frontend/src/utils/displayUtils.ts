@@ -149,6 +149,14 @@ export const buildSummaryTags = (
         username: user,
         usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
       });
+      if (post.subtype === 'task') {
+        const label = post.nodeId ? `Task: ${post.nodeId}` : 'Task';
+        tags.push({ type: 'task', label });
+      }
+      if (post.subtype === 'issue') {
+        const label = post.nodeId ? `Issue: ${post.nodeId}` : 'Issue';
+        tags.push({ type: 'issue', label });
+      }
     }
     return tags;
   }
@@ -249,6 +257,18 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
   }
 
   if (title) parts.push(`(Quest: ${title})`);
+
+  if (post.type === 'request') {
+    parts.push('(Request)');
+    if (post.subtype === 'task') {
+      if (post.nodeId) parts.push(`(Task - ${post.nodeId})`);
+      else parts.push('(Task)');
+    } else if (post.subtype === 'issue') {
+      if (post.nodeId) parts.push(`(Issue - ${post.nodeId})`);
+      else parts.push('(Issue)');
+    }
+    return parts.join(' ').trim();
+  }
 
   if (post.type === 'task' && post.nodeId) {
     const user = post.author?.username || post.authorId;
