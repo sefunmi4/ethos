@@ -133,6 +133,13 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
       className="overflow-auto w-full h-full p-2 max-w-7xl mx-auto"
       style={{ minHeight: '60vh', maxHeight: '80vh', border: '1px solid #ccc', position: 'relative' }}
     >
+      <button
+        type="button"
+        onClick={() => fgRef.current?.zoomToFit(200, 20)}
+        className="absolute right-2 top-2 z-10 bg-surface hover:bg-background rounded shadow px-2 py-1 text-xs"
+      >
+        Center Graph
+      </button>
       <ForceGraph2D
         ref={fgRef}
         width={containerRef.current?.clientWidth || undefined}
