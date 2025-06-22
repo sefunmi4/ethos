@@ -80,7 +80,14 @@ router.get('/thread/:postId', (req, res) => {
     const pageSize = parseInt(limit, 10) || constants_1.DEFAULT_PAGE_SIZE;
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
-    const replies = posts.filter(p => p.replyTo === postId).slice(start, end);
+    const replies = posts
+        .filter(p => p.replyTo === postId)
+        .sort((a, b) => {
+        const ta = a.timestamp || '';
+        const tb = b.timestamp || '';
+        return tb.localeCompare(ta);
+    })
+        .slice(start, end);
     const board = {
         id: `thread-${postId}`,
         title: 'Thread',
