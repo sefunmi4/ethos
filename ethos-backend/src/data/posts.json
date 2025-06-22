@@ -118,5 +118,22 @@
     "linkedItems": [],
     "questId": null,
     "helpRequest": false
+  },
+  {
+    "id": "ad3084d8-a40e-4382-89e9-8c28f36e9b33",
+    "authorId": "u_917e7743-e76d-4fb8-b1c3-5bd1b4d57d74",
+    "type": "review",
+    "title": "Testing review",
+    "content": "",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-22T07:26:02.805Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": null,
+    "helpRequest": false
   }
 ]
