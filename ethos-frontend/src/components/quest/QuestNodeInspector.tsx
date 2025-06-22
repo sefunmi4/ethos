@@ -5,6 +5,7 @@ import type { User } from '../../types/userTypes';
 import LogThreadPanel from './LogThreadPanel';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
+import TeamPanel from './TeamPanel';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS } from '../../constants/options';
@@ -26,7 +27,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   showLogs = true,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
-  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'file'>('status');
+  const [activeTab, setActiveTab] = useState<'status' | 'logs' | 'team' | 'file'>('status');
 
   useEffect(() => {
     setType(node?.taskType || 'abstract');
@@ -53,6 +54,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   const tabs = [
     { value: 'status', label: 'Status' },
     ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
+    { value: 'team', label: 'Team' },
     {
       value: 'file',
       label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
@@ -68,6 +70,9 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   switch (activeTab) {
     case 'logs':
       panel = <LogThreadPanel questId={questId} node={node} user={user} />;
+      break;
+    case 'team':
+      panel = <TeamPanel questId={questId} node={node} />;
       break;
     case 'file':
       panel = (
@@ -113,7 +118,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
             onClick={handleAddSubtask}
             className="ml-auto px-2 text-accent underline whitespace-nowrap"
           >
-            + Add Subtask
+            + Add Item
           </button>
         </div>
         <div className="mt-2">{panel}</div>

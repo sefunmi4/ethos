@@ -90,6 +90,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
   const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
@@ -681,19 +683,44 @@ const PostCard: React.FC<PostCardProps> = ({
       )}
 
       {post.type === 'task' && (
-        <div className="flex gap-2 mt-1">
+        <div className="relative mt-1">
           <button
             className="text-accent underline text-xs"
-            onClick={() => setCreateType('log')}
+            onClick={() => setShowAddMenu((p) => !p)}
           >
-            Add Log
+            + Add Item
           </button>
-          <button
-            className="text-accent underline text-xs"
-            onClick={() => setCreateType('issue')}
-          >
-            Add Issue
-          </button>
+          {showAddMenu && (
+            <div className="absolute z-10 mt-1 bg-surface border border-secondary rounded shadow text-xs">
+              <button
+                onClick={() => {
+                  setCreateType('log');
+                  setShowAddMenu(false);
+                }}
+                className="block w-full text-left px-2 py-1 hover:bg-background"
+              >
+                Log
+              </button>
+              <button
+                onClick={() => {
+                  setCreateType('issue');
+                  setShowAddMenu(false);
+                }}
+                className="block w-full text-left px-2 py-1 hover:bg-background"
+              >
+                Issue
+              </button>
+              <button
+                onClick={() => {
+                  setShowSubtaskForm(true);
+                  setShowAddMenu(false);
+                }}
+                className="block w-full text-left px-2 py-1 hover:bg-background"
+              >
+                Subtask
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -734,6 +761,34 @@ const PostCard: React.FC<PostCardProps> = ({
               setCreateType(null);
               setAsCommit(false);
             }}
+          />
+        </div>
+      )}
+
+      {showSubtaskForm && (
+        <div className="mt-2">
+          <CreatePost
+            initialType="task"
+            questId={post.questId}
+            boardId={post.questId ? `map-${post.questId}` : undefined}
+            replyTo={post}
+            onSave={async (newPost) => {
+              if (post.questId) {
+                try {
+                  await linkPostToQuest(post.questId, {
+                    postId: newPost.id,
+                    parentId: post.id,
+                    title: newPost.questNodeTitle || makeHeader(newPost.content),
+                  });
+                  appendToBoard?.(`map-${post.questId}`, newPost);
+                  loadGraph(post.questId);
+                } catch (err) {
+                  console.error('[PostCard] Failed to link new subtask:', err);
+                }
+              }
+              setShowSubtaskForm(false);
+            }}
+            onCancel={() => setShowSubtaskForm(false)}
           />
         </div>
       )}
