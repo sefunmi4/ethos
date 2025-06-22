@@ -596,7 +596,9 @@
     "content": "testing adding a task",
     "visibility": "public",
     "timestamp": "2025-06-22T01:04:01.563Z",
-    "tags": [],
+    "tags": [
+      "archived"
+    ],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
