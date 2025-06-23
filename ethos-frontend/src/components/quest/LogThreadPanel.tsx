@@ -5,7 +5,7 @@ import { Spinner } from '../ui';
 import { fetchPostsByQuestId } from '../../api/post';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import QuickTaskForm from '../post/QuickTaskForm';
+import CreatePost from '../post/CreatePost';
 
 interface LogThreadPanelProps {
   questId: string;
@@ -14,13 +14,23 @@ interface LogThreadPanelProps {
   onCommitSelect?: (p: Post) => void;
 }
 
-const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, onCommitSelect }) => {
+const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
+  questId,
+  node,
+  user,
+  onCommitSelect,
+}) => {
   const [entries, setEntries] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [showForm, setShowForm] = useState(false);
 
-  const handleAddTask = () => {
+  const isCollaborator =
+    !!user &&
+    (user.id === node?.authorId ||
+      node?.collaborators?.some(c => c.userId === user.id));
+
+  const handleAddLog = () => {
     setShowForm(true);
   };
 
@@ -28,19 +38,20 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
     if (!node) return;
     setLoading(true);
     fetchPostsByQuestId(questId)
-      .then((posts) => {
-        const logs = posts.filter((p) =>
-          (p.type === 'log' || p.type === 'quest_log') &&
-          (!node.replyTo ? true : p.replyTo === node.id)
+      .then(posts => {
+        const related = posts.filter(
+          p =>
+            ['log', 'quest_log', 'task', 'issue', 'commit'].includes(p.type) &&
+            p.replyTo === node.id,
         );
-        logs.sort((a, b) => {
+        related.sort((a, b) => {
           const aTime = a.createdAt || a.timestamp;
           const bTime = b.createdAt || b.timestamp;
           return aTime.localeCompare(bTime);
         });
-        setEntries(logs);
+        setEntries(related);
       })
-      .catch((err) => console.error('[LogThreadPanel] load failed', err))
+      .catch(err => console.error('[LogThreadPanel] load failed', err))
       .finally(() => setLoading(false));
   }, [questId, node]);
 
@@ -50,41 +61,45 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
     return (
       <div className="space-y-2">
         {showForm && (
-          <QuickTaskForm
-            questId={questId}
-            parentId={node.id}
-            onSave={(p) => {
-              setEntries((prev) => [...prev, p]);
+          <CreatePost
+            onSave={p => {
+              setEntries(prev => [...prev, p]);
               setShowForm(false);
             }}
             onCancel={() => setShowForm(false)}
+            initialType={isCollaborator ? 'log' : 'free_speech'}
+            questId={questId}
+            replyTo={node}
+            boardId={`log-${questId}`}
           />
         )}
         <div className="text-right">
-          <button onClick={handleAddTask} className="text-xs text-accent underline">
-            + Add Task
+          <button onClick={handleAddLog} className="text-xs text-accent underline">
+            {isCollaborator ? '+ Add Log' : '+ Add Comment'}
           </button>
         </div>
-        <div className="text-sm text-secondary">No log entries.</div>
+        <div className="text-sm text-secondary">No posts yet.</div>
       </div>
     );
 
   return (
     <div className="space-y-2">
       {showForm && (
-        <QuickTaskForm
-          questId={questId}
-          parentId={node.id}
-          onSave={(p) => {
-            setEntries((prev) => [...prev, p]);
+        <CreatePost
+          onSave={p => {
+            setEntries(prev => [...prev, p]);
             setShowForm(false);
           }}
           onCancel={() => setShowForm(false)}
+          initialType={isCollaborator ? 'log' : 'free_speech'}
+          questId={questId}
+          replyTo={node}
+          boardId={`log-${questId}`}
         />
       )}
       <div className="text-right">
-        <button onClick={handleAddTask} className="text-xs text-accent underline">
-          + Add Task
+        <button onClick={handleAddLog} className="text-xs text-accent underline">
+          {isCollaborator ? '+ Add Log' : '+ Add Comment'}
         </button>
       </div>
       {entries.map((entry) => {
