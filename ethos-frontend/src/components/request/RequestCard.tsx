@@ -55,7 +55,12 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   };
 
   return (
-    <div className={"border border-secondary rounded bg-surface p-4 space-y-2 " + (className || '')}>
+    <div
+      className={
+        'border border-secondary rounded bg-surface p-4 space-y-2 w-full max-w-xl ' +
+        (className || '')
+      }
+    >
       <div className="flex items-center gap-2 text-sm text-secondary">
         <SummaryTag type="request" label={POST_TYPE_LABELS.request} />
         {post.questId && (
@@ -63,7 +68,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         )}
       </div>
       {post.title && (
-        <h3 className="font-semibold text-lg">{toTitleCase(post.title)}</h3>
+        <h3 className="font-semibold text-lg truncate">{toTitleCase(post.title)}</h3>
       )}
       {post.content && <p className="text-sm text-primary">{post.content}</p>}
       <div className="flex items-center gap-2 text-xs text-secondary">
