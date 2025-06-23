@@ -130,16 +130,18 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const ctxBoardId = boardId || selectedBoard;
 
-  const widthClass =
-    ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
-      ? 'max-w-3xl'
-      : 'max-w-prose';
-
-  const expandedView = expanded !== undefined ? expanded : internalExpandedView;
-
   const isQuestBoardRequest =
     post.type === 'request' && ctxBoardId === 'quest-board';
   const isTimelineRequest = post.type === 'request' && ctxBoardId === 'timeline-board';
+
+  const widthClass =
+    ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
+      ? 'max-w-3xl'
+      : isQuestBoardRequest
+        ? 'max-w-xl'
+        : 'max-w-prose';
+
+  const expandedView = expanded !== undefined ? expanded : internalExpandedView;
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -443,7 +445,7 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
         {titleText && (
           <h3
-            className="font-semibold text-lg mt-1 cursor-pointer"
+            className="font-semibold text-lg mt-1 cursor-pointer truncate"
             onClick={() => navigate(ROUTES.POST(post.id))}
           >
             {titleText}
@@ -540,7 +542,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {renderRepostInfo()}
 
       {titleText && (
-        <h3 className="font-semibold text-lg mt-1">{titleText}</h3>
+        <h3 className="font-semibold text-lg mt-1 truncate">{titleText}</h3>
       )}
 
       <div className="text-sm text-primary">

@@ -63,7 +63,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         )}
       </div>
       {post.title && (
-        <h3 className="font-semibold text-lg">{toTitleCase(post.title)}</h3>
+        <h3 className="font-semibold text-lg truncate">{toTitleCase(post.title)}</h3>
       )}
       {post.content && <p className="text-sm text-primary">{post.content}</p>}
       <div className="flex items-center gap-2 text-xs text-secondary">
