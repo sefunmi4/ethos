@@ -21,6 +21,8 @@ const makeHeader = (content: string): string => {
 const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summaryOnly = false }) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
+  const [organizeFile, setOrganizeFile] = useState(false);
+  const [plannerFile, setPlannerFile] = useState(false);
   const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const rankTag = post.tags?.find(t => t.toLowerCase().startsWith('min_rank:'));
@@ -103,13 +105,40 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
           options={TASK_TYPE_OPTIONS as option[]}
           className="text-xs"
         />
-        {taskType === 'file' && (
-          <button className="text-accent underline text-xs">Make Main File</button>
-        )}
-        {taskType === 'folder' && (
-          <button className="text-accent underline text-xs">Organize Dependencies</button>
-        )}
       </div>
+      {taskType === 'file' && (
+        <label className="inline-flex items-center gap-1 text-xs">
+          <input
+            type="checkbox"
+            className="form-checkbox"
+            checked={organizeFile}
+            onChange={(e) => setOrganizeFile(e.target.checked)}
+          />
+          Organize File
+        </label>
+      )}
+      {taskType === 'folder' && (
+        <label className="inline-flex items-center gap-1 text-xs">
+          <input
+            type="checkbox"
+            className="form-checkbox"
+            checked={plannerFile}
+            onChange={(e) => setPlannerFile(e.target.checked)}
+          />
+          Make Planner File
+        </label>
+      )}
+      {taskType === 'abstract' && (
+        <label className="inline-flex items-center gap-1 text-xs">
+          <input
+            type="checkbox"
+            className="form-checkbox"
+            checked={plannerFile}
+            onChange={(e) => setPlannerFile(e.target.checked)}
+          />
+          Make Planner File
+        </label>
+      )}
       {(role || minRank || difficulty) && (
         <div className="space-y-0.5">
           {role && <div>Role: {role}</div>}
