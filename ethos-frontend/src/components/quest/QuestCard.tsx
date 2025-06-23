@@ -296,21 +296,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 onCancel={() => setShowTaskForm(false)}
               />
             )}
-            <div className="text-right">
-              {canEdit ? (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={() => setShowTaskForm(true)}
-                >
-                  Add Subtask
-                </Button>
-              ) : (
-                <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-                  Request to Join
-                </Button>
-              )}
-            </div>
           </div>
         )}
         <hr className="border-secondary" />
