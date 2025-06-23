@@ -3,6 +3,9 @@ import { fetchPostsByQuestId } from '../../api/post';
 import type { Post } from '../../types/postTypes';
 import { STATUS_OPTIONS } from '../../constants/options';
 import StatusBadge from '../ui/StatusBadge';
+import SummaryTag from '../ui/SummaryTag';
+import { ROUTES } from '../../constants/routes';
+import { getQuestLinkLabel } from '../../utils/displayUtils';
 import QuickTaskForm from '../post/QuickTaskForm';
 
 interface StatusBoardPanelProps {
@@ -141,9 +144,16 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNode
                       key={issue.id}
                       className="text-xs border border-secondary rounded p-1 bg-background space-y-1"
                     >
-                      <div className="font-semibold truncate">
-                        {issue.content.length > 15 ? `${issue.content.slice(0, 12)}…` : issue.content}
-                      </div>
+                      <span
+                        title={issue.title || issue.content}
+                        className="block truncate"
+                      >
+                        <SummaryTag
+                          type={issue.type as 'task' | 'issue'}
+                          label={`${issue.type === 'issue' ? 'Issue' : 'Task'} - ${getQuestLinkLabel(issue, '', false)}`}
+                          link={ROUTES.POST(issue.id)}
+                        />
+                      </span>
                       {issue.status && <StatusBadge status={issue.status} />}
                     </div>
                   ))
