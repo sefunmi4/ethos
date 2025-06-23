@@ -57,7 +57,9 @@
     "nodeId": "Q:ethos_multiple_users:T00",
     "questNodeTitle": "Ethos Multiple Users",
     "status": "To Do",
-    "title": "Ethos Multiple Users"
+    "title": "Ethos Multiple Users",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
@@ -117,10 +119,10 @@
     "linkedItems": [],
     "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c",
     "status": "To Do",
-    "helpRequest": false,
+    "helpRequest": true,
     "nodeId": "Q:ethos_multiple_users:I00",
     "questNodeTitle": "request help on task",
-    "needsHelp": false
+    "needsHelp": true
   },
   {
     "id": "9e3dffce-8e1e-4b25-97a0-df347b0001ac",
@@ -501,8 +503,8 @@
     "questId": "78b34502-beae-4b6c-84c2-1be60d935fd9",
     "nodeId": "Q:guild_quest:T00",
     "questNodeTitle": "Guild Quest",
-    "helpRequest": true,
-    "needsHelp": true
+    "helpRequest": false,
+    "needsHelp": false
   },
   {
     "id": "fcab8b6f-2e41-46a7-a44b-7380ec51b0a5",
@@ -1423,7 +1425,7 @@
     "repostedFrom": null,
     "linkedItems": [],
     "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
-    "taskType": "abstract",
+    "taskType": "folder",
     "status": "To Do",
     "helpRequest": false,
     "nodeId": "Q:public_media:T10",
@@ -1775,58 +1777,6 @@
     "needsHelp": true
   },
   {
-    "id": "84ab5194-231c-4c99-9c34-6d283a65cac2",
-    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
-    "type": "request",
-    "content": "Public Media",
-    "visibility": "public",
-    "timestamp": "2025-06-23T15:11:28.242Z",
-    "subtype": "task",
-    "nodeId": "Q:public_media:T00",
-    "tags": [
-      "archived"
-    ],
-    "collaborators": [],
-    "replyTo": null,
-    "repostedFrom": null,
-    "linkedItems": [
-      {
-        "itemId": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
-        "itemType": "post",
-        "linkType": "reference"
-      }
-    ],
-    "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
-    "helpRequest": true,
-    "needsHelp": true
-  },
-  {
-    "id": "bf4dc0c3-5403-431d-aa4c-c8cf620edd36",
-    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
-    "type": "request",
-    "content": "Architecture Of Homo sapiens",
-    "visibility": "public",
-    "timestamp": "2025-06-23T15:11:29.720Z",
-    "subtype": "task",
-    "nodeId": "Q:architecture_of_homo_sapiens:T00",
-    "tags": [
-      "archived"
-    ],
-    "collaborators": [],
-    "replyTo": null,
-    "repostedFrom": null,
-    "linkedItems": [
-      {
-        "itemId": "389aef67-bee6-4214-8685-17c8157aceb4",
-        "itemType": "post",
-        "linkType": "reference"
-      }
-    ],
-    "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
-    "helpRequest": true,
-    "needsHelp": true
-  },
-  {
     "id": "d9a911a8-daca-4cde-8024-3f4981751e14",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "request",
@@ -1983,32 +1933,6 @@
     "needsHelp": true
   },
   {
-    "id": "78db3e1e-2221-4ecd-b0c5-39ba0afb391d",
-    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
-    "type": "request",
-    "content": "Guild Quest",
-    "visibility": "public",
-    "timestamp": "2025-06-23T15:11:37.659Z",
-    "subtype": "task",
-    "nodeId": "Q:guild_quest:T00",
-    "tags": [
-      "archived"
-    ],
-    "collaborators": [],
-    "replyTo": null,
-    "repostedFrom": null,
-    "linkedItems": [
-      {
-        "itemId": "eaf5ce7a-f69c-47e5-a7e1-d649a9d0599e",
-        "itemType": "post",
-        "linkType": "reference"
-      }
-    ],
-    "questId": "78b34502-beae-4b6c-84c2-1be60d935fd9",
-    "helpRequest": true,
-    "needsHelp": true
-  },
-  {
     "id": "0e8379de-3fe4-4849-bdfb-8428d72abb30",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
@@ -2118,7 +2042,7 @@
     "id": "62309555-6366-483e-9718-c0cb378e6d32",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "abstract",
+    "taskType": "file",
     "content": "test quest",
     "visibility": "public",
     "timestamp": "2025-06-23T17:13:40.794Z",
@@ -2131,7 +2055,9 @@
     "nodeId": "Q:test_quest:T00",
     "questNodeTitle": "test quest",
     "status": "To Do",
-    "title": "test quest"
+    "title": "test quest",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "3b6c3a7b-35b3-46b3-aec3-5b1f52d7b039",
@@ -2264,5 +2190,125 @@
     "helpRequest": false,
     "nodeId": "Q:public_media:T15",
     "questNodeTitle": "paper prints"
+  },
+  {
+    "id": "105633d7-00cb-4d81-9897-f931abf69554",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "request help on task",
+    "visibility": "public",
+    "timestamp": "2025-06-23T20:57:21.819Z",
+    "subtype": "issue",
+    "nodeId": "Q:ethos_multiple_users:I00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "63df4a49-9bf3-4fe8-952a-cafe0779f3ea",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "628109b3-a0c7-43e2-b442-71be91c76cae",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Ethos Multiple Users",
+    "visibility": "public",
+    "timestamp": "2025-06-23T20:57:23.489Z",
+    "subtype": "task",
+    "nodeId": "Q:ethos_multiple_users:T00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "6f083635-c5a3-425f-bb1a-7677b8204399",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "74a5d532-d306-482b-83d6-a65c23d23883",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "test quest",
+    "visibility": "public",
+    "timestamp": "2025-06-23T20:57:29.100Z",
+    "subtype": "task",
+    "nodeId": "Q:test_quest:T00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "62309555-6366-483e-9718-c0cb378e6d32",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "28626aae-91f7-4543-b959-abc5b4183554",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "94f851e1-0856-441e-aac3-47313964d64d",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Public Media",
+    "visibility": "public",
+    "timestamp": "2025-06-23T20:58:08.582Z",
+    "subtype": "task",
+    "nodeId": "Q:public_media:T00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "76a98b8e-3cfe-4528-aba6-29d493f9ffe7",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Architecture Of Homo sapiens",
+    "visibility": "public",
+    "timestamp": "2025-06-23T20:58:10.414Z",
+    "subtype": "task",
+    "nodeId": "Q:architecture_of_homo_sapiens:T00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "389aef67-bee6-4214-8685-17c8157aceb4",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]

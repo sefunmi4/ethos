@@ -13,7 +13,7 @@ import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import CreatePost from './CreatePost';
-import { StatusBadge, Spinner, Select, SummaryTag } from '../ui';
+import { Spinner, Select, SummaryTag } from '../ui';
 import { STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
@@ -132,7 +132,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const widthClass =
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
-      ? 'max-w-xl'
+      ? 'max-w-3xl'
       : 'max-w-prose';
 
   const expandedView = expanded !== undefined ? expanded : internalExpandedView;
@@ -410,9 +410,6 @@ const PostCard: React.FC<PostCardProps> = ({
               </React.Fragment>
             ))}
             {post.type === 'review' && post.rating && renderStars(post.rating)}
-            {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
-              <StatusBadge status={post.status} />
-            )}
           </div>
           <div className="flex items-center gap-2">
             {['task', 'quest'].includes(post.type) && (
@@ -490,9 +487,6 @@ const PostCard: React.FC<PostCardProps> = ({
             </React.Fragment>
           ))}
           {post.type === 'review' && post.rating && renderStars(post.rating)}
-          {!isQuestBoardRequest && post.status && post.status !== 'To Do' && (
-            <StatusBadge status={post.status} />
-          )}
           {!isQuestBoardRequest &&
             canEdit &&
             ['task', 'request', 'issue'].includes(post.type) &&
