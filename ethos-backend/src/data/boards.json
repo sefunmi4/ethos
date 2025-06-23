@@ -6,6 +6,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "f15b3200-12d9-4a8d-8690-789ee7c0127d",
+      "fc1843cf-5378-4bc7-862d-294e25f1dcc0"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -18,8 +20,7 @@
     "description": "Personal quests board.",
     "boardType": "quest",
     "layout": "grid",
-    "items": [
-    ],
+    "items": [],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
@@ -32,6 +33,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "f15b3200-12d9-4a8d-8690-789ee7c0127d"
     ],
     "featured": true,
     "defaultFor": null,
@@ -46,6 +48,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "f15b3200-12d9-4a8d-8690-789ee7c0127d",
+      "fc1843cf-5378-4bc7-862d-294e25f1dcc0"
     ],
     "featured": false,
     "defaultFor": null,
