@@ -50,6 +50,11 @@ router.get(
               p.type !== 'meta_system' &&
               p.systemGenerated !== true
           )
+          .sort((a, b) =>
+            (b.timestamp || b.createdAt || '').localeCompare(
+              a.timestamp || a.createdAt || ''
+            )
+          )
           .map(p => p.id);
         return { ...board, items: filtered };
       }
@@ -258,6 +263,11 @@ router.get(
             p.type !== 'meta_system' &&
             p.systemGenerated !== true
         )
+        .sort((a, b) =>
+          (b.timestamp || b.createdAt || '').localeCompare(
+            a.timestamp || a.createdAt || ''
+          )
+        )
         .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
@@ -363,6 +373,11 @@ router.get(
             p.authorId === userId &&
             p.type !== 'meta_system' &&
             p.systemGenerated !== true
+        )
+        .sort((a, b) =>
+          (b.timestamp || b.createdAt || '').localeCompare(
+            a.timestamp || a.createdAt || ''
+          )
         )
         .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
