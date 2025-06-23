@@ -85,9 +85,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   );
   const [questData, setQuestData] = useState<Quest | null>(null);
   const navigate = useNavigate();
-  const { selectedBoard, appendToBoard } = useBoardContext() || {};
+  const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
+  const ctxBoardType = ctxBoardId ? boards?.[ctxBoardId]?.boardType : undefined;
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
+  const isPostHistory = ctxBoardId === 'my-posts';
+  const isPostBoard = isPostHistory || ctxBoardType === 'post';
   const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
   const isRequestCard =
     post.type === 'request' &&
@@ -309,9 +312,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               replyOverride.onClick();
             } else if (post.type === 'commit') {
               navigate(ROUTES.POST(post.id));
-            } else if (post.type === 'request') {
-              navigate(ROUTES.POST(post.id) + '?reply=1');
-            } else if (isTimelineBoard) {
+            } else if (
+              post.type === 'request' ||
+              isTimelineBoard ||
+              isPostBoard
+            ) {
               navigate(ROUTES.POST(post.id) + '?reply=1');
             } else {
               setShowReplyPanel(prev => {
