@@ -5,7 +5,7 @@ import { Spinner } from '../ui';
 import { fetchPostsByQuestId } from '../../api/post';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import CreatePost from '../post/CreatePost';
+import QuickTaskForm from '../post/QuickTaskForm';
 
 interface LogThreadPanelProps {
   questId: string;
@@ -20,7 +20,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [showForm, setShowForm] = useState(false);
 
-  const handleAddLog = () => {
+  const handleAddTask = () => {
     setShowForm(true);
   };
 
@@ -29,18 +29,15 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
     setLoading(true);
     fetchPostsByQuestId(questId)
       .then((posts) => {
-        const relevant = posts.filter((p) => {
-          const sameNode = node.nodeId && p.nodeId === node.nodeId;
-          const directReply = p.replyTo === node.id;
-          const allowedType = p.type === 'log' || p.type === 'commit';
-          return directReply || (allowedType && sameNode);
-        });
-        relevant.sort((a, b) => {
+        const tasks = posts.filter(
+          (p) => p.type === 'task' && p.replyTo === node.id,
+        );
+        tasks.sort((a, b) => {
           const aTime = a.createdAt || a.timestamp;
           const bTime = b.createdAt || b.timestamp;
           return aTime.localeCompare(bTime);
         });
-        setEntries(relevant);
+        setEntries(tasks);
       })
       .catch((err) => console.error('[LogThreadPanel] load failed', err))
       .finally(() => setLoading(false));
@@ -52,10 +49,9 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
     return (
       <div className="space-y-2">
         {showForm && (
-          <CreatePost
-            initialType="log"
+          <QuickTaskForm
             questId={questId}
-            replyTo={node}
+            parentId={node.id}
             onSave={(p) => {
               setEntries((prev) => [...prev, p]);
               setShowForm(false);
@@ -64,8 +60,8 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
           />
         )}
         <div className="text-right">
-          <button onClick={handleAddLog} className="text-xs text-accent underline">
-            + Add Log
+          <button onClick={handleAddTask} className="text-xs text-accent underline">
+            + Add Task
           </button>
         </div>
         <div className="text-sm text-secondary">No log entries.</div>
@@ -75,10 +71,9 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
   return (
     <div className="space-y-2">
       {showForm && (
-        <CreatePost
-          initialType="log"
+        <QuickTaskForm
           questId={questId}
-          replyTo={node}
+          parentId={node.id}
           onSave={(p) => {
             setEntries((prev) => [...prev, p]);
             setShowForm(false);
@@ -87,8 +82,8 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
         />
       )}
       <div className="text-right">
-        <button onClick={handleAddLog} className="text-xs text-accent underline">
-          + Add Log
+        <button onClick={handleAddTask} className="text-xs text-accent underline">
+          + Add Task
         </button>
       </div>
       {entries.map((entry) => {
@@ -99,16 +94,15 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
               className="flex justify-between items-center p-2 cursor-pointer bg-background"
               onClick={() => {
                 setExpanded((prev) => ({ ...prev, [entry.id]: !isOpen }));
-                if (!isOpen && entry.type === 'commit') onCommitSelect?.(entry);
               }}
             >
               <span className="font-semibold text-sm">
-                {entry.commitSummary || entry.content.slice(0, 40)}
+                {entry.content.slice(0, 40)}
               </span>
               <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
             </div>
             {isOpen && (
-              <div className="p-2 space-y-2">
+              <div className="p-2 space-y-2 overflow-auto max-h-60">
                 <PostCard post={entry} user={user} questId={questId} />
                 <ReplyThread postId={entry.id} user={user} />
               </div>
