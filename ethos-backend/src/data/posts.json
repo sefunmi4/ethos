@@ -84,7 +84,7 @@
     "repostedFrom": null,
     "linkedItems": [],
     "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
-    "taskType": "file",
+    "taskType": "folder",
     "status": "To Do",
     "helpRequest": false,
     "nodeId": "Q:ethos:T00",
@@ -260,5 +260,22 @@
     "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
     "helpRequest": true,
     "needsHelp": true
+  },
+  {
+    "id": "8c800d79-c422-4a37-9469-e1c245047a2f",
+    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "type": "task",
+    "taskType": "folder",
+    "content": "Test Quest",
+    "visibility": "public",
+    "timestamp": "2025-06-23T04:06:43.533Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "78718de0-67db-4ea7-a84b-24a482484b27",
+    "nodeId": "Q:test_quest:T00",
+    "questNodeTitle": "Test Quest"
   }
 ]
