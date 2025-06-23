@@ -12,6 +12,7 @@ interface TaskPreviewCardProps {
   post: Post;
   onUpdate?: (updated: Post) => void;
   summaryOnly?: boolean;
+  hideSummaryTag?: boolean;
 }
 
 const makeHeader = (content: string): string => {
@@ -19,7 +20,12 @@ const makeHeader = (content: string): string => {
   return text.length <= 50 ? text : text.slice(0, 50) + '…';
 };
 
-const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summaryOnly = false }) => {
+const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
+  post,
+  onUpdate,
+  summaryOnly = false,
+  hideSummaryTag = false,
+}) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
   const [organizeFile, setOrganizeFile] = useState(false);
@@ -66,7 +72,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '…' : headerText;
+  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '...' : headerText;
   if (taskTag) {
     taskTag = {
       ...taskTag,
@@ -89,7 +95,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
     } as any;
   }
 
-  const tagNode = taskTag ? (
+  const tagNode = !hideSummaryTag && taskTag ? (
     <div className="flex flex-wrap gap-1">
       <SummaryTag {...taskTag} />
     </div>
