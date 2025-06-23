@@ -477,14 +477,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
     const fileSection = (
       <div className="space-y-2">
-        {selectedNode.taskType === 'file' && (
-          <>
-            <GitFileBrowserInline questId={quest.id} />
-            {diffLoading ? null : diffData?.diffMarkdown && (
-              <GitDiffViewer markdown={diffData.diffMarkdown} />
-            )}
-          </>
-        )}
+        {selectedNode.taskType === 'file' &&
+          (diffLoading ? null : diffData?.diffMarkdown && (
+            <GitDiffViewer markdown={diffData.diffMarkdown} />
+          ))}
         <FileEditorPanel
           questId={quest.id}
           filePath={selectedNode.gitFilePath || 'file.txt'}
