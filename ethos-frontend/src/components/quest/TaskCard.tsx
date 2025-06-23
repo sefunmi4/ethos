@@ -83,7 +83,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
-          <TaskPreviewCard post={selected} summaryOnly />
+          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag />
           <div className="flex items-center justify-between">
             {parentNode && (
               <div
