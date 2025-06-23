@@ -332,7 +332,7 @@
     "id": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "file",
+    "taskType": "abstract",
     "content": "Public Media",
     "visibility": "public",
     "timestamp": "2025-06-23T05:30:45.663Z",
