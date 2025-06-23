@@ -258,6 +258,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
 
 
+
   const renderHeader = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
@@ -377,7 +378,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
       .filter((e) => e.from === selectedNode.id)
       .map((e) => e.to);
     const children = logs.filter((p) => childIds.includes(p.id));
-    const isFolder = selectedNode.id === rootNode?.id || children.length > 0;
+    const isFolder =
+      selectedNode.taskType === 'folder' ||
+      selectedNode.id === rootNode?.id ||
+      children.length > 0;
+    const isPlanner = Boolean((selectedNode as any).planner);
 
     const statusBoard = (
       <StatusBoardPanel
@@ -386,7 +391,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
         initialOpen={false}
       />
     );
-
     const checklistSection = (
       <div className="border border-secondary rounded">
         <div
@@ -404,7 +408,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
     );
 
-    const folderSection = isFolder && (
+    const folderSection = (isFolder || isPlanner) && (
       <div className="border border-secondary rounded">
         <div
           className="flex justify-between items-center p-2 bg-soft cursor-pointer"
