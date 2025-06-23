@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CollaberatorControls from '../controls/CollaberatorControls';
-import { updateQuestById, fetchQuestById } from '../../api/quest';
-import { updatePost } from '../../api/post';
+import { updateQuestById, fetchQuestById, linkPostToQuest } from '../../api/quest';
+import { updatePost, addPost, requestHelp } from '../../api/post';
 import { AvatarStack } from '../ui';
 import { ROUTES } from '../../constants/routes';
 import type { CollaberatorRoles, Post } from '../../types/postTypes';
@@ -38,6 +38,31 @@ const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node }) => {
         await updateQuestById(quest.id, { collaborators: roles });
       } else {
         await updatePost(node.id, { collaborators: roles });
+      }
+
+      for (const r of roles) {
+        if (!r.userId) {
+          const content = r.roles && r.roles.length
+            ? `Open Role: ${r.roles.join(', ')}`
+            : 'Open Role';
+          try {
+            const task = await addPost({
+              type: 'task',
+              content,
+              visibility: 'public',
+              questId,
+              status: 'To Do',
+            });
+            await linkPostToQuest(questId, {
+              postId: task.id,
+              parentId: node.id,
+              title: task.content.slice(0, 50),
+            });
+            await requestHelp(task.id, 'task');
+          } catch (err) {
+            console.error('[TeamPanel] Failed to create open role task', err);
+          }
+        }
       }
     } catch (err) {
       console.error('[TeamPanel] Failed to save roles', err);

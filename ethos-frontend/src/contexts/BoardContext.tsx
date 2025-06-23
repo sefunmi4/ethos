@@ -35,6 +35,28 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 
   useEffect(() => {
+    const handler = (e: Event) => {
+      const { task } = (e as CustomEvent<{ task: BoardItem }>).detail;
+      setBoards(prev => {
+        const updated: BoardMap = { ...prev };
+        Object.keys(updated).forEach(id => {
+          if (updated[id]?.enrichedItems?.some(it => it.id === task.id)) {
+            updated[id] = {
+              ...updated[id],
+              enrichedItems: updated[id].enrichedItems!.map(it =>
+                it.id === task.id ? task : it
+              ),
+            };
+          }
+        });
+        return updated;
+      });
+    };
+    window.addEventListener('taskUpdated', handler);
+    return () => window.removeEventListener('taskUpdated', handler);
+  }, []);
+
+  useEffect(() => {
     if (authLoading) return;
     const loadBoards = async () => {
       setLoading(true);
