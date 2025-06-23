@@ -124,6 +124,7 @@ router.post(
       questId = null,
       replyTo = null,
       linkedItems = [],
+      linkedNodeId,
       collaborators = [],
       status,
       boardId,
@@ -164,6 +165,7 @@ router.post(
       replyTo,
       repostedFrom: null,
       linkedItems,
+      linkedNodeId,
       questId,
       ...(type === 'task' ? { taskType } : {}),
       ...(type === 'review' && rating ? { rating: Math.min(5, Math.max(0, Number(rating))) } : {}),
@@ -565,6 +567,44 @@ router.post(
 );
 
 //
+// ❌ DELETE /api/posts/:id/request-help – Cancel help request and remove linked request posts
+//
+router.delete(
+  '/:id/request-help',
+  authMiddleware,
+  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+    const posts = postsStore.read();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+      res.status(404).json({ error: 'Post not found' });
+      return;
+    }
+
+    const removedIds: string[] = [];
+    for (let i = posts.length - 1; i >= 0; i--) {
+      const p = posts[i];
+      if (
+        p.type === 'request' &&
+        p.authorId === req.user!.id &&
+        p.helpRequest === true &&
+        p.linkedItems?.some(
+          li => li.itemId === post.id && li.itemType === 'post' && li.linkType === 'reference'
+        )
+      ) {
+        removedIds.push(p.id);
+        posts.splice(i, 1);
+      }
+    }
+
+    post.helpRequest = false;
+    post.needsHelp = false;
+    postsStore.write(posts);
+
+    res.json({ success: true, removedIds });
+  }
+);
+
+//
 // ✅ POST /api/posts/:id/accept – Accept a help request
 // Marks the post as pending for the current user and joins or creates a quest
 //
@@ -706,6 +746,24 @@ router.post(
     }
 
     post.tags = Array.from(new Set([...(post.tags || []), 'archived']));
+    if (post.type === 'task' && post.questId) {
+      const quests = questsStore.read();
+      const quest = quests.find(q => q.id === post.questId);
+      if (quest) {
+        const edges = quest.taskGraph || [];
+        const parentEdge = edges.find(e => e.to === post.id);
+        const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+        const childEdges = edges.filter(e => e.from === post.id);
+        quest.taskGraph = edges.filter(e => e.from !== post.id);
+        childEdges.forEach(e => {
+          const exists = quest.taskGraph!.some(se => se.from === parentId && se.to === e.to);
+          if (!exists) {
+            quest.taskGraph!.push({ ...e, from: parentId });
+          }
+        });
+        questsStore.write(quests);
+      }
+    }
     postsStore.write(posts);
     res.json({ success: true });
   }
@@ -757,6 +815,24 @@ router.delete(
         questsStore.write(quests);
         res.json({ success: true, questDeleted: removedQuest.id });
         return;
+      }
+    }
+
+    if (post.type === 'task' && post.questId) {
+      const quest = quests.find(q => q.id === post.questId);
+      if (quest) {
+        const edges = quest.taskGraph || [];
+        const parentEdge = edges.find(e => e.to === post.id);
+        const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+        const childEdges = edges.filter(e => e.from === post.id);
+        quest.taskGraph = edges.filter(e => e.to !== post.id && e.from !== post.id);
+        childEdges.forEach(e => {
+          const exists = quest.taskGraph!.some(se => se.from === parentId && se.to === e.to);
+          if (!exists) {
+            quest.taskGraph!.push({ ...e, from: parentId });
+          }
+        });
+        questsStore.write(quests);
       }
     }
 

@@ -280,6 +280,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                     compact={true}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    boardId={boardId}
                   />
                 ))}
               </DroppableColumn>

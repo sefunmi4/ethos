@@ -116,10 +116,10 @@
     "linkedItems": [],
     "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c",
     "status": "To Do",
-    "helpRequest": true,
+    "helpRequest": false,
     "nodeId": "Q:ethos_multiple_users:I00",
     "questNodeTitle": "request help on task",
-    "needsHelp": true
+    "needsHelp": false
   },
   {
     "id": "9e3dffce-8e1e-4b25-97a0-df347b0001ac",
@@ -2003,5 +2003,46 @@
     "questId": "78b34502-beae-4b6c-84c2-1be60d935fd9",
     "helpRequest": true,
     "needsHelp": true
+  },
+  {
+    "id": "0e8379de-3fe4-4849-bdfb-8428d72abb30",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "task",
+    "title": "TEST",
+    "content": "TEST",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T16:19:10.430Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "03b518f7-7205-47e6-98fa-21cbd7f4628f",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "2d44a0bb-b794-402c-8ba5-4dcd3ac2e481",
+    "taskType": "file",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:T02",
+    "questNodeTitle": "TEST"
+  },
+  {
+    "id": "ce08ae8b-d741-44bc-aacb-75880eb48271",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "issue",
+    "title": "test issue",
+    "content": "test issue",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T16:27:10.755Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:public_media:T00:I00",
+    "questNodeTitle": "test issue"
   }
 ]
