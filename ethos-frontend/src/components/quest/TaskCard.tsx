@@ -11,9 +11,11 @@ import { Select } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
 import { updatePost } from '../../api/post';
+import { updateQuestTaskGraph } from '../../api/quest';
 import { ROUTES } from '../../constants/routes';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import type { TaskEdge } from '../../types/questTypes';
 
 interface TaskCardProps {
   task: Post;
@@ -37,6 +39,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
       loadGraph(questId);
     }
   }, [questId, loadGraph]);
+
+  const handleEdgesSave = async (edgesToSave: TaskEdge[]) => {
+    try {
+      await updateQuestTaskGraph(questId, edgesToSave);
+      await loadGraph(questId);
+    } catch (err) {
+      console.error('[TaskCard] Failed to save task graph', err);
+    }
+  };
 
   const subgraphIds = useMemo(() => {
     const ids = new Set<string>();
@@ -113,6 +124,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
             <MapGraphLayout
               items={displayNodes}
               edges={displayEdges}
+              onEdgesChange={handleEdgesSave}
               onNodeClick={(n) => {
                 if (n.id !== task.id) {
                   navigate(ROUTES.POST(n.id));
@@ -186,6 +198,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
                   condensed
                   showInspector={false}
                   showStatus={false}
+                  onEdgesChange={handleEdgesSave}
                   onNodeClick={(n) => {
                     if (n.id !== task.id) {
                       navigate(ROUTES.POST(n.id));

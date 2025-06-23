@@ -4,8 +4,10 @@ import { useGraph } from '../../hooks/useGraph';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import QuestNodeInspector from './QuestNodeInspector';
 import { ROUTES } from '../../constants/routes';
+import { updateQuestTaskGraph } from '../../api/quest';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
+import type { TaskEdge } from '../../types/questTypes';
 
 interface TaskGraphSidePanelProps {
   task: Post;
@@ -23,6 +25,15 @@ const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, 
       loadGraph(questId);
     }
   }, [questId, loadGraph]);
+
+  const handleEdgesSave = async (edgesToSave: TaskEdge[]) => {
+    try {
+      await updateQuestTaskGraph(questId, edgesToSave);
+      await loadGraph(questId);
+    } catch (err) {
+      console.error('[TaskGraphSidePanel] Failed to save task graph', err);
+    }
+  };
 
   const subgraphIds = useMemo(() => {
     const ids = new Set<string>();
@@ -64,6 +75,7 @@ const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, 
               condensed
               showInspector={false}
               showStatus={false}
+              onEdgesChange={handleEdgesSave}
               onSelectNode={setSelected}
               onNodeClick={(n) => {
                 if (n.id !== task.id) {
