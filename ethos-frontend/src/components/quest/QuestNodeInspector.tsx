@@ -7,6 +7,7 @@ import FileEditorPanel from './FileEditorPanel';
 import TaskKanbanBoard from './TaskKanbanBoard';
 import QuickTaskForm from '../post/QuickTaskForm';
 import TeamPanel from './TeamPanel';
+import SubtaskChecklist from './SubtaskChecklist';
 import { useGraph } from '../../hooks/useGraph';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
@@ -150,12 +151,14 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               </div>
             )}
           </div>
-          {type === 'file' && (
+          {type === 'file' ? (
             <FileEditorPanel
               questId={questId}
               filePath={node.gitFilePath || 'file.txt'}
               content={node.content}
             />
+          ) : (
+            <SubtaskChecklist questId={questId} nodeId={node.id} />
           )}
         </div>
       );
