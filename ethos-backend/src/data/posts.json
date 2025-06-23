@@ -77,7 +77,8 @@
     "status": "To Do",
     "helpRequest": true,
     "needsHelp": true,
-    "questNodeTitle": ""
+    "questNodeTitle": "",
+    "taskType": "folder"
   },
   {
     "id": "afbc6756-b35f-4f93-95fe-eff492cd9ef6",
