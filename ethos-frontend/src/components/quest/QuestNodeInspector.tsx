@@ -69,6 +69,9 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       // Optimistically update local state so parent components react immediately
       const optimistic = { ...node, taskType: val } as Post;
       onUpdate?.(optimistic);
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+      );
       try {
         const updated = await updatePost(node.id, { taskType: val });
         onUpdate?.(updated);
@@ -89,6 +92,9 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       // Optimistically update local state for immediate UI feedback
       const optimistic = { ...node, status: newStatus } as Post;
       onUpdate?.(optimistic);
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+      );
       try {
         const updated = await updatePost(node.id, { status: newStatus });
         onUpdate?.(updated);
