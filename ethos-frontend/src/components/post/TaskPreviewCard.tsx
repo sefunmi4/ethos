@@ -52,6 +52,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
         : taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
       username: undefined,
       usernameLink: undefined,
+      link: ROUTES.POST(post.id),
     } as any;
   } else {
     const label = post.nodeId
@@ -61,6 +62,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
       type: 'task',
       label,
       detailLink: ROUTES.POST(post.id),
+      link: ROUTES.POST(post.id),
     } as any;
   }
 
