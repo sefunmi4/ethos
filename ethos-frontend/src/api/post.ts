@@ -243,6 +243,16 @@ export const requestHelp = async (
 };
 
 /**
+ * ❌ Cancel a help request for a post
+ */
+export const removeHelpRequest = async (
+  postId: string
+): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.delete(`/posts/${postId}/request-help`);
+  return res.data;
+};
+
+/**
  * ✅ Accept a help request
  */
 export const acceptRequest = async (

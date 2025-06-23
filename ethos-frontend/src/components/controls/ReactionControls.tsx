@@ -29,8 +29,8 @@ import {
   fetchReactions,
   fetchRepostCount,
   fetchUserRepost,
-  updatePost,
   requestHelp,
+  removeHelpRequest,
   acceptRequest,
   unacceptRequest,
   archivePost,
@@ -200,8 +200,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       }
     } else {
       try {
-        await updatePost(post.id, { helpRequest: false, needsHelp: false });
+        await removeHelpRequest(post.id);
         setHelpRequested(false);
+        onUpdate?.({ ...post, helpRequest: false, needsHelp: false } as Post);
       } catch (err) {
         console.error('[ReactionControls] Failed to cancel help request:', err);
       }
