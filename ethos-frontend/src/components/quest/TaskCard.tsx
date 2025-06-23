@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GraphLayout from '../layout/GraphLayout';
+import MapGraphLayout from '../layout/MapGraphLayout';
+import StatusBoardPanel from './StatusBoardPanel';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
 import TaskPreviewCard from '../post/TaskPreviewCard';
+import QuickTaskForm from '../post/QuickTaskForm';
 import { Select } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
@@ -25,6 +28,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const [status, setStatus] = useState<QuestTaskStatus>(task.status || 'To Do');
   const [taskType, setTaskType] = useState<string>(task.taskType || 'abstract');
   const [detailWidth, setDetailWidth] = useState<number>(400);
+  const [activeTab, setActiveTab] = useState<'details' | 'folder'>('details');
+  const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,16 +109,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
               />
             )}
           </div>
-          <div className="h-64 overflow-auto" data-testid="task-graph-inline">
-            <GraphLayout
+          <div className="h-64 overflow-auto" data-testid="task-map-inline">
+            <MapGraphLayout
               items={displayNodes}
               edges={displayEdges}
-              user={user}
-              questId={questId}
-              condensed
-              showInspector={false}
-              showStatus={false}
-              onSelectNode={setSelected}
               onNodeClick={(n) => {
                 if (n.id !== task.id) {
                   navigate(ROUTES.POST(n.id));
@@ -124,15 +123,78 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
         </div>
         <div className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize" onMouseDown={handleDividerMouseDown} />
         <div className="overflow-auto" style={{ width: detailWidth }}>
-          <QuestNodeInspector
-            questId={questId}
-            node={selected}
-            user={user}
-            showPost={false}
-            onUpdate={onUpdate}
-            status={status}
-            hideSelects
-          />
+          <div className="border-b border-secondary flex text-sm overflow-x-auto whitespace-nowrap">
+            <button
+              className={`px-3 py-1 -mb-px border-b-2 ${
+                activeTab === 'details'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-secondary hover:text-primary'
+              }`}
+              onClick={() => setActiveTab('details')}
+            >
+              Details
+            </button>
+            {taskType === 'folder' && (
+              <button
+                className={`px-3 py-1 -mb-px border-b-2 ${
+                  activeTab === 'folder'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-secondary hover:text-primary'
+                }`}
+                onClick={() => setActiveTab('folder')}
+              >
+                Folder
+              </button>
+            )}
+          </div>
+          {activeTab === 'details' ? (
+            <QuestNodeInspector
+              questId={questId}
+              node={selected}
+              user={user}
+              showPost={false}
+              onUpdate={onUpdate}
+              status={status}
+              hideSelects
+            />
+          ) : (
+            <div className="space-y-2 p-2">
+              <StatusBoardPanel questId={questId} linkedNodeId={selected.id} />
+              {showFolderForm && (
+                <QuickTaskForm
+                  questId={questId}
+                  parentId={selected.id}
+                  boardId={`task-${selected.id}`}
+                  allowIssue
+                  onSave={() => setShowFolderForm(false)}
+                  onCancel={() => setShowFolderForm(false)}
+                />
+              )}
+              <div className="text-right">
+                <button
+                  onClick={() => setShowFolderForm((p) => !p)}
+                  className="text-xs text-accent underline"
+                >
+                  {showFolderForm ? '- Cancel' : '+ Add Item'}
+                </button>
+              </div>
+              <div className="h-64 overflow-auto">
+                <GraphLayout
+                  items={displayNodes}
+                  edges={displayEdges}
+                  questId={questId}
+                  condensed
+                  showInspector={false}
+                  showStatus={false}
+                  onNodeClick={(n) => {
+                    if (n.id !== task.id) {
+                      navigate(ROUTES.POST(n.id));
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

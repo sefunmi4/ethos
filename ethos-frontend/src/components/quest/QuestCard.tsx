@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Quest, TaskEdge } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
@@ -8,6 +8,7 @@ import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GridLayout from '../layout/GridLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
+import GraphLayout from '../layout/GraphLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById, updateQuestTaskGraph } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
@@ -106,6 +107,32 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const isCollaborator = questData.collaborators?.some(c => c.userId === user?.id);
   const canEdit = isOwner || isCollaborator;
   const hasJoined = isOwner || isCollaborator;
+
+  const subgraphIds = useMemo(() => {
+    if (!selectedNode) return new Set<string>();
+    const ids = new Set<string>();
+    const gather = (id: string) => {
+      ids.add(id);
+      (questData.taskGraph || [])
+        .filter((e) => e.from === id)
+        .forEach((e) => gather(e.to));
+    };
+    gather(selectedNode.id);
+    return ids;
+  }, [selectedNode, questData.taskGraph]);
+
+  const folderNodes = useMemo(
+    () => logs.filter((p) => subgraphIds.has(p.id)),
+    [logs, subgraphIds],
+  );
+
+  const folderEdges = useMemo(
+    () =>
+      (questData.taskGraph || []).filter(
+        (e) => subgraphIds.has(e.from) && subgraphIds.has(e.to),
+      ),
+    [questData.taskGraph, subgraphIds],
+  );
 
   const handleJoinRequest = () => {
     if (!user?.id) {
@@ -323,15 +350,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
       return (
         <div className="text-sm p-2 space-y-2">
           <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
-          <div className="flex items-center justify-between">
-            <div className="font-semibold">Folder: {selectedNode.content}</div>
-            <button
-              onClick={() => setShowFolderForm((p) => !p)}
-              className="text-xs text-accent underline"
-            >
-              {showFolderForm ? '- Cancel' : '+ Add Item'}
-            </button>
-          </div>
           {showFolderForm && (
             <QuickTaskForm
               questId={quest.id}
@@ -345,11 +363,29 @@ const QuestCard: React.FC<QuestCardProps> = ({
               onCancel={() => setShowFolderForm(false)}
             />
           )}
-          <ul className="pl-4 list-disc">
-            {children.map((c) => (
-              <li key={c.id}>{c.content}</li>
-            ))}
-          </ul>
+          <div className="text-right">
+            <button
+              onClick={() => setShowFolderForm((p) => !p)}
+              className="text-xs text-accent underline"
+            >
+              {showFolderForm ? '- Cancel' : '+ Add Item'}
+            </button>
+          </div>
+          <div className="h-64 overflow-auto">
+            <GraphLayout
+              items={folderNodes}
+              edges={folderEdges}
+              questId={quest.id}
+              condensed
+              showInspector={false}
+              showStatus={false}
+              onNodeClick={(n) => {
+                if (n.id !== selectedNode.id) {
+                  navigate(ROUTES.POST(n.id));
+                }
+              }}
+            />
+          </div>
         </div>
       );
     }
