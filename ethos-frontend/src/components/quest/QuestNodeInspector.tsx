@@ -30,7 +30,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
-  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const [showKanban, setShowKanban] = useState(false);
   const { loadGraph } = useGraph();
 
   useEffect(() => {
@@ -64,8 +64,8 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     { value: 'team', label: 'Team' },
   ];
 
-  const handleAddSubtask = () => {
-    setShowSubtaskForm((p) => !p);
+  const handleToggleKanban = () => {
+    setShowKanban((p) => !p);
   };
 
   let panel: React.ReactNode = null;
@@ -76,11 +76,26 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     case 'file':
       panel = (
         <div className="space-y-2">
-          <TaskKanbanBoard
-            questId={questId}
-            linkedNodeId={node.id}
-            user={user}
-          />
+          {showKanban && (
+            <div className="space-y-2">
+              <TaskKanbanBoard
+                questId={questId}
+                linkedNodeId={node.id}
+                user={user}
+              />
+              <QuickTaskForm
+                questId={questId}
+                parentId={node.id}
+                boardId={`task-${node.id}`}
+                allowIssue
+                onSave={() => {
+                  setShowKanban(false);
+                  loadGraph(questId);
+                }}
+                onCancel={() => setShowKanban(false)}
+              />
+            </div>
+          )}
           {type === 'file' && (
             <FileEditorPanel
               questId={questId}
@@ -126,28 +141,13 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
           ))}
         {activeTab === 'file' && (
           <button
-            onClick={handleAddSubtask}
+            onClick={handleToggleKanban}
             className="ml-auto px-2 text-accent underline whitespace-nowrap"
           >
-            {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
+            {showKanban ? '- Cancel Item' : '+ Add Item'}
           </button>
         )}
       </div>
-        {showSubtaskForm && activeTab === 'file' && (
-          <div className="mt-2">
-            <QuickTaskForm
-              questId={questId}
-              parentId={node.id}
-              boardId={`task-${node.id}`}
-              allowIssue
-              onSave={() => {
-                setShowSubtaskForm(false);
-                loadGraph(questId);
-              }}
-              onCancel={() => setShowSubtaskForm(false)}
-            />
-          </div>
-        )}
         <div className="mt-2">{panel}</div>
       </div>
     </div>

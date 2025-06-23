@@ -76,7 +76,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Task name"
+        placeholder="Item name"
         required
       />
       {allowIssue && (
