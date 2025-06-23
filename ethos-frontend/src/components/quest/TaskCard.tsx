@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
 import TaskPreviewCard from '../post/TaskPreviewCard';
+import SummaryTag from '../ui/SummaryTag';
+import { buildSummaryTags } from '../../utils/displayUtils';
 import StatusBoardPanel from './StatusBoardPanel';
 import QuickTaskForm from '../post/QuickTaskForm';
 import { updateQuestTaskGraph } from '../../api/quest';
@@ -26,6 +28,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const [detailWidth, setDetailWidth] = useState<number>(400);
   const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
+  const isHeadNode = task.nodeId?.endsWith('T00');
+  const isRootSelected = selected.nodeId?.endsWith('T00');
 
   const handleNodeUpdate = (updated: Post) => {
     setSelected(updated);
@@ -41,6 +45,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
       loadGraph(questId);
     }
   }, [questId, loadGraph]);
+
+  useEffect(() => {
+    if (!isHeadNode) return;
+    const handleTaskOpen = (e: Event) => {
+      const { taskId } = (e as CustomEvent<{ taskId: string }>).detail;
+      const node = nodes.find((n) => n.id === taskId);
+      if (node) setSelected(node);
+    };
+    window.addEventListener('questTaskOpen', handleTaskOpen);
+    return () => window.removeEventListener('questTaskOpen', handleTaskOpen);
+  }, [isHeadNode, nodes]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { task: updated } = (e as CustomEvent<{ task: Post }>).detail;
+      if (selected.id === updated.id) setSelected({ ...selected, ...updated });
+    };
+    window.addEventListener('taskUpdated', handler);
+    return () => window.removeEventListener('taskUpdated', handler);
+  }, [selected]);
 
   const handleEdgesSave = async (edgesToSave: TaskEdge[]) => {
     try {
@@ -64,8 +88,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const displayNodes = useMemo(() => nodes.filter(n => subgraphIds.has(n.id)), [nodes, subgraphIds]);
   const displayEdges = useMemo(() => edges.filter(e => subgraphIds.has(e.from) && subgraphIds.has(e.to)), [edges, subgraphIds]);
 
-  const parentEdge = edges.find(e => e.to === task.id);
+  const parentEdge = edges.find(e => e.to === selected.id);
   const parentNode = parentEdge ? nodes.find(n => n.id === parentEdge.from) : undefined;
+  const parentTag = parentNode && !parentNode.nodeId?.endsWith('T00')
+    ? buildSummaryTags(parentNode).find(t => t.type === 'task')
+    : undefined;
 
   const taskType = selected.taskType || 'abstract';
   const status = selected.status;
@@ -90,14 +117,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
-          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag />
-          <div className="flex items-center justify-between">
+          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag={!isRootSelected} />
+          <div className="flex items-center justify-between gap-1">
             {parentNode && (
-              <div
-                className="w-px h-4 border-l-2 border-dotted border-secondary cursor-pointer"
-                title={`Parent: ${parentNode.content.slice(0, 50)}`}
-                onClick={() => navigate(ROUTES.POST(parentNode.id))}
-              />
+              <>
+                <div
+                  className="w-px h-4 border-l-2 border-dotted border-secondary cursor-pointer"
+                  title={`Parent: ${parentNode.content.slice(0, 50)}`}
+                  onClick={() => navigate(ROUTES.POST(parentNode.id))}
+                />
+                {parentTag && <SummaryTag {...parentTag} />}
+              </>
             )}
           </div>
           <div className="h-64 overflow-auto" data-testid="task-map-inline">
@@ -105,13 +135,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
               items={displayNodes}
               edges={displayEdges}
               onEdgesChange={handleEdgesSave}
-              onNodeClick={(n) => {
-                if (n.id !== task.id) {
-                  navigate(ROUTES.POST(n.id));
-                }
-              }}
+              {...(!isHeadNode && {
+                onNodeClick: (n: Post) => {
+                  if (n.id !== task.id) navigate(ROUTES.POST(n.id));
+                },
+              })}
             />
           </div>
+          {isHeadNode && (
+            <div className="text-right text-xs">
+              <Link to={ROUTES.BOARD(`map-${questId}`)} className="underline text-accent">
+                Open Canvas
+              </Link>
+            </div>
+          )}
         </div>
         <div className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize" onMouseDown={handleDividerMouseDown} />
         <div className="overflow-auto" style={{ width: detailWidth }}>
