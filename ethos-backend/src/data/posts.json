@@ -2192,7 +2192,7 @@
     "linkedItems": [],
     "linkedNodeId": "9e795983-c890-4f78-a4c8-5457ffe9da35",
     "questId": "28626aae-91f7-4543-b959-abc5b4183554",
-    "taskType": "file",
+    "taskType": "folder",
     "status": "In Progress",
     "helpRequest": false,
     "nodeId": "Q:test_quest:T03",
