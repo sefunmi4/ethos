@@ -6,6 +6,7 @@ import LogThreadPanel from './LogThreadPanel';
 import FileEditorPanel from './FileEditorPanel';
 import TaskKanbanBoard from './TaskKanbanBoard';
 import QuickTaskForm from '../post/QuickTaskForm';
+import TeamPanel from './TeamPanel';
 import { useGraph } from '../../hooks/useGraph';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
@@ -28,7 +29,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   showLogs = true,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
-  const [activeTab, setActiveTab] = useState<'logs' | 'file'>('logs');
+  const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const { loadGraph } = useGraph();
 
@@ -60,6 +61,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       value: 'file',
       label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
     },
+    { value: 'team', label: 'Team' },
   ];
 
   const handleAddSubtask = () => {
@@ -88,6 +90,9 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
           )}
         </div>
       );
+      break;
+    case 'team':
+      panel = <TeamPanel questId={questId} node={node} />;
       break;
     default:
       panel = null;
@@ -119,19 +124,22 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               {t.label}
             </button>
           ))}
+        {activeTab === 'file' && (
           <button
             onClick={handleAddSubtask}
             className="ml-auto px-2 text-accent underline whitespace-nowrap"
           >
-            + Add Item
+            {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
           </button>
-        </div>
-        {showSubtaskForm && (
+        )}
+      </div>
+        {showSubtaskForm && activeTab === 'file' && (
           <div className="mt-2">
             <QuickTaskForm
               questId={questId}
               parentId={node.id}
-              boardId={`map-${questId}`}
+              boardId={`task-${node.id}`}
+              allowIssue
               onSave={() => {
                 setShowSubtaskForm(false);
                 loadGraph(questId);
