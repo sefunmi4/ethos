@@ -55,6 +55,11 @@ export interface Post {
   commitSummary?: string;         // short description for commit-type post
   linkedNodeId?: string;          // optional file/folder node reference
 
+  /** Mark this post as a planner file */
+  planner?: boolean;
+  /** Mark this file for folder organization */
+  organize?: boolean;
+
   /** Flag indicating this post is requesting help */
   helpRequest?: boolean;
 

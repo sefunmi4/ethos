@@ -8,6 +8,8 @@ import QuickTaskForm from '../post/QuickTaskForm';
 interface StatusBoardPanelProps {
   questId: string;
   linkedNodeId: string;
+  /** Whether the panel starts open. Default false */
+  initialOpen?: boolean;
 }
 
 const statusIcons: Record<string, string> = {
@@ -17,11 +19,15 @@ const statusIcons: Record<string, string> = {
   Done: '✅',
 };
 
-const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({ questId, linkedNodeId }) => {
+const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
+  questId,
+  linkedNodeId,
+  initialOpen = false,
+}) => {
   const [items, setItems] = useState<Post[]>([]);
   const [filter, setFilter] = useState<'all' | 'issues' | 'tasks'>('all');
   const [showForm, setShowForm] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(initialOpen);
 
 
   useEffect(() => {
