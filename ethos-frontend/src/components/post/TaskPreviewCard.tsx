@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Select, StatusBadge } from '../ui';
+import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
+import { buildSummaryTags } from '../../utils/displayUtils';
 
 interface TaskPreviewCardProps {
   post: Post;
@@ -29,9 +30,17 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
     onUpdate?.({ ...post, taskType: val });
   };
 
+  const summaryTags = buildSummaryTags(post);
+  const taskTag = summaryTags.find(t => t.type === 'task');
+
   return (
     <div className="border border-secondary rounded bg-surface p-2 text-xs space-y-1">
       <div className="font-semibold text-sm">{post.content}</div>
+      {taskTag && (
+        <div className="flex flex-wrap gap-1">
+          <SummaryTag {...taskTag} />
+        </div>
+      )}
       {post.gitFilePath && (
         <div className="text-secondary">{post.gitFilePath}</div>
       )}

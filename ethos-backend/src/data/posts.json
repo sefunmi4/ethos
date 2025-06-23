@@ -54,59 +54,19 @@
     "helpRequest": false
   },
   {
-    "id": "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
+    "id": "2b445fb1-22c8-4c63-ab43-a863a265e230",
     "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
     "type": "log",
     "content": "Ethos",
     "visibility": "public",
-    "timestamp": "2025-06-23T00:41:04.502Z",
+    "timestamp": "2025-06-23T02:56:44.574Z",
     "tags": [],
     "collaborators": [],
     "replyTo": null,
     "repostedFrom": null,
     "linkedItems": [],
-    "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+    "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
     "nodeId": "Q:ethos:L00",
     "questNodeTitle": "Ethos"
-  },
-  {
-    "id": "648ba0d4-7b3d-471a-b619-8109538e9715",
-    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
-    "type": "log",
-    "title": "Test Log",
-    "content": "",
-    "details": "",
-    "visibility": "public",
-    "timestamp": "2025-06-23T01:28:14.632Z",
-    "tags": [],
-    "collaborators": [],
-    "replyTo": "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
-    "repostedFrom": null,
-    "linkedItems": [
-      {
-        "itemId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
-        "itemType": "quest"
-      }
-    ],
-    "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
-    "helpRequest": false,
-    "nodeId": "Q:ethos:L00:L00",
-    "questNodeTitle": ""
-  },
-  {
-    "id": "e903e011-ac45-453c-b43d-009cc58d39b1",
-    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
-    "type": "log",
-    "content": "Test Quest",
-    "visibility": "public",
-    "timestamp": "2025-06-23T02:25:33.777Z",
-    "tags": [],
-    "collaborators": [],
-    "replyTo": null,
-    "repostedFrom": null,
-    "linkedItems": [],
-    "questId": "f6480737-6bf7-4f56-becb-e07f343e9585",
-    "nodeId": "Q:test_quest:L00",
-    "questNodeTitle": "Test Quest"
   }
 ]
