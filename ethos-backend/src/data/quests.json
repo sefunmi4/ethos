@@ -9,11 +9,49 @@
     "approvalStatus": "approved",
     "flagCount": 0,
     "tags": [],
-    "linkedPosts": [],
+    "linkedPosts": [
+      {
+        "itemId": "c536425c-2bcb-402b-a834-6ce456b59bf8",
+        "itemType": "post",
+        "title": "test sub task"
+      },
+      {
+        "itemId": "6e39ccfe-fecd-4f71-94a9-8a7866dd6ff6",
+        "itemType": "post",
+        "title": "test sub task 2"
+      },
+      {
+        "itemId": "4ae00c07-ad73-41ec-89eb-e5107a393127",
+        "itemType": "post",
+        "title": "test sub task again"
+      },
+      {
+        "itemId": "c0d0748e-8e81-411f-a5b0-2f6cacdd0d3e",
+        "itemType": "post",
+        "title": "more test"
+      }
+    ],
     "collaborators": [],
     "status": "active",
     "headPostId": "2b445fb1-22c8-4c63-ab43-a863a265e230",
-    "taskGraph": [],
+    "taskGraph": [
+      {
+        "from": "2b445fb1-22c8-4c63-ab43-a863a265e230",
+        "to": "c536425c-2bcb-402b-a834-6ce456b59bf8"
+      },
+      {
+        "from": "2b445fb1-22c8-4c63-ab43-a863a265e230",
+        "to": "c0d0748e-8e81-411f-a5b0-2f6cacdd0d3e"
+      },
+      {
+        "from": "c536425c-2bcb-402b-a834-6ce456b59bf8",
+        "to": "6e39ccfe-fecd-4f71-94a9-8a7866dd6ff6"
+      },
+      {
+        "from": "c536425c-2bcb-402b-a834-6ce456b59bf8",
+        "to": "4ae00c07-ad73-41ec-89eb-e5107a393127"
+      }
+    ],
     "helpRequest": false
   }
 ]

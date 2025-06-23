@@ -146,5 +146,20 @@
     "createdAt": "2025-06-23T02:56:44.575Z",
     "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
     "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1"
+  },
+  {
+    "id": "log-ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "6e39ccfe-fecd-4f71-94a9-8a7866dd6ff6"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T03:23:44.990Z",
+    "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132"
   }
 ]
