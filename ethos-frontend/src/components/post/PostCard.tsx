@@ -407,13 +407,15 @@ const PostCard: React.FC<PostCardProps> = ({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button
-              className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-              onClick={() => setExpandedView(prev => !prev)}
-            >
-              {expandedView ? <FaCompress /> : <FaExpand />}{' '}
-              {expandedView ? 'Collapse View' : 'Expand View'}
-            </button>
+            {['task', 'quest'].includes(post.type) && (
+              <button
+                className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
+                onClick={() => setExpandedView(prev => !prev)}
+              >
+                {expandedView ? <FaCompress /> : <FaExpand />}{' '}
+                {expandedView ? 'Collapse View' : 'Expand View'}
+              </button>
+            )}
             <ActionMenu
               id={post.id}
               type="post"
@@ -493,13 +495,15 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button
-            className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-            onClick={() => setExpandedView(prev => !prev)}
-          >
-            {expandedView ? <FaCompress /> : <FaExpand />}{' '}
-            {expandedView ? 'Collapse View' : 'Expand View'}
-          </button>
+          {['task', 'quest'].includes(post.type) && (
+            <button
+              className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
+              onClick={() => setExpandedView(prev => !prev)}
+            >
+              {expandedView ? <FaCompress /> : <FaExpand />}{' '}
+              {expandedView ? 'Collapse View' : 'Expand View'}
+            </button>
+          )}
           <ActionMenu
             id={post.id}
             type="post"
