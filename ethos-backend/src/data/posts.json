@@ -335,7 +335,7 @@
     "id": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "abstract",
+    "taskType": "folder",
     "content": "Public Media",
     "visibility": "public",
     "timestamp": "2025-06-23T05:30:45.663Z",
@@ -395,7 +395,7 @@
     "id": "410c20ca-2bd8-406b-a012-85b555160010",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "folder",
+    "taskType": "abstract",
     "content": "IDK Comics",
     "visibility": "public",
     "timestamp": "2025-06-23T05:31:40.415Z",
@@ -408,7 +408,8 @@
     "nodeId": "Q:idk_comics:T00",
     "questNodeTitle": "IDK Comics",
     "helpRequest": true,
-    "needsHelp": true
+    "needsHelp": true,
+    "title": "IDK Comics"
   },
   {
     "id": "619d0fb2-b1da-4a55-a68b-5c4100082280",
@@ -2185,7 +2186,7 @@
     "linkedItems": [],
     "linkedNodeId": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
     "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
-    "taskType": "file",
+    "taskType": "abstract",
     "status": "Done",
     "helpRequest": false,
     "nodeId": "Q:public_media:T15",
