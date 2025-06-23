@@ -104,24 +104,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
           <TaskPreviewCard post={selected} summaryOnly />
-          <div className="space-y-2">
-            {selected.type === 'task' && (
-              <>
-                <Select
-                  id="task-type"
-                  value={taskType}
-                  onChange={handleTypeChange}
-                  options={TASK_TYPE_OPTIONS as option[]}
-                />
-                <Select
-                  id="task-status"
-                  value={status}
-                  onChange={handleStatusChange}
-                  options={STATUS_OPTIONS as option[]}
-                />
-              </>
-            )}
-          </div>
           <div className="flex items-center justify-between">
             {parentNode && (
               <div
