@@ -1,20 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
-import TaskPreviewCard from '../post/TaskPreviewCard';
 import QuestNodeInspector from './QuestNodeInspector';
-import type { Post } from '../../types/postTypes';
+import { Select } from '../ui';
+import { STATUS_OPTIONS } from '../../constants/options';
+import { updatePost } from '../../api/post';
+import { ROUTES } from '../../constants/routes';
+import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 interface TaskCardProps {
   task: Post;
   questId: string;
   user?: User;
+  onUpdate?: (p: Post) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) => {
   const { nodes, edges, loadGraph } = useGraph();
   const [selected, setSelected] = useState<Post>(task);
+  const [status, setStatus] = useState<QuestTaskStatus>(task.status || 'To Do');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (questId) {
@@ -44,12 +51,42 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user }) => {
   const displayNodes = useMemo(() => nodes.filter(n => subgraphIds.has(n.id)), [nodes, subgraphIds]);
   const displayEdges = useMemo(() => edges.filter(e => subgraphIds.has(e.from) && subgraphIds.has(e.to)), [edges, subgraphIds]);
 
+  const parentEdge = edges.find(e => e.to === task.id);
+  const parentNode = parentEdge ? nodes.find(n => n.id === parentEdge.from) : undefined;
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value as QuestTaskStatus;
+    setStatus(newStatus);
+    const optimistic = { ...task, status: newStatus };
+    onUpdate?.(optimistic);
+    try {
+      const updated = await updatePost(task.id, { status: newStatus });
+      onUpdate?.(updated);
+    } catch (err) {
+      console.error('[TaskCard] failed to update status', err);
+    }
+  };
+
   return (
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2">
-          <TaskPreviewCard post={selected} />
-          <div className="h-25 overflow-auto" data-testid="task-graph-inline">
+          <div className="flex items-center justify-between">
+            {parentNode && (
+              <div
+                className="w-px h-4 border-l-2 border-dotted border-secondary cursor-pointer"
+                title={`Parent: ${parentNode.content.slice(0, 50)}`}
+                onClick={() => navigate(ROUTES.POST(parentNode.id))}
+              />
+            )}
+            <Select
+              value={status}
+              onChange={handleStatusChange}
+              options={STATUS_OPTIONS as any}
+              className="text-xs w-32"
+            />
+          </div>
+          <div className="h-64 overflow-auto" data-testid="task-graph-inline">
             <GraphLayout
               items={displayNodes}
               edges={displayEdges}
