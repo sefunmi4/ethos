@@ -50,7 +50,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   defaultExpanded = false,
 }) => {
   const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
-  const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
+  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -78,7 +78,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const userRank = getRank(user?.xp ?? 0);
 
   const tabOptions = [
-    { value: 'logs', label: 'Logs' },
     {
       value: 'file',
       label:
@@ -88,7 +87,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
           ? 'Folder'
           : 'Planner',
     },
-    { value: 'team', label: 'Team' },
+    { value: 'logs', label: 'Logs' },
+    { value: 'options', label: 'Options' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -322,7 +322,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         </div>
         <hr className="border-secondary" />
         <hr className="border-secondary" />
-        <div className="h-64 overflow-auto" data-testid="quest-map-canvas">
+        <div className="h-48 overflow-auto" data-testid="quest-map-canvas">
           {canvas}
         </div>
       </div>
@@ -410,7 +410,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       case 'file':
         panel = renderFileView();
         break;
-      case 'team':
+      case 'options':
         panel = selectedNode || rootNode ? (
           <TeamPanel questId={quest.id} node={selectedNode || (rootNode as Post)} />
         ) : (

@@ -6,10 +6,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "e903e011-ac45-453c-b43d-009cc58d39b1",
-      "f6480737-6bf7-4f56-becb-e07f343e9585",
-      "648ba0d4-7b3d-471a-b619-8109538e9715",
-      "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
+      "2b445fb1-22c8-4c63-ab43-a863a265e230",
       "095b267a-4b60-4b29-af53-f21869fa77f6",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d",
       "fc1843cf-5378-4bc7-862d-294e25f1dcc0"
@@ -26,8 +23,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
-      "f6480737-6bf7-4f56-becb-e07f343e9585",
-      "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9"
+      "ed0791ba-6aad-4369-8864-b73d38ed1cf1"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -41,7 +37,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "0d707ec6-d045-4570-965b-10bf6508cc80",
+      "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d"
     ],
     "featured": true,
@@ -57,6 +53,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+      "2b445fb1-22c8-4c63-ab43-a863a265e230",
       "e903e011-ac45-453c-b43d-009cc58d39b1",
       "648ba0d4-7b3d-471a-b619-8109538e9715",
       "0dfeb64b-8b2b-4b80-9fa4-e60c667e8d84",
@@ -133,5 +131,20 @@
     "createdAt": "2025-06-23T02:25:33.778Z",
     "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
     "questId": "f6480737-6bf7-4f56-becb-e07f343e9585"
+  },
+  {
+    "id": "map-ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+    "title": "Ethos Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "2b445fb1-22c8-4c63-ab43-a863a265e230"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-23T02:56:44.575Z",
+    "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1"
   }
 ]

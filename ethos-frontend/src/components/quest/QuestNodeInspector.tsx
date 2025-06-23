@@ -29,7 +29,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   showLogs = true,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
-  const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
+  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [boardOpen, setBoardOpen] = useState(true);
   const { loadGraph } = useGraph();
@@ -63,12 +63,12 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
 
   const tabs = [
-    ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
     {
       value: 'file',
       label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
     },
-    { value: 'team', label: 'Team' },
+    ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
+    { value: 'options', label: 'Options' },
   ];
 
   let panel: React.ReactNode = null;
@@ -85,12 +85,15 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               onClick={() => setBoardOpen((prev) => !prev)}
             >
               <span className="font-semibold text-sm">Status Board</span>
-              <button
-                onClick={handleAddSubtask}
-                className="ml-auto text-xs text-accent underline"
-              >
-                {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
-              </button>
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  onClick={handleAddSubtask}
+                  className="text-xs text-accent underline"
+                >
+                  {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
+                </button>
+                <span className="text-xs">{boardOpen ? '▲' : '▼'}</span>
+              </div>
             </div>
             {boardOpen && (
               <div className="p-2 space-y-2">
@@ -125,7 +128,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
         </div>
       );
       break;
-    case 'team':
+    case 'options':
       panel = <TeamPanel questId={questId} node={node} />;
       break;
     default:
