@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Quest, TaskEdge } from '../../types/questTypes';
-import type { Post } from '../../types/postTypes';
+import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, SummaryTag } from '../ui';
+import { Button, SummaryTag, Select } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GridLayout from '../layout/GridLayout';
@@ -22,6 +22,9 @@ import GitDiffViewer from '../git/GitDiffViewer';
 import { useGitDiff } from '../../hooks/useGit';
 import SubtaskChecklist from './SubtaskChecklist';
 import { getRank } from '../../utils/rankUtils';
+import { STATUS_OPTIONS } from '../../constants/options';
+import type { option } from '../../constants/options';
+import { updatePost } from '../../api/post';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 import LogThreadPanel from './LogThreadPanel';
@@ -245,6 +248,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
     window.addEventListener('taskUpdated', handler);
     return () => window.removeEventListener('taskUpdated', handler);
   }, [selectedNode, rootNode]);
+
+  useEffect(() => {
+    setStatusVal(selectedNode?.status || 'To Do');
+  }, [selectedNode?.status]);
 
 
 

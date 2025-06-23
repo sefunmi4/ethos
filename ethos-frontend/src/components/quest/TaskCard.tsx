@@ -1,19 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import GraphLayout from '../layout/GraphLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
-import StatusBoardPanel from './StatusBoardPanel';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
 import TaskPreviewCard from '../post/TaskPreviewCard';
-import QuickTaskForm from '../post/QuickTaskForm';
-import { Select } from '../ui';
-import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
-import type { option } from '../../constants/options';
-import { updatePost } from '../../api/post';
 import { updateQuestTaskGraph } from '../../api/quest';
 import { ROUTES } from '../../constants/routes';
-import type { Post, QuestTaskStatus } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 
@@ -27,24 +20,16 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) => {
   const { nodes, edges, loadGraph } = useGraph();
   const [selected, setSelected] = useState<Post>(task);
-  const [status, setStatus] = useState<QuestTaskStatus>(task.status || 'To Do');
-  const [taskType, setTaskType] = useState<string>(task.taskType || 'abstract');
   const [detailWidth, setDetailWidth] = useState<number>(400);
-  const [activeTab, setActiveTab] = useState<'details' | 'folder'>('details');
-  const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
 
   const handleNodeUpdate = (updated: Post) => {
     setSelected(updated);
-    setStatus(updated.status || 'To Do');
-    setTaskType(updated.taskType || 'abstract');
     onUpdate?.(updated);
   };
 
   useEffect(() => {
     setSelected(task);
-    setStatus(task.status || 'To Do');
-    setTaskType(task.taskType || 'abstract');
   }, [task]);
 
   useEffect(() => {
@@ -78,29 +63,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const parentEdge = edges.find(e => e.to === task.id);
   const parentNode = parentEdge ? nodes.find(n => n.id === parentEdge.from) : undefined;
 
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value as QuestTaskStatus;
-    setStatus(newStatus);
-    try {
-      const updated = await updatePost(selected.id, { status: newStatus });
-      handleNodeUpdate(updated);
-      document.dispatchEvent(new CustomEvent('taskUpdated', { detail: { task: updated } }));
-    } catch (err) {
-      console.error('[TaskCard] Failed to update status', err);
-    }
-  };
-
-  const handleTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setTaskType(val);
-    try {
-      const updated = await updatePost(selected.id, { taskType: val });
-      handleNodeUpdate(updated);
-      document.dispatchEvent(new CustomEvent('taskUpdated', { detail: { task: updated } }));
-    } catch (err) {
-      console.error('[TaskCard] Failed to update task type', err);
-    }
-  };
 
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
@@ -121,7 +83,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
-          <TaskPreviewCard post={selected} summaryOnly />
+          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag />
           <div className="flex items-center justify-between">
             {parentNode && (
               <div
@@ -146,79 +108,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
         </div>
         <div className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize" onMouseDown={handleDividerMouseDown} />
         <div className="overflow-auto" style={{ width: detailWidth }}>
-          <div className="border-b border-secondary flex text-sm overflow-x-auto whitespace-nowrap">
-            <button
-              className={`px-3 py-1 -mb-px border-b-2 ${
-                activeTab === 'details'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-secondary hover:text-primary'
-              }`}
-              onClick={() => setActiveTab('details')}
-            >
-              Details
-            </button>
-            {taskType === 'folder' && (
-              <button
-                className={`px-3 py-1 -mb-px border-b-2 ${
-                  activeTab === 'folder'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-secondary hover:text-primary'
-                }`}
-                onClick={() => setActiveTab('folder')}
-              >
-                Folder
-              </button>
-            )}
-          </div>
-          {activeTab === 'details' ? (
-            <QuestNodeInspector
-              questId={questId}
-              node={selected}
-              user={user}
-              showPost={false}
-              onUpdate={handleNodeUpdate}
-              status={status}
-              hideSelects
-            />
-          ) : (
-            <div className="space-y-2 p-2">
-              <StatusBoardPanel questId={questId} linkedNodeId={selected.id} />
-              {showFolderForm && (
-                <QuickTaskForm
-                  questId={questId}
-                  parentId={selected.id}
-                  boardId={`task-${selected.id}`}
-                  allowIssue
-                  onSave={() => setShowFolderForm(false)}
-                  onCancel={() => setShowFolderForm(false)}
-                />
-              )}
-              <div className="text-right">
-                <button
-                  onClick={() => setShowFolderForm((p) => !p)}
-                  className="text-xs text-accent underline"
-                >
-                  {showFolderForm ? '- Cancel' : '+ Add Item'}
-                </button>
-              </div>
-              <div className="h-64 overflow-auto">
-                <GraphLayout
-                  items={displayNodes}
-                  edges={displayEdges}
-                  questId={questId}
-                  condensed
-                  showInspector={false}
-                  showStatus={false}
-                  onEdgesChange={handleEdgesSave}
-                  onNodeClick={(n) => {
-                    if (n.id !== task.id) {
-                      navigate(ROUTES.POST(n.id));
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          )}
+          <QuestNodeInspector
+            questId={questId}
+            node={selected}
+            user={user}
+            showPost={false}
+            onUpdate={handleNodeUpdate}
+            hideSelects
+          />
         </div>
       </div>
     </div>

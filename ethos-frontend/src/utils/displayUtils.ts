@@ -195,7 +195,7 @@ export const buildSummaryTags = (
   }
 
   if (!multipleSources && title) {
-    const shortTitle = title.length > 20 ? title.slice(0, 20) + '…' : title;
+    const shortTitle = title.length > 20 ? title.slice(0, 20) + '...' : title;
     tags.push({
       type: "quest",
       label: `Quest: ${shortTitle}`,
