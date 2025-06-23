@@ -613,5 +613,36 @@
     "defaultFor": null,
     "createdAt": "2025-06-23T16:19:10.439Z",
     "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
+  },
+  {
+    "id": "task-f822b6f2-7988-4ee4-87a5-6579c481162d",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "5ff8c30d-9d5e-4109-8dd1-01220e7b485c"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T16:37:58.137Z",
+    "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
+  },
+  {
+    "id": "task-eaf5ce7a-f69c-47e5-a7e1-d649a9d0599e",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "4eb9e85d-62af-4684-9ecf-d30ed3617e13",
+      "3badc805-f332-4465-9c45-7cdfcbc5a02a"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T16:41:05.977Z",
+    "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
   }
 ]
