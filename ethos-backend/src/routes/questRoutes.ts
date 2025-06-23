@@ -442,6 +442,10 @@ router.post(
     post.questId = id;
     postsStore.write(posts);
   }
+  if (post && parentId) {
+    post.linkedNodeId = parentId;
+    postsStore.write(posts);
+  }
 
   quest.linkedPosts = quest.linkedPosts || [];
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
