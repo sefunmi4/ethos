@@ -283,6 +283,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         {selectedNode && (
           <div className="space-y-2">
             <TaskPreviewCard post={selectedNode} />
+            <hr className="border-secondary" />
             {showTaskForm && (
               <CreatePost
                 initialType="task"
@@ -313,7 +314,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </div>
           </div>
         )}
-        <hr className="border-secondary" />
         <div className="flex justify-between items-center text-sm">
           <div className="flex gap-1">
             <span className="font-semibold">View: </span>
@@ -339,7 +339,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </button>
           </div>
         </div>
-        <div className="h-80 overflow-auto" data-testid="quest-map-canvas">
+        <hr className="border-secondary" />
+        <hr className="border-secondary" />
+        <div className="h-64 overflow-auto" data-testid="quest-map-canvas">
           {canvas}
         </div>
       </div>
