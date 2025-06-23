@@ -22,8 +22,13 @@ export const useGraph = () => {
 
     try {
       const { nodes, edges } = await fetchQuestMapData(questId);
-      setNodes(nodes || []);
-      setEdges(edges || []);
+      const taskNodes = (nodes || []).filter(n => n.type === 'task');
+      const taskIds = new Set(taskNodes.map(n => n.id));
+      const taskEdges = (edges || []).filter(
+        e => taskIds.has(e.from) && taskIds.has(e.to)
+      );
+      setNodes(taskNodes);
+      setEdges(taskEdges);
     } catch (err: unknown) {
       console.error('[useGraph] Failed to load quest map:', err);
       setError((err as { response?: { data?: { error?: string } } })?.response?.data?.error ||

@@ -10,5 +10,17 @@
     "path": "/api/quests/0d707ec6-d045-4570-965b-10bf6508cc80?enrich=true",
     "count": 2,
     "lastOccurred": "2025-06-23T01:30:50.251Z"
+  },
+  {
+    "questId": "f6480737-6bf7-4f56-becb-e07f343e9585",
+    "path": "/api/quests/f6480737-6bf7-4f56-becb-e07f343e9585?enrich=true",
+    "count": 14,
+    "lastOccurred": "2025-06-23T02:56:09.152Z"
+  },
+  {
+    "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+    "path": "/api/quests/b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9?enrich=true",
+    "count": 4,
+    "lastOccurred": "2025-06-23T02:56:09.160Z"
   }
 ]
