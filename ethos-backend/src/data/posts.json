@@ -2043,7 +2043,7 @@
     "id": "62309555-6366-483e-9718-c0cb378e6d32",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "file",
+    "taskType": "abstract",
     "content": "test quest",
     "visibility": "public",
     "timestamp": "2025-06-23T17:13:40.794Z",
