@@ -151,7 +151,8 @@ npm test --prefix ethos-backend
 This runs the Jest tests under `ethos-backend/tests`.
 
 To run the frontend test suite:
-Ensure `jest-environment-jsdom` is installed for the frontend tests.
+Ensure `jest-environment-jsdom` is installed for the frontend tests. Running
+`./setup.sh` will install this dependency for you.
 
 ```bash
 npm test --prefix ethos-frontend
