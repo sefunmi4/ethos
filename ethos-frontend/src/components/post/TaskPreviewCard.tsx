@@ -39,8 +39,15 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  if (!taskTag) {
-    const label = post.nodeId ? `Task: ${post.nodeId}` : 'Task';
+  if (taskTag) {
+    taskTag = {
+      ...taskTag,
+      label: post.nodeId || taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
+      username: undefined,
+      usernameLink: undefined,
+    } as any;
+  } else {
+    const label = post.nodeId || 'Task';
     taskTag = {
       type: 'task',
       label,
