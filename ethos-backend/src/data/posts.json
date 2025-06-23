@@ -92,5 +92,21 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:L00:L00",
     "questNodeTitle": ""
+  },
+  {
+    "id": "e903e011-ac45-453c-b43d-009cc58d39b1",
+    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "type": "log",
+    "content": "Test Quest",
+    "visibility": "public",
+    "timestamp": "2025-06-23T02:25:33.777Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "f6480737-6bf7-4f56-becb-e07f343e9585",
+    "nodeId": "Q:test_quest:L00",
+    "questNodeTitle": "Test Quest"
   }
 ]
