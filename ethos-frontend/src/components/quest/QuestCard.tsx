@@ -282,7 +282,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <div className="space-y-2">
         {selectedNode && (
           <div className="space-y-2">
-            <TaskPreviewCard post={selectedNode} onUpdate={handleSelectedNodeUpdate} />
+            <TaskPreviewCard
+              post={selectedNode}
+              onUpdate={handleSelectedNodeUpdate}
+              summaryOnly={selectedNode.id === rootNode?.id}
+            />
           </div>
         )}
         <div className="h-48 overflow-auto border-b border-secondary" data-testid="quest-map-canvas">

@@ -389,7 +389,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
       {expanded && post.type === 'task' && post.questId && (
         <div className="mt-3">
-          <TaskCard task={post} questId={post.questId} user={user} />
+          <TaskCard task={post} questId={post.questId} user={user} onUpdate={onUpdate} />
         </div>
       )}
 

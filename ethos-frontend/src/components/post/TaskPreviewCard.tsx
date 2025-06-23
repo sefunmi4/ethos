@@ -10,6 +10,7 @@ import { ROUTES } from '../../constants/routes';
 interface TaskPreviewCardProps {
   post: Post;
   onUpdate?: (updated: Post) => void;
+  summaryOnly?: boolean;
 }
 
 const makeHeader = (content: string): string => {
@@ -17,7 +18,7 @@ const makeHeader = (content: string): string => {
   return text.length <= 50 ? text : text.slice(0, 50) + '…';
 };
 
-const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => {
+const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summaryOnly = false }) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
   const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
@@ -26,6 +27,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
   const difficulty = difficultyTag ? difficultyTag.split(':')[1] : undefined;
   const role = roleTag ? roleTag.split(':')[1] : undefined;
   const minRank = rankTag ? rankTag.split(':')[1] : undefined;
+  const headerText = post.questNodeTitle || makeHeader(post.content);
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value as QuestTaskStatus;
     setStatus(val);
@@ -39,15 +41,20 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
+  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '…' : headerText;
   if (taskTag) {
     taskTag = {
       ...taskTag,
-      label: post.nodeId || taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
+      label: post.nodeId
+        ? `Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}:${shortTitle}`
+        : taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
       username: undefined,
       usernameLink: undefined,
     } as any;
   } else {
-    const label = post.nodeId || 'Task';
+    const label = post.nodeId
+      ? `Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}:${shortTitle}`
+      : 'Task';
     taskTag = {
       type: 'task',
       label,
@@ -55,15 +62,23 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
     } as any;
   }
 
-  const headerText = post.questNodeTitle || makeHeader(post.content);
+  const tagNode = taskTag ? (
+    <div className="flex flex-wrap gap-1">
+      <SummaryTag {...taskTag} />
+    </div>
+  ) : null;
+
+  if (summaryOnly) {
+    return (
+      <div className="border border-secondary rounded bg-surface p-2 text-xs">
+        {tagNode}
+      </div>
+    );
+  }
 
   return (
     <div className="border border-secondary rounded bg-surface p-2 text-xs space-y-1">
-      {taskTag && (
-        <div className="flex flex-wrap gap-1">
-          <SummaryTag {...taskTag} />
-        </div>
-      )}
+      {tagNode}
       <div className="font-semibold text-sm truncate">
         <Link to={ROUTES.POST(post.id)} className="hover:underline">
           {headerText}
