@@ -21,6 +21,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const { nodes, edges, loadGraph } = useGraph();
   const [selected, setSelected] = useState<Post>(task);
   const [detailWidth, setDetailWidth] = useState<number>(400);
+  const [activeTab, setActiveTab] = useState<'details' | 'folder'>('details');
+  const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
 
   const handleNodeUpdate = (updated: Post) => {
@@ -62,6 +64,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
 
   const parentEdge = edges.find(e => e.to === task.id);
   const parentNode = parentEdge ? nodes.find(n => n.id === parentEdge.from) : undefined;
+
+  const taskType = selected.taskType || 'abstract';
+  const status = selected.status;
 
 
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {

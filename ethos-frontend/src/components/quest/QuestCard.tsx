@@ -76,6 +76,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLogForm, setShowLogForm] = useState(false);
   const [showFolderForm, setShowFolderForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
+  const [statusVal, setStatusVal] = useState<QuestTaskStatus>('To Do');
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
