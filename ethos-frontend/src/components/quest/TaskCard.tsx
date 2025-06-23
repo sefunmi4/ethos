@@ -88,10 +88,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const displayNodes = useMemo(() => nodes.filter(n => subgraphIds.has(n.id)), [nodes, subgraphIds]);
   const displayEdges = useMemo(() => edges.filter(e => subgraphIds.has(e.from) && subgraphIds.has(e.to)), [edges, subgraphIds]);
 
-  const parentEdge = edges.find(e => e.to === selected.id);
-  const parentNode = parentEdge ? nodes.find(n => n.id === parentEdge.from) : undefined;
-  const parentTag = parentNode && !parentNode.nodeId?.endsWith('T00')
-    ? buildSummaryTags(parentNode).find(t => t.type === 'task')
+  const parentEdge = edges.find((e) => e.to === selected.id);
+  const parentNode = parentEdge ? nodes.find((n) => n.id === parentEdge.from) : undefined;
+  const parentTag = !isRootSelected && parentNode
+    ? buildSummaryTags(parentNode).find((t) => t.type === 'task')
     : undefined;
 
   const taskType = selected.taskType || 'abstract';
@@ -117,7 +117,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
-          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag={!isRootSelected} />
+          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag={isRootSelected} />
           <div className="flex items-center justify-between gap-1">
             {parentNode && (
               <>
