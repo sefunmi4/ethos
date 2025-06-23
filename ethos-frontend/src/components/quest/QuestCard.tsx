@@ -51,7 +51,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   defaultExpanded = false,
   hideToggle = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
+  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('file');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -307,6 +307,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     if (isFolder) {
       return (
         <div className="text-sm p-2 space-y-2">
+          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
           <div className="flex items-center justify-between">
             <div className="font-semibold">Folder: {selectedNode.content}</div>
             <button
@@ -334,18 +335,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <li key={c.id}>{c.content}</li>
             ))}
           </ul>
-          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
         </div>
       );
     }
     return (
       <div className="space-y-2 p-2">
+        <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
         <FileEditorPanel
           questId={quest.id}
           filePath={selectedNode.gitFilePath || 'file.txt'}
           content={selectedNode.content}
         />
-        <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
       </div>
     );
   };

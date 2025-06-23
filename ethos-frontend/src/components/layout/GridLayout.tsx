@@ -255,7 +255,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               key={col}
               className="min-w-[280px] w-[320px] flex-shrink-0 bg-surface border border-secondary rounded-lg p-4 shadow-sm"
             >
-              <h3 className="text-sm font-bold text-secondary mb-2">{col}</h3>
+              <h3 className="text-sm font-bold text-secondary mb-2">
+                {col} ({grouped[col].length})
+              </h3>
               <DroppableColumn id={col}>
                 {grouped[col].map((item) => (
                   <DraggableCard
