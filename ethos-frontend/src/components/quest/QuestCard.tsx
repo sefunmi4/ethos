@@ -322,7 +322,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         </div>
         <hr className="border-secondary" />
         <hr className="border-secondary" />
-        <div className="h-64 overflow-auto" data-testid="quest-map-canvas">
+        <div className="h-48 overflow-auto" data-testid="quest-map-canvas">
           {canvas}
         </div>
       </div>
