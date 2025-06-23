@@ -408,7 +408,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       {expanded && post.type === 'quest' && post.questId && (
         <div className="mt-3">
           {questData ? (
-            <QuestCard quest={questData} user={user} defaultExpanded />
+            <QuestCard quest={questData} user={user} defaultExpanded hideToggle />
           ) : (
             <div className="text-sm">Loading...</div>
           )}
