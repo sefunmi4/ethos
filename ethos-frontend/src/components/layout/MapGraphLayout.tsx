@@ -15,12 +15,15 @@ interface MapGraphLayoutProps {
   loadingMore?: boolean;
   /** Notify parent when the edge list updates */
   onEdgesChange?: (edges: TaskEdge[]) => void;
+  /** Custom handler when a node is clicked */
+  onNodeClick?: (node: Post) => void;
 }
 
 const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   items,
   edges = [],
   onEdgesChange,
+  onNodeClick,
 }) => {
   const fgRef = useRef<ForceGraphMethods>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,9 +75,13 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
 
   const handleNodeClick = (node: unknown) => {
     const n = node as Post;
-    window.dispatchEvent(
-      new CustomEvent('questTaskOpen', { detail: { taskId: n.id } }),
-    );
+    if (onNodeClick) {
+      onNodeClick(n);
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('questTaskOpen', { detail: { taskId: n.id } }),
+      );
+    }
   };
 
   const handleNodeDragEnd = (node: unknown) => {
