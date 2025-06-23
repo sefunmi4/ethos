@@ -72,10 +72,23 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     // Display quests on timeline and post history boards like regular posts for consistency
     if (boardId === 'timeline-board' || boardId === 'my-posts') {
       const headPost = (quest as any).headPost as Post | undefined;
-      const postLike = headPost ?? ({
+      const enrichedHeadPost = headPost
+        ? {
+            ...headPost,
+            author:
+              headPost.author ||
+              (quest.author
+                ? { id: quest.author.id, username: quest.author.username }
+                : undefined),
+          }
+        : undefined;
+      const postLike = enrichedHeadPost ?? ({
         id: quest.headPostId,
         type: 'quest',
         authorId: quest.authorId,
+        author: quest.author
+          ? { id: quest.author.id, username: quest.author.username }
+          : undefined,
         content: quest.title,
         visibility: 'public',
         timestamp: quest.createdAt || '',
