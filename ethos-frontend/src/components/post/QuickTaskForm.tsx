@@ -46,6 +46,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         status: taskStatus,
         taskType,
         ...(boardId ? { boardId } : {}),
+        ...(parentId ? { replyTo: parentId, linkedNodeId: parentId } : {}),
       });
       if (boardId) appendToBoard?.(boardId, newPost);
       if (parentId) {
