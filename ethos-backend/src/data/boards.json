@@ -597,5 +597,20 @@
     "defaultFor": null,
     "createdAt": "2025-06-23T14:44:19.822Z",
     "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
+  },
+  {
+    "id": "task-03b518f7-7205-47e6-98fa-21cbd7f4628f",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "0e8379de-3fe4-4849-bdfb-8428d72abb30"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T16:19:10.439Z",
+    "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
   }
 ]
