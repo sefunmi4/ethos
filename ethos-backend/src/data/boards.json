@@ -559,5 +559,20 @@
     "defaultFor": null,
     "createdAt": "2025-06-23T14:05:56.240Z",
     "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
+  },
+  {
+    "id": "task-06b9cf10-e613-42c0-ad55-334c16303d31",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "a0a675a8-e120-46f4-8c67-4ab456eaa580"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T14:44:19.822Z",
+    "userId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57"
   }
 ]

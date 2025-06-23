@@ -1512,7 +1512,7 @@
     "id": "b29d4a9b-d636-4a20-8fef-cd17c7470515",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "folder",
+    "taskType": "file",
     "content": "Sk The Street",
     "visibility": "public",
     "timestamp": "2025-06-23T13:37:39.492Z",
@@ -1523,7 +1523,8 @@
     "linkedItems": [],
     "questId": "bcde045c-422c-42ee-88f6-03614071d973",
     "nodeId": "Q:sk_the_street:T00",
-    "questNodeTitle": "Sk The Street"
+    "questNodeTitle": "Sk The Street",
+    "title": "Sk The Street"
   },
   {
     "id": "38de38ee-8987-4d60-9480-0ad862374c7d",
@@ -1671,5 +1672,26 @@
     "helpRequest": false,
     "nodeId": "Q:eco:T03",
     "questNodeTitle": "creator / dev out reach"
+  },
+  {
+    "id": "a0a675a8-e120-46f4-8c67-4ab456eaa580",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "task",
+    "title": "test",
+    "content": "test",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T14:44:19.812Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "998c0dfd-031c-4bce-956d-927a55d8aafe",
+    "taskType": "file",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:eco:T04",
+    "questNodeTitle": "test"
   }
 ]

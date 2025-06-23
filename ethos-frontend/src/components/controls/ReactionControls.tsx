@@ -345,7 +345,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           )
         )}
 
-        {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') &&
+        {(post.type === 'task' || post.type === 'quest') &&
           !onToggleExpand && (
             <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
               {expanded ? <FaCompress /> : <FaExpand />}{' '}
@@ -372,20 +372,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </div>
       )}
 
-
-
-      {expanded && post.type === 'commit' && (
-        <div className="mt-3 text-sm">
-          {post.commitSummary && (
-            <div className="mb-1 italic text-secondary dark:text-secondary">{post.commitSummary}</div>
-          )}
-          {post.gitDiff && (
-            <pre className="whitespace-pre-wrap overflow-x-auto bg-gray-50 p-2 border text-xs">
-              {post.gitDiff}
-            </pre>
-          )}
-        </div>
-      )}
 
       {expanded && post.type === 'task' && post.questId && (
         <div className="mt-3">
