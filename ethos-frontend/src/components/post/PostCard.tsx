@@ -124,6 +124,11 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const ctxBoardId = boardId || selectedBoard;
 
+  const widthClass =
+    ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
+      ? 'max-w-xl'
+      : 'max-w-prose';
+
   const isQuestBoardRequest =
     post.type === 'request' && ctxBoardId === 'quest-board';
   const isTimelineRequest = post.type === 'request' && ctxBoardId === 'timeline-board';
@@ -379,7 +384,8 @@ const PostCard: React.FC<PostCardProps> = ({
       <div
         id={post.id}
         className={clsx(
-          'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
+          'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary',
+          widthClass,
           depth === 0 ? 'mx-auto' : '',
           post.highlight && 'border-accent bg-infoBackground',
           className
@@ -389,7 +395,10 @@ const PostCard: React.FC<PostCardProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             {summaryTags.map((tag, idx) => (
               <React.Fragment key={idx}>
-                <SummaryTag {...tag} />
+                <SummaryTag
+                  {...tag}
+                  className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
+                />
               </React.Fragment>
             ))}
             {post.type === 'review' && post.rating && renderStars(post.rating)}
@@ -449,7 +458,8 @@ const PostCard: React.FC<PostCardProps> = ({
     <div
       id={post.id}
       className={clsx(
-        'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary max-w-prose',
+        'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary',
+        widthClass,
         depth === 0 ? 'mx-auto' : '',
         post.highlight && 'border-accent bg-infoBackground',
         className
@@ -459,7 +469,10 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {summaryTags.map((tag, idx) => (
             <React.Fragment key={idx}>
-              <SummaryTag {...tag} />
+              <SummaryTag
+                {...tag}
+                className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
+              />
             </React.Fragment>
           ))}
           {post.type === 'review' && post.rating && renderStars(post.rating)}
