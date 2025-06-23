@@ -122,6 +122,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
+  const handleSelectedNodeUpdate = (updated: Post) => {
+    setSelectedNode(updated);
+    setLogs(prev => prev.map(p => (p.id === updated.id ? { ...p, ...updated } : p)));
+    if (rootNode?.id === updated.id) {
+      setRootNode(updated);
+    }
+  };
+
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
     const startWidth = mapWidth;
@@ -282,7 +290,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <div className="space-y-2">
         {selectedNode && (
           <div className="space-y-2">
-            <TaskPreviewCard post={selectedNode} />
+            <TaskPreviewCard post={selectedNode} onUpdate={handleSelectedNodeUpdate} />
             {showTaskForm && (
               <CreatePost
                 initialType="task"
