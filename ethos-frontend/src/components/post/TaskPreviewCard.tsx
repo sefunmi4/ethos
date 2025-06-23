@@ -7,6 +7,7 @@ import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import { updatePost } from '../../api/post';
+import { createRepoFolder } from '../../api/git';
 
 interface TaskPreviewCardProps {
   post: Post;
@@ -30,6 +31,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
   const [organizeFile, setOrganizeFile] = useState(false);
   const [plannerFile, setPlannerFile] = useState(false);
+  const [folderName, setFolderName] = useState('');
   const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const rankTag = post.tags?.find(t => t.toLowerCase().startsWith('min_rank:'));
@@ -67,6 +69,34 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
       );
     } catch (err) {
       console.error('[TaskPreviewCard] Failed to update task type', err);
+    }
+  };
+
+  const handleOrganizeToggle = async (checked: boolean) => {
+    setOrganizeFile(checked);
+    if (checked) {
+      const defaultName = post.content
+        .trim()
+        .split(/\s+/)[0]
+        .replace(/[^a-z0-9_-]/gi, '_')
+        .toLowerCase();
+      setFolderName(defaultName || 'folder');
+      if (post.questId) {
+        try {
+          await createRepoFolder(post.questId, defaultName || 'folder');
+        } catch (err) {
+          console.error('[TaskPreviewCard] Failed to create folder', err);
+        }
+      }
+    }
+  };
+
+  const handleFolderSave = async () => {
+    if (!post.questId || !folderName) return;
+    try {
+      await createRepoFolder(post.questId, folderName);
+    } catch (err) {
+      console.error('[TaskPreviewCard] Failed to create folder', err);
     }
   };
 
@@ -123,15 +153,34 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
           />
         </div>
         {taskType === 'file' && (
-          <label className="inline-flex items-center gap-1 text-xs">
-            <input
-              type="checkbox"
-              className="form-checkbox"
-              checked={organizeFile}
-              onChange={(e) => setOrganizeFile(e.target.checked)}
-            />
-            Organize File
-          </label>
+          <div className="space-y-1">
+            <label className="inline-flex items-center gap-1 text-xs">
+              <input
+                type="checkbox"
+                className="form-checkbox"
+                checked={organizeFile}
+                onChange={(e) => handleOrganizeToggle(e.target.checked)}
+              />
+              Organize File
+            </label>
+            {organizeFile && (
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={folderName}
+                  onChange={(e) => setFolderName(e.target.value)}
+                  className="border rounded px-1 py-0.5 text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={handleFolderSave}
+                  className="text-xs underline"
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
         )}
         {taskType === 'folder' && (
           <label className="inline-flex items-center gap-1 text-xs">
@@ -188,15 +237,34 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
         />
       </div>
       {taskType === 'file' && (
-        <label className="inline-flex items-center gap-1 text-xs">
-          <input
-            type="checkbox"
-            className="form-checkbox"
-            checked={organizeFile}
-            onChange={(e) => setOrganizeFile(e.target.checked)}
-          />
-          Organize File
-        </label>
+        <div className="space-y-1">
+          <label className="inline-flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              checked={organizeFile}
+              onChange={(e) => handleOrganizeToggle(e.target.checked)}
+            />
+            Organize File
+          </label>
+          {organizeFile && (
+            <div className="flex items-center gap-1">
+              <input
+                type="text"
+                value={folderName}
+                onChange={(e) => setFolderName(e.target.value)}
+                className="border rounded px-1 py-0.5 text-xs"
+              />
+              <button
+                type="button"
+                onClick={handleFolderSave}
+                className="text-xs underline"
+              >
+                Save
+              </button>
+            </div>
+          )}
+        </div>
       )}
       {taskType === 'folder' && (
         <label className="inline-flex items-center gap-1 text-xs">
