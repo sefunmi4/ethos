@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
-import { requestHelp, updatePost } from '../../api/post';
+import { requestHelp, removeHelpRequest } from '../../api/post';
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
@@ -23,7 +23,7 @@ jest.mock('../../api/post', () => ({
       subRequests: [],
     })
   ),
-  updatePost: jest.fn(() => Promise.resolve({})),
+  removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
   updateReaction: jest.fn(() => Promise.resolve()),
   addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
   removeRepost: jest.fn(() => Promise.resolve()),
@@ -82,7 +82,9 @@ describe('PostCard request help', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/Cancel Help/i));
     });
-    await waitFor(() => expect(updatePost).toHaveBeenCalledWith('t1', { helpRequest: false, needsHelp: false }));
+    await waitFor(() =>
+      expect(removeHelpRequest).toHaveBeenCalledWith('t1')
+    );
   });
 
   it('does not show checkbox for free speech posts', () => {

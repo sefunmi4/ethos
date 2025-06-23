@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { boardsStore, questsStore, postsStore, usersStore } from '../models/stores';
+import { boardsStore, questsStore, postsStore, usersStore, reactionsStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
@@ -618,6 +618,64 @@ router.patch(
   }
 );
 
+// POST /quests/:id/archive - archive quest and posts without reactions
+router.post(
+  '/:id/archive',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const quests = questsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    quest.tags = Array.from(new Set([...(quest.tags || []), 'archived']));
+
+    const posts = postsStore.read();
+    const reactions = reactionsStore.read();
+    posts.forEach(p => {
+      if (p.questId === id && !reactions.some(r => r.startsWith(`${p.id}_`))) {
+        p.tags = Array.from(new Set([...(p.tags || []), 'archived']));
+      }
+    });
+    questsStore.write(quests);
+    postsStore.write(posts);
+
+    res.json({ success: true });
+  }
+);
+
+// DELETE /quests/:id/archive - unarchive quest and posts
+router.delete(
+  '/:id/archive',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
+    const { id } = req.params;
+    const quests = questsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    quest.tags = (quest.tags || []).filter(t => t !== 'archived');
+    const posts = postsStore.read();
+    posts.forEach(p => {
+      if (p.questId === id) {
+        p.tags = (p.tags || []).filter(t => t !== 'archived');
+      }
+    });
+    questsStore.write(quests);
+    postsStore.write(posts);
+
+    res.json({ success: true });
+  }
+);
+
 // DELETE quest
 router.delete(
   '/:id',
@@ -633,9 +691,23 @@ router.delete(
     return;
   }
 
+  const questsStorePosts = postsStore.read();
+  const reactions = reactionsStore.read();
+
+  const questPosts = questsStorePosts.filter(p => p.questId === id);
+  const postsToKeep = new Set(
+    questPosts
+      .filter(p => reactions.some(r => r.startsWith(`${p.id}_`)))
+      .map(p => p.id)
+  );
+  const remainingPosts = questsStorePosts.filter(
+    p => !(p.questId === id && !postsToKeep.has(p.id))
+  );
+  postsStore.write(remainingPosts);
+
   quests.splice(index, 1);
   questsStore.write(quests);
-  res.json({ success: true });
+  res.json({ success: true, removedPosts: questPosts.length - postsToKeep.size });
 });
 
 export default router;
