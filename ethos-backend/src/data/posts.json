@@ -62,11 +62,11 @@
     "timestamp": "2025-06-23T02:56:44.574Z",
     "tags": [],
     "collaborators": [],
-    "replyTo": null,
+    "replyTo": "c536425c-2bcb-402b-a834-6ce456b59bf8",
     "repostedFrom": null,
     "linkedItems": [],
     "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
-    "nodeId": "Q:ethos:L00",
+    "nodeId": "Q:ethos:T00:L00",
     "questNodeTitle": "Ethos"
   },
   {
