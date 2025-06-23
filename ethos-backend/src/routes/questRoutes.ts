@@ -108,6 +108,16 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
     return;
   }
 
+  const existingQuests = questsStore.read();
+  const normalize = (t: string): string => t.replace(/\s+/g, '').toLowerCase();
+  const duplicate = existingQuests.some(
+    (q) => normalize(q.title) === normalize(title)
+  );
+  if (duplicate) {
+    res.status(400).json({ error: 'Quest title already exists' });
+    return;
+  }
+
   const newQuest: Quest = {
     id: uuidv4(),
     authorId,
