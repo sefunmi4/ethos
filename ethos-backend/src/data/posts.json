@@ -16,8 +16,8 @@
     "nodeId": "Q:ethos:T00",
     "questNodeTitle": "Ethos",
     "title": "Ethos",
-    "helpRequest": false,
-    "needsHelp": false
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "03b518f7-7205-47e6-98fa-21cbd7f4628f",
@@ -55,7 +55,9 @@
     "linkedItems": [],
     "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c",
     "nodeId": "Q:ethos_multiple_users:T00",
-    "questNodeTitle": "Ethos Multiple Users"
+    "questNodeTitle": "Ethos Multiple Users",
+    "status": "To Do",
+    "title": "Ethos Multiple Users"
   },
   {
     "id": "9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
@@ -341,7 +343,9 @@
     "linkedItems": [],
     "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
     "nodeId": "Q:public_media:T00",
-    "questNodeTitle": "Public Media"
+    "questNodeTitle": "Public Media",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "389aef67-bee6-4214-8685-17c8157aceb4",
@@ -358,7 +362,9 @@
     "linkedItems": [],
     "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
     "nodeId": "Q:architecture_of_homo_sapiens:T00",
-    "questNodeTitle": "Architecture Of Homo sapiens"
+    "questNodeTitle": "Architecture Of Homo sapiens",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "dad34f19-6d5e-43a8-9922-426f30f63e61",
@@ -375,7 +381,9 @@
     "linkedItems": [],
     "questId": "11866fe7-a6dc-4ae5-af0b-478bfb0a568d",
     "nodeId": "Q:pod_shop:T00",
-    "questNodeTitle": "POD Shop"
+    "questNodeTitle": "POD Shop",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "410c20ca-2bd8-406b-a012-85b555160010",
@@ -392,7 +400,9 @@
     "linkedItems": [],
     "questId": "6d1f8c30-abf1-4318-ab0a-f15c57787035",
     "nodeId": "Q:idk_comics:T00",
-    "questNodeTitle": "IDK Comics"
+    "questNodeTitle": "IDK Comics",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "619d0fb2-b1da-4a55-a68b-5c4100082280",
@@ -409,7 +419,9 @@
     "linkedItems": [],
     "questId": "a950ce53-cfd4-40ea-a38a-bcf4cb1f2f71",
     "nodeId": "Q:q:T00",
-    "questNodeTitle": "Q++"
+    "questNodeTitle": "Q++",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "f822b6f2-7988-4ee4-87a5-6579c481162d",
@@ -426,7 +438,9 @@
     "linkedItems": [],
     "questId": "900072f1-7630-4e59-9ad2-900dcc93e2d6",
     "nodeId": "Q:symbolcast:T00",
-    "questNodeTitle": "Symbolcast"
+    "questNodeTitle": "Symbolcast",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "06b9cf10-e613-42c0-ad55-334c16303d31",
@@ -443,7 +457,9 @@
     "linkedItems": [],
     "questId": "998c0dfd-031c-4bce-956d-927a55d8aafe",
     "nodeId": "Q:eco:T00",
-    "questNodeTitle": "e-co"
+    "questNodeTitle": "e-co",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "e19ae082-b814-4c10-81e2-f10e4d039994",
@@ -460,7 +476,9 @@
     "linkedItems": [],
     "questId": "4a97108f-08a7-44ad-be2d-f77037cdfe53",
     "nodeId": "Q:graduate_applications:T00",
-    "questNodeTitle": "Graduate Applications"
+    "questNodeTitle": "Graduate Applications",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "eaf5ce7a-f69c-47e5-a7e1-d649a9d0599e",
@@ -477,7 +495,9 @@
     "linkedItems": [],
     "questId": "78b34502-beae-4b6c-84c2-1be60d935fd9",
     "nodeId": "Q:guild_quest:T00",
-    "questNodeTitle": "Guild Quest"
+    "questNodeTitle": "Guild Quest",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "fcab8b6f-2e41-46a7-a44b-7380ec51b0a5",
@@ -559,9 +579,10 @@
     "questId": "6d1f8c30-abf1-4318-ab0a-f15c57787035",
     "taskType": "file",
     "status": "To Do",
-    "helpRequest": false,
+    "helpRequest": true,
     "nodeId": "Q:idk_comics:T01",
-    "questNodeTitle": "poughkeepsie"
+    "questNodeTitle": "poughkeepsie",
+    "needsHelp": true
   },
   {
     "id": "a4cd7e5e-d350-49ed-a0bf-a0ef86c00f77",
@@ -1524,7 +1545,9 @@
     "questId": "bcde045c-422c-42ee-88f6-03614071d973",
     "nodeId": "Q:sk_the_street:T00",
     "questNodeTitle": "Sk The Street",
-    "title": "Sk The Street"
+    "title": "Sk The Street",
+    "helpRequest": true,
+    "needsHelp": true
   },
   {
     "id": "38de38ee-8987-4d60-9480-0ad862374c7d",
@@ -1693,5 +1716,291 @@
     "helpRequest": false,
     "nodeId": "Q:eco:T04",
     "questNodeTitle": "test"
+  },
+  {
+    "id": "f3deff5a-1e1d-484b-a494-e45f09975da1",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "poughkeepsie",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:18.929Z",
+    "subtype": "task",
+    "nodeId": "Q:idk_comics:T01",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e1e0407b-9609-4c60-9835-294559e494ae",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "6d1f8c30-abf1-4318-ab0a-f15c57787035",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "7af0da29-9a8a-4fdc-a712-68074533091b",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Ethos",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:25.963Z",
+    "subtype": "task",
+    "nodeId": "Q:ethos:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "4ee1dae9-1969-4478-93fd-024cfb645111",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "2d44a0bb-b794-402c-8ba5-4dcd3ac2e481",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "84ab5194-231c-4c99-9c34-6d283a65cac2",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Public Media",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:28.242Z",
+    "subtype": "task",
+    "nodeId": "Q:public_media:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "bf4dc0c3-5403-431d-aa4c-c8cf620edd36",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Architecture Of Homo sapiens",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:29.720Z",
+    "subtype": "task",
+    "nodeId": "Q:architecture_of_homo_sapiens:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "389aef67-bee6-4214-8685-17c8157aceb4",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "d9a911a8-daca-4cde-8024-3f4981751e14",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "POD Shop",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:30.602Z",
+    "subtype": "task",
+    "nodeId": "Q:pod_shop:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "dad34f19-6d5e-43a8-9922-426f30f63e61",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "11866fe7-a6dc-4ae5-af0b-478bfb0a568d",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "f8c65984-f046-4e65-9a21-20103286dd27",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "IDK Comics",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:31.308Z",
+    "subtype": "task",
+    "nodeId": "Q:idk_comics:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "410c20ca-2bd8-406b-a012-85b555160010",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "6d1f8c30-abf1-4318-ab0a-f15c57787035",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "b9866241-e3f3-4661-83f7-e9b50c46f191",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Q++",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:32.866Z",
+    "subtype": "task",
+    "nodeId": "Q:q:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "619d0fb2-b1da-4a55-a68b-5c4100082280",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "a950ce53-cfd4-40ea-a38a-bcf4cb1f2f71",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "32fe3174-cb87-4b3b-a5f6-f887a115b355",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Symbolcast",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:33.900Z",
+    "subtype": "task",
+    "nodeId": "Q:symbolcast:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "f822b6f2-7988-4ee4-87a5-6579c481162d",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "900072f1-7630-4e59-9ad2-900dcc93e2d6",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "2dd0446e-1ab6-492d-83eb-80975b69bdb2",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "e-co",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:35.038Z",
+    "subtype": "task",
+    "nodeId": "Q:eco:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "06b9cf10-e613-42c0-ad55-334c16303d31",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "998c0dfd-031c-4bce-956d-927a55d8aafe",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "bdff58a5-19e4-4bbe-97e7-93bb324e72d7",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Graduate Applications",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:36.348Z",
+    "subtype": "task",
+    "nodeId": "Q:graduate_applications:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "e19ae082-b814-4c10-81e2-f10e4d039994",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "4a97108f-08a7-44ad-be2d-f77037cdfe53",
+    "helpRequest": true,
+    "needsHelp": true
+  },
+  {
+    "id": "78db3e1e-2221-4ecd-b0c5-39ba0afb391d",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "request",
+    "content": "Guild Quest",
+    "visibility": "public",
+    "timestamp": "2025-06-23T15:11:37.659Z",
+    "subtype": "task",
+    "nodeId": "Q:guild_quest:T00",
+    "tags": [
+      "archived"
+    ],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "eaf5ce7a-f69c-47e5-a7e1-d649a9d0599e",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "78b34502-beae-4b6c-84c2-1be60d935fd9",
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]

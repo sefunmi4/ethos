@@ -54,7 +54,7 @@ const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, 
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 overflow-auto p-2 border-r border-secondary space-y-2">
           <TaskPreviewCard post={selected} />
-          <div className="h-25 md:h-auto overflow-auto" data-testid="task-graph">
+          <div className="h-22 md:h-auto overflow-auto" data-testid="task-graph">
             <GraphLayout
               items={displayNodes}
               edges={displayEdges}
