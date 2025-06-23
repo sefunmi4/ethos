@@ -237,9 +237,12 @@ router.patch(
       quest.linkedPosts.push({ itemId, itemType: 'post' });
       if (post && post.type === 'task') {
         quest.taskGraph = quest.taskGraph || [];
-        const edgeExists = quest.taskGraph.some(e => e.to === itemId);
+        const from = post.replyTo || post.linkedNodeId || quest.headPostId;
+        const edgeExists = quest.taskGraph.some(
+          e => e.to === itemId && e.from === from
+        );
         if (!edgeExists) {
-          quest.taskGraph.push({ from: quest.headPostId, to: itemId });
+          quest.taskGraph.push({ from, to: itemId });
         }
       }
     }
