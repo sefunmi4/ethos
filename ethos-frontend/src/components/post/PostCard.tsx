@@ -421,16 +421,14 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <div className="flex items-center justify-between gap-2">
-          <ReactionControls
-            post={post}
-            user={user}
-            onUpdate={onUpdate}
-            timestamp={!isQuestBoardRequest ? timestamp : undefined}
-            replyOverride={replyOverride}
-            boardId={ctxBoardId || undefined}
-          />
-        </div>
+        <ReactionControls
+          post={post}
+          user={user}
+          onUpdate={onUpdate}
+          timestamp={!isQuestBoardRequest ? timestamp : undefined}
+          replyOverride={replyOverride}
+          boardId={ctxBoardId || undefined}
+        />
       </div>
     );
   }
