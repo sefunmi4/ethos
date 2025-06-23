@@ -7,11 +7,13 @@ import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import { updatePost } from '../../api/post';
+import { createRepoFolder } from '../../api/git';
 
 interface TaskPreviewCardProps {
   post: Post;
   onUpdate?: (updated: Post) => void;
   summaryOnly?: boolean;
+  hideSummaryTag?: boolean;
 }
 
 const makeHeader = (content: string): string => {
@@ -19,11 +21,17 @@ const makeHeader = (content: string): string => {
   return text.length <= 50 ? text : text.slice(0, 50) + '…';
 };
 
-const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summaryOnly = false }) => {
+const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
+  post,
+  onUpdate,
+  summaryOnly = false,
+  hideSummaryTag = false,
+}) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
   const [taskType, setTaskType] = useState(post.taskType || 'abstract');
   const [organizeFile, setOrganizeFile] = useState(false);
   const [plannerFile, setPlannerFile] = useState(false);
+  const [folderName, setFolderName] = useState('');
   const difficultyTag = post.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const rankTag = post.tags?.find(t => t.toLowerCase().startsWith('min_rank:'));
@@ -64,9 +72,37 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
     }
   };
 
+  const handleOrganizeToggle = async (checked: boolean) => {
+    setOrganizeFile(checked);
+    if (checked) {
+      const defaultName = post.content
+        .trim()
+        .split(/\s+/)[0]
+        .replace(/[^a-z0-9_-]/gi, '_')
+        .toLowerCase();
+      setFolderName(defaultName || 'folder');
+      if (post.questId) {
+        try {
+          await createRepoFolder(post.questId, defaultName || 'folder');
+        } catch (err) {
+          console.error('[TaskPreviewCard] Failed to create folder', err);
+        }
+      }
+    }
+  };
+
+  const handleFolderSave = async () => {
+    if (!post.questId || !folderName) return;
+    try {
+      await createRepoFolder(post.questId, folderName);
+    } catch (err) {
+      console.error('[TaskPreviewCard] Failed to create folder', err);
+    }
+  };
+
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '…' : headerText;
+  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '...' : headerText;
   if (taskTag) {
     taskTag = {
       ...taskTag,
@@ -89,7 +125,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
     } as any;
   }
 
-  const tagNode = taskTag ? (
+  const tagNode = !hideSummaryTag && taskTag ? (
     <div className="flex flex-wrap gap-1">
       <SummaryTag {...taskTag} />
     </div>
@@ -117,15 +153,34 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
           />
         </div>
         {taskType === 'file' && (
-          <label className="inline-flex items-center gap-1 text-xs">
-            <input
-              type="checkbox"
-              className="form-checkbox"
-              checked={organizeFile}
-              onChange={(e) => setOrganizeFile(e.target.checked)}
-            />
-            Organize File
-          </label>
+          <div className="space-y-1">
+            <label className="inline-flex items-center gap-1 text-xs">
+              <input
+                type="checkbox"
+                className="form-checkbox"
+                checked={organizeFile}
+                onChange={(e) => handleOrganizeToggle(e.target.checked)}
+              />
+              Organize File
+            </label>
+            {organizeFile && (
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={folderName}
+                  onChange={(e) => setFolderName(e.target.value)}
+                  className="border rounded px-1 py-0.5 text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={handleFolderSave}
+                  className="text-xs underline"
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
         )}
         {taskType === 'folder' && (
           <label className="inline-flex items-center gap-1 text-xs">
@@ -182,15 +237,34 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
         />
       </div>
       {taskType === 'file' && (
-        <label className="inline-flex items-center gap-1 text-xs">
-          <input
-            type="checkbox"
-            className="form-checkbox"
-            checked={organizeFile}
-            onChange={(e) => setOrganizeFile(e.target.checked)}
-          />
-          Organize File
-        </label>
+        <div className="space-y-1">
+          <label className="inline-flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              checked={organizeFile}
+              onChange={(e) => handleOrganizeToggle(e.target.checked)}
+            />
+            Organize File
+          </label>
+          {organizeFile && (
+            <div className="flex items-center gap-1">
+              <input
+                type="text"
+                value={folderName}
+                onChange={(e) => setFolderName(e.target.value)}
+                className="border rounded px-1 py-0.5 text-xs"
+              />
+              <button
+                type="button"
+                onClick={handleFolderSave}
+                className="text-xs underline"
+              >
+                Save
+              </button>
+            </div>
+          )}
+        </div>
       )}
       {taskType === 'folder' && (
         <label className="inline-flex items-center gap-1 text-xs">
