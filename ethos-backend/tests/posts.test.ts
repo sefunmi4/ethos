@@ -84,6 +84,43 @@ describe('post routes', () => {
     expect(questsStoreMock.write).toHaveBeenCalled();
   });
 
+  it('POST /posts links task to parent when replyTo is set', async () => {
+    const quest: any = {
+      id: 'q1',
+      title: 'Quest',
+      status: 'active',
+      headPostId: 'h1',
+      linkedPosts: [],
+      collaborators: [],
+      taskGraph: [] as any[],
+    };
+    const parent = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+      questId: 'q1',
+      replyTo: null,
+    } as any;
+
+    postsStoreMock.read.mockReturnValue([parent]);
+    questsStoreMock.read.mockReturnValue([quest]);
+    postsStoreMock.write.mockClear();
+    questsStoreMock.write.mockClear();
+
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', questId: 'q1', replyTo: 't1' });
+
+    expect(res.status).toBe(201);
+    const newPost = postsStoreMock.write.mock.calls[0][0][1];
+    expect(quest.taskGraph).toHaveLength(1);
+    expect(quest.taskGraph[0]).toEqual({ from: 't1', to: newPost.id });
+    expect(questsStoreMock.write).toHaveBeenCalled();
+  });
+
   it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
     const posts = [
       {
