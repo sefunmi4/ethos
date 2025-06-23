@@ -19,9 +19,8 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
-import QuestNodeInspector from '../quest/QuestNodeInspector';
 import QuestCard from '../quest/QuestCard';
-import TaskGraphSidePanel from '../quest/TaskGraphSidePanel';
+import TaskCard from '../quest/TaskCard';
 import { fetchQuestById } from '../../api/quest';
 import {
   updateReaction,
@@ -382,12 +381,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       )}
 
       {showTaskGraph && post.type === 'task' && post.questId && (
-        <TaskGraphSidePanel
-          task={post}
-          questId={post.questId}
-          user={user}
-          onClose={() => setShowTaskGraph(false)}
-        />
+        <div className="mt-3">
+          <TaskCard task={post} questId={post.questId} user={user} />
+        </div>
       )}
 
 
