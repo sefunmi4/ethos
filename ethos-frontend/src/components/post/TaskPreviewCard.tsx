@@ -4,6 +4,7 @@ import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
+import { ROUTES } from '../../constants/routes';
 
 interface TaskPreviewCardProps {
   post: Post;
@@ -31,7 +32,14 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
   };
 
   const summaryTags = buildSummaryTags(post);
-  const taskTag = summaryTags.find(t => t.type === 'task');
+  let taskTag = summaryTags.find(t => t.type === 'task');
+  if (!taskTag && post.nodeId) {
+    taskTag = {
+      type: 'task',
+      label: `Task: ${post.nodeId}`,
+      detailLink: ROUTES.POST(post.id),
+    } as any;
+  }
 
   return (
     <div className="border border-secondary rounded bg-surface p-2 text-xs space-y-1">
