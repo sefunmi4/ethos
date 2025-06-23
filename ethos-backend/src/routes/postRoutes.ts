@@ -186,12 +186,12 @@ router.post(
       const quest = quests.find((q) => q.id === questId);
       if (quest) {
         quest.taskGraph = quest.taskGraph || [];
-        const from = quest.headPostId || '';
+        const parentId = replyTo || linkedNodeId || quest.headPostId || '';
         const exists = quest.taskGraph.some(
-          (e) => e.from === from && e.to === newPost.id
+          (e) => e.from === parentId && e.to === newPost.id
         );
         if (!exists) {
-          quest.taskGraph.push({ from, to: newPost.id });
+          quest.taskGraph.push({ from: parentId, to: newPost.id });
         }
         questsStore.write(quests);
       }
