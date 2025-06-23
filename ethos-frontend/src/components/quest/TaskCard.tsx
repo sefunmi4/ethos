@@ -4,6 +4,8 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
 import TaskPreviewCard from '../post/TaskPreviewCard';
+import StatusBoardPanel from './StatusBoardPanel';
+import QuickTaskForm from '../post/QuickTaskForm';
 import { updateQuestTaskGraph } from '../../api/quest';
 import { ROUTES } from '../../constants/routes';
 import type { Post } from '../../types/postTypes';
@@ -21,7 +23,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const { nodes, edges, loadGraph } = useGraph();
   const [selected, setSelected] = useState<Post>(task);
   const [detailWidth, setDetailWidth] = useState<number>(400);
-  const [activeTab, setActiveTab] = useState<'details' | 'folder'>('details');
   const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
 
@@ -113,42 +114,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
         </div>
         <div className="hidden md:block w-1.5 bg-gray-200 dark:bg-gray-600 cursor-ew-resize" onMouseDown={handleDividerMouseDown} />
         <div className="overflow-auto" style={{ width: detailWidth }}>
-          <div className="border-b border-secondary flex text-sm overflow-x-auto whitespace-nowrap">
-            <button
-              className={`px-3 py-1 -mb-px border-b-2 ${
-                activeTab === 'details'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-secondary hover:text-primary'
-              }`}
-              onClick={() => setActiveTab('details')}
-            >
-              Details
-            </button>
-            {taskType === 'folder' && (
-              <button
-                className={`px-3 py-1 -mb-px border-b-2 ${
-                  activeTab === 'folder'
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-secondary hover:text-primary'
-                }`}
-                onClick={() => setActiveTab('folder')}
-              >
-                Folder
-              </button>
-            )}
-          </div>
-          {activeTab === 'details' ? (
-            <QuestNodeInspector
-              questId={questId}
-              node={selected}
-              user={user}
-              showPost={false}
-              onUpdate={handleNodeUpdate}
-              status={status}
-              hideSelects
-            />
-          ) : (
-            <div className="space-y-2 p-2">
+          <QuestNodeInspector
+            questId={questId}
+            node={selected}
+            user={user}
+            showPost={false}
+            onUpdate={handleNodeUpdate}
+            status={status}
+            hideSelects
+          />
+          {taskType === 'folder' && (
+            <div className="space-y-2 p-2 mt-2">
               <StatusBoardPanel
                 questId={questId}
                 linkedNodeId={selected.id}

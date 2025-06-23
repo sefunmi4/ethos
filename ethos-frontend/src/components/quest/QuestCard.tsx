@@ -392,6 +392,19 @@ const QuestCard: React.FC<QuestCardProps> = ({
         initialOpen={false}
       />
     );
+
+    const handleFolderEdgesSave = async (edges: TaskEdge[]) => {
+      const otherEdges = (questData.taskGraph || []).filter(
+        (e) => !(subgraphIds.has(e.from) && subgraphIds.has(e.to)),
+      );
+      const updated = [...otherEdges, ...edges];
+      try {
+        await updateQuestTaskGraph(quest.id, updated);
+        setQuestData((prev) => ({ ...prev, taskGraph: updated }));
+      } catch (err) {
+        console.error('[QuestCard] Failed to save folder graph', err);
+      }
+    };
     const checklistSection = (
       <div className="border border-secondary rounded">
         <div
@@ -449,6 +462,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 condensed
                 showInspector={false}
                 showStatus={false}
+                onEdgesChange={handleFolderEdgesSave}
                 onNodeClick={(n) => {
                   if (n.id !== selectedNode.id) {
                     navigate(ROUTES.POST(n.id));
