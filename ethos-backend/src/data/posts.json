@@ -2024,5 +2024,25 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T02",
     "questNodeTitle": "TEST"
+  },
+  {
+    "id": "ce08ae8b-d741-44bc-aacb-75880eb48271",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "issue",
+    "title": "test issue",
+    "content": "test issue",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T16:27:10.755Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:public_media:T00:I00",
+    "questNodeTitle": "test issue"
   }
 ]
