@@ -41,7 +41,7 @@ describe('QuickTaskForm persistence', () => {
     );
 
     fireEvent.click(screen.getByText('+ Add Task'));
-    fireEvent.change(screen.getByPlaceholderText('Task name'), { target: { value: 'Sub' } });
+    fireEvent.change(screen.getByPlaceholderText('Item name'), { target: { value: 'Sub' } });
     fireEvent.click(screen.getByText('Add'));
 
     await waitFor(() => expect(addPost).toHaveBeenCalled());

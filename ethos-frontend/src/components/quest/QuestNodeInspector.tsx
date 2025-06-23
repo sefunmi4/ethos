@@ -55,6 +55,11 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     }
   };
 
+  const handleAddSubtask = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setShowSubtaskForm((prev) => !prev);
+  };
+
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
 
   const tabs = [
@@ -65,11 +70,6 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     },
     { value: 'team', label: 'Team' },
   ];
-
-  const handleAddSubtask = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setShowSubtaskForm((p) => !p);
-  };
 
   let panel: React.ReactNode = null;
   switch (activeTab) {
@@ -82,7 +82,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
           <div className="border border-secondary rounded">
             <div
               className="flex items-center justify-between p-2 bg-soft cursor-pointer"
-              onClick={() => setBoardOpen((p) => !p)}
+              onClick={() => setBoardOpen((prev) => !prev)}
             >
               <span className="font-semibold text-sm">Status Board</span>
               <button
@@ -158,7 +158,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               {t.label}
             </button>
           ))}
-      </div>
+        </div>
         <div className="mt-2">{panel}</div>
       </div>
     </div>
