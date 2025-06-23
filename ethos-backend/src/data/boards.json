@@ -6,6 +6,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "e4b1ed34-3d99-42b7-bd93-56f646d8be54",
       "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
       "095b267a-4b60-4b29-af53-f21869fa77f6",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d",
@@ -23,6 +24,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "0d707ec6-d045-4570-965b-10bf6508cc80",
       "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9"
     ],
     "defaultFor": null,
@@ -37,7 +39,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+      "0d707ec6-d045-4570-965b-10bf6508cc80",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d"
     ],
     "featured": true,
@@ -53,6 +55,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "0d707ec6-d045-4570-965b-10bf6508cc80",
+      "e4b1ed34-3d99-42b7-bd93-56f646d8be54",
       "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
       "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
       "095b267a-4b60-4b29-af53-f21869fa77f6",
@@ -79,5 +83,20 @@
     "createdAt": "2025-06-23T00:41:04.504Z",
     "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
     "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9"
+  },
+  {
+    "id": "map-0d707ec6-d045-4570-965b-10bf6508cc80",
+    "title": "Test Quest Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "e4b1ed34-3d99-42b7-bd93-56f646d8be54"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-23T00:58:40.238Z",
+    "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "questId": "0d707ec6-d045-4570-965b-10bf6508cc80"
   }
 ]
