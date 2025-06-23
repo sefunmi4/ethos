@@ -26,6 +26,8 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
   const open = controlled ? openProp : internalOpen;
   const [resolved, setResolved] = useState<LinkedItem[]>(items);
   const [chain, setChain] = useState<Post[]>([]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const resolve = async () => {
@@ -80,7 +82,18 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
 
   if (resolved.length === 0 && chain.length === 0) return null;
 
-  const grouped = resolved.reduce<Record<string, LinkedItem[]>>((acc, item) => {
+  const filtered = resolved.filter((item) => {
+    const term = search.toLowerCase();
+    const matchesSearch =
+      !term ||
+      (item.title && item.title.toLowerCase().includes(term)) ||
+      (item.linkType && item.linkType.toLowerCase().includes(term)) ||
+      (item.itemType && item.itemType.toLowerCase().includes(term));
+    const matchesFilter = filter === 'all' || item.linkType === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const grouped = filtered.reduce<Record<string, LinkedItem[]>>((acc, item) => {
     const key = item.linkType || 'other';
     acc[key] = acc[key] || [];
     acc[key].push(item);
@@ -107,6 +120,10 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
     return acc;
   }, []);
 
+  const linkTypes = Array.from(
+    new Set(resolved.map((i) => i.linkType || 'other'))
+  );
+
   return (
     <div className="text-xs text-primary dark:text-primary">
       <button
@@ -119,10 +136,32 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
         }}
         className="flex items-center gap-1 text-blue-600 underline"
       >
-        {open ? <FaCompress /> : <FaExpand />} {open ? 'Collapse Details' : 'Expand Details'}
+        {open ? <FaCompress /> : <FaExpand />} {open ? 'Hide Links' : 'View Links'}
       </button>
       {open && (
         <div className="mt-2 border rounded bg-background dark:bg-surface p-2 space-y-1">
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search links..."
+              className="border px-1 py-0.5 text-xs rounded w-full"
+            />
+            <select
+              value={filter}
+              onChange={e => setFilter(e.target.value)}
+              className="border px-1 py-0.5 text-xs rounded"
+            >
+              <option value="all">All</option>
+              {linkTypes.map(t => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="max-h-48 overflow-y-auto space-y-2">
           {Object.entries(grouped).map(([type, list]) => (
             <div key={type}>
               <div className="font-semibold capitalize mb-1">{type}</div>
@@ -153,6 +192,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
               </div>
             </div>
           )}
+          </div>
         </div>
       )}
     </div>

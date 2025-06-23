@@ -67,14 +67,14 @@ describe('LinkViewer', () => {
 
   it('toggles label text', () => {
     render(<LinkViewer items={items} />);
-    const btn = screen.getByText('Expand Details');
+    const btn = screen.getByText('View Links');
     fireEvent.click(btn);
-    expect(screen.getByText('Collapse Details')).toBeInTheDocument();
+    expect(screen.getByText('Hide Links')).toBeInTheDocument();
   });
 
   it('shows reply chain when enabled', async () => {
     render(<LinkViewer items={[]} post={post} showReplyChain />);
-    fireEvent.click(screen.getByText('Expand Details'));
+    fireEvent.click(screen.getByText('View Links'));
     await waitFor(() => {
       expect(screen.getByText('Q:T02')).toBeInTheDocument();
       expect(screen.getByText('Q:T01')).toBeInTheDocument();
