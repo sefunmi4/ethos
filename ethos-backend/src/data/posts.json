@@ -70,19 +70,27 @@
     "questNodeTitle": "Ethos"
   },
   {
-    "id": "e4b1ed34-3d99-42b7-bd93-56f646d8be54",
+    "id": "648ba0d4-7b3d-471a-b619-8109538e9715",
     "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
     "type": "log",
-    "content": "Test Quest",
+    "title": "Test Log",
+    "content": "",
+    "details": "",
     "visibility": "public",
-    "timestamp": "2025-06-23T00:58:40.237Z",
+    "timestamp": "2025-06-23T01:28:14.632Z",
     "tags": [],
     "collaborators": [],
-    "replyTo": null,
+    "replyTo": "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
     "repostedFrom": null,
-    "linkedItems": [],
-    "questId": "0d707ec6-d045-4570-965b-10bf6508cc80",
-    "nodeId": "Q:test_quest:L00",
-    "questNodeTitle": "Test Quest"
+    "linkedItems": [
+      {
+        "itemId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+        "itemType": "quest"
+      }
+    ],
+    "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+    "helpRequest": false,
+    "nodeId": "Q:ethos:L00:L00",
+    "questNodeTitle": ""
   }
 ]

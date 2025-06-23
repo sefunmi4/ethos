@@ -1,3 +1,14 @@
 [
-  
+  {
+    "questId": "424e330a-fdf6-488a-b862-a0928f1a59bb",
+    "path": "/api/quests/424e330a-fdf6-488a-b862-a0928f1a59bb?enrich=true",
+    "count": 2,
+    "lastOccurred": "2025-06-23T01:30:50.242Z"
+  },
+  {
+    "questId": "0d707ec6-d045-4570-965b-10bf6508cc80",
+    "path": "/api/quests/0d707ec6-d045-4570-965b-10bf6508cc80?enrich=true",
+    "count": 2,
+    "lastOccurred": "2025-06-23T01:30:50.251Z"
+  }
 ]

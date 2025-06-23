@@ -13,24 +13,12 @@
     "collaborators": [],
     "status": "active",
     "headPostId": "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
-    "taskGraph": [],
-    "helpRequest": false
-  },
-  {
-    "id": "0d707ec6-d045-4570-965b-10bf6508cc80",
-    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
-    "title": "Test Quest",
-    "description": "",
-    "displayOnBoard": true,
-    "visibility": "public",
-    "approvalStatus": "approved",
-    "flagCount": 0,
-    "tags": [],
-    "linkedPosts": [],
-    "collaborators": [],
-    "status": "active",
-    "headPostId": "e4b1ed34-3d99-42b7-bd93-56f646d8be54",
-    "taskGraph": [],
+    "taskGraph": [
+      {
+        "from": "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
+        "to": "648ba0d4-7b3d-471a-b619-8109538e9715"
+      }
+    ],
     "helpRequest": false
   }
 ]
