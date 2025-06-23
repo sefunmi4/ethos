@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
-import { Select } from '../ui';
-import { STATUS_OPTIONS } from '../../constants/options';
-import { updatePost } from '../../api/post';
 import { ROUTES } from '../../constants/routes';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -57,20 +54,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as QuestTaskStatus;
     setStatus(newStatus);
-    const optimistic = { ...task, status: newStatus };
-    onUpdate?.(optimistic);
-    try {
-      const updated = await updatePost(task.id, { status: newStatus });
-      onUpdate?.(updated);
-    } catch (err) {
-      console.error('[TaskCard] failed to update status', err);
-    }
   };
 
   return (
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 space-y-2">
+        <div className="w-full md:w-60 space-y-2">
           <div className="flex items-center justify-between">
             {parentNode && (
               <div
@@ -79,12 +68,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
                 onClick={() => navigate(ROUTES.POST(parentNode.id))}
               />
             )}
-            <Select
-              value={status}
-              onChange={handleStatusChange}
-              options={STATUS_OPTIONS as any}
-              className="text-xs w-32"
-            />
           </div>
           <div className="h-64 overflow-auto" data-testid="task-graph-inline">
             <GraphLayout
@@ -99,8 +82,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
             />
           </div>
         </div>
-        <div className="w-full md:w-80 overflow-auto">
-          <QuestNodeInspector questId={questId} node={selected} user={user} showPost={false} />
+        <div className="flex-1 overflow-auto">
+          <QuestNodeInspector
+            questId={questId}
+            node={selected}
+            user={user}
+            showPost={false}
+            onUpdate={onUpdate}
+            status={status}
+            onStatusChange={handleStatusChange}
+          />
         </div>
       </div>
     </div>

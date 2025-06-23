@@ -10,8 +10,9 @@ import TeamPanel from './TeamPanel';
 import { useGraph } from '../../hooks/useGraph';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
-import { TASK_TYPE_OPTIONS } from '../../constants/options';
+import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
+import type { QuestTaskStatus } from '../../types/postTypes';
 
 interface QuestNodeInspectorProps {
   questId: string;
@@ -19,6 +20,9 @@ interface QuestNodeInspectorProps {
   user?: User;
   showPost?: boolean;
   showLogs?: boolean;
+  status?: QuestTaskStatus;
+  onStatusChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onUpdate?: (p: Post) => void;
 }
 
 const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
@@ -27,16 +31,21 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   user,
   showPost = true,
   showLogs = true,
+  status,
+  onStatusChange,
+  onUpdate,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [boardOpen, setBoardOpen] = useState(true);
+  const [statusVal, setStatusVal] = useState<QuestTaskStatus>(status || node?.status || 'To Do');
   const { loadGraph } = useGraph();
 
   useEffect(() => {
     setType(node?.taskType || 'abstract');
-  }, [node?.taskType]);
+    setStatusVal(status || node?.status || 'To Do');
+  }, [node?.taskType, node?.status, status]);
 
   useEffect(() => {
     setActiveTab('logs');
@@ -48,9 +57,30 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     setActiveTab('file');
     if (node) {
       try {
-        await updatePost(node.id, { taskType: val });
+        const updated = await updatePost(node.id, { taskType: val });
+        onUpdate?.(updated);
+        document.dispatchEvent(
+          new CustomEvent('taskUpdated', { detail: { task: updated } })
+        );
       } catch (err) {
         console.error('[QuestNodeInspector] Failed to update task type', err);
+      }
+    }
+  };
+
+  const handleStatusSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value as QuestTaskStatus;
+    setStatusVal(newStatus);
+    onStatusChange?.(e);
+    if (node) {
+      try {
+        const updated = await updatePost(node.id, { status: newStatus });
+        onUpdate?.(updated);
+        document.dispatchEvent(
+          new CustomEvent('taskUpdated', { detail: { task: updated } })
+        );
+      } catch (err) {
+        console.error('[QuestNodeInspector] Failed to update status', err);
       }
     }
   };
@@ -140,12 +170,20 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       <div className="p-2 space-y-2 flex-1 overflow-auto">
         {showPost && <PostCard post={node} user={user} questId={questId} />}
         {node.type === 'task' && (
-          <Select
-            id="task-type"
-            value={type}
-            onChange={handleChange}
-            options={TASK_TYPE_OPTIONS as option[]}
-          />
+          <div className="space-y-2">
+            <Select
+              id="task-type"
+              value={type}
+              onChange={handleChange}
+              options={TASK_TYPE_OPTIONS as option[]}
+            />
+            <Select
+              id="task-status"
+              value={statusVal}
+              onChange={handleStatusSelect}
+              options={STATUS_OPTIONS as option[]}
+            />
+          </div>
         )}
         <div className="border-b border-secondary flex items-center text-sm overflow-x-auto whitespace-nowrap">
           {tabs.map((t) => (
