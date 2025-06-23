@@ -37,13 +37,16 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
     fgRef.current?.zoomToFit(200, 20);
   }, [items, edgeList]);
 
-  const data = useMemo(
-    () => ({
+  const data = useMemo(() => {
+    const nodeSet = new Set(items.map((p) => p.id));
+    const links = edgeList
+      .filter((e) => nodeSet.has(e.from) && nodeSet.has(e.to))
+      .map((e) => ({ source: e.from, target: e.to }));
+    return {
       nodes: items.map((p) => ({ ...p, id: p.id, val: 4 })),
-      links: edgeList.map((e) => ({ source: e.from, target: e.to })),
-    }),
-    [items, edgeList],
-  );
+      links,
+    };
+  }, [items, edgeList]);
 
   const emitEdges = (updated: TaskEdge[]) => {
     if (onEdgesChange) {
@@ -86,7 +89,11 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
 
   const handleNodeDragEnd = (node: unknown) => {
     const dragged = node as Post & { x?: number; y?: number };
-    const nodes = fgRef.current?.graphData().nodes || [];
+    const data =
+      typeof fgRef.current?.graphData === 'function'
+        ? fgRef.current?.graphData()
+        : fgRef.current?.graphData;
+    const nodes = data?.nodes || [];
     let targetId: string | null = null;
     let minDist = Infinity;
     nodes.forEach((n) => {

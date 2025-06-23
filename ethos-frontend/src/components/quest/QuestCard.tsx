@@ -264,7 +264,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
               }
               if (!expanded) {
                 setActiveTab('file');
-                setMapMode('folder');
               }
             }}
           >
