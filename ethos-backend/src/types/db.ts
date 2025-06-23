@@ -30,6 +30,7 @@ export interface DBPost {
   details?: string;
   visibility: Visibility;
   timestamp: string;
+  createdAt?: string;
 
   replyTo?: string | null;
   repostedFrom?: string | null;
