@@ -9,6 +9,8 @@ import QuickTaskForm from '../post/QuickTaskForm';
 import TeamPanel from './TeamPanel';
 import SubtaskChecklist from './SubtaskChecklist';
 import { useGraph } from '../../hooks/useGraph';
+import GitDiffViewer from '../git/GitDiffViewer';
+import { useGitDiff } from '../../hooks/useGit';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
@@ -44,6 +46,11 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   const [boardOpen, setBoardOpen] = useState(true);
   const [statusVal, setStatusVal] = useState<QuestTaskStatus>(status || node?.status || 'To Do');
   const { loadGraph } = useGraph();
+  const { data: diffData, isLoading: diffLoading } = useGitDiff({
+    questId,
+    filePath: node?.gitFilePath,
+    commitId: node?.gitCommitSha,
+  });
 
   useEffect(() => {
     setType(node?.taskType || 'abstract');
@@ -152,11 +159,16 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
             )}
           </div>
           {type === 'file' ? (
-            <FileEditorPanel
-              questId={questId}
-              filePath={node.gitFilePath || 'file.txt'}
-              content={node.content}
-            />
+            <>
+              {diffLoading ? null : diffData?.diffMarkdown && (
+                <GitDiffViewer markdown={diffData.diffMarkdown} />
+              )}
+              <FileEditorPanel
+                questId={questId}
+                filePath={node.gitFilePath || 'file.txt'}
+                content={node.content}
+              />
+            </>
           ) : (
             <SubtaskChecklist questId={questId} nodeId={node.id} />
           )}

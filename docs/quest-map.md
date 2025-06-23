@@ -52,4 +52,6 @@ The inspector sidebar lets you change the task type. Changing from `file` to `fo
 
 Tab labels reflect the selected type: selecting **file** shows a *File* tab, **folder** shows a *Folder* tab, and **planner** displays a *Planner* tab.
 
+File tasks display the latest Git diff and an inline file editor. Planner nodes render their child tasks as a checklist so progress can be tracked when exporting the repo or downloading a specific file.
+
 

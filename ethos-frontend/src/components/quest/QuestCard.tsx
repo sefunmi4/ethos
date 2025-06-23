@@ -18,6 +18,9 @@ import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
 import GitFileBrowserInline from '../git/GitFileBrowserInline';
+import GitDiffViewer from '../git/GitDiffViewer';
+import { useGitDiff } from '../../hooks/useGit';
+import SubtaskChecklist from './SubtaskChecklist';
 import { getRank } from '../../utils/rankUtils';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
@@ -73,6 +76,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
   const navigate = useNavigate();
+
+  const { data: diffData, isLoading: diffLoading } = useGitDiff({
+    questId: quest.id,
+    filePath: selectedNode?.gitFilePath,
+    commitId: selectedNode?.gitCommitSha,
+  });
 
   const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
 
@@ -346,6 +355,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
       .map((e) => e.to);
     const children = logs.filter((p) => childIds.includes(p.id));
     const isFolder = selectedNode.id === rootNode?.id || children.length > 0;
+
+    if (selectedNode.taskType === 'abstract') {
+      return (
+        <div className="space-y-2 p-2">
+          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
+          <SubtaskChecklist questId={quest.id} nodeId={selectedNode.id} />
+        </div>
+      );
+    }
     if (isFolder) {
       return (
         <div className="text-sm p-2 space-y-2">
@@ -393,7 +411,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <div className="space-y-2 p-2">
         <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
         {selectedNode.taskType === 'file' && (
-          <GitFileBrowserInline questId={quest.id} />
+          <>
+            <GitFileBrowserInline questId={quest.id} />
+            {diffLoading ? null : diffData?.diffMarkdown && (
+              <GitDiffViewer markdown={diffData.diffMarkdown} />
+            )}
+          </>
         )}
         <FileEditorPanel
           questId={quest.id}
