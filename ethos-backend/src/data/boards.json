@@ -6,6 +6,17 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "72101041-8647-4a20-9902-dfabedad5d59",
+      "942bcdce-9994-43e4-959d-9d2f15762d89",
+      "c0b7e1e6-3b6f-4a48-b62b-3ec2f0ee844d",
+      "9e037d86-bbfc-4437-acf0-e36555b44b7e",
+      "bbe05e19-c127-4e18-aa85-30348529df47",
+      "4ab141a7-9d1a-4a01-886a-63d5fe3c10d4",
+      "9e3dffce-8e1e-4b25-97a0-df347b0001ac",
+      "63df4a49-9bf3-4fe8-952a-cafe0779f3ea",
+      "afbc6756-b35f-4f93-95fe-eff492cd9ef6",
+      "9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
+      "6f083635-c5a3-425f-bb1a-7677b8204399"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -19,6 +30,7 @@
     "boardType": "quest",
     "layout": "grid",
     "items": [
+      "c68aac70-264e-425d-bf1a-2ad949c3f96c"
     ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
@@ -32,6 +44,11 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "9e037d86-bbfc-4437-acf0-e36555b44b7e",
+      "bbe05e19-c127-4e18-aa85-30348529df47",
+      "54efc6de-9298-4fd3-87dd-520472d3a477",
+      "9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
+      "f2acac59-b1cb-4cba-904c-85fbd56695ad"
     ],
     "featured": true,
     "defaultFor": null,
@@ -46,11 +63,102 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "72101041-8647-4a20-9902-dfabedad5d59",
+      "942bcdce-9994-43e4-959d-9d2f15762d89",
+      "c0b7e1e6-3b6f-4a48-b62b-3ec2f0ee844d",
+      "9e037d86-bbfc-4437-acf0-e36555b44b7e",
+      "bbe05e19-c127-4e18-aa85-30348529df47",
+      "54efc6de-9298-4fd3-87dd-520472d3a477",
+      "f2acac59-b1cb-4cba-904c-85fbd56695ad",
+      "9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
+      "6f083635-c5a3-425f-bb1a-7677b8204399",
+      "29317841-a416-4464-b830-936522c8e4c7",
+      "5673e67d-a9e3-4f0d-9e01-1df98e073ec4",
+      "45768839-aaf5-4612-b21f-36cfb8988464",
+      "4ee1dae9-1969-4478-93fd-024cfb645111"
     ],
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
+  },
+  {
+    "id": "map-2d44a0bb-b794-402c-8ba5-4dcd3ac2e481",
+    "title": "Ethos Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "4ee1dae9-1969-4478-93fd-024cfb645111"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-23T04:40:26.263Z",
+    "userId": "u_17d09254-a23f-4f45-8f0e-7f2c11719c41",
+    "questId": "2d44a0bb-b794-402c-8ba5-4dcd3ac2e481"
+  },
+  {
+    "id": "map-c68aac70-264e-425d-bf1a-2ad949c3f96c",
+    "title": "Ethos Multiple Users Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "6f083635-c5a3-425f-bb1a-7677b8204399"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-23T04:47:54.887Z",
+    "userId": "u_782ab888-86ff-4bdd-a85d-6c82faf5d22e",
+    "questId": "c68aac70-264e-425d-bf1a-2ad949c3f96c"
+  },
+  {
+    "id": "log-c68aac70-264e-425d-bf1a-2ad949c3f96c",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "4ab141a7-9d1a-4a01-886a-63d5fe3c10d4",
+      "9e3dffce-8e1e-4b25-97a0-df347b0001ac",
+      "63df4a49-9bf3-4fe8-952a-cafe0779f3ea",
+      "afbc6756-b35f-4f93-95fe-eff492cd9ef6"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T04:50:25.992Z",
+    "userId": "u_782ab888-86ff-4bdd-a85d-6c82faf5d22e"
+  },
+  {
+    "id": "thread-9bac9ef4-1178-4cc5-ab72-8ddfffbd8ffd",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "942bcdce-9994-43e4-959d-9d2f15762d89"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T04:58:24.714Z",
+    "userId": "u_782ab888-86ff-4bdd-a85d-6c82faf5d22e"
+  },
+  {
+    "id": "thread-c0b7e1e6-3b6f-4a48-b62b-3ec2f0ee844d",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "72101041-8647-4a20-9902-dfabedad5d59"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T05:03:28.362Z",
+    "userId": "u_782ab888-86ff-4bdd-a85d-6c82faf5d22e"
   }
 ]
