@@ -131,7 +131,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
     <div
       ref={containerRef}
       className="overflow-auto w-full h-full p-2 max-w-7xl mx-auto"
-      style={{ minHeight: '60vh', maxHeight: '80vh', border: '1px solid #ccc', position: 'relative' }}
+      style={{ minHeight: '40vh', maxHeight: '60vh', border: '1px solid #ccc', position: 'relative' }}
     >
       <button
         type="button"
