@@ -182,7 +182,7 @@ const ActiveQuestBoard: React.FC = () => {
                   : 'scale-90 opacity-50')
               }
             >
-              <QuestCard quest={q} />
+              <QuestCard quest={q} user={user} />
             </div>
           ))}
         </div>
