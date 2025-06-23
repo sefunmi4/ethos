@@ -236,7 +236,7 @@ router.get(
           let highlight = false;
           if (userId) {
             if (p.questId && userQuestIds.includes(p.questId)) {
-              weight = 2;
+              weight = p.type === 'task' ? 3 : 2;
               if (p.type === 'task') highlight = true;
             } else if (
               p.linkedItems?.some(
@@ -347,7 +347,7 @@ router.get(
           let highlight = false;
           if (userId) {
             if (p.questId && userQuestIds.includes(p.questId)) {
-              weight = 2;
+              weight = p.type === 'task' ? 3 : 2;
               if (p.type === 'task') highlight = true;
             } else if (
               p.linkedItems?.some(
