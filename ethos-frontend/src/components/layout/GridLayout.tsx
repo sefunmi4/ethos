@@ -44,7 +44,8 @@ const DraggableCard: React.FC<{
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   initialExpanded?: boolean;
-}> = ({ item, user, compact, onEdit, onDelete, initialExpanded }) => {
+  boardId?: string;
+}> = ({ item, user, compact, onEdit, onDelete, initialExpanded, boardId }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -267,6 +268,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                     compact={true}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    boardId={boardId}
                   />
                 ))}
               </DroppableColumn>
