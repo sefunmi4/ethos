@@ -37,18 +37,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     const ids = new Set<string>();
     const gatherChildren = (id: string) => {
       ids.add(id);
-      edges.filter(e => e.from === id).forEach(e => gatherChildren(e.to));
-    };
-    const gatherParents = (id: string) => {
-      edges.filter(e => e.to === id).forEach(e => {
-        if (!ids.has(e.from)) {
-          ids.add(e.from);
-          gatherParents(e.from);
-        }
-      });
+      edges.filter((e) => e.from === id).forEach((e) => gatherChildren(e.to));
     };
     gatherChildren(task.id);
-    gatherParents(task.id);
     return ids;
   }, [task.id, edges]);
 
@@ -123,6 +114,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
               showInspector={false}
               showStatus={false}
               onSelectNode={setSelected}
+              onNodeClick={(n) => {
+                if (n.id !== task.id) {
+                  navigate(ROUTES.POST(n.id));
+                }
+              }}
             />
           </div>
         </div>

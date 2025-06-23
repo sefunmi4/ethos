@@ -22,7 +22,7 @@ import LinkViewer from '../ui/LinkViewer';
 import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
-import GitFileBrowser from '../git/GitFileBrowser';
+import GitFileBrowserInline from '../git/GitFileBrowserInline';
 import NestedReply from './NestedReply';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
@@ -757,10 +757,12 @@ const PostCard: React.FC<PostCardProps> = ({
             View {post.taskType === 'file' ? 'File' : post.taskType === 'folder' ? 'Folder' : 'Planner'}
           </button>
           {showBrowser && (
-            <GitFileBrowser
-              questId={post.questId}
-              onClose={() => setShowBrowser(false)}
-            />
+            <div className="mt-2">
+              <GitFileBrowserInline
+                questId={post.questId}
+                onClose={() => setShowBrowser(false)}
+              />
+            </div>
           )}
         </>
       )}
