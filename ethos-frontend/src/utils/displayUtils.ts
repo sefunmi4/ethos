@@ -1,22 +1,22 @@
-import type { Post, PostType } from '../types/postTypes';
-import { ROUTES } from '../constants/routes';
+import type { Post, PostType } from "../types/postTypes";
+import { ROUTES } from "../constants/routes";
 
 export const toTitleCase = (str: string): string =>
   str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
 
 export const POST_TYPE_LABELS: Record<PostType, string> = {
-  free_speech: 'Free Speech',
-  request: 'Request',
-  log: 'Log',
-  quest_log: 'Log',
-  task: 'Task',
-  quest: 'Quest',
-  meta_system: 'System',
-  meta_announcement: 'Announcement',
-  commit: 'Commit',
-  issue: 'Issue',
-  review: 'Review',
-  solved: 'Solved',
+  free_speech: "Free Speech",
+  request: "Request",
+  log: "Log",
+  quest_log: "Log",
+  task: "Task",
+  quest: "Quest",
+  meta_system: "System",
+  meta_announcement: "Announcement",
+  commit: "Commit",
+  issue: "Issue",
+  review: "Review",
+  solved: "Solved",
 };
 
 /**
@@ -31,11 +31,11 @@ export const POST_TYPE_LABELS: Record<PostType, string> = {
 export const getQuestLinkLabel = (
   post: Post,
   questName?: string,
-  includeQuestName = false
+  includeQuestName = false,
 ): string => {
-  let quest = 'Q';
+  let quest = "Q";
   if (questName !== undefined) {
-    quest += ':';
+    quest += ":";
     if (includeQuestName && questName) {
       quest += questName;
     }
@@ -43,8 +43,8 @@ export const getQuestLinkLabel = (
   const node = post.nodeId?.trim();
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
-  const isLog = post.type === 'log';
-  const isTask = post.type === 'task';
+  const isLog = post.type === "log";
+  const isTask = post.type === "task";
   const isReply = !!post.replyTo;
 
   // 📌 Log post in timeline view
@@ -58,7 +58,7 @@ export const getQuestLinkLabel = (
   }
 
   // 📌 Nested log reply (log inside log, or deeper)
-  if (isLog && isReply && node?.startsWith('Tx')) {
+  if (isLog && isReply && node?.startsWith("T")) {
     return `${quest}:${node}:L${suffix}`;
   }
 
@@ -78,32 +78,32 @@ export const getQuestLinkLabel = (
 export const getDisplayTitle = (
   post: Post,
   questName?: string,
-  includeQuestName = false
+  includeQuestName = false,
 ): string => {
   if (post.nodeId || post.questId) {
     return getQuestLinkLabel(post, questName, includeQuestName);
   }
 
-  const content = post.content?.trim() || '';
-  const text = content.length > 50 ? content.slice(0, 50) + '…' : content;
+  const content = post.content?.trim() || "";
+  const text = content.length > 50 ? content.slice(0, 50) + "…" : content;
   return toTitleCase(text);
 };
 
 export interface SummaryTagData {
   type:
-    | 'quest'
-    | 'task'
-    | 'issue'
-    | 'log'
-    | 'review'
-    | 'category'
-    | 'status'
-    | 'free_speech'
-    | 'type'
-    | 'commit'
-    | 'meta_system'
-    | 'meta_announcement'
-    | 'solved';
+    | "quest"
+    | "task"
+    | "issue"
+    | "log"
+    | "review"
+    | "category"
+    | "status"
+    | "free_speech"
+    | "type"
+    | "commit"
+    | "meta_system"
+    | "meta_announcement"
+    | "solved";
   label: string;
   link?: string;
   username?: string;
@@ -122,54 +122,76 @@ export interface PostWithQuestTitle extends Post {
 export const buildSummaryTags = (
   post: PostWithQuestTitle,
   questTitle?: string,
-  questId?: string
+  questId?: string,
 ): SummaryTagData[] => {
   const tags: SummaryTagData[] = [];
   const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
-  if (post.type === 'review') {
+  if (post.type === "review") {
     const user = post.author?.username || post.authorId;
     tags.push({
-      type: 'review',
-      label: title ? `Review: ${title}` : 'Review',
+      type: "review",
+      label: title ? `Review: ${title}` : "Review",
       detailLink: post.id ? ROUTES.POST(post.id) : undefined,
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-    if (post.subtype) tags.push({ type: 'category', label: post.subtype });
+    if (post.subtype) {
+      tags.push({
+        type: "category",
+        label: post.subtype,
+        detailLink: ROUTES.POST(post.id),
+      });
+    }
     return tags;
   }
 
-  if (post.type === 'request') {
+  if (post.type === "request") {
     if (post.questId && title) {
       tags.push({
-        type: 'request',
+        type: "request",
         label: `Request: ${title}`,
-        link: ROUTES.QUEST(post.questId),
+        detailLink: ROUTES.POST(post.id),
       });
       if (post.nodeId) {
-        tags.push({ type: 'task', label: `Task: ${post.nodeId}`, link: ROUTES.POST(post.id) });
+        tags.push({
+          type: "task",
+          label: `Task: ${post.nodeId}`,
+          link: ROUTES.POST(post.id),
+        });
       }
-      if (post.status && post.status !== 'To Do') {
-        tags.push({ type: 'status', label: post.status });
+      if (post.status && post.status !== "To Do") {
+        tags.push({
+          type: "status",
+          label: post.status,
+          detailLink: ROUTES.POST(post.id),
+        });
       }
     } else {
       const user = post.author?.username || post.authorId;
       tags.push({
-        type: 'request',
-        label: 'Request:',
+        type: "request",
+        label: "Request:",
         detailLink: ROUTES.POST(post.id),
         username: user,
         usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
       });
-      if (post.subtype === 'task') {
-        const label = post.nodeId ? `Task: ${post.nodeId}` : 'Task';
-        tags.push({ type: 'task', label });
+      if (post.subtype === "task") {
+        const label = post.nodeId ? `Task: ${post.nodeId}` : "Task";
+        tags.push({
+          type: "task",
+          label,
+          detailLink: ROUTES.POST(post.id),
+        });
       }
-      if (post.subtype === 'issue') {
-        const label = post.nodeId ? `Issue: ${post.nodeId}` : 'Issue';
-        tags.push({ type: 'issue', label });
+      if (post.subtype === "issue") {
+        const label = post.nodeId ? `Issue: ${post.nodeId}` : "Issue";
+        tags.push({
+          type: "issue",
+          label,
+          detailLink: ROUTES.POST(post.id),
+        });
       }
     }
     return tags;
@@ -177,85 +199,105 @@ export const buildSummaryTags = (
 
   if (!multipleSources && title) {
     tags.push({
-      type: 'quest',
+      type: "quest",
       label: `Quest: ${title}`,
-      link: (questId || post.questId) ? ROUTES.QUEST(questId || post.questId!) : undefined,
+      link:
+        questId || post.questId
+          ? ROUTES.QUEST(questId || post.questId!)
+          : undefined,
     });
   }
 
-  if (post.type === 'task' && post.nodeId) {
+  if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
     const label = title
       ? `Task - ${getQuestLinkLabel(post, title, false)}`
       : `Task - ${post.nodeId}`;
     tags.push({
-      type: 'task',
+      type: "task",
       label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === 'issue') {
+  } else if (post.type === "issue") {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources
-      ? `Issue - ${post.nodeId}`
-      : 'Issue';
+    const label =
+      post.nodeId && !multipleSources ? `Issue - ${post.nodeId}` : "Issue";
     tags.push({
-      type: 'issue',
+      type: "issue",
       label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === 'log' || post.type === 'quest_log') {
+  } else if (post.type === "log" || post.type === "quest_log") {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources
-      ? title
-        ? `Log - ${getQuestLinkLabel(post, title, false)}`
-        : `Log - ${post.nodeId}`
-      : 'Log';
+    const label =
+      post.nodeId && !multipleSources
+        ? title
+          ? `Log - ${getQuestLinkLabel(post, title, false)}`
+          : `Log - ${post.nodeId}`
+        : "Log";
     tags.push({
-      type: 'log',
+      type: "log",
       label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === 'commit') {
+  } else if (post.type === "commit") {
     const user = post.author?.username || post.authorId;
-    const label = post.nodeId && !multipleSources ? `Commit - ${post.nodeId}` : 'Commit';
+    const label =
+      post.nodeId && !multipleSources ? `Commit - ${post.nodeId}` : "Commit";
     tags.push({
-      type: 'commit',
+      type: "commit",
       label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === 'meta_system') {
-    tags.push({ type: 'meta_system', label: 'System' });
-  } else if (post.type === 'meta_announcement') {
-    tags.push({ type: 'meta_announcement', label: 'Announcement' });
-  } else if (post.type === 'solved') {
-    tags.push({ type: 'solved', label: 'Solved' });
+  } else if (post.type === "meta_system") {
+    tags.push({
+      type: "meta_system",
+      label: "System",
+      detailLink: ROUTES.POST(post.id),
+    });
+  } else if (post.type === "meta_announcement") {
+    tags.push({
+      type: "meta_announcement",
+      label: "Announcement",
+      detailLink: ROUTES.POST(post.id),
+    });
+  } else if (post.type === "solved") {
+    tags.push({
+      type: "solved",
+      label: "Solved",
+      detailLink: ROUTES.POST(post.id),
+    });
   }
 
-
-  if (post.status && ['task', 'issue'].includes(post.type)) {
-    tags.push({ type: 'status', label: post.status });
+  if (post.status && ["task", "issue"].includes(post.type)) {
+    tags.push({
+      type: "status",
+      label: post.status,
+      detailLink: ROUTES.POST(post.id),
+    });
   }
 
-  if (post.type === 'free_speech') {
+  if (post.type === "free_speech") {
     const user = post.author?.username || post.authorId;
     tags.push({
-      type: 'free_speech',
+      type: "free_speech",
       label: `Free Speech: @${user}`,
       link: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   }
 
   // Remove duplicate entries by label in case of redundant inputs
-  return tags.filter((t, idx) =>
-    tags.findIndex((o) => o.label === t.label && o.type === t.type) === idx
+  return tags.filter(
+    (t, idx) =>
+      tags.findIndex((o) => o.label === t.label && o.type === t.type) === idx,
   );
 };
 
@@ -264,48 +306,51 @@ export const buildSummaryTags = (
  * Format: "Quest: {title} Task:{nodeId} {status}".
  * Quest title may be provided via optional param or `post.questTitle` field.
  */
-export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): string => {
+export const getPostSummary = (
+  post: PostWithQuestTitle,
+  questTitle?: string,
+): string => {
   const parts: string[] = [];
   const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
-  if (post.type === 'review') {
+  if (post.type === "review") {
     const user = post.author?.username || post.authorId;
     if (title) parts.push(`(Review: ${title})`);
     parts.push(`(@${user})`);
     if (post.subtype) parts.push(`(${post.subtype})`);
-    return parts.join(' ').trim();
+    return parts.join(" ").trim();
   }
 
   if (title) parts.push(`(Quest: ${title})`);
 
-  if (post.type === 'request') {
-    parts.push('(Request)');
-    if (post.subtype === 'task') {
+  if (post.type === "request") {
+    parts.push("(Request)");
+    if (post.subtype === "task") {
       if (post.nodeId) parts.push(`(Task - ${post.nodeId})`);
-      else parts.push('(Task)');
-    } else if (post.subtype === 'issue') {
+      else parts.push("(Task)");
+    } else if (post.subtype === "issue") {
       if (post.nodeId) parts.push(`(Issue - ${post.nodeId})`);
-      else parts.push('(Issue)');
+      else parts.push("(Issue)");
     }
-    return parts.join(' ').trim();
+    return parts.join(" ").trim();
   }
 
-  if (post.type === 'task' && post.nodeId) {
+  if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
     if (title) {
       parts.push(`(Task - ${getQuestLinkLabel(post, title, false)} @${user})`);
     } else {
       parts.push(`(Task - ${post.nodeId} @${user})`);
     }
-  } else if (post.type === 'issue') {
+  } else if (post.type === "issue") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
       parts.push(`(Issue - ${post.nodeId} @${user})`);
     } else {
       parts.push(`(Issue @${user})`);
     }
-  } else if (post.type === 'log' || post.type === 'quest_log') {
+  } else if (post.type === "log" || post.type === "quest_log") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
       if (title) {
@@ -316,31 +361,31 @@ export const getPostSummary = (post: PostWithQuestTitle, questTitle?: string): s
     } else {
       parts.push(`(Log @${user})`);
     }
-  } else if (post.type === 'commit') {
+  } else if (post.type === "commit") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
       parts.push(`(Commit - ${post.nodeId} @${user})`);
     } else {
       parts.push(`(Commit @${user})`);
     }
-  } else if (post.type === 'meta_system') {
-    parts.push('(System)');
-  } else if (post.type === 'meta_announcement') {
-    parts.push('(Announcement)');
-  } else if (post.type === 'solved') {
-    parts.push('(Solved)');
+  } else if (post.type === "meta_system") {
+    parts.push("(System)");
+  } else if (post.type === "meta_announcement") {
+    parts.push("(Announcement)");
+  } else if (post.type === "solved") {
+    parts.push("(Solved)");
   } else if (post.type) {
     parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
   }
 
-  if (post.status && ['task', 'issue'].includes(post.type)) {
+  if (post.status && ["task", "issue"].includes(post.type)) {
     parts.push(`(${post.status})`);
   }
 
-  if (post.type === 'free_speech') {
+  if (post.type === "free_speech") {
     const user = post.author?.username || post.authorId;
     parts.push(`(Free Speech: @${user})`);
   }
 
-  return parts.join(' ').trim();
+  return parts.join(" ").trim();
 };
