@@ -75,6 +75,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [showFolderView, setShowFolderView] = useState(false);
   const navigate = useNavigate();
 
   const { data: diffData, isLoading: diffLoading } = useGitDiff({
@@ -179,6 +181,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
+
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
     const startWidth = mapWidth;
@@ -242,6 +245,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     window.addEventListener('taskUpdated', handler);
     return () => window.removeEventListener('taskUpdated', handler);
   }, [selectedNode, rootNode]);
+
 
 
 
@@ -366,60 +370,81 @@ const QuestCard: React.FC<QuestCardProps> = ({
     const children = logs.filter((p) => childIds.includes(p.id));
     const isFolder = selectedNode.id === rootNode?.id || children.length > 0;
 
-    if (selectedNode.taskType === 'abstract') {
-      return (
-        <div className="space-y-2 p-2">
-          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
-          <SubtaskChecklist questId={quest.id} nodeId={selectedNode.id} />
+    const statusBoard = (
+      <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
+    );
+
+    const checklistSection = (
+      <div className="border border-secondary rounded">
+        <div
+          className="flex justify-between items-center p-2 bg-soft cursor-pointer"
+          onClick={() => setShowChecklist((p) => !p)}
+        >
+          <span className="font-semibold text-sm">Checklist</span>
+          <span className="text-xs">{showChecklist ? '▲' : '▼'}</span>
         </div>
-      );
-    }
-    if (isFolder) {
-      return (
-        <div className="text-sm p-2 space-y-2">
-          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
-          {showFolderForm && (
-            <QuickTaskForm
-              questId={quest.id}
-              parentId={selectedNode.id}
-              boardId={`task-${selectedNode.id}`}
-              allowIssue
-              onSave={(p) => {
-                setLogs((prev) => [...prev, p]);
-                setShowFolderForm(false);
-              }}
-              onCancel={() => setShowFolderForm(false)}
-            />
-          )}
-          <div className="text-right">
-            <button
-              onClick={() => setShowFolderForm((p) => !p)}
-              className="text-xs text-accent underline"
-            >
-              {showFolderForm ? '- Cancel' : '+ Add Item'}
-            </button>
+        {showChecklist && (
+          <div className="p-2">
+            <SubtaskChecklist questId={quest.id} nodeId={selectedNode.id} />
           </div>
-          <div className="h-64 overflow-auto">
-            <GraphLayout
-              items={folderNodes}
-              edges={folderEdges}
-              questId={quest.id}
-              condensed
-              showInspector={false}
-              showStatus={false}
-              onNodeClick={(n) => {
-                if (n.id !== selectedNode.id) {
-                  navigate(ROUTES.POST(n.id));
-                }
-              }}
-            />
-          </div>
+        )}
+      </div>
+    );
+
+    const folderSection = isFolder && (
+      <div className="border border-secondary rounded">
+        <div
+          className="flex justify-between items-center p-2 bg-soft cursor-pointer"
+          onClick={() => setShowFolderView((p) => !p)}
+        >
+          <span className="font-semibold text-sm">Folder Structure</span>
+          <span className="text-xs">{showFolderView ? '▲' : '▼'}</span>
         </div>
-      );
-    }
-    return (
-      <div className="space-y-2 p-2">
-        <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
+        {showFolderView && (
+          <div className="p-2 space-y-2">
+            {showFolderForm && (
+              <QuickTaskForm
+                questId={quest.id}
+                parentId={selectedNode.id}
+                boardId={`task-${selectedNode.id}`}
+                allowIssue
+                onSave={(p) => {
+                  setLogs((prev) => [...prev, p]);
+                  setShowFolderForm(false);
+                }}
+                onCancel={() => setShowFolderForm(false)}
+              />
+            )}
+            <div className="text-right">
+              <button
+                onClick={() => setShowFolderForm((p) => !p)}
+                className="text-xs text-accent underline"
+              >
+                {showFolderForm ? '- Cancel' : '+ Add Item'}
+              </button>
+            </div>
+            <div className="h-64 overflow-auto">
+              <GraphLayout
+                items={folderNodes}
+                edges={folderEdges}
+                questId={quest.id}
+                condensed
+                showInspector={false}
+                showStatus={false}
+                onNodeClick={(n) => {
+                  if (n.id !== selectedNode.id) {
+                    navigate(ROUTES.POST(n.id));
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+
+    const fileSection = (
+      <div className="space-y-2">
         {selectedNode.taskType === 'file' && (
           <>
             <GitFileBrowserInline questId={quest.id} />
@@ -433,6 +458,15 @@ const QuestCard: React.FC<QuestCardProps> = ({
           filePath={selectedNode.gitFilePath || 'file.txt'}
           content={selectedNode.content}
         />
+      </div>
+    );
+
+    return (
+      <div className="space-y-2 p-2">
+        {statusBoard}
+        {checklistSection}
+        {folderSection}
+        {selectedNode.taskType !== 'abstract' && fileSection}
       </div>
     );
   };
