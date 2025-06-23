@@ -182,7 +182,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
             />
           ) : (
             <div className="space-y-2 p-2">
-              <StatusBoardPanel questId={questId} linkedNodeId={selected.id} />
+              <StatusBoardPanel
+                questId={questId}
+                linkedNodeId={selected.id}
+                initialOpen={false}
+              />
               {showFolderForm && (
                 <QuickTaskForm
                   questId={questId}

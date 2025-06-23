@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fetchAllQuests } from '../../api/quest';
 import type { Quest } from '../../types/questTypes';
 import QuestCard from '../../components/quest/QuestCard';
-import { Spinner } from '../../components/ui';
+import { Spinner, ErrorBoundary } from '../../components/ui';
 
 const BannedQuestsPage: React.FC = () => {
   const { user } = useAuth();
@@ -32,7 +32,9 @@ const BannedQuestsPage: React.FC = () => {
     <main className="container mx-auto p-4 space-y-4">
       <h1 className="text-2xl font-bold">Banned Quests</h1>
       {quests.map(q => (
-        <QuestCard key={q.id} quest={q} defaultExpanded />
+        <ErrorBoundary key={q.id}>
+          <QuestCard quest={q} defaultExpanded />
+        </ErrorBoundary>
       ))}
       {quests.length === 0 && <p>No banned quests.</p>}
     </main>
