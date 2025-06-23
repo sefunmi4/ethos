@@ -38,6 +38,8 @@ interface QuestCardProps {
   onCancel?: () => void;
   isEditing?: boolean;
   defaultExpanded?: boolean;
+  /** Hide the built-in expand/collapse toggle button */
+  hideToggle?: boolean;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -48,6 +50,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onEdit,
   onCancel,
   defaultExpanded = false,
+  hideToggle = false,
 }) => {
   const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
@@ -215,20 +218,22 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
 
       <div className="flex gap-2 mt-2 md:mt-0 items-center flex-wrap">
-        <Button
-          variant="ghost"
-          onClick={() => {
-            if (expanded) {
-              setExpanded(false);
-            } else {
-              setExpanded(true);
-              setActiveTab('logs');
-              setMapMode('folder');
-            }
-          }}
-        >
-          {expanded ? "▲ Collapse" : "▼ Expand"}
-        </Button>
+        {!hideToggle && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (expanded) {
+                setExpanded(false);
+              } else {
+                setExpanded(true);
+                setActiveTab('logs');
+                setMapMode('folder');
+              }
+            }}
+          >
+            {expanded ? "▲ Collapse" : "▼ Expand"}
+          </Button>
+        )}
 
         <ActionMenu
           type="quest"
