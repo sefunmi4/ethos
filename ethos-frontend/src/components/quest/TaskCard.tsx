@@ -49,7 +49,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user }) => {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2">
           <TaskPreviewCard post={selected} />
-          <div className="h-80 overflow-auto" data-testid="task-graph-inline">
+          <div className="h-64 overflow-auto" data-testid="task-graph-inline">
             <GraphLayout
               items={displayNodes}
               edges={displayEdges}
