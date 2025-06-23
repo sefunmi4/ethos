@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
+import TaskPreviewCard from '../post/TaskPreviewCard';
+import { Select } from '../ui';
+import { STATUS_OPTIONS } from '../../constants/options';
+import { updatePost } from '../../api/post';
 import { ROUTES } from '../../constants/routes';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -59,7 +63,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   return (
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-60 space-y-2">
+        <div className="flex-1 space-y-2">
+          <TaskPreviewCard post={selected} summaryOnly />
           <div className="flex items-center justify-between">
             {parentNode && (
               <div
