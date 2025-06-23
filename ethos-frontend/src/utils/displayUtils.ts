@@ -50,7 +50,7 @@ export const getQuestLinkLabel = (
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
   const isLog = post.type === 'log' || post.type === 'quest_log';
-  const isTask = post.type === 'task';
+  const isTask = post.type === 'task' || post.type === 'issue';
 
   if (isLog) {
     // If nodeId exists use it, otherwise fall back to generated suffix
@@ -179,7 +179,11 @@ export const buildSummaryTags = (
         });
       }
       if (post.subtype === "issue") {
-        const label = post.nodeId ? `Issue: ${post.nodeId}` : "Issue";
+        const label = post.nodeId
+          ? title
+            ? `Issue: ${getQuestLinkLabel(post, title, false)}`
+            : `Issue: ${post.nodeId}`
+          : "Issue";
         tags.push({
           type: "issue",
           label,
@@ -216,7 +220,11 @@ export const buildSummaryTags = (
   } else if (post.type === "issue") {
     const user = post.author?.username || post.authorId;
     const label =
-      post.nodeId && !multipleSources ? `Issue - ${post.nodeId}` : "Issue";
+      post.nodeId && !multipleSources
+        ? title
+          ? `Issue - ${getQuestLinkLabel(post, title, false)}`
+          : `Issue - ${post.nodeId}`
+        : "Issue";
     tags.push({
       type: "issue",
       label,
@@ -323,7 +331,12 @@ export const getPostSummary = (
       if (post.nodeId) parts.push(`(Task - ${post.nodeId})`);
       else parts.push("(Task)");
     } else if (post.subtype === "issue") {
-      if (post.nodeId) parts.push(`(Issue - ${post.nodeId})`);
+      if (post.nodeId)
+        parts.push(
+          title
+            ? `(Issue - ${getQuestLinkLabel(post, title, false)})`
+            : `(Issue - ${post.nodeId})`
+        );
       else parts.push("(Issue)");
     }
     return parts.join(" ").trim();
@@ -339,7 +352,11 @@ export const getPostSummary = (
   } else if (post.type === "issue") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Issue - ${post.nodeId} @${user})`);
+      if (title) {
+        parts.push(`(Issue - ${getQuestLinkLabel(post, title, false)} @${user})`);
+      } else {
+        parts.push(`(Issue - ${post.nodeId} @${user})`);
+      }
     } else {
       parts.push(`(Issue @${user})`);
     }
