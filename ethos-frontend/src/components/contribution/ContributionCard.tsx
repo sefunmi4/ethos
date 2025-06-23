@@ -3,6 +3,7 @@
 import React from 'react';
 import PostCard from '../post/PostCard';
 import QuestCard from '../quest/QuestCard';
+import { ErrorBoundary } from '../ui';
 
 import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
@@ -126,15 +127,17 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     }
 
     return (
-      <QuestCard
-        quest={quest}
-        user={user}
-        compact={compact}
-        expanded={expanded}
-        onToggleExpand={onToggleExpand}
-        onEdit={onEdit ? () => onEdit(quest.id) : undefined}
-        onDelete={onDelete ? (q) => onDelete(q.id) : undefined}
-      />
+      <ErrorBoundary>
+        <QuestCard
+          quest={quest}
+          user={user}
+          compact={compact}
+          expanded={expanded}
+          onToggleExpand={onToggleExpand}
+          onEdit={onEdit ? () => onEdit(quest.id) : undefined}
+          onDelete={onDelete ? (q) => onDelete(q.id) : undefined}
+        />
+      </ErrorBoundary>
     );
   }
   // 🛑 Fallback for unknown types

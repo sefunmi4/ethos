@@ -20,6 +20,7 @@ import {
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
 import QuestCard from '../quest/QuestCard';
+import { ErrorBoundary } from '../ui';
 import TaskCard from '../quest/TaskCard';
 import { fetchQuestById } from '../../api/quest';
 import {
@@ -383,7 +384,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       {expanded && post.type === 'quest' && post.questId && (
         <div className="mt-3">
           {questData ? (
-            <QuestCard quest={questData} user={user} defaultExpanded hideToggle />
+            <ErrorBoundary>
+              <QuestCard quest={questData} user={user} defaultExpanded hideToggle />
+            </ErrorBoundary>
           ) : (
             <div className="text-sm">Loading...</div>
           )}

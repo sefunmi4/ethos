@@ -4,7 +4,7 @@ import { fetchActiveQuests } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
 import CreateQuest from './CreateQuest';
-import { Spinner, Button } from '../ui';
+import { Spinner, Button, ErrorBoundary } from '../ui';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
@@ -190,7 +190,9 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
                   : 'scale-90 opacity-50')
               }
             >
-              <QuestCard quest={q} user={user} />
+              <ErrorBoundary>
+                <QuestCard quest={q} user={user} />
+              </ErrorBoundary>
             </div>
           ))}
         </div>
