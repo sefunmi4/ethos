@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -112,6 +112,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [linkExpanded, setLinkExpanded] = useState(false);
+  const [expandedView, setExpandedView] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -396,17 +397,26 @@ const PostCard: React.FC<PostCardProps> = ({
               <StatusBadge status={post.status} />
             )}
           </div>
-          <ActionMenu
-            id={post.id}
-            type="post"
-            canEdit={canEdit}
-            onEdit={() => setEditMode(true)}
-            onEditLinks={() => setShowLinkEditor(true)}
-            onDelete={() => onDelete?.(post.id)}
-            allowDelete={allowDelete}
-            content={post.content}
-            permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
-          />
+          <div className="flex items-center gap-2">
+            <button
+              className="flex items-center gap-1 text-secondary"
+              onClick={() => setExpandedView(prev => !prev)}
+            >
+              {expandedView ? <FaCompress /> : <FaExpand />}{' '}
+              {expandedView ? 'Collapse View' : 'Expand View'}
+            </button>
+            <ActionMenu
+              id={post.id}
+              type="post"
+              canEdit={canEdit}
+              onEdit={() => setEditMode(true)}
+              onEditLinks={() => setShowLinkEditor(true)}
+              onDelete={() => onDelete?.(post.id)}
+              allowDelete={allowDelete}
+              content={post.content}
+              permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+            />
+          </div>
         </div>
           {isQuestBoardRequest && timestamp && (
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -428,6 +438,8 @@ const PostCard: React.FC<PostCardProps> = ({
           timestamp={!isQuestBoardRequest ? timestamp : undefined}
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
+          expanded={expandedView}
+          onToggleExpand={() => setExpandedView(prev => !prev)}
         />
       </div>
     );
@@ -467,17 +479,26 @@ const PostCard: React.FC<PostCardProps> = ({
             </div>
           )}
         </div>
-        <ActionMenu
-          id={post.id}
-          type="post"
-          canEdit={canEdit}
-          onEdit={() => setEditMode(true)}
-          onEditLinks={() => setShowLinkEditor(true)}
-          onDelete={() => onDelete?.(post.id)}
-          allowDelete={allowDelete}
-          content={post.content}
-          permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
-        />
+        <div className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-1 text-secondary"
+            onClick={() => setExpandedView(prev => !prev)}
+          >
+            {expandedView ? <FaCompress /> : <FaExpand />}{' '}
+            {expandedView ? 'Collapse View' : 'Expand View'}
+          </button>
+          <ActionMenu
+            id={post.id}
+            type="post"
+            canEdit={canEdit}
+            onEdit={() => setEditMode(true)}
+            onEditLinks={() => setShowLinkEditor(true)}
+            onDelete={() => onDelete?.(post.id)}
+            allowDelete={allowDelete}
+            content={post.content}
+            permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+          />
+        </div>
       </div>
       {isQuestBoardRequest && timestamp && (
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -579,6 +600,8 @@ const PostCard: React.FC<PostCardProps> = ({
         replyOverride={replyOverride}
         boardId={ctxBoardId || undefined}
         timestamp={!isQuestBoardRequest ? timestamp : undefined}
+        expanded={expandedView}
+        onToggleExpand={() => setExpandedView(prev => !prev)}
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }

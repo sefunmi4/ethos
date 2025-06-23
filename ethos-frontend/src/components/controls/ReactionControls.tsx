@@ -57,6 +57,10 @@ interface ReactionControlsProps {
   onReplyToggle?: (open: boolean) => void;
   /** Optional timestamp to display */
   timestamp?: string;
+  /** Controlled expand state */
+  expanded?: boolean;
+  /** Toggle expand state when controlled */
+  onToggleExpand?: () => void;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -68,6 +72,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   boardId,
   onReplyToggle,
   timestamp,
+  expanded: expandedProp,
+  onToggleExpand,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
@@ -76,7 +82,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [internalExpanded, setInternalExpanded] = useState(false);
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(
@@ -95,6 +101,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     post.type === 'request' &&
     ['quest-board', 'timeline-board', 'my-posts'].includes(ctxBoardId || '');
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
+  const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -253,13 +260,50 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.like ? <FaThumbsUp /> : <FaRegThumbsUp />} {counts.like || ''}
         </button>
 
+      <button
+        className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
+        onClick={() => handleToggleReaction('heart')}
+        disabled={loading || !user}
+      >
+        {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
+      </button>
+
+      {post.type !== 'task' && (
         <button
-          className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
-          onClick={() => handleToggleReaction('heart')}
-          disabled={loading || !user}
+          className={clsx(
+            'flex items-center gap-1',
+            post.type !== 'commit' && showReplyPanel && 'text-green-600'
+          )}
+          onClick={() => {
+            if (replyOverride) {
+              replyOverride.onClick();
+            } else if (post.type === 'commit') {
+              navigate(ROUTES.POST(post.id));
+            } else if (
+              post.type === 'request' ||
+              isTimelineBoard ||
+              isPostBoard
+            ) {
+              navigate(ROUTES.POST(post.id) + '?reply=1');
+            } else {
+              setShowReplyPanel(prev => {
+                const next = !prev;
+                onReplyToggle?.(next);
+                return next;
+              });
+            }
+          }}
         >
-          {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
+          <FaReply />{' '}
+          {replyOverride
+            ? replyOverride.label
+            : post.type === 'commit'
+            ? 'File Change View'
+            : showReplyPanel
+            ? 'Cancel'
+            : 'Reply'}
         </button>
+      )}
 
         {!isQuestRequest && post.type === 'free_speech' && (
           <button
@@ -301,51 +345,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           )
         )}
 
-        <button
-          className={clsx(
-            'flex items-center gap-1',
-            post.type !== 'task' && post.type !== 'commit' && showReplyPanel && 'text-green-600'
+        {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') &&
+          !onToggleExpand && (
+            <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
+              {expanded ? <FaCompress /> : <FaExpand />}{' '}
+              {expanded ? 'Collapse View' : 'Expand View'}
+            </button>
           )}
-          onClick={() => {
-            if (replyOverride) {
-              replyOverride.onClick();
-            } else if (post.type === 'commit') {
-              navigate(ROUTES.POST(post.id));
-            } else if (
-              post.type === 'request' ||
-              isTimelineBoard ||
-              isPostBoard
-            ) {
-              navigate(ROUTES.POST(post.id) + '?reply=1');
-            } else {
-              setShowReplyPanel(prev => {
-                const next = !prev;
-                onReplyToggle?.(next);
-                return next;
-              });
-            }
-          }}
-        >
-          <FaReply />{' '}
-          {replyOverride
-            ? replyOverride.label
-            : post.type === 'commit'
-            ? 'File Change View'
-            : showReplyPanel
-            ? 'Cancel'
-            : 'Reply'}
-        </button>
-
-
-        {(post.type === 'task' || post.type === 'commit' || post.type === 'quest') && (
-          <button
-            className="flex items-center gap-1"
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            {expanded ? <FaCompress /> : <FaExpand />}{' '}
-            {expanded ? 'Collapse View' : 'Expand View'}
-          </button>
-        )}
 
         {timestamp && (
           <span className="ml-auto text-xs text-secondary">{timestamp}</span>
