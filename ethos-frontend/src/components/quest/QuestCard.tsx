@@ -6,7 +6,6 @@ import type { User } from '../../types/userTypes';
 import { Button, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
-import GraphLayout from '../layout/GraphLayout';
 import GridLayout from '../layout/GridLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import CreatePost from '../post/CreatePost';
@@ -49,7 +48,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onCancel,
   defaultExpanded = false,
 }) => {
-  const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
@@ -59,6 +57,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [mapWidth, setMapWidth] = useState(240);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
+  const [showFolderForm, setShowFolderForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
@@ -266,27 +265,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
       }
     };
 
-    const canvas =
-      mapMode === 'graph' ? (
-        <MapGraphLayout
-          items={logs}
-          edges={questData.taskGraph}
-          onEdgesChange={handleEdgesSave}
-        />
-      ) : (
-        <GraphLayout
-          items={logs}
-          user={user}
-          edges={questData.taskGraph}
-          condensed
-          questId={quest.id}
-          showStatus={false}
-          onSelectNode={setSelectedNode}
-          onEdgesChange={handleEdgesSave}
-          showInspector={false}
-          boardId={`map-${quest.id}`}
-        />
-      );
+    const canvas = (
+      <MapGraphLayout
+        items={logs}
+        edges={questData.taskGraph}
+        onEdgesChange={handleEdgesSave}
+      />
+    );
 
     return (
       <div className="space-y-2">
@@ -295,35 +280,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <TaskPreviewCard post={selectedNode} onUpdate={handleSelectedNodeUpdate} />
           </div>
         )}
-        <div className="flex justify-between items-center text-sm">
-          <div className="flex gap-1">
-            <span className="font-semibold">View: </span>
-            <button
-              className={`px-2 py-1 rounded text-xs border ${
-                mapMode === 'folder'
-                  ? 'bg-accent text-white border-accent'
-                  : 'border-secondary text-secondary'
-              }`}
-              onClick={() => setMapMode('folder')}
-            >
-              Folder
-            </button>
-            <button
-              className={`px-2 py-1 rounded text-xs border ${
-                mapMode === 'graph'
-                  ? 'bg-accent text-white border-accent'
-                  : 'border-secondary text-secondary'
-              }`}
-              onClick={() => setMapMode('graph')}
-            >
-              Map
-            </button>
-          </div>
-        </div>
-        <hr className="border-secondary" />
-        <hr className="border-secondary" />
-        <div className="h-48 overflow-auto" data-testid="quest-map-canvas">
+        <div className="h-48 overflow-auto border-b border-secondary" data-testid="quest-map-canvas">
           {canvas}
+        </div>
+        <div className="text-right text-xs">
+          <Link to={ROUTES.BOARD(`map-${quest.id}`)} className="underline text-accent">
+            Open Canvas
+          </Link>
         </div>
       </div>
     );
@@ -338,13 +301,35 @@ const QuestCard: React.FC<QuestCardProps> = ({
     const isFolder = selectedNode.id === rootNode?.id || children.length > 0;
     if (isFolder) {
       return (
-        <div className="text-sm p-2 space-y-1">
-          <div className="font-semibold">Folder: {selectedNode.content}</div>
+        <div className="text-sm p-2 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="font-semibold">Folder: {selectedNode.content}</div>
+            <button
+              onClick={() => setShowFolderForm((p) => !p)}
+              className="text-xs text-accent underline"
+            >
+              {showFolderForm ? '- Cancel' : '+ Add Item'}
+            </button>
+          </div>
+          {showFolderForm && (
+            <QuickTaskForm
+              questId={quest.id}
+              parentId={selectedNode.id}
+              boardId={`task-${selectedNode.id}`}
+              allowIssue
+              onSave={(p) => {
+                setLogs((prev) => [...prev, p]);
+                setShowFolderForm(false);
+              }}
+              onCancel={() => setShowFolderForm(false)}
+            />
+          )}
           <ul className="pl-4 list-disc">
             {children.map((c) => (
               <li key={c.id}>{c.content}</li>
             ))}
           </ul>
+          <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
         </div>
       );
     }
