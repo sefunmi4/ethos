@@ -285,6 +285,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <TaskPreviewCard
               post={selectedNode}
               onUpdate={handleSelectedNodeUpdate}
+              summaryOnly
             />
           </div>
         )}

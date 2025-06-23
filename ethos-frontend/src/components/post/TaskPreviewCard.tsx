@@ -52,6 +52,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
         : taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
       username: undefined,
       usernameLink: undefined,
+      link: ROUTES.POST(post.id),
     } as any;
   } else {
     const label = post.nodeId
@@ -61,6 +62,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
       type: 'task',
       label,
       detailLink: ROUTES.POST(post.id),
+      link: ROUTES.POST(post.id),
     } as any;
   }
 
@@ -72,8 +74,58 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
 
   if (summaryOnly) {
     return (
-      <div className="border border-secondary rounded bg-surface p-2 text-xs">
+      <div className="border border-secondary rounded bg-surface p-2 text-xs space-y-1">
         {tagNode}
+        <div className="flex items-center gap-2">
+          <StatusBadge status={status} />
+          <Select
+            value={status}
+            onChange={handleStatusChange}
+            options={STATUS_OPTIONS as option[]}
+            className="text-xs"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Select
+            value={taskType}
+            onChange={handleTypeChange}
+            options={TASK_TYPE_OPTIONS as option[]}
+            className="text-xs"
+          />
+        </div>
+        {taskType === 'file' && (
+          <label className="inline-flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              checked={organizeFile}
+              onChange={(e) => setOrganizeFile(e.target.checked)}
+            />
+            Organize File
+          </label>
+        )}
+        {taskType === 'folder' && (
+          <label className="inline-flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              checked={plannerFile}
+              onChange={(e) => setPlannerFile(e.target.checked)}
+            />
+            Make Planner File
+          </label>
+        )}
+        {taskType === 'abstract' && (
+          <label className="inline-flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              className="form-checkbox"
+              checked={plannerFile}
+              onChange={(e) => setPlannerFile(e.target.checked)}
+            />
+            Make Planner File
+          </label>
+        )}
       </div>
     );
   }
