@@ -37,7 +37,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
-      "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+      "5a737d05-9981-4a8d-b617-65ee695146e1",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d"
     ],
     "featured": true,
@@ -53,6 +53,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "5a737d05-9981-4a8d-b617-65ee695146e1",
       "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
       "2b445fb1-22c8-4c63-ab43-a863a265e230",
       "e903e011-ac45-453c-b43d-009cc58d39b1",
@@ -160,6 +161,21 @@
     "featured": false,
     "defaultFor": null,
     "createdAt": "2025-06-23T03:23:44.990Z",
+    "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132"
+  },
+  {
+    "id": "task-78bbc652-7d84-4e79-89e3-4370a415c86b",
+    "title": "Untitled Board",
+    "description": "",
+    "boardType": "post",
+    "layout": "grid",
+    "items": [
+      "51be10d9-397a-4710-b6fa-8ade12a4696c"
+    ],
+    "filters": {},
+    "featured": false,
+    "defaultFor": null,
+    "createdAt": "2025-06-23T03:57:29.330Z",
     "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132"
   }
 ]

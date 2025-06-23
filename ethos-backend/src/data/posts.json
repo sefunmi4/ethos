@@ -215,5 +215,50 @@
     "helpRequest": false,
     "nodeId": "Q:ethos:T06",
     "questNodeTitle": "one more time"
+  },
+  {
+    "id": "51be10d9-397a-4710-b6fa-8ade12a4696c",
+    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "type": "issue",
+    "title": "testing issue",
+    "content": "testing issue",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T03:57:29.321Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [],
+    "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+    "status": "To Do",
+    "helpRequest": true,
+    "nodeId": "Q:ethos:I00",
+    "questNodeTitle": "testing issue",
+    "needsHelp": true
+  },
+  {
+    "id": "5a737d05-9981-4a8d-b617-65ee695146e1",
+    "authorId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "type": "request",
+    "content": "testing issue",
+    "visibility": "public",
+    "timestamp": "2025-06-23T04:00:47.769Z",
+    "subtype": "issue",
+    "nodeId": "Q:ethos:I00",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": null,
+    "repostedFrom": null,
+    "linkedItems": [
+      {
+        "itemId": "51be10d9-397a-4710-b6fa-8ade12a4696c",
+        "itemType": "post",
+        "linkType": "reference"
+      }
+    ],
+    "questId": "ed0791ba-6aad-4369-8864-b73d38ed1cf1",
+    "helpRequest": true,
+    "needsHelp": true
   }
 ]
