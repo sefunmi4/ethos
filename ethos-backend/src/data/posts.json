@@ -446,7 +446,7 @@
     "id": "06b9cf10-e613-42c0-ad55-334c16303d31",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "folder",
+    "taskType": "abstract",
     "content": "e-co",
     "visibility": "public",
     "timestamp": "2025-06-23T05:32:38.130Z",
@@ -459,7 +459,8 @@
     "nodeId": "Q:eco:T00",
     "questNodeTitle": "e-co",
     "helpRequest": true,
-    "needsHelp": true
+    "needsHelp": true,
+    "title": "e-co"
   },
   {
     "id": "e19ae082-b814-4c10-81e2-f10e4d039994",
@@ -1533,7 +1534,7 @@
     "id": "b29d4a9b-d636-4a20-8fef-cd17c7470515",
     "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
     "type": "task",
-    "taskType": "file",
+    "taskType": "abstract",
     "content": "Sk The Street",
     "visibility": "public",
     "timestamp": "2025-06-23T13:37:39.492Z",
@@ -1546,8 +1547,8 @@
     "nodeId": "Q:sk_the_street:T00",
     "questNodeTitle": "Sk The Street",
     "title": "Sk The Street",
-    "helpRequest": true,
-    "needsHelp": true
+    "helpRequest": false,
+    "needsHelp": false
   },
   {
     "id": "38de38ee-8987-4d60-9480-0ad862374c7d",
