@@ -408,9 +408,11 @@ const PostCard: React.FC<PostCardProps> = ({
             permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
           />
         </div>
-        {isQuestBoardRequest && timestamp && (
-          <div className="text-xs text-secondary mt-1">{timestamp}</div>
-        )}
+          {isQuestBoardRequest && timestamp && (
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {timestamp}
+            </div>
+          )}
         {titleText && (
           <h3
             className="font-semibold text-lg mt-1 cursor-pointer"
@@ -480,7 +482,9 @@ const PostCard: React.FC<PostCardProps> = ({
         />
       </div>
       {isQuestBoardRequest && timestamp && (
-        <div className="text-xs text-secondary mt-1">{timestamp}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {timestamp}
+        </div>
       )}
 
       {post.linkedNodeId && post.author?.username && !isQuestBoardRequest && (
