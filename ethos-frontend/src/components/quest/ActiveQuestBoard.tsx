@@ -13,7 +13,12 @@ interface QuestWithLog extends Quest {
   lastLog?: Post;
 }
 
-const ActiveQuestBoard: React.FC = () => {
+interface ActiveQuestBoardProps {
+  /** When true, only display quests authored by the current user */
+  onlyMine?: boolean;
+}
+
+const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
   const { user } = useAuth();
   const [quests, setQuests] = useState<QuestWithLog[]>([]);
   const [loading, setLoading] = useState(false);
@@ -65,7 +70,10 @@ const ActiveQuestBoard: React.FC = () => {
           })
         );
 
-        const enriched = Object.values(questMap);
+        let enriched = Object.values(questMap);
+        if (onlyMine) {
+          enriched = enriched.filter(q => q.authorId === user?.id);
+        }
         setQuests(enriched);
       } catch (err) {
         console.warn('[ActiveQuestBoard] Failed to load quests', err);

@@ -60,7 +60,7 @@ const ProfilePage: React.FC = () => {
 
       {/* 📘 Your Quests */}
       <section className="mb-12">
-        <ActiveQuestBoard />
+        <ActiveQuestBoard onlyMine />
 
         <div className="text-right">
           <Link to={ROUTES.BOARD('active')} className="text-sm text-blue-600 underline">
