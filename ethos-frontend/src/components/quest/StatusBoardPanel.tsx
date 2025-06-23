@@ -156,7 +156,7 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
                       >
                         <SummaryTag
                           type={issue.type as 'task' | 'issue'}
-                          label={`${issue.type === 'issue' ? 'Issue' : 'Task'} - ${getQuestLinkLabel(issue, '', false)}`}
+                          label={getQuestLinkLabel(issue, '', false)}
                           link={ROUTES.POST(issue.id)}
                         />
                       </span>
