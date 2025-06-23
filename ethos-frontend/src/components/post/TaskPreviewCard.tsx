@@ -66,7 +66,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '…' : headerText;
+  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '...' : headerText;
   if (taskTag) {
     taskTag = {
       ...taskTag,
