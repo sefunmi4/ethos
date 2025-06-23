@@ -50,7 +50,13 @@ const Board: React.FC<BoardProps> = ({
   const isQuestBoard = (boardId || boardProp?.id || board?.id) === 'quest-board';
 
   const { canEditBoard } = usePermissions();
-  const { setSelectedBoard, appendToBoard, boards } = useBoardContext();
+  const {
+    setSelectedBoard,
+    appendToBoard,
+    boards,
+    expandedItemId,
+    setExpandedItemId,
+  } = useBoardContext();
   const [filterText, setFilterText] = useState('');
   const [sortKey, setSortKey] = useState<'createdAt' | 'displayTitle'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -469,6 +475,8 @@ const Board: React.FC<BoardProps> = ({
           questId={quest?.id || ''}
           boardId={board?.id}
           initialExpanded={initialExpanded}
+          expandedId={expandedItemId}
+          onExpand={setExpandedItemId}
           headerOnly={isQuestBoard || headerOnly}
           editable={editable}
           {...(resolvedStructure === 'graph' ||

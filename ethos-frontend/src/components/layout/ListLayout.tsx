@@ -19,6 +19,8 @@ interface ListLayoutProps {
   initialExpanded?: boolean;
   /** Board ID for context */
   boardId?: string;
+  expandedId?: string | null;
+  onExpand?: (id: string | null) => void;
 }
 
 const ListLayout: React.FC<ListLayoutProps> = ({
@@ -33,6 +35,8 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   headerOnly = false,
   initialExpanded = false,
   boardId,
+  expandedId,
+  onExpand,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +77,10 @@ const ListLayout: React.FC<ListLayoutProps> = ({
           headerOnly={headerOnly}
           initialShowReplies={initialExpanded}
           boardId={boardId}
+          expanded={expandedId === item.id}
+          onToggleExpand={() =>
+            onExpand?.(expandedId === item.id ? null : item.id)
+          }
         />
       ))}
       {loadingMore && <Spinner />}

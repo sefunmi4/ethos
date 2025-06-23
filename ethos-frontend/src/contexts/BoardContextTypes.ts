@@ -22,5 +22,7 @@ export interface BoardContextType {
   setBoardMeta: (meta: { id: string; title: string; layout: string }) => void;
   updateBoardGitStatus: (boardId: string, status: GitStatus) => void;
   setBoardFileTree: (boardId: string, tree: GitFileNode[]) => void;
+  expandedItemId: string | null;
+  setExpandedItemId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 

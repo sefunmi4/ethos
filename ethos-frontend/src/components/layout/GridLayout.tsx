@@ -33,6 +33,10 @@ type GridLayoutProps = {
   boardId?: string;
   /** Quest ID when rendering quest tasks */
   questId?: string;
+  /** Currently expanded item ID */
+  expandedId?: string | null;
+  /** Set expanded item ID */
+  onExpand?: (id: string | null) => void;
 };
 
 const defaultKanbanColumns = ['To Do', 'In Progress', 'Blocked', 'Done'];
@@ -44,7 +48,9 @@ const DraggableCard: React.FC<{
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   initialExpanded?: boolean;
-}> = ({ item, user, compact, onEdit, onDelete, initialExpanded }) => {
+  expandedId?: string | null;
+  onExpand?: (id: string | null) => void;
+}> = ({ item, user, compact, onEdit, onDelete, initialExpanded, expandedId, onExpand }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -68,6 +74,10 @@ const DraggableCard: React.FC<{
         onDelete={onDelete}
         initialShowReplies={initialExpanded}
         boardId={boardId}
+        expanded={expandedId === item.id}
+        onToggleExpand={() =>
+          onExpand?.(expandedId === item.id ? null : item.id)
+        }
       />
     </div>
   );
@@ -96,6 +106,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   loadingMore = false,
   initialExpanded = false,
   boardId,
+  expandedId,
+  onExpand,
+  questId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -310,6 +323,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                 onDelete={onDelete}
                 initialShowReplies={initialExpanded}
                 boardId={boardId}
+                expanded={expandedId === item.id}
+                onToggleExpand={() =>
+                  onExpand?.(expandedId === item.id ? null : item.id)
+                }
               />
             </div>
           ))}
@@ -384,6 +401,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                   onDelete={onDelete}
                   initialShowReplies={initialExpanded}
                   boardId={boardId}
+                  expanded={expandedId === item.id}
+                  onToggleExpand={() =>
+                    onExpand?.(expandedId === item.id ? null : item.id)
+                  }
                 />
               ))}
             </div>
@@ -442,16 +463,20 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       <div className="relative">
         <div ref={containerRef} className="max-h-96 overflow-y-auto space-y-4 px-2 pb-4 scroll-smooth">
           {items.map((item) => (
-            <ContributionCard
-              key={item.id}
-              contribution={item}
-              user={user}
-              compact={compact}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              initialShowReplies={initialExpanded}
-              boardId={boardId}
-            />
+          <ContributionCard
+            key={item.id}
+            contribution={item}
+            user={user}
+            compact={compact}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            initialShowReplies={initialExpanded}
+            boardId={boardId}
+            expanded={expandedId === item.id}
+            onToggleExpand={() =>
+              onExpand?.(expandedId === item.id ? null : item.id)
+            }
+          />
           ))}
           {loadingMore && <Spinner />}
         </div>
@@ -494,6 +519,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
             onDelete={onDelete}
             initialShowReplies={initialExpanded}
             boardId={boardId}
+            expanded={expandedId === item.id}
+            onToggleExpand={() =>
+              onExpand?.(expandedId === item.id ? null : item.id)
+            }
           />
         </div>
       ))}

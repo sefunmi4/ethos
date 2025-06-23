@@ -26,6 +26,10 @@ interface ContributionCardProps {
   initialShowReplies?: boolean;
   /** Board ID where this contribution is rendered */
   boardId?: string;
+  /** Whether this card is expanded */
+  expanded?: boolean;
+  /** Callback when expansion toggled */
+  onToggleExpand?: () => void;
 }
 
 const ContributionCard: React.FC<ContributionCardProps> = ({
@@ -39,6 +43,8 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   headerOnly = false,
   initialShowReplies = false,
   boardId,
+  expanded,
+  onToggleExpand,
 }) => {
   if (!contribution) return null;
 
@@ -49,7 +55,18 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
     return null;
   }
 
-  const sharedProps = { user, compact, onEdit, onDelete, showStatusControl, headerOnly, initialShowReplies, boardId };
+  const sharedProps = {
+    user,
+    compact,
+    onEdit,
+    onDelete,
+    showStatusControl,
+    headerOnly,
+    initialShowReplies,
+    boardId,
+    expanded,
+    onToggleExpand,
+  };
 
   // ✅ Render Post types
   if ('type' in contribution) {
@@ -113,6 +130,8 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
         quest={quest}
         user={user}
         compact={compact}
+        expanded={expanded}
+        onToggleExpand={onToggleExpand}
         onEdit={onEdit ? () => onEdit(quest.id) : undefined}
         onDelete={onDelete ? (q) => onDelete(q.id) : undefined}
       />

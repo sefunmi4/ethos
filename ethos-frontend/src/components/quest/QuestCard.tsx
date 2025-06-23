@@ -39,6 +39,10 @@ interface QuestCardProps {
   defaultExpanded?: boolean;
   /** Hide the built-in expand/collapse toggle button */
   hideToggle?: boolean;
+  /** Controlled expanded state */
+  expanded?: boolean;
+  /** Callback when expand toggled */
+  onToggleExpand?: () => void;
 }
 
 const QuestCard: React.FC<QuestCardProps> = ({
@@ -50,9 +54,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
   onCancel,
   defaultExpanded = false,
   hideToggle = false,
+  expanded: expandedProp,
+  onToggleExpand,
 }) => {
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('file');
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
@@ -65,6 +71,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
   const navigate = useNavigate();
+
+  const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
 
   const rankTag = questData.tags?.find(t => t.toLowerCase().startsWith('rank:'));
   const difficultyTag = questData.tags?.find(t => t.toLowerCase().startsWith('difficulty:'));
@@ -221,10 +229,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
           <Button
             variant="ghost"
             onClick={() => {
-              if (expanded) {
-                setExpanded(false);
+              if (onToggleExpand) {
+                onToggleExpand();
               } else {
-                setExpanded(true);
+                setInternalExpanded((prev) => !prev);
+              }
+              if (!expanded) {
                 setActiveTab('file');
                 setMapMode('folder');
               }
