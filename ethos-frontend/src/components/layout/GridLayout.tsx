@@ -18,6 +18,7 @@ import type { User } from '../../types/userTypes';
 import { Spinner } from '../ui';
 import QuickTaskForm from '../post/QuickTaskForm';
 
+import { ErrorBoundary } from '../ui';
 type GridLayoutProps = {
   items: Post[];
   user?: User;
@@ -50,7 +51,8 @@ const DraggableCard: React.FC<{
   initialExpanded?: boolean;
   expandedId?: string | null;
   onExpand?: (id: string | null) => void;
-}> = ({ item, user, compact, onEdit, onDelete, initialExpanded, expandedId, onExpand }) => {
+  boardId?: string;
+}> = ({ item, user, compact, onEdit, onDelete, initialExpanded, expandedId, onExpand, boardId }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -273,15 +275,16 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               </h3>
               <DroppableColumn id={col}>
                 {grouped[col].map((item) => (
-                  <DraggableCard
-                    key={item.id}
-                    item={item}
-                    user={user}
-                    compact={true}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    boardId={boardId}
-                  />
+                  <ErrorBoundary key={item.id}>
+                    <DraggableCard
+                      item={item}
+                      user={user}
+                      compact={true}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      boardId={boardId}
+                    />
+                  </ErrorBoundary>
                 ))}
               </DroppableColumn>
             </div>
