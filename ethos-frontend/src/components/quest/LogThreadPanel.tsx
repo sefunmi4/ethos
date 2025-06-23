@@ -29,15 +29,16 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({ questId, node, user, on
     setLoading(true);
     fetchPostsByQuestId(questId)
       .then((posts) => {
-        const tasks = posts.filter(
-          (p) => p.type === 'task' && p.replyTo === node.id,
+        const logs = posts.filter((p) =>
+          (p.type === 'log' || p.type === 'quest_log') &&
+          (!node.replyTo ? true : p.replyTo === node.id)
         );
-        tasks.sort((a, b) => {
+        logs.sort((a, b) => {
           const aTime = a.createdAt || a.timestamp;
           const bTime = b.createdAt || b.timestamp;
           return aTime.localeCompare(bTime);
         });
-        setEntries(tasks);
+        setEntries(logs);
       })
       .catch((err) => console.error('[LogThreadPanel] load failed', err))
       .finally(() => setLoading(false));
