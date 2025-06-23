@@ -23,6 +23,7 @@ interface QuestNodeInspectorProps {
   status?: QuestTaskStatus;
   onStatusChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onUpdate?: (p: Post) => void;
+  hideSelects?: boolean;
 }
 
 const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
@@ -34,6 +35,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   status,
   onStatusChange,
   onUpdate,
+  hideSelects = false,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
@@ -169,7 +171,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     <div className="flex flex-col h-full">
       <div className="p-2 space-y-2 flex-1 overflow-auto">
         {showPost && <PostCard post={node} user={user} questId={questId} />}
-        {node.type === 'task' && (
+        {node.type === 'task' && !hideSelects && (
           <div className="space-y-2">
             <Select
               id="task-type"
