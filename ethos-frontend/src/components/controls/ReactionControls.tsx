@@ -20,7 +20,7 @@ import {
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
 import QuestCard from '../quest/QuestCard';
-import TaskCard from '../quest/TaskCard';
+import TaskGraphSidePanel from '../quest/TaskGraphSidePanel';
 import { fetchQuestById } from '../../api/quest';
 import {
   updateReaction,
@@ -386,9 +386,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       )}
 
       {showTaskGraph && post.type === 'task' && post.questId && (
-        <div className="mt-3">
-          <TaskCard task={post} questId={post.questId} user={user} />
-        </div>
+        <TaskGraphSidePanel
+          task={post}
+          questId={post.questId}
+          user={user}
+          onClose={() => setShowTaskGraph(false)}
+        />
       )}
 
 
