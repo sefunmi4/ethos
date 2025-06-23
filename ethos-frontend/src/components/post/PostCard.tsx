@@ -399,7 +399,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <button
-              className="flex items-center gap-1 text-secondary"
+              className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
               onClick={() => setExpandedView(prev => !prev)}
             >
               {expandedView ? <FaCompress /> : <FaExpand />}{' '}
@@ -481,7 +481,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <button
-            className="flex items-center gap-1 text-secondary"
+            className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
             onClick={() => setExpandedView(prev => !prev)}
           >
             {expandedView ? <FaCompress /> : <FaExpand />}{' '}
