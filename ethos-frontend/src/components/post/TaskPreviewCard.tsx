@@ -6,6 +6,7 @@ import type { option } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
+import { updatePost } from '../../api/post';
 
 interface TaskPreviewCardProps {
   post: Post;
@@ -30,15 +31,37 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate, summa
   const role = roleTag ? roleTag.split(':')[1] : undefined;
   const minRank = rankTag ? rankTag.split(':')[1] : undefined;
   const headerText = post.questNodeTitle || makeHeader(post.content);
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const val = e.target.value as QuestTaskStatus;
     setStatus(val);
     onUpdate?.({ ...post, status: val });
+    try {
+      const updated = await updatePost(post.id, { status: val });
+      onUpdate?.(updated);
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: updated } })
+      );
+    } catch (err) {
+      console.error('[TaskPreviewCard] Failed to update status', err);
+    }
   };
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTypeChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const val = e.target.value as 'file' | 'folder' | 'abstract';
     setTaskType(val);
     onUpdate?.({ ...post, taskType: val });
+    try {
+      const updated = await updatePost(post.id, { taskType: val });
+      onUpdate?.(updated);
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: updated } })
+      );
+    } catch (err) {
+      console.error('[TaskPreviewCard] Failed to update task type', err);
+    }
   };
 
   const summaryTags = buildSummaryTags(post);
