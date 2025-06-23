@@ -22,6 +22,7 @@ import { getRank } from '../../utils/rankUtils';
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 import LogThreadPanel from './LogThreadPanel';
 import QuickTaskForm from '../post/QuickTaskForm';
+import TeamPanel from './TeamPanel';
 
 
 /**
@@ -49,7 +50,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   defaultExpanded = false,
 }) => {
   const [mapMode, setMapMode] = useState<'folder' | 'graph'>('graph');
-  const [activeTab, setActiveTab] = useState<'logs' | 'file'>('logs');
+  const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [questData, setQuestData] = useState<Quest>(quest);
   const [logs, setLogs] = useState<Post[]>([]);
@@ -87,6 +88,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           ? 'Folder'
           : 'Planner',
     },
+    { value: 'team', label: 'Team' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -119,6 +121,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
       setShowLinkEditor(false);
     } catch (err) {
       console.error("[QuestCard] Failed to save links:", err);
+    }
+  };
+
+  const handleSelectedNodeUpdate = (updated: Post) => {
+    setSelectedNode(updated);
+    setLogs(prev => prev.map(p => (p.id === updated.id ? { ...p, ...updated } : p)));
+    if (rootNode?.id === updated.id) {
+      setRootNode(updated);
     }
   };
 
@@ -282,36 +292,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <div className="space-y-2">
         {selectedNode && (
           <div className="space-y-2">
-            <TaskPreviewCard post={selectedNode} />
-            <hr className="border-secondary" />
-            {showTaskForm && (
-              <CreatePost
-                initialType="task"
-                questId={quest.id}
-                boardId={`map-${quest.id}`}
-                replyTo={selectedNode}
-                onSave={(p) => {
-                  setLogs((prev) => [...prev, p]);
-                  setShowTaskForm(false);
-                }}
-                onCancel={() => setShowTaskForm(false)}
-              />
-            )}
-            <div className="text-right">
-              {canEdit ? (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={() => setShowTaskForm(true)}
-                >
-                  Add Subtask
-                </Button>
-              ) : (
-                <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-                  Request to Join
-                </Button>
-              )}
-            </div>
+            <TaskPreviewCard post={selectedNode} onUpdate={handleSelectedNodeUpdate} />
           </div>
         )}
         <div className="flex justify-between items-center text-sm">
@@ -428,6 +409,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
         break;
       case 'file':
         panel = renderFileView();
+        break;
+      case 'team':
+        panel = selectedNode || rootNode ? (
+          <TeamPanel questId={quest.id} node={selectedNode || (rootNode as Post)} />
+        ) : (
+          <div className="p-2 text-sm">Select a task</div>
+        );
         break;
       default:
         panel = null;
