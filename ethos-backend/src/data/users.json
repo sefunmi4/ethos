@@ -1,29 +1,2 @@
 [
-  {
-    "id": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
-    "username": "swift_tiger_4291",
-    "email": "testerbot1@ethos.com",
-    "password": "$2b$10$UmS/E4f5sWlajbkZFSebh.YczGgQllL9wvHulSqFyd1/2FD/w1ksa",
-    "role": "user",
-    "tags": [
-      "explorer"
-    ],
-    "bio": "",
-    "links": {
-      "github": "",
-      "linkedin": "",
-      "tiktok": "",
-      "website": ""
-    },
-    "xp": 0,
-    "experienceTimeline": [
-      {
-        "datetime": "2025-06-23T00:00:58.370Z",
-        "title": "Journey begins",
-        "tags": [
-          "registered"
-        ]
-      }
-    ]
-  }
 ]
