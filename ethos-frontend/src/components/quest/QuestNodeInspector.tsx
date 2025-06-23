@@ -31,6 +31,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'logs' | 'file' | 'team'>('logs');
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const [boardOpen, setBoardOpen] = useState(true);
   const { loadGraph } = useGraph();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
     setType(val);
+    setActiveTab('file');
     if (node) {
       try {
         await updatePost(node.id, { taskType: val });
@@ -64,7 +66,8 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     { value: 'team', label: 'Team' },
   ];
 
-  const handleAddSubtask = () => {
+  const handleAddSubtask = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setShowSubtaskForm((p) => !p);
   };
 
@@ -76,11 +79,42 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     case 'file':
       panel = (
         <div className="space-y-2">
-          <TaskKanbanBoard
-            questId={questId}
-            linkedNodeId={node.id}
-            user={user}
-          />
+          <div className="border border-secondary rounded">
+            <div
+              className="flex items-center justify-between p-2 bg-soft cursor-pointer"
+              onClick={() => setBoardOpen((p) => !p)}
+            >
+              <span className="font-semibold text-sm">Status Board</span>
+              <button
+                onClick={handleAddSubtask}
+                className="ml-auto text-xs text-accent underline"
+              >
+                {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
+              </button>
+            </div>
+            {boardOpen && (
+              <div className="p-2 space-y-2">
+                {showSubtaskForm && (
+                  <QuickTaskForm
+                    questId={questId}
+                    parentId={node.id}
+                    boardId={`task-${node.id}`}
+                    allowIssue
+                    onSave={() => {
+                      setShowSubtaskForm(false);
+                      loadGraph(questId);
+                    }}
+                    onCancel={() => setShowSubtaskForm(false)}
+                  />
+                )}
+                <TaskKanbanBoard
+                  questId={questId}
+                  linkedNodeId={node.id}
+                  user={user}
+                />
+              </div>
+            )}
+          </div>
           {type === 'file' && (
             <FileEditorPanel
               questId={questId}
@@ -124,30 +158,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               {t.label}
             </button>
           ))}
-        {activeTab === 'file' && (
-          <button
-            onClick={handleAddSubtask}
-            className="ml-auto px-2 text-accent underline whitespace-nowrap"
-          >
-            {showSubtaskForm ? '- Cancel Item' : '+ Add Item'}
-          </button>
-        )}
       </div>
-        {showSubtaskForm && activeTab === 'file' && (
-          <div className="mt-2">
-            <QuickTaskForm
-              questId={questId}
-              parentId={node.id}
-              boardId={`task-${node.id}`}
-              allowIssue
-              onSave={() => {
-                setShowSubtaskForm(false);
-                loadGraph(questId);
-              }}
-              onCancel={() => setShowSubtaskForm(false)}
-            />
-          </div>
-        )}
         <div className="mt-2">{panel}</div>
       </div>
     </div>

@@ -283,34 +283,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
         {selectedNode && (
           <div className="space-y-2">
             <TaskPreviewCard post={selectedNode} />
-            {showTaskForm && (
-              <CreatePost
-                initialType="task"
-                questId={quest.id}
-                boardId={`map-${quest.id}`}
-                replyTo={selectedNode}
-                onSave={(p) => {
-                  setLogs((prev) => [...prev, p]);
-                  setShowTaskForm(false);
-                }}
-                onCancel={() => setShowTaskForm(false)}
-              />
-            )}
-            <div className="text-right">
-              {canEdit ? (
-                <Button
-                  size="sm"
-                  variant="contrast"
-                  onClick={() => setShowTaskForm(true)}
-                >
-                  Add Subtask
-                </Button>
-              ) : (
-                <Button size="sm" variant="contrast" onClick={handleJoinRequest}>
-                  Request to Join
-                </Button>
-              )}
-            </div>
           </div>
         )}
         <hr className="border-secondary" />
@@ -339,7 +311,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
             </button>
           </div>
         </div>
-        <div className="h-80 overflow-auto" data-testid="quest-map-canvas">
+        <hr className="border-secondary" />
+        <div className="h-60 overflow-auto" data-testid="quest-map-canvas">
           {canvas}
         </div>
       </div>
