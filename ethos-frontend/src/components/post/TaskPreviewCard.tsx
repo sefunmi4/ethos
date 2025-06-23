@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { option } from '../../constants/options';
@@ -10,6 +11,11 @@ interface TaskPreviewCardProps {
   post: Post;
   onUpdate?: (updated: Post) => void;
 }
+
+const makeHeader = (content: string): string => {
+  const text = content.trim();
+  return text.length <= 50 ? text : text.slice(0, 50) + '…';
+};
 
 const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => {
   const [status, setStatus] = useState<QuestTaskStatus>(post.status || 'To Do');
@@ -33,22 +39,29 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({ post, onUpdate }) => 
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  if (!taskTag && post.nodeId) {
+  if (!taskTag) {
+    const label = post.nodeId ? `Task: ${post.nodeId}` : 'Task';
     taskTag = {
       type: 'task',
-      label: `Task: ${post.nodeId}`,
+      label,
       detailLink: ROUTES.POST(post.id),
     } as any;
   }
 
+  const headerText = post.questNodeTitle || makeHeader(post.content);
+
   return (
     <div className="border border-secondary rounded bg-surface p-2 text-xs space-y-1">
-      <div className="font-semibold text-sm">{post.content}</div>
       {taskTag && (
         <div className="flex flex-wrap gap-1">
           <SummaryTag {...taskTag} />
         </div>
       )}
+      <div className="font-semibold text-sm truncate">
+        <Link to={ROUTES.POST(post.id)} className="hover:underline">
+          {headerText}
+        </Link>
+      </div>
       {post.gitFilePath && (
         <div className="text-secondary">{post.gitFilePath}</div>
       )}
