@@ -58,7 +58,7 @@ export const getQuestLinkLabel = (
   }
 
   // 📌 Nested log reply (log inside log, or deeper)
-  if (isLog && isReply && node?.startsWith("Tx")) {
+  if (isLog && isReply && node?.startsWith("T")) {
     return `${quest}:${node}:L${suffix}`;
   }
 
