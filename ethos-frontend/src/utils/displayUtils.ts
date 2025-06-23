@@ -33,41 +33,34 @@ export const getQuestLinkLabel = (
   questName?: string,
   includeQuestName = false,
 ): string => {
-  let quest = "Q";
+  let quest = 'Q';
   if (questName !== undefined) {
-    quest += ":";
+    quest += ':';
     if (includeQuestName && questName) {
       quest += questName;
     }
   }
-  const node = post.nodeId?.trim();
+
+  // Strip quest slug from nodeId so labels like `Q::T00:L00` work
+  let path = post.nodeId?.trim() || '';
+  if (path.startsWith('Q:')) {
+    path = path.split(':').slice(2).join(':');
+  }
+
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
-  const isLog = post.type === "log";
-  const isTask = post.type === "task";
-  const isReply = !!post.replyTo;
+  const isLog = post.type === 'log' || post.type === 'quest_log';
+  const isTask = post.type === 'task';
 
-  // 📌 Log post in timeline view
-  if (isLog && !post.replyTo && !node) {
-    return `${quest}:L${suffix}`;
+  if (isLog) {
+    // If nodeId exists use it, otherwise fall back to generated suffix
+    return path ? `${quest}:${path}` : `${quest}:L${suffix}`;
   }
 
-  // 📌 Log reply in timeline view
-  if (isLog && isReply && node) {
-    return `${quest}:${node}:L${suffix}`;
+  if (isTask && path) {
+    return `${quest}:${path}`;
   }
 
-  // 📌 Nested log reply (log inside log, or deeper)
-  if (isLog && isReply && node?.startsWith("T")) {
-    return `${quest}:${node}:L${suffix}`;
-  }
-
-  // 📌 Generic task with ancestry or chain
-  if (isTask && node) {
-    return `${quest}:${node}`;
-  }
-
-  // 📌 Fallback for anything else
   return `${quest}:${suffix}`;
 };
 
