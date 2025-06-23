@@ -26,6 +26,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [, setBoardMetaState] = useState<{ id: string; title: string; layout: string } | null>(null);
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
   const setBoardMeta = useCallback(
     (meta: { id: string; title: string; layout: string }) => {
@@ -175,6 +176,8 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setBoardMeta,
     updateBoardGitStatus,
     setBoardFileTree,
+    expandedItemId,
+    setExpandedItemId,
   };
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;

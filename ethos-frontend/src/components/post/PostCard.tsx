@@ -71,6 +71,10 @@ interface PostCardProps {
   showDetails?: boolean;
   /** Board ID where this post is being rendered */
   boardId?: string;
+  /** Controlled expanded state */
+  expanded?: boolean;
+  /** Callback when expand toggled */
+  onToggleExpand?: () => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -89,6 +93,8 @@ const PostCard: React.FC<PostCardProps> = ({
   initialShowReplies = false,
   showDetails = false,
   boardId,
+  expanded,
+  onToggleExpand,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -112,7 +118,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [linkExpanded, setLinkExpanded] = useState(false);
-  const [expandedView, setExpandedView] = useState(false);
+  const [internalExpandedView, setInternalExpandedView] = useState(false);
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -128,6 +134,8 @@ const PostCard: React.FC<PostCardProps> = ({
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
       ? 'max-w-xl'
       : 'max-w-prose';
+
+  const expandedView = expanded !== undefined ? expanded : internalExpandedView;
 
   const isQuestBoardRequest =
     post.type === 'request' && ctxBoardId === 'quest-board';
@@ -410,7 +418,9 @@ const PostCard: React.FC<PostCardProps> = ({
             {['task', 'quest'].includes(post.type) && (
               <button
                 className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-                onClick={() => setExpandedView(prev => !prev)}
+                onClick={() =>
+                  onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
+                }
               >
                 {expandedView ? <FaCompress /> : <FaExpand />}{' '}
                 {expandedView ? 'Collapse View' : 'Expand View'}
@@ -450,7 +460,9 @@ const PostCard: React.FC<PostCardProps> = ({
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
           expanded={expandedView}
-          onToggleExpand={() => setExpandedView(prev => !prev)}
+          onToggleExpand={() =>
+            onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
+          }
         />
       </div>
     );
@@ -498,7 +510,9 @@ const PostCard: React.FC<PostCardProps> = ({
           {['task', 'quest'].includes(post.type) && (
             <button
               className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-              onClick={() => setExpandedView(prev => !prev)}
+              onClick={() =>
+                onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
+              }
             >
               {expandedView ? <FaCompress /> : <FaExpand />}{' '}
               {expandedView ? 'Collapse View' : 'Expand View'}
@@ -618,7 +632,9 @@ const PostCard: React.FC<PostCardProps> = ({
         boardId={ctxBoardId || undefined}
         timestamp={!isQuestBoardRequest ? timestamp : undefined}
         expanded={expandedView}
-        onToggleExpand={() => setExpandedView(prev => !prev)}
+        onToggleExpand={() =>
+          onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
+        }
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }
