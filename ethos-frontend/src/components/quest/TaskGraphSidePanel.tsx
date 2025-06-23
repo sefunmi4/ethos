@@ -3,6 +3,7 @@ import GraphLayout from '../layout/GraphLayout';
 import { useGraph } from '../../hooks/useGraph';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import QuestNodeInspector from './QuestNodeInspector';
+import { ROUTES } from '../../constants/routes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
@@ -64,6 +65,11 @@ const TaskGraphSidePanel: React.FC<TaskGraphSidePanelProps> = ({ task, questId, 
               showInspector={false}
               showStatus={false}
               onSelectNode={setSelected}
+              onNodeClick={(n) => {
+                if (n.id !== task.id) {
+                  window.location.assign(ROUTES.POST(n.id));
+                }
+              }}
             />
           </div>
         </div>

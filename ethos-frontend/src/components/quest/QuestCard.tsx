@@ -16,6 +16,7 @@ import ActionMenu from '../ui/ActionMenu';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
+import GitFileBrowserInline from '../git/GitFileBrowserInline';
 import { getRank } from '../../utils/rankUtils';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
@@ -355,6 +356,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
     return (
       <div className="space-y-2 p-2">
         <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
+        {selectedNode.taskType === 'file' && (
+          <GitFileBrowserInline questId={quest.id} />
+        )}
         <FileEditorPanel
           questId={quest.id}
           filePath={selectedNode.gitFilePath || 'file.txt'}

@@ -29,6 +29,8 @@ interface GraphLayoutProps {
   showInspector?: boolean;
   /** Notify parent when a node is selected */
   onSelectNode?: (n: Post) => void;
+  /** Custom handler when a node is clicked */
+  onNodeClick?: (n: Post) => void;
   /** Notify parent when edges change */
   onEdgesChange?: (edges: TaskEdge[]) => void;
   onScrollEnd?: () => void;
@@ -65,6 +67,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   showStatus = true,
   showInspector = true,
   onSelectNode,
+  onNodeClick,
   onEdgesChange,
   onScrollEnd,
   loadingMore = false,
@@ -360,6 +363,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
             onFocus={handleNodeFocus}
             selectedNode={selectedNode}
             onSelect={handleNodeClick}
+            onNodeClick={onNodeClick}
             onRemoveEdge={handleRemoveEdge}
             diffData={diffData}
             diffLoading={diffLoading}
