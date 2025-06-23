@@ -400,6 +400,9 @@ const PostCard: React.FC<PostCardProps> = ({
             permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
           />
         </div>
+        {isQuestBoardRequest && timestamp && (
+          <div className="text-xs text-secondary mt-1">{timestamp}</div>
+        )}
         {titleText && (
           <h3
             className="font-semibold text-lg mt-1 cursor-pointer"
@@ -413,7 +416,7 @@ const PostCard: React.FC<PostCardProps> = ({
             post={post}
             user={user}
             onUpdate={onUpdate}
-            timestamp={timestamp}
+            timestamp={!isQuestBoardRequest ? timestamp : undefined}
             replyOverride={replyOverride}
             boardId={ctxBoardId || undefined}
           />
@@ -468,6 +471,9 @@ const PostCard: React.FC<PostCardProps> = ({
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />
       </div>
+      {isQuestBoardRequest && timestamp && (
+        <div className="text-xs text-secondary mt-1">{timestamp}</div>
+      )}
 
       {post.linkedNodeId && post.author?.username && !isQuestBoardRequest && (
         <div className="text-xs text-secondary italic">
@@ -562,7 +568,7 @@ const PostCard: React.FC<PostCardProps> = ({
         onUpdate={onUpdate}
         replyOverride={replyOverride}
         boardId={ctxBoardId || undefined}
-        timestamp={timestamp}
+        timestamp={!isQuestBoardRequest ? timestamp : undefined}
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }
