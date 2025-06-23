@@ -295,7 +295,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <TaskPreviewCard post={selectedNode} onUpdate={handleSelectedNodeUpdate} />
           </div>
         )}
-        <hr className="border-secondary" />
         <div className="flex justify-between items-center text-sm">
           <div className="flex gap-1">
             <span className="font-semibold">View: </span>
@@ -322,7 +321,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
           </div>
         </div>
         <hr className="border-secondary" />
-        <div className="h-60 overflow-auto" data-testid="quest-map-canvas">
+        <hr className="border-secondary" />
+        <div className="h-64 overflow-auto" data-testid="quest-map-canvas">
           {canvas}
         </div>
       </div>
