@@ -16,6 +16,7 @@ import {
   createFile,
   updateFile,
   downloadRepo,
+  uploadRepoItem,
 } from '../services/gitService';
 import type { AuthenticatedRequest } from '../types/express';
 
@@ -249,6 +250,23 @@ router.put('/files', authMiddleware, async (
   } catch (err) {
     error('[GIT UPDATE FILE ERROR]', err);
     res.status(500).json({ error: 'Failed to update file' });
+  }
+});
+
+//
+// ✅ POST /api/git/upload
+// Create a file or folder and commit the change
+router.post('/upload', authMiddleware, async (
+  req: AuthenticatedRequest<{}, any, { questId: string; filePath: string; content?: string; isFolder?: boolean; message?: string }>,
+  res: Response
+): Promise<void> => {
+  const { questId, filePath, content = '', isFolder = false, message = 'upload' } = req.body;
+  try {
+    const repo = await uploadRepoItem(questId, filePath, content, isFolder, message);
+    res.json(repo);
+  } catch (err) {
+    error('[GIT UPLOAD ERROR]', err);
+    res.status(500).json({ error: 'Failed to upload item' });
   }
 });
 

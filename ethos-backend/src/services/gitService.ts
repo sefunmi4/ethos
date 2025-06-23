@@ -305,3 +305,30 @@ export async function getCommits(questId: string): Promise<any[]> {
     author: { id: c.author_email, username: c.author_name },
   }));
 }
+
+export async function commitRepo(
+  questId: string,
+  message: string,
+  filePaths: string[] = ['.']
+): Promise<GitRepo> {
+  const repoDir = ensureRepoDir(questId);
+  const git = simpleGit(repoDir);
+  await git.add(filePaths);
+  await git.commit(message);
+  return (await getQuestRepoMeta(questId)) as GitRepo;
+}
+
+export async function uploadRepoItem(
+  questId: string,
+  filePath: string,
+  content: string,
+  isFolder: boolean,
+  message: string
+): Promise<GitRepo> {
+  if (isFolder) {
+    await createFolder(questId, filePath);
+  } else {
+    await createFile(questId, filePath, content);
+  }
+  return commitRepo(questId, message, [filePath]);
+}

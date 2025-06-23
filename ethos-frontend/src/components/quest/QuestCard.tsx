@@ -180,7 +180,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       const node = logs.find((p) => p.id === evt.detail.taskId);
       if (node) {
         setSelectedNode(node);
-        setActiveTab('logs');
+        setActiveTab('file');
       }
     };
     window.addEventListener('questTaskOpen', handleTaskOpen);
@@ -225,7 +225,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 setExpanded(false);
               } else {
                 setExpanded(true);
-                setActiveTab('logs');
+                setActiveTab('file');
                 setMapMode('folder');
               }
             }}

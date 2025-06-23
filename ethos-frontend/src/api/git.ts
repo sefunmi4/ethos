@@ -118,6 +118,23 @@ export const updateRepoFile = async (
   return res.data;
 };
 
+export const uploadRepoItem = async (
+  questId: string,
+  filePath: string,
+  content: string,
+  isFolder = false,
+  message = 'upload'
+): Promise<GitRepoMeta> => {
+  const res = await axiosWithAuth.post(`/git/upload`, {
+    questId,
+    filePath,
+    content,
+    isFolder,
+    message,
+  });
+  return res.data;
+};
+
 export const downloadRepo = async (questId: string): Promise<Blob> => {
   const res = await axiosWithAuth.get(`/git/download/${questId}`, {
     responseType: 'blob',

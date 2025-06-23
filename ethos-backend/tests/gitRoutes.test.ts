@@ -86,4 +86,23 @@ describe('git routes real operations', () => {
     expect(diff.status).toBe(200);
     expect(diff.body.diffMarkdown).toContain('file.txt');
   });
+
+  it('uploads file and commits', async () => {
+    await request(app)
+      .post('/git/connect')
+      .send({ questId: 'q4', repoUrl: baseRepo, branch: 'main' });
+
+    const res = await request(app)
+      .post('/git/upload')
+      .send({
+        questId: 'q4',
+        filePath: 'new.txt',
+        content: 'hello',
+        message: 'add new.txt',
+      });
+    expect(res.status).toBe(200);
+    const git = simpleGit(path.join(reposRoot, 'q4'));
+    const log = await git.log({ maxCount: 1 });
+    expect(log.latest?.message).toBe('add new.txt');
+  });
 });
