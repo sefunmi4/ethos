@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Input, Select, Button } from '../ui';
-import type { option } from '../../constants/options';
+import { POST_TYPES, type option } from '../../constants/options';
 
 export interface FilterState {
   search: string;
@@ -27,9 +27,7 @@ const STATUS_OPTIONS: option[] = [
 
 const POST_TYPE_OPTIONS: option[] = [
   { value: '', label: 'All Types' },
-  { value: 'request', label: 'Request' },
-  { value: 'quest_log', label: 'Quest Log' },
-  { value: 'deliverable', label: 'Deliverable' },
+  ...POST_TYPES,
 ];
 
 const ROLE_OPTIONS: option[] = [
@@ -45,19 +43,14 @@ const SORT_OPTIONS: option[] = [
   { value: 'trending', label: 'Trending' },
 ];
 
-const VIEW_OPTIONS: option[] = [
-  { value: 'grid', label: 'Grid' },
-  { value: 'list', label: 'List' },
-];
-
-const DEFAULT_FILTERS: FilterState = {
+export const DEFAULT_FILTERS: FilterState = {
   search: '',
   tags: [],
   status: '',
   postType: '',
   role: '',
   sortBy: 'recent',
-  view: 'grid',
+  view: 'list',
 };
 
 const STORAGE_KEY = 'boardFilters';
@@ -158,11 +151,6 @@ const BoardSearchFilter: React.FC<BoardSearchFilterProps> = ({
             value={filters.sortBy}
             onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
             options={SORT_OPTIONS}
-          />
-          <Select
-            value={filters.view}
-            onChange={(e) => setFilters({ ...filters, view: e.target.value as 'grid' | 'list' })}
-            options={VIEW_OPTIONS}
           />
         </div>
       )}

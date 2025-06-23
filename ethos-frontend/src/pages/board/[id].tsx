@@ -8,7 +8,10 @@ import { useSocket } from '../../hooks/useSocket';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
 import Board from '../../components/board/Board';
-import BoardSearchFilter from '../../components/board/BoardSearchFilter';
+import BoardSearchFilter, {
+  DEFAULT_FILTERS,
+  type FilterState,
+} from '../../components/board/BoardSearchFilter';
 import { Spinner } from '../../components/ui';
 import { toTitleCase } from '../../utils/displayUtils';
 
@@ -31,7 +34,7 @@ const BoardPage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
   const loadQuest = useCallback(async (questId: string) => {
     try {
@@ -129,7 +132,7 @@ const BoardPage: React.FC = () => {
           <BoardSearchFilter
             tags={availableTags}
             className="md:w-64"
-            onChange={(f) => setView(f.view)}
+            onChange={setFilters}
           />
         )}
         <div className="flex-1">
@@ -157,11 +160,12 @@ const BoardPage: React.FC = () => {
               <Board
                 boardId={id}
                 board={boardData}
-                layout={view}
+                layout="list"
                 quest={quest || undefined}
                 editable={editable}
                 showCreate={editable}
                 hideControls
+                filter={filters}
                 onScrollEnd={loadMore}
                 loading={loadingMore}
               />

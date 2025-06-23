@@ -8,7 +8,10 @@ import { ROUTES } from '../constants/routes';
 
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
-import BoardSearchFilter from '../components/board/BoardSearchFilter';
+import BoardSearchFilter, {
+  DEFAULT_FILTERS,
+  type FilterState,
+} from '../components/board/BoardSearchFilter';
 import { Spinner } from '../components/ui';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 
@@ -29,7 +32,7 @@ const ProfilePage: React.FC = () => {
     isLoading: loadingPosts,
   } = useBoard('my-posts', { pageSize: 1000 });
 
-  const [view, setView] = useState<'grid' | 'list'>('list');
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
 
   useSocketListener('board:update', (updatedBoard: BoardData) => {
@@ -77,15 +80,16 @@ const ProfilePage: React.FC = () => {
           <Spinner />
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
-            <BoardSearchFilter className="md:w-64" onChange={(f) => setView(f.view)} />
+            <BoardSearchFilter className="md:w-64" onChange={setFilters} />
             <div className="flex-1">
               <Board
                 boardId="my-posts"
                 board={userPostBoard}
-                layout={view}
+                layout="list"
                 user={castUser}
                 compact
                 hideControls
+                filter={filters}
                 headerOnly
               />
               {userPostBoard?.enrichedItems?.length === 0 && (
