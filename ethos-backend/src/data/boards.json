@@ -6,6 +6,8 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
+      "095b267a-4b60-4b29-af53-f21869fa77f6",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d",
       "fc1843cf-5378-4bc7-862d-294e25f1dcc0"
     ],
@@ -20,7 +22,9 @@
     "description": "Personal quests board.",
     "boardType": "quest",
     "layout": "grid",
-    "items": [],
+    "items": [
+      "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9"
+    ],
     "defaultFor": null,
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
@@ -33,6 +37,7 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d"
     ],
     "featured": true,
@@ -48,6 +53,9 @@
     "boardType": "post",
     "layout": "grid",
     "items": [
+      "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+      "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda",
+      "095b267a-4b60-4b29-af53-f21869fa77f6",
       "f15b3200-12d9-4a8d-8690-789ee7c0127d",
       "fc1843cf-5378-4bc7-862d-294e25f1dcc0"
     ],
@@ -56,5 +64,20 @@
     "createdAt": "2025-06-07T00:00:00Z",
     "userId": "system",
     "category": "default"
+  },
+  {
+    "id": "map-b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9",
+    "title": "Ethos Map",
+    "description": "",
+    "boardType": "map",
+    "layout": "graph",
+    "items": [
+      "b7dbc8ed-06cf-4583-b8bd-f4fa2fa77fda"
+    ],
+    "filters": {},
+    "featured": false,
+    "createdAt": "2025-06-23T00:41:04.504Z",
+    "userId": "u_b8f0178b-ce37-45f8-b2da-5bfb1c3de132",
+    "questId": "b1391474-5ec4-4e05-8f1f-19ea7fcb8fc9"
   }
 ]
