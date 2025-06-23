@@ -78,7 +78,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [showLinkEditor, setShowLinkEditor] = useState(false);
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
-  const [statusVal, setStatusVal] = useState<QuestTaskStatus>('To Do');
   const [showChecklist, setShowChecklist] = useState(false);
   const [showFolderView, setShowFolderView] = useState(false);
   const navigate = useNavigate();
@@ -185,19 +184,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     }
   };
 
-  const handleStatusSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (!selectedNode) return;
-    const val = e.target.value as QuestTaskStatus;
-    setStatusVal(val);
-    setSelectedNode({ ...selectedNode, status: val });
-    setLogs(prev => prev.map(p => (p.id === selectedNode.id ? { ...p, status: val } : p)));
-    try {
-      const updated = await updatePost(selectedNode.id, { status: val });
-      handleSelectedNodeUpdate(updated);
-    } catch (err) {
-      console.error('[QuestCard] Failed to update status', err);
-    }
-  };
 
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
@@ -266,6 +252,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
   useEffect(() => {
     setStatusVal(selectedNode?.status || 'To Do');
   }, [selectedNode?.status]);
+
 
 
 
@@ -390,12 +377,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
     const children = logs.filter((p) => childIds.includes(p.id));
     const isFolder = selectedNode.id === rootNode?.id || children.length > 0;
 
-    const statusSelect = (
-      <Select
-        value={statusVal}
-        onChange={handleStatusSelect}
-        options={STATUS_OPTIONS as option[]}
-      />
+    const statusBoard = (
+      <StatusBoardPanel questId={quest.id} linkedNodeId={selectedNode.id} />
     );
 
     const checklistSection = (
@@ -487,7 +470,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
 
     return (
       <div className="space-y-2 p-2">
-        {statusSelect}
+        {statusBoard}
         {checklistSection}
         {folderSection}
         {selectedNode.taskType !== 'abstract' && fileSection}
