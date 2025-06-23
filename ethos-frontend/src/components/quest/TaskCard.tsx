@@ -34,6 +34,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const [showFolderForm, setShowFolderForm] = useState(false);
   const navigate = useNavigate();
 
+  const handleNodeUpdate = (updated: Post) => {
+    setSelected(updated);
+    setStatus(updated.status || 'To Do');
+    setTaskType(updated.taskType || 'abstract');
+    onUpdate?.(updated);
+  };
+
+  useEffect(() => {
+    setSelected(task);
+    setStatus(task.status || 'To Do');
+    setTaskType(task.taskType || 'abstract');
+  }, [task]);
+
   useEffect(() => {
     if (questId) {
       loadGraph(questId);
@@ -70,8 +83,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     setStatus(newStatus);
     try {
       const updated = await updatePost(selected.id, { status: newStatus });
-      setSelected(updated);
-      onUpdate?.(updated);
+      handleNodeUpdate(updated);
       document.dispatchEvent(new CustomEvent('taskUpdated', { detail: { task: updated } }));
     } catch (err) {
       console.error('[TaskCard] Failed to update status', err);
@@ -83,8 +95,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     setTaskType(val);
     try {
       const updated = await updatePost(selected.id, { taskType: val });
-      setSelected(updated);
-      onUpdate?.(updated);
+      handleNodeUpdate(updated);
       document.dispatchEvent(new CustomEvent('taskUpdated', { detail: { task: updated } }));
     } catch (err) {
       console.error('[TaskCard] Failed to update task type', err);
@@ -165,7 +176,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
               node={selected}
               user={user}
               showPost={false}
-              onUpdate={onUpdate}
+              onUpdate={handleNodeUpdate}
               status={status}
               hideSelects
             />

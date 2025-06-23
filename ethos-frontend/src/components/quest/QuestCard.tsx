@@ -232,6 +232,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
     return () => window.removeEventListener('questTaskOpen', handleTaskOpen);
   }, [logs, rootNode]);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { task } = (e as CustomEvent<{ task: Post }>).detail;
+      setLogs(prev => prev.map(p => (p.id === task.id ? { ...p, ...task } : p)));
+      if (selectedNode?.id === task.id) setSelectedNode({ ...selectedNode, ...task });
+      if (rootNode?.id === task.id) setRootNode({ ...rootNode, ...task });
+    };
+    window.addEventListener('taskUpdated', handler);
+    return () => window.removeEventListener('taskUpdated', handler);
+  }, [selectedNode, rootNode]);
+
 
 
   const renderHeader = () => (
