@@ -150,7 +150,7 @@ export const buildSummaryTags = (
       if (post.nodeId) {
         tags.push({
           type: "task",
-          label: `Task: ${post.nodeId}`,
+          label: `Task: ${getQuestLinkLabel(post, title ?? '', false)}`,
           link: ROUTES.POST(post.id),
         });
       }
@@ -171,7 +171,9 @@ export const buildSummaryTags = (
         usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
       });
       if (post.subtype === "task") {
-        const label = post.nodeId ? `Task: ${post.nodeId}` : "Task";
+        const label = post.nodeId
+          ? `Task: ${getQuestLinkLabel(post, title ?? '', false)}`
+          : "Task";
         tags.push({
           type: "task",
           label,
@@ -180,9 +182,7 @@ export const buildSummaryTags = (
       }
       if (post.subtype === "issue") {
         const label = post.nodeId
-          ? title
-            ? `Issue: ${getQuestLinkLabel(post, title, false)}`
-            : `Issue: ${post.nodeId}`
+          ? `Issue: ${getQuestLinkLabel(post, title ?? '', false)}`
           : "Issue";
         tags.push({
           type: "issue",
@@ -195,9 +195,10 @@ export const buildSummaryTags = (
   }
 
   if (!multipleSources && title) {
+    const shortTitle = title.length > 20 ? title.slice(0, 20) + '…' : title;
     tags.push({
       type: "quest",
-      label: `Quest: ${title}`,
+      label: `Quest: ${shortTitle}`,
       link:
         questId || post.questId
           ? ROUTES.QUEST(questId || post.questId!)
@@ -207,9 +208,7 @@ export const buildSummaryTags = (
 
   if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
-    const label = title
-      ? `Task - ${getQuestLinkLabel(post, title, false)}`
-      : `Task - ${post.nodeId}`;
+    const label = `Task - ${getQuestLinkLabel(post, title ?? '', false)}`;
     tags.push({
       type: "task",
       label,
@@ -221,9 +220,7 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
-        ? title
-          ? `Issue - ${getQuestLinkLabel(post, title, false)}`
-          : `Issue - ${post.nodeId}`
+        ? `Issue - ${getQuestLinkLabel(post, title ?? '', false)}`
         : "Issue";
     tags.push({
       type: "issue",
@@ -236,9 +233,7 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
-        ? title
-          ? `Log - ${getQuestLinkLabel(post, title, false)}`
-          : `Log - ${post.nodeId}`
+        ? `Log - ${getQuestLinkLabel(post, title ?? '', false)}`
         : "Log";
     tags.push({
       type: "log",
@@ -250,7 +245,9 @@ export const buildSummaryTags = (
   } else if (post.type === "commit") {
     const user = post.author?.username || post.authorId;
     const label =
-      post.nodeId && !multipleSources ? `Commit - ${post.nodeId}` : "Commit";
+      post.nodeId && !multipleSources
+        ? `Commit - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}`
+        : "Commit";
     tags.push({
       type: "commit",
       label,
@@ -328,14 +325,12 @@ export const getPostSummary = (
   if (post.type === "request") {
     parts.push("(Request)");
     if (post.subtype === "task") {
-      if (post.nodeId) parts.push(`(Task - ${post.nodeId})`);
+      if (post.nodeId) parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)})`);
       else parts.push("(Task)");
     } else if (post.subtype === "issue") {
       if (post.nodeId)
         parts.push(
-          title
-            ? `(Issue - ${getQuestLinkLabel(post, title, false)})`
-            : `(Issue - ${post.nodeId})`
+          `(Issue - ${getQuestLinkLabel(post, title ?? '', false)})`
         );
       else parts.push("(Issue)");
     }
@@ -344,37 +339,25 @@ export const getPostSummary = (
 
   if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
-    if (title) {
-      parts.push(`(Task - ${getQuestLinkLabel(post, title, false)} @${user})`);
-    } else {
-      parts.push(`(Task - ${post.nodeId} @${user})`);
-    }
+    parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
   } else if (post.type === "issue") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      if (title) {
-        parts.push(`(Issue - ${getQuestLinkLabel(post, title, false)} @${user})`);
-      } else {
-        parts.push(`(Issue - ${post.nodeId} @${user})`);
-      }
+        parts.push(`(Issue - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
     } else {
       parts.push(`(Issue @${user})`);
     }
   } else if (post.type === "log" || post.type === "quest_log") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      if (title) {
-        parts.push(`(Log - ${getQuestLinkLabel(post, title, false)} @${user})`);
-      } else {
-        parts.push(`(Log - ${post.nodeId} @${user})`);
-      }
+        parts.push(`(Log - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
     } else {
       parts.push(`(Log @${user})`);
     }
   } else if (post.type === "commit") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Commit - ${post.nodeId} @${user})`);
+      parts.push(`(Commit - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')} @${user})`);
     } else {
       parts.push(`(Commit @${user})`);
     }
