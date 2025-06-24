@@ -110,7 +110,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
 
   const content = (
     <>
-      <Icon className="w-3 h-3" />
+      <Icon className="w-3 h-3 flex-shrink-0" />
       {label}
     </>
   );
