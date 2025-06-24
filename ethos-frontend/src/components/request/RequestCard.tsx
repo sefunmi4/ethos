@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { Post } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
@@ -8,7 +8,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { acceptRequest, unacceptRequest } from '../../api/post';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
-import CreatePost from '../post/CreatePost';
 
 interface RequestCardProps {
   post: Post;
@@ -17,7 +16,6 @@ interface RequestCardProps {
 }
 
 const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) => {
-  const [showReply, setShowReply] = useState(false);
   const { user } = useAuth();
   const collaboratorUsers = (post as any).enrichedCollaborators || [];
   const collaboratorCount = collaboratorUsers.filter((c: any) => c.userId).length || 0;
@@ -86,9 +84,6 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         </div>
       )}
       <div className="flex gap-2">
-        <Button variant="ghost" size="sm" onClick={() => setShowReply(r => !r)}>
-          {showReply ? 'Cancel' : 'Reply'}
-        </Button>
         <Button variant="primary" size="sm" onClick={handleJoin} disabled={joining}>
           {joining ? (
             '...'
@@ -99,16 +94,6 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           )}
         </Button>
       </div>
-      {showReply && (
-        <CreatePost
-          replyTo={post}
-          onSave={(p) => {
-            onUpdate?.(p);
-            setShowReply(false);
-          }}
-          onCancel={() => setShowReply(false)}
-        />
-      )}
     </div>
   );
 };
