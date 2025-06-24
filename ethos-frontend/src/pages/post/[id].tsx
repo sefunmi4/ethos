@@ -31,9 +31,14 @@ const PostPage: React.FC = () => {
   const [showReplyForm, setShowReplyForm] = useState(false);
 
   const boardWithPost = useMemo<BoardData | null>(() => {
-    if (!replyBoard) return null;
-    return replyBoard;
-  }, [replyBoard]);
+    if (!replyBoard || !post) return null;
+    return {
+      ...replyBoard,
+      title: replyBoard.title || 'Thread',
+      items: [post.id, ...(replyBoard.items || [])],
+      enrichedItems: [post, ...(replyBoard.enrichedItems ?? [])],
+    };
+  }, [replyBoard, post]);
 
   useEffect(() => {
     if (searchParams.get('reply') === '1') {
@@ -112,7 +117,7 @@ const PostPage: React.FC = () => {
   if (!post) return <Spinner />;
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12 text-primary">
+    <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
       {post.repostedFrom && (
         <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-secondary">
           ♻️ Reposted from @{post.repostedFrom.username}
