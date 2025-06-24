@@ -89,9 +89,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [internalExpanded, setInternalExpanded] = useState(post.type === 'task');
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const [joining, setJoining] = useState(false);
-  const [joined, setJoined] = useState(
-    !!user && post.tags?.includes(`pending:${user.id}`)
+  const initialJoined = !!user && (
+    post.authorId === user.id ||
+    post.tags?.includes(`pending:${user.id}`) ||
+    (post.collaborators || []).some(c => c.userId === user.id)
   );
+  const [joined, setJoined] = useState(initialJoined);
   const [following, setFollowing] = useState(
     !!user && (post.followers || []).includes(user.id)
   );
@@ -106,8 +109,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isPostBoard = isPostHistory || ctxBoardType === 'post';
   const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
   const isRequestCard =
-    post.type === 'request' &&
-    ['quest-board', 'timeline-board', 'my-posts'].includes(ctxBoardId || '');
+    post.type === 'request' && ctxBoardId === 'quest-board';
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
 
@@ -294,42 +296,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
       </button>
 
-      {post.type !== 'task' && (
-        <button
-          className={clsx(
-            'flex items-center gap-1',
-            post.type !== 'commit' && showReplyPanel && 'text-green-600'
-          )}
-          onClick={() => {
-            if (replyOverride) {
-              replyOverride.onClick();
-            } else if (post.type === 'commit') {
-              navigate(ROUTES.POST(post.id));
-            } else if (
-              post.type === 'request' ||
-              isTimelineBoard ||
-              isPostBoard
-            ) {
-              navigate(ROUTES.POST(post.id) + '?reply=1');
-            } else {
-              setShowReplyPanel(prev => {
-                const next = !prev;
-                onReplyToggle?.(next);
-                return next;
-              });
-            }
-          }}
-        >
-          <FaReply />{' '}
-          {replyOverride
-            ? replyOverride.label
-            : post.type === 'commit'
-            ? 'File Change View'
-            : showReplyPanel
-            ? 'Cancel'
-            : 'Reply'}
-        </button>
-      )}
 
         {!isQuestRequest && post.type === 'free_speech' && (
           <button
@@ -360,20 +326,67 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             >
               {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
             </button>
-          ) : (
+          ) : !joined ? (
             <button
               className="flex items-center gap-1"
               onClick={handleJoin}
               disabled={joining || !user}
             >
-              {joining ? '...' : joined ? (<><FaUserCheck /> Joined</>) : (<><FaUserPlus /> {post.questId ? 'Join' : 'Apply'}</>)}
+              {joining ? '...' : (<><FaUserPlus /> {post.questId ? 'Join' : 'Apply'}</>)}
             </button>
+          ) : (
+            <span className="flex items-center gap-1">
+              <FaUserCheck /> Joined
+            </span>
           )
         )}
 
-        {['task', 'request', 'quest'].includes(post.type) && (
+        {['task', 'request', 'quest'].includes(post.type) && !isRequestCard && !joined && (
           <button className="flex items-center gap-1" onClick={handleFollow} disabled={!user}>
             <FaBell /> {following ? 'Following' : 'Follow'} {followerCount}
+          </button>
+        )}
+
+        {joined && !isRequestCard && (
+          <span className="flex items-center gap-1">
+            <FaUserCheck /> Joined
+          </span>
+        )}
+
+        {post.type !== 'task' && (
+          <button
+            className={clsx(
+              'flex items-center gap-1',
+              post.type !== 'commit' && showReplyPanel && 'text-green-600'
+            )}
+            onClick={() => {
+              if (replyOverride) {
+                replyOverride.onClick();
+              } else if (post.type === 'commit') {
+                navigate(ROUTES.POST(post.id));
+              } else if (
+                post.type === 'request' ||
+                isTimelineBoard ||
+                isPostBoard
+              ) {
+                navigate(ROUTES.POST(post.id) + '?reply=1');
+              } else {
+                setShowReplyPanel(prev => {
+                  const next = !prev;
+                  onReplyToggle?.(next);
+                  return next;
+                });
+              }
+            }}
+          >
+            <FaReply />{' '}
+            {replyOverride
+              ? replyOverride.label
+              : post.type === 'commit'
+              ? 'File Change View'
+              : showReplyPanel
+              ? 'Cancel'
+              : 'Reply'}
           </button>
         )}
 
