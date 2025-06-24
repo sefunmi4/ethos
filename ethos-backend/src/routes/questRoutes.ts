@@ -2,12 +2,13 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { boardsStore, questsStore, postsStore, usersStore, reactionsStore } from '../models/stores';
+import { boardsStore, questsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, LinkedItem, Visibility, TaskEdge } from '../types/api';
 import type { DBQuest, DBPost } from '../types/db';
+import type { AuthenticatedRequest } from '../types/express';
 
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();
@@ -715,6 +716,44 @@ router.delete(
   quests.splice(index, 1);
   questsStore.write(quests);
   res.json({ success: true, removedPosts: questPosts.length - postsToKeep.size });
+});
+
+// POST /api/quests/:id/follow - follow a quest
+router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+  const quests = questsStore.read();
+  const users = usersStore.read();
+  const quest = quests.find(q => q.id === req.params.id);
+  const follower = users.find(u => u.id === req.user!.id);
+  if (!quest || !follower) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
+  quest.followers = Array.from(new Set([...(quest.followers || []), follower.id]));
+  questsStore.write(quests);
+  const notes = notificationsStore.read();
+  const newNote = {
+    id: uuidv4(),
+    userId: quest.authorId,
+    message: `${follower.username} followed your quest`,
+    link: `/quest/${quest.id}`,
+    read: false,
+    createdAt: new Date().toISOString(),
+  };
+  notificationsStore.write([...notes, newNote]);
+  res.json({ followers: quest.followers });
+});
+
+// POST /api/quests/:id/unfollow - unfollow a quest
+router.post('/:id/unfollow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+  const quests = questsStore.read();
+  const quest = quests.find(q => q.id === req.params.id);
+  if (!quest) {
+    res.status(404).json({ error: 'Quest not found' });
+    return;
+  }
+  quest.followers = (quest.followers || []).filter(id => id !== req.user!.id);
+  questsStore.write(quests);
+  res.json({ followers: quest.followers });
 });
 
 export default router;
