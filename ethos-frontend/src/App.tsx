@@ -26,10 +26,12 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Quest = lazy(() => import('./pages/quest/[id]'));
+const Project = lazy(() => import('./pages/project/[id]'));
 const Post = lazy(() => import('./pages/post/[id]'));
 const Board = lazy(() => import('./pages/board/[id]'));
 const BoardType = lazy(() => import('./pages/board/[boardType]'));
 const TeamBoard = lazy(() => import('./pages/board/team-[questId]'));
+const ReviewSummary = lazy(() => import('./pages/review/[entityType]/[id]'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
@@ -71,12 +73,14 @@ const App: React.FC = () => {
                   <Route path={ROUTES.TERMS} element={<Terms />} />
                   <Route path={ROUTES.PUBLIC_PROFILE()} element={<PublicProfile />} />
                   <Route path={ROUTES.RESET_PASSWORD()} element={<ResetPassword />} />
+                  <Route path={ROUTES.REVIEW_SUMMARY()} element={<ReviewSummary />} />
 
                   {/* 🔒 Routes requiring authentication (wrapped in PrivateRoute) */}
                   <Route element={<PrivateRoute />}>
                   <Route path={ROUTES.PROFILE} element={<Profile />} />
                   <Route path={ROUTES.NOTIFICATIONS} element={<Notifications />} />
                   <Route path={ROUTES.QUEST()} element={<Quest />} />
+                  <Route path={ROUTES.PROJECT()} element={<Project />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />

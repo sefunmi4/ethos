@@ -120,6 +120,21 @@ export interface TaskEdge {
   label?: string;
 }
 
+export interface DBProject {
+  id: string;
+  authorId: string;
+  title: string;
+  description?: string;
+  visibility: Visibility;
+  status: 'active' | 'completed' | 'archived';
+  tags?: string[];
+  createdAt?: string;
+  quests?: string[];
+  deliverables?: string[];
+  mapEdges?: TaskEdge[];
+  collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
+}
+
 // types/db.ts
 export interface DBBoard {
   id: string;
@@ -235,6 +250,8 @@ export interface DBReview {
   reviewerId: string;
   targetType: ReviewTargetType;
   rating: number;
+  visibility: 'private' | 'public';
+  status: 'draft' | 'submitted' | 'accepted';
   tags?: string[];
   feedback?: string;
   repoUrl?: string;
@@ -269,6 +286,7 @@ export interface DBSchema {
   boards: DBBoard[];
   git: DBGitRepo[];
   posts: DBPost[];
+  projects: DBProject[];
   quests: DBQuest[];
   projects: DBProject[];
   users: DBUser[];

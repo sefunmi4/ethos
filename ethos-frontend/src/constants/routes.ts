@@ -46,6 +46,12 @@ export const ROUTES = {
      * @returns A route string like `/quest/abc123`
      */
     QUEST: (id = ':id') => `/quest/${id}`,
+
+    /**
+     * Project page by ID
+     * @param id - Project ID
+     */
+    PROJECT: (id = ':id') => `/project/${id}`,
   
     /**
      * Post page by ID (private)
@@ -74,6 +80,16 @@ export const ROUTES = {
      * @returns A route string like `/board/quests`
      */
     BOARD_TYPE: (boardType = ':boardType') => `/board/${boardType}`,
+
+    /**
+     * Review summary page
+     * @param entityType Entity type being reviewed
+     * @param id Entity ID
+     */
+    REVIEW_SUMMARY: (
+      entityType = ':entityType',
+      id = ':id',
+    ) => `/reviews/${entityType}/${id}`,
 
     FLAGGED_QUESTS: '/admin/flagged-quests',
     BANNED_QUESTS: '/admin/banned-quests',
