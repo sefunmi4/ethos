@@ -70,13 +70,19 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       const optimistic = { ...node, taskType: val } as Post;
       onUpdate?.(optimistic);
       document.dispatchEvent(
-        new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+        new CustomEvent('taskUpdated', {
+          detail: { task: optimistic },
+          bubbles: true,
+        })
       );
       try {
         const updated = await updatePost(node.id, { taskType: val });
         onUpdate?.(updated);
         document.dispatchEvent(
-          new CustomEvent('taskUpdated', { detail: { task: updated } })
+          new CustomEvent('taskUpdated', {
+            detail: { task: updated },
+            bubbles: true,
+          })
         );
       } catch (err) {
         console.error('[QuestNodeInspector] Failed to update task type', err);
@@ -93,13 +99,19 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       const optimistic = { ...node, status: newStatus } as Post;
       onUpdate?.(optimistic);
       document.dispatchEvent(
-        new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+        new CustomEvent('taskUpdated', {
+          detail: { task: optimistic },
+          bubbles: true,
+        })
       );
       try {
         const updated = await updatePost(node.id, { status: newStatus });
         onUpdate?.(updated);
         document.dispatchEvent(
-          new CustomEvent('taskUpdated', { detail: { task: updated } })
+          new CustomEvent('taskUpdated', {
+            detail: { task: updated },
+            bubbles: true,
+          })
         );
       } catch (err) {
         console.error('[QuestNodeInspector] Failed to update status', err);

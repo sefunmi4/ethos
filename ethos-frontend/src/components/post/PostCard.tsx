@@ -131,7 +131,10 @@ const PostCard: React.FC<PostCardProps> = ({
   const dispatchTaskUpdated = (p: Post) => {
     if (p.type === 'task') {
       document.dispatchEvent(
-        new CustomEvent('taskUpdated', { detail: { task: p } })
+        new CustomEvent('taskUpdated', {
+          detail: { task: p },
+          bubbles: true,
+        })
       );
     }
   };
