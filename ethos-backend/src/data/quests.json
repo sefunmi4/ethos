@@ -292,6 +292,11 @@
         "itemId": "039cb2f6-d33b-4909-b008-b33e744dca00",
         "itemType": "post",
         "title": "setup BAs"
+      },
+      {
+        "itemId": "63ad6281-c3d6-442d-bf09-5dc10a19db1c",
+        "itemType": "post",
+        "title": "finace"
       }
     ],
     "collaborators": [],
@@ -304,15 +309,24 @@
       },
       {
         "from": "389aef67-bee6-4214-8685-17c8157aceb4",
-        "to": "f1b9104c-965b-478b-850d-2d2b01a486da"
+        "to": "63ad6281-c3d6-442d-bf09-5dc10a19db1c"
       },
       {
-        "from": "389aef67-bee6-4214-8685-17c8157aceb4",
+        "from": "63ad6281-c3d6-442d-bf09-5dc10a19db1c",
         "to": "c37a6d1c-d18f-4efc-9dc9-70dba4ca1098"
       },
       {
-        "from": "389aef67-bee6-4214-8685-17c8157aceb4",
+        "from": "63ad6281-c3d6-442d-bf09-5dc10a19db1c",
         "to": "039cb2f6-d33b-4909-b008-b33e744dca00"
+      },
+      {
+        "from": "ae7b313b-ccab-4d00-865a-416bdf57a174",
+        "to": "f1b9104c-965b-478b-850d-2d2b01a486da"
+      },
+      {
+        "from": "f1b9104c-965b-478b-850d-2d2b01a486da",
+        "to": "ae7b313b-ccab-4d00-865a-416bdf57a174",
+        "type": "abstract"
       }
     ],
     "helpRequest": true

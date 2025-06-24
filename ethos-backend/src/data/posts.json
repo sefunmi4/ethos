@@ -2186,7 +2186,7 @@
     "linkedItems": [],
     "linkedNodeId": "11277a4d-b1f5-4abf-bcac-41d691297cb1",
     "questId": "f96a5cb6-414c-4d72-9b81-298b755f2374",
-    "taskType": "abstract",
+    "taskType": "file",
     "status": "Done",
     "helpRequest": false,
     "nodeId": "Q:public_media:T15",
@@ -2311,5 +2311,27 @@
     "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
     "helpRequest": true,
     "needsHelp": true
+  },
+  {
+    "id": "63ad6281-c3d6-442d-bf09-5dc10a19db1c",
+    "authorId": "u_2c9e0694-df87-4f30-9dc6-46679ccf0c57",
+    "type": "task",
+    "title": "finace",
+    "content": "finace",
+    "details": "",
+    "visibility": "public",
+    "timestamp": "2025-06-23T23:33:53.074Z",
+    "tags": [],
+    "collaborators": [],
+    "replyTo": "389aef67-bee6-4214-8685-17c8157aceb4",
+    "repostedFrom": null,
+    "linkedItems": [],
+    "linkedNodeId": "389aef67-bee6-4214-8685-17c8157aceb4",
+    "questId": "bfd84e87-a331-4a5a-8e7b-9c864ff9e8cd",
+    "taskType": "file",
+    "status": "To Do",
+    "helpRequest": false,
+    "nodeId": "Q:architecture_of_homo_sapiens:T05",
+    "questNodeTitle": "finace"
   }
 ]
