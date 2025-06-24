@@ -113,6 +113,21 @@ export interface TaskEdge {
   label?: string;
 }
 
+export interface DBProject {
+  id: string;
+  authorId: string;
+  title: string;
+  description?: string;
+  visibility: Visibility;
+  status: 'active' | 'completed' | 'archived';
+  tags?: string[];
+  createdAt?: string;
+  quests?: string[];
+  deliverables?: string[];
+  mapEdges?: TaskEdge[];
+  collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
+}
+
 // types/db.ts
 export interface DBBoard {
   id: string;
@@ -264,6 +279,7 @@ export interface DBSchema {
   boards: DBBoard[];
   git: DBGitRepo[];
   posts: DBPost[];
+  projects: DBProject[];
   quests: DBQuest[];
   users: DBUser[];
   reviews: DBReview[];
@@ -272,7 +288,7 @@ export interface DBSchema {
 }
 
 // Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews' | 'boardLogs' | 'notifications'
+export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'projects' | 'quests' | 'users' | 'reviews' | 'boardLogs' | 'notifications'
 
 /**
  * Generic type for file-based mock storage (can be used in utils/loaders.ts)
