@@ -210,7 +210,7 @@ export const buildSummaryTags = (
 
   if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
-    const label = `Task - ${getQuestLinkLabel(post, title ?? '', false)}`;
+    const label = post.nodeId.replace(/^Q:[^:]+:/, "");
     tags.push({
       type: "task",
       label,
@@ -222,7 +222,7 @@ export const buildSummaryTags = (
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
-        ? `Issue - ${getQuestLinkLabel(post, title ?? '', false)}`
+        ? post.nodeId.replace(/^Q:[^:]+:/, "")
         : "Issue";
     tags.push({
       type: "issue",

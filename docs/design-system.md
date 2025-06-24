@@ -75,13 +75,14 @@ All tags share the `TAG_BASE` style which sets padding, font size and border rad
 
 ### Tag summary format
 
-Summary tags combine the quest title with the post's node ID and a linked author
-handle. The username appears once after each label and links to the profile:
+Summary tags combine the quest title with a node ID badge. The node ID links to
+the request detail page so you can quickly jump to that task. The quest’s root
+task is always labeled `T00` while issues include the task and issue numbers:
 
 ```
-[Quest: Demo Quest] [Task - Q:demo:T01] @alice
-[Quest: Demo Quest] [Issue - Q:demo:T01:I00] @bob
-[Quest: Demo Quest] [Commit - Q:demo:T01:C00] @carol
+[Quest] [T00]
+[Quest Task] [T01]
+[Issue] [T01:I00]
 ```
 Logs and other post types show the author name after a `Log` label. These
 concise tags help identify who created each node at a glance.
