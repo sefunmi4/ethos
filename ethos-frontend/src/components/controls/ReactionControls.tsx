@@ -40,7 +40,7 @@ import {
   followPost,
   unfollowPost,
 } from '../../api/post';
-import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
+import type { Post, ReactionType, ReactionCountMap, Reaction, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { Quest } from '../../types/questTypes';
 
@@ -110,6 +110,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
   const isRequestCard =
     post.type === 'request' && ctxBoardId === 'quest-board';
+  const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
 
@@ -236,6 +237,17 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const handleJoin = async () => {
     if (!user) return;
+    const joinAndNavigate =
+      ctxBoardId === 'my-posts' && post.type === 'request' && post.questId && roleTag;
+    if (joinAndNavigate) {
+      const isPrivate =
+        post.visibility === 'private' || questData?.visibility === 'private';
+      const type: PostType = isPrivate ? 'request' : 'log';
+      navigate(
+        ROUTES.POST(post.id) + `?reply=1&initialType=${type}&intro=1`
+      );
+      return;
+    }
     try {
       setJoining(true);
       if (joined) {
@@ -332,7 +344,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               onClick={handleJoin}
               disabled={joining || !user}
             >
-              {joining ? '...' : (<><FaUserPlus /> {post.questId ? 'Join' : 'Apply'}</>)}
+              {joining ? '...' : (
+                <>
+                  <FaUserPlus />{' '}
+                  {post.questId && roleTag ? 'Join' : 'Accept'}
+                </>
+              )}
             </button>
           ) : (
             <span className="flex items-center gap-1">

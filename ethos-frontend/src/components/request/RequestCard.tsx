@@ -91,11 +91,11 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         </Button>
         <Button variant="primary" size="sm" onClick={handleJoin} disabled={joining}>
           {joining ? (
-            '...' 
+            '...'
           ) : joined ? (
             <><FaUserCheck className="inline mr-1" /> Joined</>
           ) : (
-            <><FaUserPlus className="inline mr-1" /> {post.questId ? 'Join' : 'Apply'}</>
+            <><FaUserPlus className="inline mr-1" /> {post.questId && role ? 'Join' : 'Accept'}</>
           )}
         </Button>
       </div>
