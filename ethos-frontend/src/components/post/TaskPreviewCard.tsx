@@ -44,7 +44,11 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
   ) => {
     const val = e.target.value as QuestTaskStatus;
     setStatus(val);
-    onUpdate?.({ ...post, status: val });
+    const optimistic = { ...post, status: val };
+    onUpdate?.(optimistic);
+    document.dispatchEvent(
+      new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+    );
     try {
       const updated = await updatePost(post.id, { status: val });
       onUpdate?.(updated);
@@ -60,7 +64,11 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
   ) => {
     const val = e.target.value as 'file' | 'folder' | 'abstract';
     setTaskType(val);
-    onUpdate?.({ ...post, taskType: val });
+    const optimistic = { ...post, taskType: val };
+    onUpdate?.(optimistic);
+    document.dispatchEvent(
+      new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+    );
     try {
       const updated = await updatePost(post.id, { taskType: val });
       onUpdate?.(updated);
