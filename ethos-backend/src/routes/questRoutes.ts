@@ -8,6 +8,7 @@ import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, LinkedItem, Visibility, TaskEdge } from '../types/api';
 import type { DBQuest, DBPost } from '../types/db';
+import type { AuthenticatedRequest } from '../types/express';
 
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();
