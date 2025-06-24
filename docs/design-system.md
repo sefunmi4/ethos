@@ -73,8 +73,8 @@ Posts and quests are annotated with small tags that reuse the same color palette
 | party_request | `bg-pink-100 text-pink-800` / `dark:bg-pink-800 dark:text-pink-200` |
 
 All tags share the `TAG_BASE` style which sets padding, font size and border radius.
-Most tags also use `TAG_TRUNCATED` to limit width and truncate long labels with an ellipsis,
-while quest tags use `TAG_BASE` so the full quest title is visible.
+Most tags also use `TAG_TRUNCATED` to limit width and truncate long labels with an ellipsis.
+Quest tags now also use `TAG_TRUNCATED` so extremely long quest titles are shortened with an ellipsis instead of wrapping to the next line.
 
 ### Tag summary format
 

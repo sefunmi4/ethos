@@ -208,7 +208,6 @@ export const buildSummaryTags = (
         questId || post.questId
           ? ROUTES.QUEST(questId || post.questId!)
           : undefined,
-      truncate: false,
     });
   }
 
