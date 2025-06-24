@@ -228,6 +228,8 @@ export interface DBReview {
   reviewerId: string;
   targetType: ReviewTargetType;
   rating: number;
+  visibility: 'private' | 'public';
+  status: 'draft' | 'submitted' | 'accepted';
   tags?: string[];
   feedback?: string;
   repoUrl?: string;

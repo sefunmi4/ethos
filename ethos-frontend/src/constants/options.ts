@@ -36,6 +36,12 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'review', label: 'Review' },
 ];
 
+export const REVIEW_STATUS_OPTIONS = [
+  { value: 'draft', label: 'Draft' },
+  { value: 'submitted', label: 'Submitted' },
+  { value: 'accepted', label: 'Accepted' },
+] as const;
+
 export const LINK_TYPES = ['solution', 'duplicate', 'citation'];
 
 export const STATUS_OPTIONS = [

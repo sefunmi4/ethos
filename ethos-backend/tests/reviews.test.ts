@@ -26,10 +26,17 @@ describe('review routes', () => {
   it('POST /reviews creates review', async () => {
     const res = await request(app)
       .post('/reviews')
-      .send({ targetType: 'quest', rating: 5, feedback: 'great' });
+      .send({
+        targetType: 'quest',
+        rating: 5,
+        feedback: 'great',
+        visibility: 'public',
+        status: 'submitted',
+      });
     expect(res.status).toBe(201);
     expect(reviewsStoreMock.write).toHaveBeenCalled();
     expect(res.body.rating).toBe(5);
+    expect(res.body.visibility).toBe('public');
   });
 
   it('GET /reviews filters by type and sorts', async () => {

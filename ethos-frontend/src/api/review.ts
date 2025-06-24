@@ -8,6 +8,14 @@ export const addReview = async (data: Partial<Review>): Promise<Review> => {
   return res.data;
 };
 
+export const updateReview = async (
+  id: string,
+  data: Partial<Review>
+): Promise<Review> => {
+  const res = await axiosWithAuth.patch(`${BASE_URL}/${id}`, data);
+  return res.data;
+};
+
 export const fetchReviews = async (params: {
   type: string;
   questId?: string;
