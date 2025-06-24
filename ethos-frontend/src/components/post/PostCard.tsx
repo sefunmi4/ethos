@@ -118,7 +118,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [linkExpanded, setLinkExpanded] = useState(false);
-  const [internalExpandedView, setInternalExpandedView] = useState(false);
+  const [internalExpandedView, setInternalExpandedView] = useState(
+    post.type === 'task'
+  );
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();

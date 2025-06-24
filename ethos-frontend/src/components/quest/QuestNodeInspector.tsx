@@ -41,7 +41,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   hideSelects = false,
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
-  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('logs');
+  const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('file');
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [boardOpen, setBoardOpen] = useState(true);
   const [statusVal, setStatusVal] = useState<QuestTaskStatus>(status || node?.status || 'To Do');
@@ -58,7 +58,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
   }, [node?.taskType, node?.status, status]);
 
   useEffect(() => {
-    setActiveTab('logs');
+    setActiveTab('file');
   }, [node?.id]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {

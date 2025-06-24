@@ -83,7 +83,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
-  const [internalExpanded, setInternalExpanded] = useState(false);
+  const [internalExpanded, setInternalExpanded] = useState(post.type === 'task');
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(
