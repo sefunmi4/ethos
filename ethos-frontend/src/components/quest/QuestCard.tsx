@@ -109,6 +109,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const shortDesc = desc.length > 120 ? desc.slice(0, 117) + '…' : desc;
   const userRank = getRank(user?.xp ?? 0);
 
+  const isOwner = user?.id === questData.authorId;
+  const isCollaborator = questData.collaborators?.some(c => c.userId === user?.id);
+  const canEdit = isOwner || isCollaborator;
+  const hasJoined = isOwner || isCollaborator;
+
   const tabOptions = [
     {
       value: 'file',
@@ -122,11 +127,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     { value: 'logs', label: 'Logs' },
     { value: 'options', label: canEdit ? 'Options' : 'Team' },
   ];
-
-  const isOwner = user?.id === questData.authorId;
-  const isCollaborator = questData.collaborators?.some(c => c.userId === user?.id);
-  const canEdit = isOwner || isCollaborator;
-  const hasJoined = isOwner || isCollaborator;
 
   const subgraphIds = useMemo(() => {
     if (!selectedNode) return new Set<string>();
