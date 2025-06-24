@@ -46,6 +46,12 @@ export interface User {
   // Timeline for experience/quests
   experienceTimeline: UserExperienceEvent[];
 
+  /** Users following this account */
+  followers?: string[];
+
+  /** Accounts this user follows */
+  following?: string[];
+
   // Optional system metadata (for moderation, status, etc.)
   status?: 'active' | 'archived' | 'banned';
   createdAt?: string;

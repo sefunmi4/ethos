@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { fetchNotifications, markNotificationRead } from '../api/notifications';
 import type { Notification } from '../types/notificationTypes';
 import { useAuth } from './AuthContext';
@@ -14,6 +14,7 @@ const NotificationContext = createContext<NotificationContextValue | undefined>(
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const shownRef = useRef<Set<string>>(new Set());
 
   const load = async () => {
     if (!user) return;
@@ -28,6 +29,16 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     load();
   }, [user]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || Notification.permission !== 'granted') return;
+    notifications.forEach(n => {
+      if (!n.read && !shownRef.current.has(n.id)) {
+        new Notification(n.message);
+        shownRef.current.add(n.id);
+      }
+    });
+  }, [notifications]);
 
   const markRead = async (id: string) => {
     try {

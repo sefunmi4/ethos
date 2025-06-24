@@ -4,13 +4,14 @@ import type { Quest, TaskEdge } from '../../types/questTypes';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, SummaryTag, Select } from '../ui';
+import { FaBell } from 'react-icons/fa';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GridLayout from '../layout/GridLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import GraphLayout from '../layout/GraphLayout';
 import CreatePost from '../post/CreatePost';
-import { fetchQuestById, updateQuestById, updateQuestTaskGraph } from '../../api/quest';
+import { fetchQuestById, updateQuestById, updateQuestTaskGraph, followQuest, unfollowQuest } from '../../api/quest';
 import { fetchPostsByQuestId } from '../../api/post';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
@@ -81,6 +82,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
   const [showFolderView, setShowFolderView] = useState(false);
+  const [following, setFollowing] = useState(
+    !!user && (quest.followers || []).includes(user.id)
+  );
+  const [followerCount, setFollowerCount] = useState(quest.followers?.length || 0);
   const navigate = useNavigate();
 
   const { data: diffData, isLoading: diffLoading } = useGitDiff({
@@ -171,6 +176,23 @@ const QuestCard: React.FC<QuestCardProps> = ({
     onJoinToggle?.(questData);
     setJoinRequested(true);
     alert('Join request sent.');
+  };
+
+  const handleFollowQuest = async () => {
+    if (!user) return;
+    try {
+      if (following) {
+        const res = await unfollowQuest(quest.id);
+        setFollowerCount(res.followers.length);
+        setFollowing(false);
+      } else {
+        const res = await followQuest(quest.id);
+        setFollowerCount(res.followers.length);
+        setFollowing(true);
+      }
+    } catch (err) {
+      console.error('[QuestCard] Failed to toggle follow', err);
+    }
   };
 
   const saveLinks = async () => {
@@ -311,6 +333,10 @@ const QuestCard: React.FC<QuestCardProps> = ({
             {expanded ? "▲ Collapse" : "▼ Expand"}
           </Button>
         )}
+
+        <Button variant="ghost" onClick={handleFollowQuest} disabled={!user}>
+          <FaBell className="mr-1" /> {following ? 'Following' : 'Follow'} {followerCount}
+        </Button>
 
         <ActionMenu
           type="quest"

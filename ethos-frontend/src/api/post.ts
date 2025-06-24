@@ -291,3 +291,13 @@ export const getPropagationStatus = async (
   const res = await axiosWithAuth.get(`${BASE_URL}/${postId}/propagation-status`);
   return res.data;
 };
+
+export const followPost = async (id: string): Promise<{ followers: string[] }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/follow`);
+  return res.data;
+};
+
+export const unfollowPost = async (id: string): Promise<{ followers: string[] }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/unfollow`);
+  return res.data;
+};

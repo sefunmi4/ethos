@@ -33,6 +33,9 @@ export interface Quest {
 
   /** Marks this quest as a request for help */
   helpRequest?: boolean;
+
+  /** Users following this quest */
+  followers?: string[];
 }
 
 

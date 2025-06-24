@@ -220,3 +220,13 @@ export const enrichQuestWithData = async (quest: Quest): Promise<EnrichedQuest> 
     isNew: false,
   };
 };
+
+export const followQuest = async (id: string): Promise<{ followers: string[] }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/follow`);
+  return res.data;
+};
+
+export const unfollowQuest = async (id: string): Promise<{ followers: string[] }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/unfollow`);
+  return res.data;
+};

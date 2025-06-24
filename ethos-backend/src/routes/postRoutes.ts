@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { postsStore, usersStore, reactionsStore, questsStore } from '../models/stores';
+import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore } from '../models/stores';
 import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
@@ -182,6 +182,28 @@ router.post(
     posts.push(newPost);
     postsStore.write(posts);
 
+    if (replyTo) {
+      const parent = posts.find(p => p.id === replyTo);
+      if (parent) {
+        const users = usersStore.read();
+        const author = users.find(u => u.id === req.user!.id);
+        const followers = new Set([parent.authorId, ...(parent.followers || [])]);
+        followers.forEach(uid => {
+          if (uid === author?.id) return;
+          const notes = notificationsStore.read();
+          const newNote = {
+            id: uuidv4(),
+            userId: uid,
+            message: `${author?.username || 'Someone'} replied to a post you follow`,
+            link: `/posts/${parent.id}`,
+            read: false,
+            createdAt: new Date().toISOString(),
+          };
+          notificationsStore.write([...notes, newNote]);
+        });
+      }
+    }
+
     if (questId && type === 'task') {
       const quest = quests.find((q) => q.id === questId);
       if (quest) {
@@ -284,6 +306,44 @@ router.get('/:id/replies', (req: Request<{ id: string }>, res: Response) => {
   const replies = posts.filter((p) => p.replyTo === req.params.id);
   const users = usersStore.read();
   res.json({ replies: replies.map((p) => enrichPost(p, { users })) });
+});
+
+// POST /api/posts/:id/follow - follow a post
+router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+  const posts = postsStore.read();
+  const users = usersStore.read();
+  const post = posts.find(p => p.id === req.params.id);
+  const follower = users.find(u => u.id === req.user!.id);
+  if (!post || !follower) {
+    res.status(404).json({ error: 'Post not found' });
+    return;
+  }
+  post.followers = Array.from(new Set([...(post.followers || []), follower.id]));
+  postsStore.write(posts);
+  const notes = notificationsStore.read();
+  const newNote = {
+    id: uuidv4(),
+    userId: post.authorId,
+    message: `${follower.username} followed your post`,
+    link: `/posts/${post.id}`,
+    read: false,
+    createdAt: new Date().toISOString(),
+  };
+  notificationsStore.write([...notes, newNote]);
+  res.json({ followers: post.followers });
+});
+
+// POST /api/posts/:id/unfollow - unfollow a post
+router.post('/:id/unfollow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+  const posts = postsStore.read();
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) {
+    res.status(404).json({ error: 'Post not found' });
+    return;
+  }
+  post.followers = (post.followers || []).filter(id => id !== req.user!.id);
+  postsStore.write(posts);
+  res.json({ followers: post.followers });
 });
 
 //
@@ -660,7 +720,22 @@ router.post(
     postsStore.write(posts);
 
     const users = usersStore.read();
-  res.json({ post: enrichPost(post, { users }), quest });
+
+    const follower = users.find(u => u.id === req.user!.id);
+    if (follower && post.authorId !== follower.id) {
+      const notes = notificationsStore.read();
+      const newNote = {
+        id: uuidv4(),
+        userId: post.authorId,
+        message: `${follower.username} requested to join your post`,
+        link: `/posts/${post.id}`,
+        read: false,
+        createdAt: new Date().toISOString(),
+      };
+      notificationsStore.write([...notes, newNote]);
+    }
+
+    res.json({ post: enrichPost(post, { users }), quest });
   }
 );
 
