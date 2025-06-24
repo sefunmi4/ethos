@@ -1,9 +1,11 @@
 import { useContext } from 'react';
+import { FaBell } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContextBase';
 import type { AuthContextType } from '../../types/authTypes';
 import { logoutUser } from '../../utils/authUtils';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNotifications } from '../../contexts/NotificationContext';
 
 /**
  * NavBar component for displaying top-level navigation.
@@ -13,6 +15,7 @@ const NavBar: React.FC = () => {
   // Access authenticated user context
   const { user } = useContext(AuthContext as React.Context<AuthContextType>);
   const { theme, toggleTheme } = useTheme();
+  const { notifications } = useNotifications();
 
   const navClasses =
     'w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur border-b bg-accent-muted border-gray-200 dark:border-gray-700';
@@ -36,6 +39,14 @@ const NavBar: React.FC = () => {
           ) : (
             // Authenticated user view
             <>
+              <Link to="/notifications" className="relative hover:text-accent transition" aria-label="Notifications">
+                <FaBell />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-2 -right-2 text-xs bg-red-600 text-white rounded-full px-1">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </Link>
               <Link to="/profile" className="hover:text-accent transition">
                 Account
               </Link>

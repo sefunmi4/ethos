@@ -225,6 +225,15 @@ export interface DBReview {
   createdAt: string;
 }
 
+export interface DBNotification {
+  id: string;
+  userId: string;
+  message: string;
+  link?: string;
+  read?: boolean;
+  createdAt: string;
+}
+
 export interface DBBoardLog {
   id: string;
   boardId: string;
@@ -245,10 +254,11 @@ export interface DBSchema {
   users: DBUser[];
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
+  notifications: DBNotification[];
 }
 
 // Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews' | 'boardLogs'
+export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'quests' | 'users' | 'reviews' | 'boardLogs' | 'notifications'
 
 /**
  * Generic type for file-based mock storage (can be used in utils/loaders.ts)
