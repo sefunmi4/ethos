@@ -205,18 +205,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const content = post.renderedContent || post.content;
   const titleText = post.title || makeHeader(post.content);
   let summaryTags = buildSummaryTags(post, questTitle, questId);
-  if (isQuestBoardRequest) {
-    const user = post.author?.username || post.authorId;
-    summaryTags = [
-      {
-        type: 'request',
-        label: 'Request:',
-        detailLink: ROUTES.POST(post.id),
-        username: user,
-        usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-      },
-    ];
-  }
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
