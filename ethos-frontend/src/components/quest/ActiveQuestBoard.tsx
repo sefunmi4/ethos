@@ -105,9 +105,14 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
   };
 
   useEffect(() => {
-    scrollToIndex(index);
     indexRef.current = index;
   }, [index]);
+
+  useEffect(() => {
+    if (quests.length > 0) {
+      scrollToIndex(indexRef.current);
+    }
+  }, [quests.length]);
 
   // Update index when user scrolls manually
   useEffect(() => {

@@ -113,6 +113,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   questId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const indexRef = useRef(0);
   const [index, setIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const sensors = useSensors(
@@ -125,14 +126,22 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     const width = card?.offsetWidth || 0;
     el.scrollTo({ left: i * width, behavior: 'smooth' });
   }, []);
-  const handlePrev = useCallback(
-    () => setIndex((i) => Math.max(0, i - 1)),
-    []
-  );
-  const handleNext = useCallback(
-    () => setIndex((i) => Math.min(items.length - 1, i + 1)),
-    [items.length]
-  );
+  const handlePrev = useCallback(() => {
+    setIndex(i => {
+      const next = Math.max(0, i - 1);
+      scrollToIndex(next);
+      indexRef.current = next;
+      return next;
+    });
+  }, []);
+  const handleNext = useCallback(() => {
+    setIndex(i => {
+      const next = Math.min(items.length - 1, i + 1);
+      scrollToIndex(next);
+      indexRef.current = next;
+      return next;
+    });
+  }, [items.length]);
 
 
   /** Context for board updates is needed in several layouts. Call it here so
@@ -143,10 +152,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
 
 
   useEffect(() => {
-    if (layout === 'horizontal') {
-      scrollToIndex(index);
+    indexRef.current = index;
+  }, [index]);
+
+  useEffect(() => {
+    if (layout === 'horizontal' && items.length > 0) {
+      scrollToIndex(indexRef.current);
     }
-  }, [layout, index, scrollToIndex]);
+  }, [layout, items.length, scrollToIndex]);
   useEffect(() => {
     if (layout !== 'paged') setPageIndex(0);
   }, [layout, items.length]);
@@ -167,6 +180,34 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     window.addEventListener('questTaskSelect', handler);
     return () => window.removeEventListener('questTaskSelect', handler);
   }, []);
+
+  useEffect(() => {
+    if (layout !== 'horizontal') return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, clientWidth } = el;
+      let closestIdx = 0;
+      let closestDiff = Infinity;
+      Array.from(el.children).forEach((child, i) => {
+        const node = child as HTMLElement;
+        const center = node.offsetLeft + node.clientWidth / 2;
+        const diff = Math.abs(center - scrollLeft - clientWidth / 2);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestIdx = i;
+        }
+      });
+      if (closestIdx !== indexRef.current) {
+        indexRef.current = closestIdx;
+        setIndex(closestIdx);
+      }
+    };
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [layout, items.length]);
 
   // Hooks used by the paged layout variant must be declared unconditionally so
   // that the hook order remains stable when the layout changes at runtime.
