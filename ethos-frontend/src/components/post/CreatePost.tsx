@@ -24,6 +24,8 @@ type CreatePostProps = {
    * Useful when creating quest tasks or logs from a quest board.
    */
   questId?: string;
+  /** Prefill the content field */
+  initialContent?: string;
   /**
    * Optional board ID to associate the new post with.
    * When provided this overrides the currently selected board context.
@@ -47,6 +49,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   boardId,
   initialGitFilePath,
   initialLinkedNodeId,
+  initialContent,
 }) => {
   const restrictedReply =
     replyTo && ['task', 'log', 'commit', 'issue'].includes(replyTo.type);
@@ -56,7 +59,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
   );
   const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>(initialContent || '');
   const [details, setDetails] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);

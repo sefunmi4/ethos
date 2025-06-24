@@ -12,7 +12,7 @@ import { ROUTES } from '../../constants/routes';
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 
-import type { Post } from '../../types/postTypes';
+import type { Post, PostType } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
 
 const PostPage: React.FC = () => {
@@ -21,6 +21,8 @@ const PostPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const initialTypeParam = searchParams.get('initialType') as PostType | null;
+  const introParam = searchParams.get('intro') === '1';
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
@@ -130,6 +132,12 @@ const PostPage: React.FC = () => {
           <div className="mt-4">
             <CreatePost
               replyTo={post}
+              initialType={initialTypeParam || undefined}
+              initialContent={
+                introParam && user
+                  ? `Hi @${post.author?.username}, I'm @${user.username} and would like to join.`
+                  : undefined
+              }
               onSave={() => {
                 setShowReplyForm(false);
                 navigate(ROUTES.POST(post.id), { replace: true });
