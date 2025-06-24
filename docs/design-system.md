@@ -70,6 +70,7 @@ Posts and quests are annotated with small tags that reuse the same color palette
 | status | `bg-yellow-100 text-yellow-800` / `dark:bg-yellow-800 dark:text-yellow-200` |
 | category | `bg-indigo-100 text-indigo-800` / `dark:bg-indigo-800 dark:text-indigo-200` |
 | free_speech | `bg-gray-100 text-gray-700` / `dark:bg-gray-700 dark:text-gray-200` |
+| party_request | `bg-pink-100 text-pink-800` / `dark:bg-pink-800 dark:text-pink-200` |
 
 All tags share the `TAG_BASE` style which sets padding, font size and border radius.
 Most tags also use `TAG_TRUNCATED` to limit width and truncate long labels with an ellipsis,

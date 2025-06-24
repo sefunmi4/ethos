@@ -3,3 +3,4 @@ export const TAG_BASE =
 
 export const TAG_TRUNCATED =
   `${TAG_BASE} max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis`;
+

@@ -155,6 +155,27 @@ export const buildSummaryTags = (
           ? getQuestLinkLabel(post, "", false)
           : undefined;
         label = id ? `Issue Request - ${id}` : "Issue Request";
+      } else if (post.subtype === "party") {
+        const id = post.nodeId
+          ? getQuestLinkLabel(post, "", false)
+          : undefined;
+        label = id ? `Party Request - ${id}` : "Party Request";
+        const user = post.author?.username || post.authorId;
+        tags.push({
+          type: "party_request",
+          label,
+          detailLink: ROUTES.POST(post.id),
+          username: user,
+          usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
+        });
+        if (post.status && post.status !== "To Do") {
+          tags.push({
+            type: "status",
+            label: post.status,
+            detailLink: ROUTES.POST(post.id),
+          });
+        }
+        return tags;
       } else {
         label = "Request - Quest";
       }
@@ -312,6 +333,10 @@ export const getPostSummary = (
           `(Issue - ${getQuestLinkLabel(post, title ?? '', false)})`
         );
       else parts.push("(Issue)");
+    } else if (post.subtype === "party") {
+      if (post.nodeId)
+        parts.push(`(Party - ${getQuestLinkLabel(post, title ?? '', false)})`);
+      else parts.push("(Party)");
     }
     return parts.join(" ").trim();
   }

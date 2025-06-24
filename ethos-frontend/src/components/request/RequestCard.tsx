@@ -55,7 +55,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   return (
     <div
       className={
-        'border border-secondary rounded bg-surface p-4 space-y-2 w-full max-w-xl ' +
+        'border border-secondary rounded bg-surface p-4 space-y-2 w-72 flex-shrink-0 ' +
         (className || '')
       }
     >
