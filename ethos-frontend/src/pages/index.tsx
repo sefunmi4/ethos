@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
           boardId="quest-board"
           title="🗺️ Quest Board"
           layout="grid"
-          gridLayout="paged"
+          gridLayout="horizontal"
           compact
           user={user as User}
           hideControls
