@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
 import { BoardProvider } from './contexts/BoardContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './utils/queryClient';
 import { TimelineProvider } from './contexts/TimelineContext';
@@ -34,6 +35,7 @@ const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const FlaggedQuests = lazy(() => import('./pages/admin/FlaggedQuests'));
 const BannedQuests = lazy(() => import('./pages/admin/BannedQuests'));
+const Notifications = lazy(() => import('./pages/Notifications'));
 
 /**
  * The root App component of the application.
@@ -51,6 +53,7 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <TimelineProvider>
           <BoardProvider>
+            <NotificationProvider>
             <ThemeProvider>
             <div className="min-h-screen flex flex-col bg-background dark:bg-surface text-primary">
               {/* Top-level navigation */}
@@ -72,6 +75,7 @@ const App: React.FC = () => {
                   {/* 🔒 Routes requiring authentication (wrapped in PrivateRoute) */}
                   <Route element={<PrivateRoute />}>
                   <Route path={ROUTES.PROFILE} element={<Profile />} />
+                  <Route path={ROUTES.NOTIFICATIONS} element={<Notifications />} />
                   <Route path={ROUTES.QUEST()} element={<Quest />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
@@ -90,6 +94,7 @@ const App: React.FC = () => {
             <Footer />
             </div>
             </ThemeProvider>
+            </NotificationProvider>
           </BoardProvider>
         </TimelineProvider>
       </QueryClientProvider>

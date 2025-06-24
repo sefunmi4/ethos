@@ -13,6 +13,7 @@ import questRoutes from './routes/questRoutes';
 import boardRoutes from './routes/boardRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 
 // Load environment variables from `.env` file
 dotenv.config();
@@ -70,6 +71,7 @@ app.use('/api/quests', questRoutes);  // 📦 Quests, task maps
 app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
+app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
 
 /**
  * Default server port

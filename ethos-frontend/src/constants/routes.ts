@@ -22,6 +22,9 @@ export const ROUTES = {
   
     /** Logged-in user’s private profile page */
     PROFILE: '/profile',
+
+    /** Notifications page */
+    NOTIFICATIONS: '/notifications',
   
     /**
      * Public profile page for any user
