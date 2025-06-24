@@ -142,56 +142,38 @@ export const buildSummaryTags = (
   }
 
   if (post.type === "request") {
+    let label = "Request";
     if (post.questId && title) {
-      const isHead = post.nodeId ? /:T00$/.test(post.nodeId) : true;
-      tags.push({
-        type: "quest_task",
-        label: `${isHead ? 'Quest' : 'Quest Task'}: ${title}`,
-        detailLink: ROUTES.POST(post.id),
-      });
-      if (post.nodeId && !isHead) {
-        tags.push({
-          type: "task",
-          label: `Task: ${getQuestLinkLabel(post, title ?? '', false)}`,
-          link: ROUTES.POST(post.id),
-        });
+      if (post.subtype === "task") {
+        const id = post.nodeId
+          ? getQuestLinkLabel(post, "", false)
+          : undefined;
+        label = id ? `Task Request - ${id}` : "Task Request";
+      } else if (post.subtype === "issue") {
+        const id = post.nodeId
+          ? getQuestLinkLabel(post, "", false)
+          : undefined;
+        label = id ? `Issue Request - ${id}` : "Issue Request";
+      } else {
+        label = "Request - Quest";
       }
-      if (post.status && post.status !== "To Do") {
-        tags.push({
-          type: "status",
-          label: post.status,
-          detailLink: ROUTES.POST(post.id),
-        });
-      }
+      tags.push({ type: "request", label, detailLink: ROUTES.POST(post.id) });
     } else {
       const user = post.author?.username || post.authorId;
       tags.push({
         type: "request",
-        label: "Request:",
+        label,
         detailLink: ROUTES.POST(post.id),
         username: user,
         usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
       });
-      if (post.subtype === "task") {
-        const label = post.nodeId
-          ? `Task: ${getQuestLinkLabel(post, title ?? '', false)}`
-          : "Task";
-        tags.push({
-          type: "task",
-          label,
-          detailLink: ROUTES.POST(post.id),
-        });
-      }
-      if (post.subtype === "issue") {
-        const label = post.nodeId
-          ? `Issue: ${getQuestLinkLabel(post, title ?? '', false)}`
-          : "Issue";
-        tags.push({
-          type: "issue",
-          label,
-          detailLink: ROUTES.POST(post.id),
-        });
-      }
+    }
+    if (post.status && post.status !== "To Do") {
+      tags.push({
+        type: "status",
+        label: post.status,
+        detailLink: ROUTES.POST(post.id),
+      });
     }
     return tags;
   }
@@ -209,17 +191,13 @@ export const buildSummaryTags = (
   }
 
   if (post.type === "task" && post.nodeId) {
-    const user = post.author?.username || post.authorId;
     const label = post.nodeId.replace(/^Q:[^:]+:/, "");
     tags.push({
       type: "task",
       label,
       detailLink: ROUTES.POST(post.id),
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   } else if (post.type === "issue") {
-    const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
         ? post.nodeId.replace(/^Q:[^:]+:/, "")
@@ -228,8 +206,6 @@ export const buildSummaryTags = (
       type: "issue",
       label,
       detailLink: ROUTES.POST(post.id),
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   } else if (post.type === "log" || post.type === "quest_log") {
     const user = post.author?.username || post.authorId;
