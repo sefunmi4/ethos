@@ -132,7 +132,6 @@ export interface DBProject {
   quests?: string[];
   deliverables?: string[];
   mapEdges?: TaskEdge[];
-  collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
 }
 
 // types/db.ts
@@ -288,7 +287,6 @@ export interface DBSchema {
   posts: DBPost[];
   projects: DBProject[];
   quests: DBQuest[];
-  projects: DBProject[];
   users: DBUser[];
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
