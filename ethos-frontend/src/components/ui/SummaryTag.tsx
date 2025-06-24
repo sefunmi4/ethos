@@ -9,6 +9,7 @@ import {
   FaCommentAlt,
   FaUser,
   FaHandsHelping,
+  FaUserCheck,
   FaCog,
   FaBullhorn,
   FaCodeBranch,
@@ -28,6 +29,7 @@ export type SummaryTagType =
   | 'free_speech'
   | 'type'
   | 'request'
+  | 'quest_task'
   | 'commit'
   | 'meta_system'
   | 'meta_announcement'
@@ -56,6 +58,7 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
   free_speech: FaCommentAlt,
   type: FaUser,
   request: FaHandsHelping,
+  quest_task: FaUserCheck,
   commit: FaCodeBranch,
   meta_system: FaCog,
   meta_announcement: FaBullhorn,
@@ -73,6 +76,7 @@ const colors: Record<SummaryTagType, string> = {
   free_speech: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
   type: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
   request: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
+  quest_task: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-200',
   commit: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',
   meta_system: 'bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-200',
   meta_announcement: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200',

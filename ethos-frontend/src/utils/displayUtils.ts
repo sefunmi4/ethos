@@ -94,6 +94,7 @@ export interface SummaryTagData {
     | "free_speech"
     | "type"
     | "commit"
+    | "quest_task"
     | "meta_system"
     | "meta_announcement"
     | "solved";
@@ -142,12 +143,13 @@ export const buildSummaryTags = (
 
   if (post.type === "request") {
     if (post.questId && title) {
+      const isHead = post.nodeId ? /:T00$/.test(post.nodeId) : true;
       tags.push({
-        type: "request",
-        label: `Request: ${title}`,
+        type: "quest_task",
+        label: `${isHead ? 'Quest' : 'Quest Task'}: ${title}`,
         detailLink: ROUTES.POST(post.id),
       });
-      if (post.nodeId) {
+      if (post.nodeId && !isHead) {
         tags.push({
           type: "task",
           label: `Task: ${getQuestLinkLabel(post, title ?? '', false)}`,
