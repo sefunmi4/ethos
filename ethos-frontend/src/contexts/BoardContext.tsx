@@ -26,7 +26,22 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [, setBoardMetaState] = useState<{ id: string; title: string; layout: string } | null>(null);
-  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
+  const EXPANDED_KEY = 'ethos.expandedItem';
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(EXPANDED_KEY) || null;
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (expandedItemId) {
+      localStorage.setItem(EXPANDED_KEY, expandedItemId);
+    } else {
+      localStorage.removeItem(EXPANDED_KEY);
+    }
+  }, [expandedItemId]);
 
   const setBoardMeta = useCallback(
     (meta: { id: string; title: string; layout: string }) => {
