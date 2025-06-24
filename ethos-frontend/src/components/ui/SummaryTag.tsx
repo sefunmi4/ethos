@@ -108,7 +108,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
   if (username && usernameLink && detailLink) {
     return (
       <span className={clsx(baseClass, colorClass, className)}>
-        <Icon className="w-3 h-3" />
+        <Icon className="w-3 h-3 flex-shrink-0" />
         <Link to={detailLink} className="underline text-inherit">
           {label}
         </Link>{' '}
