@@ -9,9 +9,10 @@ import { useBoardContext } from '../../contexts/BoardContext';
 
 import Banner from '../../components/ui/Banner';
 import Board from '../../components/board/Board';
-import { Spinner } from '../../components/ui';
+import { Spinner, Button } from '../../components/ui';
 import ReviewForm from '../../components/ReviewForm';
 import { fetchUserById } from '../../api/auth';
+import { promoteQuest } from '../../api/quest';
 
 import type { User } from '../../types/userTypes';
 import type { BoardData } from '../../types/boardTypes';
@@ -77,6 +78,18 @@ const QuestPage: React.FC = () => {
     if (fetchedLog) setLogBoard(fetchedLog);
   }, [fetchedMap, fetchedLog]);
 
+  const handlePromote = async () => {
+    if (!quest) return;
+    if (!window.confirm('Promote this quest to a project?')) return;
+    try {
+      await promoteQuest(quest.id);
+      alert('Quest promoted to project');
+    } catch (err) {
+      console.error('[QuestPage] promote failed:', err);
+      alert('Failed to promote quest');
+    }
+  };
+
   // ❌ Error state
   if (questError) {
     return (
@@ -95,6 +108,13 @@ const QuestPage: React.FC = () => {
     <main className="max-w-6xl mx-auto px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
       {/* 🎯 Quest Summary Card */}
       <Banner quest={quest} creatorName={creatorName} />
+      {user?.id === quest.authorId && (
+        <div className="mb-4">
+          <Button variant="secondary" onClick={handlePromote}>
+            Promote to Project
+          </Button>
+        </div>
+      )}
 
       {/* 🗺 Quest Map Section */}
       <section>

@@ -80,7 +80,7 @@ export type LinkType =
   | 'reference'
   | 'task_edge';
 
-export type ItemType = 'post' | 'quest' | 'board';
+export type ItemType = 'post' | 'quest' | 'board' | 'project';
 
 export type GitItemType = 'post' | 'quest';
 
@@ -174,6 +174,9 @@ export interface Quest {
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
 
+  /** Optional parent project association */
+  projectId?: string;
+
   headPostId: string;
   createdAt?: string;
 
@@ -195,6 +198,11 @@ export interface Quest {
 
   /** Marks this quest as a request for help */
   helpRequest?: boolean;
+}
+
+export interface Project extends Quest {
+  /** Quests under this project */
+  questIds: string[];
 }
 /**
  * Users associated with a post.

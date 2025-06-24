@@ -82,6 +82,9 @@ export interface DBQuest {
   flagCount?: number;
   status: 'active' | 'completed' | 'archived';
 
+  /** Optional parent project association */
+  projectId?: string;
+
   headPostId: string;
   linkedPosts: LinkedItem[];
   collaborators: { userId?: string; roles?: string[]; pending?: string[] }[];
@@ -104,6 +107,10 @@ export interface DBQuest {
 
   /** Users following this quest */
   followers?: string[];
+}
+
+export interface DBProject extends DBQuest {
+  questIds: string[];
 }
 
 export interface TaskEdge {
@@ -281,6 +288,7 @@ export interface DBSchema {
   posts: DBPost[];
   projects: DBProject[];
   quests: DBQuest[];
+  projects: DBProject[];
   users: DBUser[];
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
@@ -288,7 +296,7 @@ export interface DBSchema {
 }
 
 // Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema; // 'boards' | 'git' | 'posts' | 'projects' | 'quests' | 'users' | 'reviews' | 'boardLogs' | 'notifications'
+export type DBFileName = keyof DBSchema;
 
 /**
  * Generic type for file-based mock storage (can be used in utils/loaders.ts)

@@ -1,5 +1,6 @@
 import { axiosWithAuth } from '../utils/authUtils';
 import type { Quest, TaskEdge, EnrichedQuest } from '../types/questTypes';
+import type { Project } from '../types/projectTypes';
 import type { Post } from '../types/postTypes';
 import { fetchPostById, fetchPostsByQuestId } from './post';
 
@@ -228,5 +229,10 @@ export const followQuest = async (id: string): Promise<{ followers: string[] }> 
 
 export const unfollowQuest = async (id: string): Promise<{ followers: string[] }> => {
   const res = await axiosWithAuth.post(`${BASE_URL}/${id}/unfollow`);
+  return res.data;
+};
+
+export const promoteQuest = async (id: string): Promise<Project> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/promote`);
   return res.data;
 };

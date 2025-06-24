@@ -2,12 +2,12 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { boardsStore, questsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
+import { boardsStore, questsStore, projectsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
-import type { Quest, LinkedItem, Visibility, TaskEdge } from '../types/api';
-import type { DBQuest, DBPost } from '../types/db';
+import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/api';
+import type { DBQuest, DBPost, DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -535,6 +535,45 @@ router.get(
   recurse(id);
   res.json(nodes);
 });
+
+// POST promote quest to project
+router.post(
+  '/:id/promote',
+  authMiddleware,
+  (req: AuthRequest<{ id: string }>, res: Response<Project>): void => {
+    const { id } = req.params;
+
+    const quests = questsStore.read();
+    const questIndex = quests.findIndex((q) => q.id === id);
+    if (questIndex === -1) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
+
+    const quest = quests[questIndex];
+    const childQuestIds = (quest.linkedPosts || [])
+      .filter((l) => l.itemType === 'quest')
+      .map((l) => l.itemId);
+
+    const projects = projectsStore.read();
+    const newProject: DBProject = {
+      ...quest,
+      questIds: childQuestIds,
+    };
+    projects.push(newProject);
+    projectsStore.write(projects);
+
+    quests.splice(questIndex, 1);
+    childQuestIds.forEach((cid) => {
+      const child = quests.find((q) => q.id === cid);
+      if (child) child.projectId = newProject.id;
+    });
+    questsStore.write(quests);
+
+    res.json(newProject);
+  }
+);
 
 // POST mark quest complete and cascade solution
 router.post(
