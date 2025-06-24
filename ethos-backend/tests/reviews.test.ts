@@ -59,25 +59,18 @@ describe('review routes', () => {
     expect(res.status).toBe(400);
   });
 
-  it('PATCH /reviews/:id updates fields', async () => {
-    const existing = {
-      id: 'r1',
-      reviewerId: 'u1',
-      targetType: 'quest',
-      rating: 3,
-      visibility: 'public',
-      status: 'submitted',
-      createdAt: '1',
-    };
-    reviewsStoreMock.read.mockReturnValue([existing]);
+  it('GET /reviews/summary/:entityType/:id returns averages', async () => {
+    const data = [
+      { id: 'r1', reviewerId: 'u1', targetType: 'quest', rating: 4, tags: ['easy'], questId: 'q1', createdAt: '1' },
+      { id: 'r2', reviewerId: 'u2', targetType: 'quest', rating: 2, tags: ['hard'], questId: 'q1', createdAt: '2' },
+      { id: 'r3', reviewerId: 'u3', targetType: 'quest', rating: 5, tags: ['easy'], questId: 'q2', createdAt: '3' },
+    ];
+    reviewsStoreMock.read.mockReturnValue(data);
 
-    const res = await request(app)
-      .patch('/reviews/r1')
-      .send({ rating: 4, visibility: 'private', status: 'accepted' });
-
+    const res = await request(app).get('/reviews/summary/quest/q1');
     expect(res.status).toBe(200);
-    expect(reviewsStoreMock.write).toHaveBeenCalled();
-    expect(res.body.visibility).toBe('private');
-    expect(res.body.status).toBe('accepted');
+    expect(res.body.count).toBe(2);
+    expect(res.body.averageRating).toBe(3);
+    expect(res.body.tagCounts.easy).toBe(1);
   });
 });

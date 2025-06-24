@@ -75,6 +75,16 @@ export const ROUTES = {
      */
     BOARD_TYPE: (boardType = ':boardType') => `/board/${boardType}`,
 
+    /**
+     * Review summary page
+     * @param entityType Entity type being reviewed
+     * @param id Entity ID
+     */
+    REVIEW_SUMMARY: (
+      entityType = ':entityType',
+      id = ':id',
+    ) => `/reviews/${entityType}/${id}`,
+
     FLAGGED_QUESTS: '/admin/flagged-quests',
     BANNED_QUESTS: '/admin/banned-quests',
 

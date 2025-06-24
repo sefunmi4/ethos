@@ -25,3 +25,17 @@ export const fetchReviews = async (params: {
   const res = await axiosWithAuth.get(BASE_URL, { params });
   return res.data;
 };
+
+export interface ReviewSummary {
+  averageRating: number;
+  count: number;
+  tagCounts: Record<string, number>;
+}
+
+export const fetchReviewSummary = async (
+  entityType: string,
+  id: string,
+): Promise<ReviewSummary> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/summary/${entityType}/${id}`);
+  return res.data;
+};

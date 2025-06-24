@@ -44,6 +44,41 @@ router.get('/:id', (req: Request<{ id: string }>, res: Response): void => {
   res.json(review);
 });
 
+// GET /api/reviews/summary/:entityType/:id
+router.get('/summary/:entityType/:id', (req: Request<{ entityType: string; id: string }>, res: Response): void => {
+  const { entityType, id } = req.params;
+  const reviews = reviewsStore.read().filter(r => {
+    if (r.targetType !== entityType) return false;
+    switch (entityType) {
+      case 'quest':
+        return r.questId === id;
+      case 'ai_app':
+        return r.repoUrl === id;
+      case 'dataset':
+        return r.modelId === id;
+      case 'creator':
+        return r.modelId === id;
+      default:
+        return false;
+    }
+  });
+
+  if (reviews.length === 0) {
+    res.json({ averageRating: 0, count: 0, tagCounts: {} });
+    return;
+  }
+
+  const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+  const tagCounts: Record<string, number> = {};
+  reviews.forEach(r => {
+    (r.tags || []).forEach(t => {
+      tagCounts[t] = (tagCounts[t] || 0) + 1;
+    });
+  });
+  const averageRating = parseFloat((total / reviews.length).toFixed(2));
+  res.json({ averageRating, count: reviews.length, tagCounts });
+});
+
 // POST /api/reviews
 router.post('/', authMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const {
