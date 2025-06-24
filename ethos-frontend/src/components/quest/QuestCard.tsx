@@ -126,6 +126,12 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const subgraphIds = useMemo(() => {
     if (!selectedNode) return new Set<string>();
     const ids = new Set<string>();
+
+    if (rootNode && selectedNode.id === rootNode.id) {
+      logs.forEach((p) => ids.add(p.id));
+      return ids;
+    }
+
     const gather = (id: string) => {
       ids.add(id);
       (questData.taskGraph || [])
@@ -134,7 +140,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     };
     gather(selectedNode.id);
     return ids;
-  }, [selectedNode, questData.taskGraph]);
+  }, [selectedNode, questData.taskGraph, rootNode, logs]);
 
   const folderNodes = useMemo(
     () => logs.filter((p) => subgraphIds.has(p.id)),
@@ -429,31 +435,36 @@ const QuestCard: React.FC<QuestCardProps> = ({
           onClick={() => setShowFolderView((p) => !p)}
         >
           <span className="font-semibold text-sm">Folder Structure</span>
-          <span className="text-xs">{showFolderView ? '▲' : '▼'}</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFolderForm((p) => !p);
+              }}
+              className="text-xs text-accent underline"
+            >
+              {showFolderForm ? '- Cancel' : '+ Add Item'}
+            </button>
+            <span className="text-xs">{showFolderView ? '▲' : '▼'}</span>
+          </div>
         </div>
+        {showFolderForm && (
+          <div className="p-2">
+            <QuickTaskForm
+              questId={quest.id}
+              parentId={selectedNode.id}
+              boardId={`task-${selectedNode.id}`}
+              allowIssue
+              onSave={(p) => {
+                setLogs((prev) => [...prev, p]);
+                setShowFolderForm(false);
+              }}
+              onCancel={() => setShowFolderForm(false)}
+            />
+          </div>
+        )}
         {showFolderView && (
           <div className="p-2 space-y-2">
-            {showFolderForm && (
-              <QuickTaskForm
-                questId={quest.id}
-                parentId={selectedNode.id}
-                boardId={`task-${selectedNode.id}`}
-                allowIssue
-                onSave={(p) => {
-                  setLogs((prev) => [...prev, p]);
-                  setShowFolderForm(false);
-                }}
-                onCancel={() => setShowFolderForm(false)}
-              />
-            )}
-            <div className="text-right">
-              <button
-                onClick={() => setShowFolderForm((p) => !p)}
-                className="text-xs text-accent underline"
-              >
-                {showFolderForm ? '- Cancel' : '+ Add Item'}
-              </button>
-            </div>
             <div className="h-64 overflow-auto">
               <GraphLayout
                 items={folderNodes}
