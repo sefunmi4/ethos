@@ -46,7 +46,18 @@ router.get('/:id', (req: Request<{ id: string }>, res: Response): void => {
 
 // POST /api/reviews
 router.post('/', authMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const { targetType, rating, tags = [], feedback = '', repoUrl, modelId, questId, postId } = req.body;
+  const {
+    targetType,
+    rating,
+    tags = [],
+    feedback = '',
+    repoUrl,
+    modelId,
+    questId,
+    postId,
+    visibility = 'public',
+    status = 'submitted',
+  } = req.body;
 
   if (!targetType || !rating) {
     res.status(400).json({ error: 'Missing fields' });
@@ -64,6 +75,8 @@ router.post('/', authMiddleware, (req: AuthenticatedRequest, res: Response): voi
     reviewerId: req.user!.id,
     targetType,
     rating: Math.min(5, Math.max(1, Number(rating))),
+    visibility,
+    status,
     tags,
     feedback,
     repoUrl,
@@ -76,6 +89,31 @@ router.post('/', authMiddleware, (req: AuthenticatedRequest, res: Response): voi
   reviews.push(newReview);
   reviewsStore.write(reviews);
   res.status(201).json(newReview);
+});
+
+// PATCH /api/reviews/:id
+router.patch('/:id', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  const reviews = reviewsStore.read();
+  const review = reviews.find(r => r.id === req.params.id);
+  if (!review) {
+    res.status(404).json({ error: 'Review not found' });
+    return;
+  }
+
+  const { feedback } = req.body;
+  if (feedback && bannedWords.some(w => String(feedback).toLowerCase().includes(w))) {
+    res.status(400).json({ error: 'Inappropriate language detected' });
+    return;
+  }
+
+  Object.assign(review, req.body);
+
+  if ('rating' in req.body && typeof review.rating === 'number') {
+    review.rating = Math.min(5, Math.max(1, Number(review.rating)));
+  }
+
+  reviewsStore.write(reviews);
+  res.json(review);
 });
 
 export default router;
