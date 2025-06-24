@@ -122,21 +122,18 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
 
   const summaryTags = buildSummaryTags(post);
   let taskTag = summaryTags.find(t => t.type === 'task');
-  const shortTitle = headerText.length > 20 ? headerText.slice(0, 20) + '...' : headerText;
   if (taskTag) {
     taskTag = {
       ...taskTag,
       label: post.nodeId
-        ? `Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}:${shortTitle}`
+        ? post.nodeId.replace(/^Q:[^:]+:/, '')
         : taskTag.label.replace(/^Task\s*[-:]\s*/, ''),
       username: undefined,
       usernameLink: undefined,
       link: ROUTES.POST(post.id),
     } as any;
   } else {
-    const label = post.nodeId
-      ? `Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}:${shortTitle}`
-      : 'Task';
+    const label = post.nodeId ? post.nodeId.replace(/^Q:[^:]+:/, '') : 'Task';
     taskTag = {
       type: 'task',
       label,

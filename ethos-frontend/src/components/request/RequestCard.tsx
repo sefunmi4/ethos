@@ -68,6 +68,13 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         ) : (
           <SummaryTag type="request" label={POST_TYPE_LABELS.request} />
         )}
+        {post.nodeId && (
+          <SummaryTag
+            type={post.type === 'issue' || post.subtype === 'issue' ? 'issue' : 'task'}
+            label={post.nodeId.replace(/^Q:[^:]+:/, '')}
+            detailLink={ROUTES.POST(post.id)}
+          />
+        )}
         {post.questId && (
           <SummaryTag
             type="quest"

@@ -120,7 +120,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           : 'Planner',
     },
     { value: 'logs', label: 'Logs' },
-    { value: 'options', label: 'Options' },
+    { value: 'options', label: canEdit ? 'Options' : 'Team' },
   ];
 
   const isOwner = user?.id === questData.authorId;
@@ -588,7 +588,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
         break;
       case 'options':
         panel = selectedNode || rootNode ? (
-          <TeamPanel questId={quest.id} node={selectedNode || (rootNode as Post)} />
+          <TeamPanel
+            questId={quest.id}
+            node={selectedNode || (rootNode as Post)}
+            canEdit={canEdit}
+          />
         ) : (
           <div className="p-2 text-sm">Select a task</div>
         );

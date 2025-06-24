@@ -11,9 +11,10 @@ import type { Quest } from '../../types/questTypes';
 interface TeamPanelProps {
   questId: string;
   node: Post;
+  canEdit?: boolean;
 }
 
-const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node }) => {
+const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node, canEdit = true }) => {
   const [quest, setQuest] = useState<Quest | null>(null);
   const [roles, setRoles] = useState<CollaberatorRoles[]>(node.collaborators || []);
   const [saving, setSaving] = useState(false);
@@ -88,13 +89,29 @@ const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node }) => {
           </Link>
         </div>
       )}
-      <CollaberatorControls value={roles} onChange={setRoles} />
-      <button
-        onClick={handleSave}
-        className="text-xs text-accent underline"
-      >
-        {saving ? 'Saving...' : 'Save Roles'}
-      </button>
+      {canEdit ? (
+        <>
+          <CollaberatorControls value={roles} onChange={setRoles} />
+          <button
+            onClick={handleSave}
+            className="text-xs text-accent underline"
+          >
+            {saving ? 'Saving...' : 'Save Roles'}
+          </button>
+        </>
+      ) : (
+        <div className="text-sm">
+          <p className="font-semibold">Team Members:</p>
+          <ul className="list-disc ml-4 space-y-1">
+            {roles.map((r, i) => (
+              <li key={i}>
+                {r.username ? `@${r.username}` : 'Open Role'}
+                {r.roles && r.roles.length ? ` - ${r.roles.join(', ')}` : ''}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

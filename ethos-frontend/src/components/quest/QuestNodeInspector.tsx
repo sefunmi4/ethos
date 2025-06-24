@@ -126,13 +126,17 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
 
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
 
+  const canEdit =
+    user?.id === node.authorId ||
+    (node.collaborators || []).some(c => c.userId === user?.id);
+
   const tabs = [
     {
       value: 'file',
       label: type === 'file' ? 'File' : type === 'folder' ? 'Folder' : 'Planner',
     },
     ...(showLogs ? [{ value: 'logs', label: 'Logs' }] : []),
-    { value: 'options', label: 'Options' },
+    { value: 'options', label: canEdit ? 'Options' : 'Team' },
   ];
 
   let panel: React.ReactNode = null;
@@ -161,7 +165,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
       );
       break;
     case 'options':
-      panel = <TeamPanel questId={questId} node={node} />;
+      panel = <TeamPanel questId={questId} node={node} canEdit={canEdit} />;
       break;
     default:
       panel = null;
