@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes';
 import gitRoutes from './routes/gitRoutes';
 import postRoutes from './routes/postRoutes';
 import questRoutes from './routes/questRoutes';
+import projectRoutes from './routes/projectRoutes';
 import boardRoutes from './routes/boardRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
@@ -68,6 +69,7 @@ app.use('/api/auth', authRoutes);     // 🔐 Authentication (login, register, s
 app.use('/api/git', gitRoutes);       // 🔁 Git sync, commits, diffs
 app.use('/api/posts', postRoutes);    // 📝 Posts, reactions, replies
 app.use('/api/quests', questRoutes);  // 📦 Quests, task maps
+app.use('/api/projects', projectRoutes); // 🗂 Projects
 app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles

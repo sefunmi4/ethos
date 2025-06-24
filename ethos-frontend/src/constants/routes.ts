@@ -46,6 +46,12 @@ export const ROUTES = {
      * @returns A route string like `/quest/abc123`
      */
     QUEST: (id = ':id') => `/quest/${id}`,
+
+    /**
+     * Project page by ID
+     * @param id - Project ID
+     */
+    PROJECT: (id = ':id') => `/project/${id}`,
   
     /**
      * Post page by ID (private)
