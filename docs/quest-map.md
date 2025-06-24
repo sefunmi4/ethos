@@ -36,6 +36,13 @@ The `/api/quests/:id/map` endpoint returns:
 
 The frontend uses these nodes and edges to build the quest graph. Nodes without an incoming edge become roots in the visualization. Dragging nodes in the graph view calls `linkPostToQuest` to create or update edges.
 
+When the **root** task is selected in a QuestCard the folder view lists every
+post in the quest, even if some of those posts have no incoming links. These
+orphan tasks appear as separate root nodes and can be dragged onto another node
+to reconnect them. The folder section also contains a small form for creating
+new file, folder or planner tasks and includes a status board for the currently
+selected node.
+
 ## Map Graph view
 
 Boards may use a force-directed layout by setting their layout to `map-graph`. Quest pages pass this layout to their map board so users can freely drag nodes around. The map graph uses `react-force-graph` under the hood.
