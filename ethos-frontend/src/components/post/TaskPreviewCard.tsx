@@ -47,13 +47,19 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
     const optimistic = { ...post, status: val };
     onUpdate?.(optimistic);
     document.dispatchEvent(
-      new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+      new CustomEvent('taskUpdated', {
+        detail: { task: optimistic },
+        bubbles: true,
+      })
     );
     try {
       const updated = await updatePost(post.id, { status: val });
       onUpdate?.(updated);
       document.dispatchEvent(
-        new CustomEvent('taskUpdated', { detail: { task: updated } })
+        new CustomEvent('taskUpdated', {
+          detail: { task: updated },
+          bubbles: true,
+        })
       );
     } catch (err) {
       console.error('[TaskPreviewCard] Failed to update status', err);
@@ -67,13 +73,19 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
     const optimistic = { ...post, taskType: val };
     onUpdate?.(optimistic);
     document.dispatchEvent(
-      new CustomEvent('taskUpdated', { detail: { task: optimistic } })
+      new CustomEvent('taskUpdated', {
+        detail: { task: optimistic },
+        bubbles: true,
+      })
     );
     try {
       const updated = await updatePost(post.id, { taskType: val });
       onUpdate?.(updated);
       document.dispatchEvent(
-        new CustomEvent('taskUpdated', { detail: { task: updated } })
+        new CustomEvent('taskUpdated', {
+          detail: { task: updated },
+          bubbles: true,
+        })
       );
     } catch (err) {
       console.error('[TaskPreviewCard] Failed to update task type', err);
