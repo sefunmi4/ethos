@@ -103,6 +103,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
               {editing?.id === review.id && (
                 <div className="mt-3">
                   <ReviewForm
+                    reviewId={review.id}
                     targetType={review.targetType}
                     questId={review.questId}
                     postId={review.postId}
@@ -111,6 +112,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
                     initialRating={review.rating}
                     initialTags={review.tags}
                     initialFeedback={review.feedback}
+                    initialVisibility={review.visibility}
+                    initialStatus={review.status}
                     onSubmitted={() => {
                       setEditing(null);
                       load();

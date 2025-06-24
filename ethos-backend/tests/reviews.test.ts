@@ -26,10 +26,17 @@ describe('review routes', () => {
   it('POST /reviews creates review', async () => {
     const res = await request(app)
       .post('/reviews')
-      .send({ targetType: 'quest', rating: 5, feedback: 'great' });
+      .send({
+        targetType: 'quest',
+        rating: 5,
+        feedback: 'great',
+        visibility: 'public',
+        status: 'submitted',
+      });
     expect(res.status).toBe(201);
     expect(reviewsStoreMock.write).toHaveBeenCalled();
     expect(res.body.rating).toBe(5);
+    expect(res.body.visibility).toBe('public');
   });
 
   it('GET /reviews filters by type and sorts', async () => {
@@ -50,5 +57,27 @@ describe('review routes', () => {
       .post('/reviews')
       .send({ targetType: 'quest', rating: 4, feedback: 'badword inside' });
     expect(res.status).toBe(400);
+  });
+
+  it('PATCH /reviews/:id updates fields', async () => {
+    const existing = {
+      id: 'r1',
+      reviewerId: 'u1',
+      targetType: 'quest',
+      rating: 3,
+      visibility: 'public',
+      status: 'submitted',
+      createdAt: '1',
+    };
+    reviewsStoreMock.read.mockReturnValue([existing]);
+
+    const res = await request(app)
+      .patch('/reviews/r1')
+      .send({ rating: 4, visibility: 'private', status: 'accepted' });
+
+    expect(res.status).toBe(200);
+    expect(reviewsStoreMock.write).toHaveBeenCalled();
+    expect(res.body.visibility).toBe('private');
+    expect(res.body.status).toBe('accepted');
   });
 });
