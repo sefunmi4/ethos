@@ -16,6 +16,7 @@ import {
   FaRegCheckSquare,
   FaUserPlus,
   FaUserCheck,
+  FaBell,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -36,6 +37,8 @@ import {
   unacceptRequest,
   archivePost,
   unarchivePost,
+  followPost,
+  unfollowPost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -89,6 +92,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [joined, setJoined] = useState(
     !!user && post.tags?.includes(`pending:${user.id}`)
   );
+  const [following, setFollowing] = useState(
+    !!user && (post.followers || []).includes(user.id)
+  );
+  const [followerCount, setFollowerCount] = useState(post.followers?.length || 0);
   const [questData, setQuestData] = useState<Quest | null>(null);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
@@ -243,6 +250,23 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
+  const handleFollow = async () => {
+    if (!user) return;
+    try {
+      if (following) {
+        const res = await unfollowPost(post.id);
+        setFollowerCount(res.followers.length);
+        setFollowing(false);
+      } else {
+        const res = await followPost(post.id);
+        setFollowerCount(res.followers.length);
+        setFollowing(true);
+      }
+    } catch (err) {
+      console.error('[ReactionControls] Failed to toggle follow', err);
+    }
+  };
+
   useEffect(() => {
     if (expanded && post.type === 'quest' && post.questId && !questData) {
       fetchQuestById(post.questId)
@@ -345,6 +369,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               {joining ? '...' : joined ? (<><FaUserCheck /> Joined</>) : (<><FaUserPlus /> {post.questId ? 'Join' : 'Apply'}</>)}
             </button>
           )
+        )}
+
+        {['task', 'request', 'quest'].includes(post.type) && (
+          <button className="flex items-center gap-1" onClick={handleFollow} disabled={!user}>
+            <FaBell /> {following ? 'Following' : 'Follow'} {followerCount}
+          </button>
         )}
 
         {(post.type === 'task' || post.type === 'quest') &&

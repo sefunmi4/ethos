@@ -66,6 +66,9 @@ export interface DBPost {
   rating?: number;
 
   reactionCounts?: ReactionCountMap;
+
+  /** Users following this post */
+  followers?: string[];
 }
 
 // types/db.ts
@@ -98,6 +101,9 @@ export interface DBQuest {
 
   /** Marks this quest as a request for help */
   helpRequest?: boolean;
+
+  /** Users following this quest */
+  followers?: string[];
 }
 
 export interface TaskEdge {
@@ -199,6 +205,12 @@ export interface DBUser {
   }>;
 
   experienceTimeline?: DBUserExperienceEvent[];
+
+  /** Users following this user */
+  followers?: string[];
+
+  /** Accounts this user follows */
+  following?: string[];
 
   status?: 'active' | 'archived' | 'banned';
   createdAt?: string;
