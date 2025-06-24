@@ -84,8 +84,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const subgraphIds = useMemo(() => {
     const ids = new Set<string>();
     const gatherChildren = (id: string) => {
+      if (ids.has(id)) return; // Prevent infinite recursion on cyclical graphs
       ids.add(id);
-      edges.filter((e) => e.from === id).forEach((e) => gatherChildren(e.to));
+      edges
+        .filter((e) => e.from === id)
+        .forEach((e) => gatherChildren(e.to));
     };
     gatherChildren(task.id);
     return ids;
