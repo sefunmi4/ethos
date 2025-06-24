@@ -370,7 +370,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </span>
         )}
 
-        {post.type !== 'task' && (
+        {(post.type === 'task' || post.type === 'quest') &&
+          !onToggleExpand && (
+            <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
+              {expanded ? <FaCompress /> : <FaExpand />}{' '}
+              {expanded ? 'Collapse View' : 'Expand View'}
+            </button>
+          )}
+
+        {post.type !== 'task' && !isRequestCard && (
           <button
             className={clsx(
               'flex items-center gap-1',
@@ -406,14 +414,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               : 'Reply'}
           </button>
         )}
-
-        {(post.type === 'task' || post.type === 'quest') &&
-          !onToggleExpand && (
-            <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
-              {expanded ? <FaCompress /> : <FaExpand />}{' '}
-              {expanded ? 'Collapse View' : 'Expand View'}
-            </button>
-          )}
 
         {timestamp && (
           <span className="ml-auto text-xs text-secondary">{timestamp}</span>
