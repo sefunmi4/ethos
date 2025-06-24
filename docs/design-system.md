@@ -72,8 +72,9 @@ Posts and quests are annotated with small tags that reuse the same color palette
 | free_speech | `bg-gray-100 text-gray-700` / `dark:bg-gray-700 dark:text-gray-200` |
 | party_request | `bg-pink-100 text-pink-800` / `dark:bg-pink-800 dark:text-pink-200` |
 
-All tags share the `TAG_BASE` style which sets padding, font size and border radius
-and prevents long text from overflowing by truncating with an ellipsis.
+All tags share the `TAG_BASE` style which sets padding, font size and border radius.
+Most tags also use `TAG_TRUNCATED` to limit width and truncate long labels with an ellipsis,
+while quest tags use `TAG_BASE` so the full quest title is visible.
 
 ### Tag summary format
 
