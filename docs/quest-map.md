@@ -61,4 +61,10 @@ Tab labels reflect the selected type: selecting **file** shows a *File* tab, **f
 
 File tasks display the latest Git diff and an inline file editor. Planner nodes render their child tasks as a checklist so progress can be tracked when exporting the repo or downloading a specific file.
 
+## Project ⇄ Quest Evolution
+
+* Any large quest (Q::XX) can be promoted to a project
+* Auto-assigns its current ID as P::Q00
+* All its internal quests become children
+* Maintains continuity for links, posts, and deliverables
 
