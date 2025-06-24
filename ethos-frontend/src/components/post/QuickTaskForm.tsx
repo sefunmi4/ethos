@@ -26,7 +26,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
   allowIssue = false,
 }) => {
   const [title, setTitle] = useState('');
-  const [taskType, setTaskType] = useState<'file' | 'folder'>('file');
+  const [taskType, setTaskType] = useState<'file' | 'folder' | 'abstract'>('file');
   const [taskStatus, setTaskStatus] = useState(status || 'To Do');
   const [submitting, setSubmitting] = useState(false);
   const [postType, setPostType] = useState<'task' | 'issue'>('task');
@@ -92,8 +92,10 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
       )}
       <Select
         value={taskType}
-        onChange={(e) => setTaskType(e.target.value as 'file' | 'folder')}
-        options={TASK_TYPE_OPTIONS.filter((o) => o.value !== 'abstract')}
+        onChange={(e) =>
+          setTaskType(e.target.value as 'file' | 'folder' | 'abstract')
+        }
+        options={TASK_TYPE_OPTIONS}
       />
       {!status && (
         <Select
