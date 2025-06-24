@@ -540,7 +540,7 @@ router.get(
 router.post(
   '/:id/promote',
   authMiddleware,
-  (req: AuthRequest<{ id: string }>, res: Response<Project>): void => {
+  (req: AuthRequest<{ id: string }>, res: Response): void => {
     const { id } = req.params;
 
     const quests = questsStore.read();
