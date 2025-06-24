@@ -62,9 +62,15 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
       }
     >
       <div className="flex items-center gap-2 text-sm text-secondary">
-        <SummaryTag type="request" label={POST_TYPE_LABELS.request} />
+        <SummaryTag
+          type="request"
+          label={post.questId ? 'Quest Post' : POST_TYPE_LABELS.request}
+        />
         {post.questId && (
-          <SummaryTag type="quest" label={post.questNodeTitle || post.questTitle || 'Quest'} />
+          <SummaryTag
+            type="quest"
+            label={post.questNodeTitle || post.questTitle || 'Quest'}
+          />
         )}
       </div>
       {post.title && (
