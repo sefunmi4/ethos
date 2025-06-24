@@ -15,9 +15,10 @@ jest.mock('../src/models/stores', () => ({
   usersStore: { read: jest.fn(() => []), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
+  notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-import { postsStore, questsStore, usersStore, reactionsStore } from '../src/models/stores';
+import { postsStore, questsStore, usersStore, reactionsStore, notificationsStore } from '../src/models/stores';
 
 const postsStoreMock = postsStore as jest.Mocked<any>;
 const questsStoreMock = questsStore as jest.Mocked<any>;

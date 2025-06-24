@@ -94,6 +94,7 @@ export interface SummaryTagData {
     | "free_speech"
     | "type"
     | "commit"
+    | "quest_post"
     | "meta_system"
     | "meta_announcement"
     | "solved";
@@ -143,8 +144,8 @@ export const buildSummaryTags = (
   if (post.type === "request") {
     if (post.questId && title) {
       tags.push({
-        type: "request",
-        label: `Request: ${title}`,
+        type: "quest_post",
+        label: `Quest Post: ${title}`,
         detailLink: ROUTES.POST(post.id),
       });
       if (post.nodeId) {
