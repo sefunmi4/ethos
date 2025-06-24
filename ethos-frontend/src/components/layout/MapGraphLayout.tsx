@@ -35,7 +35,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
 
   useEffect(() => {
     fgRef.current?.zoomToFit(200, 20);
-  }, [items, edgeList]);
+  }, []);
 
   const data = useMemo(() => {
     const nodeSet = new Set(items.map((p) => p.id));
@@ -87,58 +87,9 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
     }
   };
 
-  const handleNodeDragEnd = (node: unknown) => {
-    const dragged = node as Post & { x?: number; y?: number };
-    const data =
-      typeof fgRef.current?.graphData === 'function'
-        ? fgRef.current?.graphData()
-        : fgRef.current?.graphData;
-    const nodes = data?.nodes || [];
-    let targetId: string | null = null;
-    let minDist = Infinity;
-    nodes.forEach((n) => {
-      const { id, x = 0, y = 0 } = n as Post & { x?: number; y?: number };
-      if (id === dragged.id) return;
-      const dx = (dragged.x ?? 0) - x;
-      const dy = (dragged.y ?? 0) - y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < minDist) {
-        minDist = dist;
-        targetId = id as string;
-      }
-    });
-
-    if (minDist > 40) targetId = null;
-
-    const nodeId = dragged.id;
-
-    if (!targetId) {
-      setEdgeList((prev) => {
-        const updated = prev.filter((e) => e.to !== nodeId);
-        if (updated !== prev) emitEdges(updated);
-        return updated;
-      });
-      return;
-    }
-
-    if (nodeId === targetId) return;
-
-    if (isDescendant(nodeId, targetId)) {
-      return;
-    }
-
-    setEdgeList((prev) => {
-      const filtered = prev.filter((e) => e.to !== nodeId);
-      const exists = filtered.some(
-        (e) => e.from === targetId && e.to === nodeId,
-      );
-      const updated = exists
-        ? filtered
-        : [...filtered, { from: targetId as string, to: nodeId }];
-      if (updated !== prev) emitEdges(updated);
-      return updated;
-    });
-    fgRef.current?.zoomToFit(200, 20);
+  const handleNodeDragEnd = () => {
+    // reheat simulation to stabilize layout without changing edges
+    fgRef.current?.d3ReheatSimulation();
   };
 
   return (
@@ -158,6 +109,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         ref={fgRef}
         width={containerRef.current?.clientWidth || undefined}
         height={containerRef.current?.clientHeight || undefined}
+        enableNodeDrag
         graphData={data}
         nodeId="id"
         nodeRelSize={6}
