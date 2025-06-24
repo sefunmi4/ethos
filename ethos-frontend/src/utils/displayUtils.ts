@@ -103,6 +103,7 @@ export interface SummaryTagData {
   username?: string;
   usernameLink?: string;
   detailLink?: string;
+  truncate?: boolean;
 }
 
 /**
@@ -179,14 +180,14 @@ export const buildSummaryTags = (
   }
 
   if (!multipleSources && title) {
-    const shortTitle = title.length > 20 ? title.slice(0, 20) + '...' : title;
     tags.push({
       type: "quest",
-      label: `Quest: ${shortTitle}`,
+      label: `Quest: ${title}`,
       link:
         questId || post.questId
           ? ROUTES.QUEST(questId || post.questId!)
           : undefined,
+      truncate: false,
     });
   }
 

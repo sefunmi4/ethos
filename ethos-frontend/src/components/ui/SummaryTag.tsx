@@ -16,7 +16,7 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 import clsx from 'clsx';
-import { TAG_BASE } from '../../constants/styles';
+import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
 
 export type SummaryTagType =
   | 'quest'
@@ -45,6 +45,8 @@ export interface SummaryTagData {
   usernameLink?: string;
   /** Separate link for the label itself (e.g. post detail page) */
   detailLink?: string;
+  /** Whether the text should be truncated with ellipsis */
+  truncate?: boolean;
 }
 
 const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> = {
@@ -92,13 +94,16 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
   username,
   usernameLink,
   detailLink,
+  truncate = true,
 }) => {
   const Icon = icons[type] || FaStickyNote;
   const colorClass = colors[type] || colors.type;
 
+  const baseClass = truncate ? TAG_TRUNCATED : TAG_BASE;
+
   if (username && usernameLink && detailLink) {
     return (
-      <span className={clsx(TAG_BASE, colorClass, className)}>
+      <span className={clsx(baseClass, colorClass, className)}>
         <Icon className="w-3 h-3" />
         <Link to={detailLink} className="underline text-inherit">
           {label}
@@ -117,7 +122,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
 
   if (link) {
     return (
-      <Link to={link} className={clsx(TAG_BASE, colorClass, className)}>
+      <Link to={link} className={clsx(baseClass, colorClass, className)}>
         {content}
       </Link>
     );
@@ -125,13 +130,13 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
 
   if (detailLink) {
     return (
-      <Link to={detailLink} className={clsx(TAG_BASE, colorClass, className)}>
+      <Link to={detailLink} className={clsx(baseClass, colorClass, className)}>
         {content}
       </Link>
     );
   }
 
-  return <span className={clsx(TAG_BASE, colorClass, className)}>{content}</span>;
+  return <span className={clsx(baseClass, colorClass, className)}>{content}</span>;
 };
 
 export default SummaryTag;
