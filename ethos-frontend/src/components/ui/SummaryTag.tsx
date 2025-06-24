@@ -123,6 +123,14 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
     );
   }
 
+  if (detailLink) {
+    return (
+      <Link to={detailLink} className={clsx(TAG_BASE, colorClass, className)}>
+        {content}
+      </Link>
+    );
+  }
+
   return <span className={clsx(TAG_BASE, colorClass, className)}>{content}</span>;
 };
 

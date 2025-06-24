@@ -151,7 +151,7 @@ const PostCard: React.FC<PostCardProps> = ({
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
       ? 'max-w-3xl'
       : isQuestBoardRequest
-        ? 'max-w-2xl'
+        ? 'w-72'
         : 'max-w-prose';
 
   const expandedView = expanded !== undefined ? expanded : internalExpandedView;
