@@ -9,6 +9,10 @@ import SummaryTag from '../ui/SummaryTag';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import StatusBoardPanel from './StatusBoardPanel';
 import QuickTaskForm from '../post/QuickTaskForm';
+import SubtaskChecklist from './SubtaskChecklist';
+import FileEditorPanel from './FileEditorPanel';
+import GitDiffViewer from '../git/GitDiffViewer';
+import { useGitDiff } from '../../hooks/useGit';
 import { updateQuestTaskGraph } from '../../api/quest';
 import { ROUTES } from '../../constants/routes';
 import type { Post } from '../../types/postTypes';
@@ -27,6 +31,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const [selected, setSelected] = useState<Post>(task);
   const [detailWidth, setDetailWidth] = useState<number>(400);
   const [showFolderForm, setShowFolderForm] = useState(false);
+  const [showFolderView, setShowFolderView] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
   const navigate = useNavigate();
   const isHeadNode = task.nodeId?.endsWith('T00');
   const isRootSelected = selected.nodeId?.endsWith('T00');
@@ -97,6 +103,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const taskType = selected.taskType || 'abstract';
   const status = selected.status;
 
+  const { data: diffData, isLoading: diffLoading } = useGitDiff({
+    questId,
+    filePath: selected.gitFilePath,
+    commitId: selected.gitCommitSha,
+  });
+
 
   const handleDividerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const startX = e.clientX;
@@ -117,7 +129,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
     <div className="border border-secondary rounded-lg bg-surface p-4 space-y-2">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 space-y-2 md:pr-4" style={{ minWidth: 240 }}>
-          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag={isRootSelected} />
+          <TaskPreviewCard post={selected} summaryOnly hideSummaryTag={!isRootSelected} />
           <div className="flex items-center justify-between gap-1">
             {parentNode && (
               <>
@@ -161,49 +173,93 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
             status={status}
             hideSelects
           />
-          {taskType === 'folder' && (
-            <div className="space-y-2 p-2 mt-2">
-              <StatusBoardPanel
-                questId={questId}
-                linkedNodeId={selected.id}
-                initialOpen={false}
-              />
-              {showFolderForm && (
-                <QuickTaskForm
-                  questId={questId}
-                  parentId={selected.id}
-                  boardId={`task-${selected.id}`}
-                  allowIssue
-                  onSave={() => setShowFolderForm(false)}
-                  onCancel={() => setShowFolderForm(false)}
-                />
+          <div className="space-y-2 p-2 mt-2">
+            <StatusBoardPanel
+              questId={questId}
+              linkedNodeId={selected.id}
+              initialOpen={false}
+            />
+            <div className="border border-secondary rounded">
+              <div
+                className="flex justify-between items-center p-2 bg-soft cursor-pointer"
+                onClick={() => setShowChecklist((p) => !p)}
+              >
+                <span className="font-semibold text-sm">Checklist</span>
+                <span className="text-xs">{showChecklist ? '▲' : '▼'}</span>
+              </div>
+              {showChecklist && (
+                <div className="p-2">
+                  <SubtaskChecklist questId={questId} nodeId={selected.id} />
+                </div>
               )}
-              <div className="text-right">
-                <button
-                  onClick={() => setShowFolderForm((p) => !p)}
-                  className="text-xs text-accent underline"
+            </div>
+            {(
+              taskType === 'folder' ||
+              selected.id === task.id ||
+              displayEdges.some((e) => e.from === selected.id)
+            ) && (
+              <div className="border border-secondary rounded">
+                <div
+                  className="flex justify-between items-center p-2 bg-soft cursor-pointer"
+                  onClick={() => setShowFolderView((p) => !p)}
                 >
-                  {showFolderForm ? '- Cancel' : '+ Add Item'}
-                </button>
+                  <span className="font-semibold text-sm">Folder Structure</span>
+                  <span className="text-xs">{showFolderView ? '▲' : '▼'}</span>
+                </div>
+                {showFolderView && (
+                  <div className="p-2 space-y-2">
+                    {showFolderForm && (
+                      <QuickTaskForm
+                        questId={questId}
+                        parentId={selected.id}
+                        boardId={`task-${selected.id}`}
+                        allowIssue
+                        onSave={() => setShowFolderForm(false)}
+                        onCancel={() => setShowFolderForm(false)}
+                      />
+                    )}
+                    <div className="text-right">
+                      <button
+                        onClick={() => setShowFolderForm((p) => !p)}
+                        className="text-xs text-accent underline"
+                      >
+                        {showFolderForm ? '- Cancel' : '+ Add Item'}
+                      </button>
+                    </div>
+                    <div className="h-64 overflow-auto">
+                      <GraphLayout
+                        items={displayNodes}
+                        edges={displayEdges}
+                        questId={questId}
+                        condensed
+                        showInspector={false}
+                        showStatus={false}
+                        onEdgesChange={handleEdgesSave}
+                        onNodeClick={(n) => {
+                          if (n.id !== task.id) {
+                            navigate(ROUTES.POST(n.id));
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="h-64 overflow-auto">
-                <GraphLayout
-                  items={displayNodes}
-                  edges={displayEdges}
+            )}
+            {taskType !== 'abstract' && (
+              <div className="space-y-2">
+                {taskType === 'file' &&
+                  (diffLoading ? null : diffData?.diffMarkdown && (
+                    <GitDiffViewer markdown={diffData.diffMarkdown} />
+                  ))}
+                <FileEditorPanel
                   questId={questId}
-                  condensed
-                  showInspector={false}
-                  showStatus={false}
-                  onEdgesChange={handleEdgesSave}
-                  onNodeClick={(n) => {
-                    if (n.id !== task.id) {
-                      navigate(ROUTES.POST(n.id));
-                    }
-                  }}
+                  filePath={selected.gitFilePath || 'file.txt'}
+                  content={selected.content}
                 />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -128,6 +128,14 @@ const PostCard: React.FC<PostCardProps> = ({
     appendToBoard,
   } = useBoardContext() || {};
 
+  const dispatchTaskUpdated = (p: Post) => {
+    if (p.type === 'task') {
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: p } })
+      );
+    }
+  };
+
   const ctxBoardId = boardId || selectedBoard;
 
   const isQuestBoardRequest =
@@ -148,10 +156,12 @@ const PostCard: React.FC<PostCardProps> = ({
     const optimistic = { ...post, status: newStatus };
     if (ctxBoardId) updateBoardItem(ctxBoardId, optimistic);
     onUpdate?.(optimistic);
+    dispatchTaskUpdated(optimistic);
     try {
       const updated = await updatePost(post.id, { status: newStatus });
       if (ctxBoardId) updateBoardItem(ctxBoardId, updated);
       onUpdate?.(updated);
+      dispatchTaskUpdated(updated);
     } catch (err) {
       console.error('[PostCard] Failed to update status:', err);
     }
@@ -278,9 +288,11 @@ const PostCard: React.FC<PostCardProps> = ({
 
     const optimistic = { ...post, content: updatedContent } as Post;
     onUpdate?.(optimistic);
+    dispatchTaskUpdated(optimistic);
     try {
       const updated = await updatePost(post.id, { content: updatedContent });
       onUpdate?.(updated);
+      dispatchTaskUpdated(updated);
     } catch (err) {
       console.error('[PostCard] Failed to toggle task:', err);
     }
@@ -718,6 +730,7 @@ const PostCard: React.FC<PostCardProps> = ({
                       }
                       setShowLinkEditor(false);
                       onUpdate?.(updated);
+                      dispatchTaskUpdated(updated);
                     } catch (err) {
                       console.error('[PostCard] Failed to update links:', err);
                     }
