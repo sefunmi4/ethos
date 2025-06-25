@@ -55,12 +55,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 app.use(helmet());
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  })
-);
+// Apply rate limiting only in production to prevent local development issues
+if (process.env.NODE_ENV === 'production') {
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 100,
+    })
+  );
+}
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
