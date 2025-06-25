@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "npm run build && rm -rf aws-s3-deploy && mkdir -p aws-s3-deploy && cp -r dist/* aws-s3-deploy/"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

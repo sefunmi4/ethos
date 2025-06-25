@@ -4,6 +4,9 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import type { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { requestLogger, info } from './utils/logger';
 
 import authRoutes from './routes/authRoutes';
@@ -15,6 +18,7 @@ import boardRoutes from './routes/boardRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import healthRoutes from './routes/healthRoutes';
 
 // Load environment variables from `.env` file
 dotenv.config();
@@ -31,32 +35,32 @@ const app: Express = express();
  */
 const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
 
-/**
- * CORS configuration.
- * Enables cookies and cross-origin support for the client.
- */
-function simpleCors(req: Request, res: Response, next: NextFunction): void {
-  res.header('Access-Control-Allow-Origin', CLIENT_URL);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(204);
-    return;
-  }
-  next();
-}
 
 /**
  * Middleware setup
  * @middleware CORS - enable cross-origin resource sharing
  * @middleware express.json - parse incoming JSON payloads
  * @middleware cookieParser - parse cookie headers
+ * @middleware helmet - basic security headers
+ * @middleware rateLimit - basic rate limiting
  */
-app.use(simpleCors);
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
+app.use(helmet());
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
@@ -74,6 +78,24 @@ app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
 app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
+app.use('/api/health', healthRoutes); // ❤️ Health check
+
+// Generic error handler to prevent leaking stack traces in production
+app.use(
+  (
+    err: Error,
+    _req: Request,
+    res: Response,
+    _next: NextFunction
+  ): void => {
+    console.error(err);
+    if (process.env.NODE_ENV === 'production') {
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.status(500).json({ error: err.message, stack: err.stack });
+    }
+  }
+);
 
 /**
  * Default server port
