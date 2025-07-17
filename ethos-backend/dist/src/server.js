@@ -32,7 +32,7 @@ const app = (0, express_1.default)();
  * @constant
  * @default 'http://localhost:4173'
  */
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:4173';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://18.118.173.176:4173';
 /**
  * Comma separated list of allowed origins for CORS.
  * Allows multiple frontends in different environments.
@@ -114,6 +114,6 @@ const PORT = parseInt(process.env.PORT || '4173', 10);
  * Logs a message with the active port and frontend origin
  */
 app.listen(PORT, () => {
-    (0, logger_1.info)(`🚀 Backend server running at http://localhost:${PORT}`);
+    (0, logger_1.info)(`🚀 Backend server running at http://18.118.173.176:${PORT}`);
     (0, logger_1.info)(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
 });
