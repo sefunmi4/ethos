@@ -31,9 +31,9 @@ const app: Express = express();
 /**
  * Define allowed frontend origin.
  * @constant
- * @default 'http://localhost:5173'
+ * @default 'http://localhost:4173'
  */
-const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:4173';
 
 /**
  * Comma separated list of allowed origins for CORS.
@@ -124,9 +124,9 @@ app.use(
 
 /**
  * Default server port
- * @default 3001
+ * @default 4173
  */
-const PORT: number = parseInt(process.env.PORT || '3001', 10);
+const PORT: number = parseInt(process.env.PORT || '4173', 10);
 
 /**
  * Start the server

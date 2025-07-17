@@ -106,8 +106,8 @@ If the plugin cannot be found after installing, try running `npm install --legac
 `.env` for frontend:
 
 ```env
-VITE_API_URL=http://localhost:3001/api
-VITE_SOCKET_URL=http://localhost:3001
+VITE_API_URL=http://localhost:4173/api
+VITE_SOCKET_URL=http://localhost:4173
 ```
 
 ### Theme Tokens
@@ -168,7 +168,7 @@ This runs the frontend Jest tests in `ethos-frontend/tests`.
 `.env` for backend:
 
 ```env
-PORT=3001
+PORT=4173
 ACCESS_SECRET=your_access_secret
 REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri

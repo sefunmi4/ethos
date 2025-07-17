@@ -15,6 +15,6 @@ if (typeof global.TextDecoder === 'undefined') {
 }
 
 // Provide a default API base for modules that read from import.meta.env
-process.env.VITE_API_URL = 'http://localhost:3001/api';
+process.env.VITE_API_URL = 'http://18.118.173.176:4173/api';
 
 
