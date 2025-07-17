@@ -137,6 +137,11 @@ npm install
 npx ts-node src/server.ts       # or: npm run dev
 ```
 
+Running the standalone TypeScript compiler requires the typings from
+`node_modules`. If you encounter errors about missing type definitions,
+ensure you've installed dependencies with `npm install` or run the
+provided `setup.sh` script first.
+
 For production builds, run `npm run build` and then start with `node dist/server.js`.
 
 ### Running Tests
