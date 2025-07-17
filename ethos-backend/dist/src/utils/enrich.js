@@ -138,8 +138,10 @@ const enrichQuest = (quest, { posts = stores_1.postsStore.read(), users = stores
             : { userId: c.userId, roles: c.roles };
     });
     const headPostDB = posts.find((p) => p.id === quest.headPostId);
+    const authorUser = users.find((u) => u.id === quest.authorId);
     return {
         ...normalizedQuest,
+        author: authorUser ? { id: authorUser.id, username: authorUser.username } : { id: quest.authorId },
         headPost: headPostDB ? normalizePost(headPostDB) : undefined,
         logs,
         tasks,

@@ -17,6 +17,8 @@ const getQuestBoardItems = (posts) => {
         .filter((p) => {
         if (p.type !== 'request')
             return false;
+        if (p.tags?.includes('archived'))
+            return false;
         return p.visibility === 'public' || p.visibility === 'request_board';
     })
         .map((p) => p.id);
@@ -37,6 +39,7 @@ router.get('/', (req, res) => {
                 .filter(p => p.authorId === userId &&
                 p.type !== 'meta_system' &&
                 p.systemGenerated !== true)
+                .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
                 .map(p => p.id);
             return { ...board, items: filtered };
         }
@@ -147,21 +150,53 @@ router.get('/:id', (req, res) => {
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
     let boardItems = board.items;
+    let highlightMap = {};
     if (board.id === 'quest-board') {
         boardItems = getQuestBoardItems(posts);
     }
     else if (board.id === 'timeline-board') {
-        boardItems = posts
+        const userQuestIds = userId
+            ? quests
+                .filter(q => q.authorId === userId ||
+                (q.collaborators || []).some(c => c.userId === userId) ||
+                posts.some(p => p.questId === q.id && p.authorId === userId))
+                .map(q => q.id)
+            : [];
+        const userTaskIds = userId
+            ? posts
+                .filter(p => p.authorId === userId && p.type === 'task')
+                .map(p => p.id)
+            : [];
+        const withMeta = posts
             .filter(p => p.type !== 'meta_system' &&
             p.visibility !== 'private')
-            .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-            .map(p => p.id);
+            .map(p => {
+            let weight = 0;
+            let highlight = false;
+            if (userId) {
+                if (p.questId && userQuestIds.includes(p.questId)) {
+                    weight = p.type === 'task' ? 3 : 2;
+                    if (p.type === 'task')
+                        highlight = true;
+                }
+                else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                    (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
+                    weight = 1;
+                    highlight = true;
+                }
+            }
+            return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+        })
+            .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+        highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
+        boardItems = withMeta.map(it => it.id);
     }
     else if (userId && board.id === 'my-posts') {
         boardItems = posts
             .filter(p => p.authorId === userId &&
             p.type !== 'meta_system' &&
             p.systemGenerated !== true)
+            .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
             .map(p => p.id);
     }
     else if (userId && board.id === 'my-quests') {
@@ -174,6 +209,12 @@ router.get('/:id', (req, res) => {
         result = {
             ...enriched,
             layout: board.layout ?? 'grid',
+            enrichedItems: enriched.enrichedItems.map(item => {
+                if ('id' in item && highlightMap[item.id]) {
+                    item.highlight = true;
+                }
+                return item;
+            }),
         };
     }
     res.json(result);
@@ -193,21 +234,53 @@ router.get('/:id/items', (req, res) => {
         return;
     }
     let boardItems = board.items;
+    let highlightMap = {};
     if (board.id === 'quest-board') {
         boardItems = getQuestBoardItems(posts);
     }
     else if (board.id === 'timeline-board') {
-        boardItems = posts
+        const userQuestIds = userId
+            ? quests
+                .filter(q => q.authorId === userId ||
+                (q.collaborators || []).some(c => c.userId === userId) ||
+                posts.some(p => p.questId === q.id && p.authorId === userId))
+                .map(q => q.id)
+            : [];
+        const userTaskIds = userId
+            ? posts
+                .filter(p => p.authorId === userId && p.type === 'task')
+                .map(p => p.id)
+            : [];
+        const withMeta = posts
             .filter(p => p.type !== 'meta_system' &&
             p.visibility !== 'private')
-            .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-            .map(p => p.id);
+            .map(p => {
+            let weight = 0;
+            let highlight = false;
+            if (userId) {
+                if (p.questId && userQuestIds.includes(p.questId)) {
+                    weight = p.type === 'task' ? 3 : 2;
+                    if (p.type === 'task')
+                        highlight = true;
+                }
+                else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                    (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
+                    weight = 1;
+                    highlight = true;
+                }
+            }
+            return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+        })
+            .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+        highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
+        boardItems = withMeta.map(it => it.id);
     }
     else if (userId && board.id === 'my-posts') {
         boardItems = posts
             .filter(p => p.authorId === userId &&
             p.type !== 'meta_system' &&
             p.systemGenerated !== true)
+            .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
             .map(p => p.id);
     }
     else if (userId && board.id === 'my-quests') {
@@ -215,7 +288,13 @@ router.get('/:id/items', (req, res) => {
     }
     if (enrich === 'true') {
         const enriched = (0, enrich_1.enrichBoard)({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
-        res.json(enriched.enrichedItems);
+        const items = enriched.enrichedItems.map(item => {
+            if ('id' in item && highlightMap[item.id]) {
+                item.highlight = true;
+            }
+            return item;
+        });
+        res.json(items);
         return;
     }
     const items = boardItems
@@ -225,6 +304,8 @@ router.get('/:id/items', (req, res) => {
         if ('type' in item) {
             const p = item;
             if (p.type !== 'request')
+                return false;
+            if (p.tags?.includes('archived'))
                 return false;
             return (p.visibility === 'public' ||
                 p.visibility === 'request_board' ||

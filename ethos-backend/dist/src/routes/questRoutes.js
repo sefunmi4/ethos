@@ -72,10 +72,17 @@ router.get('/', (req, res) => {
 });
 // CREATE a new quest
 router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
-    const { title, description = '', tags = [], fromPostId = '', headType = 'log', taskType = 'folder', helpRequest = false, } = req.body;
+    const { title, description = '', tags = [], fromPostId = '', headType = 'task', taskType = 'folder', helpRequest = false, } = req.body;
     const authorId = req.user?.id;
     if (!authorId || !title) {
         res.status(400).json({ error: 'Missing required fields' });
+        return;
+    }
+    const existingQuests = stores_1.questsStore.read();
+    const normalize = (t) => t.replace(/\s+/g, '').toLowerCase();
+    const duplicate = existingQuests.some((q) => normalize(q.title) === normalize(title));
+    if (duplicate) {
+        res.status(400).json({ error: 'Quest title already exists' });
         return;
     }
     const newQuest = {
@@ -179,9 +186,10 @@ router.patch('/:id', (req, res) => {
             quest.linkedPosts.push({ itemId, itemType: 'post' });
             if (post && post.type === 'task') {
                 quest.taskGraph = quest.taskGraph || [];
-                const edgeExists = quest.taskGraph.some(e => e.to === itemId);
+                const from = post.replyTo || post.linkedNodeId || quest.headPostId;
+                const edgeExists = quest.taskGraph.some(e => e.to === itemId && e.from === from);
                 if (!edgeExists) {
-                    quest.taskGraph.push({ from: quest.headPostId, to: itemId });
+                    quest.taskGraph.push({ from, to: itemId });
                 }
             }
         }
@@ -259,6 +267,25 @@ router.get('/:id/map', authOptional_1.default, (req, res) => {
         .map((p) => (0, enrich_1.enrichPost)(p, { users, currentUserId: req.user?.id || null }));
     res.json({ nodes, edges: quest.taskGraph || [] });
 });
+// PATCH update task graph edges for a quest
+router.patch('/:id/map', authMiddleware_1.authMiddleware, (req, res) => {
+    const { id } = req.params;
+    const { edges } = req.body;
+    if (!Array.isArray(edges)) {
+        res.status(400).json({ error: 'Invalid edges' });
+        return;
+    }
+    const quests = stores_1.questsStore.read();
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+        (0, errorTracker_1.logQuest404)(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    quest.taskGraph = edges;
+    stores_1.questsStore.write(quests);
+    res.json({ success: true, edges: quest.taskGraph });
+});
 // GET enriched quest
 router.get('/:id', authOptional_1.default, async (req, res) => {
     const { id } = req.params;
@@ -301,6 +328,10 @@ router.post('/:id/link', authMiddleware_1.authMiddleware, (req, res) => {
         post.type = 'quest_log';
         post.subtype = 'comment';
         post.questId = id;
+        stores_1.postsStore.write(posts);
+    }
+    if (post && parentId) {
+        post.linkedNodeId = parentId;
         stores_1.postsStore.write(posts);
     }
     quest.linkedPosts = quest.linkedPosts || [];
@@ -365,6 +396,36 @@ router.get('/:id/tree', authOptional_1.default, (req, res) => {
     };
     recurse(id);
     res.json(nodes);
+});
+// POST promote quest to project
+router.post('/:id/promote', authMiddleware_1.authMiddleware, (req, res) => {
+    const { id } = req.params;
+    const quests = stores_1.questsStore.read();
+    const questIndex = quests.findIndex((q) => q.id === id);
+    if (questIndex === -1) {
+        (0, errorTracker_1.logQuest404)(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    const quest = quests[questIndex];
+    const childQuestIds = (quest.linkedPosts || [])
+        .filter((l) => l.itemType === 'quest')
+        .map((l) => l.itemId);
+    const projects = stores_1.projectsStore.read();
+    const newProject = {
+        ...quest,
+        questIds: childQuestIds,
+    };
+    projects.push(newProject);
+    stores_1.projectsStore.write(projects);
+    quests.splice(questIndex, 1);
+    childQuestIds.forEach((cid) => {
+        const child = quests.find((q) => q.id === cid);
+        if (child)
+            child.projectId = newProject.id;
+    });
+    stores_1.questsStore.write(quests);
+    res.json(newProject);
 });
 // POST mark quest complete and cascade solution
 router.post('/:id/complete', authMiddleware_1.authMiddleware, (req, res) => {
@@ -435,6 +496,49 @@ router.patch('/:id/moderate', authMiddleware_1.authMiddleware, (req, res) => {
     stores_1.questsStore.write(quests);
     res.json(quest);
 });
+// POST /quests/:id/archive - archive quest and posts without reactions
+router.post('/:id/archive', authMiddleware_1.authMiddleware, (req, res) => {
+    const { id } = req.params;
+    const quests = stores_1.questsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+        (0, errorTracker_1.logQuest404)(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    quest.tags = Array.from(new Set([...(quest.tags || []), 'archived']));
+    const posts = stores_1.postsStore.read();
+    const reactions = stores_1.reactionsStore.read();
+    posts.forEach(p => {
+        if (p.questId === id && !reactions.some(r => r.startsWith(`${p.id}_`))) {
+            p.tags = Array.from(new Set([...(p.tags || []), 'archived']));
+        }
+    });
+    stores_1.questsStore.write(quests);
+    stores_1.postsStore.write(posts);
+    res.json({ success: true });
+});
+// DELETE /quests/:id/archive - unarchive quest and posts
+router.delete('/:id/archive', authMiddleware_1.authMiddleware, (req, res) => {
+    const { id } = req.params;
+    const quests = stores_1.questsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+        (0, errorTracker_1.logQuest404)(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    quest.tags = (quest.tags || []).filter(t => t !== 'archived');
+    const posts = stores_1.postsStore.read();
+    posts.forEach(p => {
+        if (p.questId === id) {
+            p.tags = (p.tags || []).filter(t => t !== 'archived');
+        }
+    });
+    stores_1.questsStore.write(quests);
+    stores_1.postsStore.write(posts);
+    res.json({ success: true });
+});
 // DELETE quest
 router.delete('/:id', authMiddleware_1.authMiddleware, (req, res) => {
     const { id } = req.params;
@@ -445,8 +549,52 @@ router.delete('/:id', authMiddleware_1.authMiddleware, (req, res) => {
         res.status(404).json({ error: 'Quest not found' });
         return;
     }
+    const questsStorePosts = stores_1.postsStore.read();
+    const reactions = stores_1.reactionsStore.read();
+    const questPosts = questsStorePosts.filter(p => p.questId === id);
+    const postsToKeep = new Set(questPosts
+        .filter(p => reactions.some(r => r.startsWith(`${p.id}_`)))
+        .map(p => p.id));
+    const remainingPosts = questsStorePosts.filter(p => !(p.questId === id && !postsToKeep.has(p.id)));
+    stores_1.postsStore.write(remainingPosts);
     quests.splice(index, 1);
     stores_1.questsStore.write(quests);
-    res.json({ success: true });
+    res.json({ success: true, removedPosts: questPosts.length - postsToKeep.size });
+});
+// POST /api/quests/:id/follow - follow a quest
+router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
+    const quests = stores_1.questsStore.read();
+    const users = stores_1.usersStore.read();
+    const quest = quests.find(q => q.id === req.params.id);
+    const follower = users.find(u => u.id === req.user.id);
+    if (!quest || !follower) {
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    quest.followers = Array.from(new Set([...(quest.followers || []), follower.id]));
+    stores_1.questsStore.write(quests);
+    const notes = stores_1.notificationsStore.read();
+    const newNote = {
+        id: (0, uuid_1.v4)(),
+        userId: quest.authorId,
+        message: `${follower.username} followed your quest`,
+        link: `/quest/${quest.id}`,
+        read: false,
+        createdAt: new Date().toISOString(),
+    };
+    stores_1.notificationsStore.write([...notes, newNote]);
+    res.json({ followers: quest.followers });
+});
+// POST /api/quests/:id/unfollow - unfollow a quest
+router.post('/:id/unfollow', authMiddleware_1.authMiddleware, (req, res) => {
+    const quests = stores_1.questsStore.read();
+    const quest = quests.find(q => q.id === req.params.id);
+    if (!quest) {
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+    }
+    quest.followers = (quest.followers || []).filter(id => id !== req.user.id);
+    stores_1.questsStore.write(quests);
+    res.json({ followers: quest.followers });
 });
 exports.default = router;

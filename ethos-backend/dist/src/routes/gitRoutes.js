@@ -167,6 +167,20 @@ router.put('/files', authMiddleware_1.authMiddleware, async (req, res) => {
     }
 });
 //
+// ✅ POST /api/git/upload
+// Create a file or folder and commit the change
+router.post('/upload', authMiddleware_1.authMiddleware, async (req, res) => {
+    const { questId, filePath, content = '', isFolder = false, message = 'upload' } = req.body;
+    try {
+        const repo = await (0, gitService_1.uploadRepoItem)(questId, filePath, content, isFolder, message);
+        res.json(repo);
+    }
+    catch (err) {
+        (0, logger_1.error)('[GIT UPLOAD ERROR]', err);
+        res.status(500).json({ error: 'Failed to upload item' });
+    }
+});
+//
 // ✅ GET /api/git/download/:questId
 // Download repo as zip
 router.get('/download/:questId', authMiddleware_1.authMiddleware, async (req, res) => {

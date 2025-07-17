@@ -44,6 +44,13 @@ jest.mock('../src/models/stores', () => ({
     reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
     boardLogsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
+const stores_1 = require("../src/models/stores");
+const boardsStoreMock = stores_1.boardsStore;
+const postsStoreMock = stores_1.postsStore;
+const questsStoreMock = stores_1.questsStore;
+const usersStoreMock = stores_1.usersStore;
+const reactionsStoreMock = stores_1.reactionsStore;
+const boardLogsStoreMock = stores_1.boardLogsStore;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use('/boards', boardRoutes_1.default);
@@ -62,20 +69,19 @@ describe('route handlers', () => {
         expect(res.body[0].id).toBe('q1');
     });
     it('POST /quests creates quest with head post', async () => {
-        const { postsStore, questsStore } = require('../src/models/stores');
-        postsStore.read.mockReturnValue([]);
-        questsStore.read.mockReturnValue([]);
-        postsStore.write.mockClear();
-        questsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([]);
+        questsStoreMock.read.mockReturnValue([]);
+        postsStoreMock.write.mockClear();
+        questsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app)
             .post('/quests')
             .send({ title: 'New Quest', description: 'desc' });
         expect(res.status).toBe(201);
-        const newPost = postsStore.write.mock.calls[0][0][0];
-        const newQuest = questsStore.write.mock.calls[0][0][0];
+        const newPost = postsStoreMock.write.mock.calls[0][0][0];
+        const newQuest = questsStoreMock.write.mock.calls[0][0][0];
         expect(newQuest.headPostId).toBe(newPost.id);
         expect(newPost.questId).toBe(newQuest.id);
-        questsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([
             {
                 id: 'q1',
                 authorId: 'u1',
@@ -113,8 +119,7 @@ describe('route handlers', () => {
         expect(res.body.collaborators[0].userId).toBeUndefined();
     });
     it('GET /quests/:id/map returns nodes and edges', async () => {
-        const { postsStore, questsStore } = require('../src/models/stores');
-        postsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue([
             {
                 id: 't1',
                 authorId: 'u1',
@@ -125,7 +130,7 @@ describe('route handlers', () => {
                 questId: 'q1',
             },
         ]);
-        questsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([
             {
                 id: 'q1',
                 authorId: 'u1',
@@ -143,7 +148,6 @@ describe('route handlers', () => {
         expect(res.body.edges).toHaveLength(1);
     });
     it('POST /quests/:id/link adds task edge with type and label', async () => {
-        const { postsStore, questsStore } = require('../src/models/stores');
         const quest = {
             id: 'q1',
             authorId: 'u1',
@@ -154,8 +158,8 @@ describe('route handlers', () => {
             collaborators: [],
             taskGraph: [],
         };
-        questsStore.read.mockReturnValue([quest]);
-        postsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([quest]);
+        postsStoreMock.read.mockReturnValue([
             {
                 id: 't1',
                 authorId: 'u1',
@@ -179,7 +183,6 @@ describe('route handlers', () => {
         expect(quest.linkedPosts[0].title).toBe('Task t1');
     });
     it('POST /quests/:id/link links task to task when parentId provided', async () => {
-        const { postsStore, questsStore } = require('../src/models/stores');
         const quest = {
             id: 'q1',
             authorId: 'u1',
@@ -190,8 +193,8 @@ describe('route handlers', () => {
             collaborators: [],
             taskGraph: [],
         };
-        questsStore.read.mockReturnValue([quest]);
-        postsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([quest]);
+        postsStoreMock.read.mockReturnValue([
             {
                 id: 't1',
                 authorId: 'u1',
@@ -218,7 +221,6 @@ describe('route handlers', () => {
         expect(quest.linkedPosts[0].title).toBe('Task t2');
     });
     it('POST /quests/:id/complete cascades solution', async () => {
-        const { questsStore, postsStore } = require('../src/models/stores');
         const quest = {
             id: 'q1',
             authorId: 'u1',
@@ -242,8 +244,8 @@ describe('route handlers', () => {
             collaborators: [],
             taskGraph: [],
         };
-        questsStore.read.mockReturnValue([quest, parent]);
-        postsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([quest, parent]);
+        postsStoreMock.read.mockReturnValue([
             {
                 id: 'p1',
                 authorId: 'u1',
@@ -254,19 +256,18 @@ describe('route handlers', () => {
                 tags: [],
             },
         ]);
-        postsStore.write.mockClear();
+        postsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app).post('/quests/q1/complete');
         expect(res.status).toBe(200);
         expect(quest.status).toBe('completed');
         expect(parent.status).toBe('completed');
-        expect(postsStore.write).toHaveBeenCalled();
+        expect(postsStoreMock.write).toHaveBeenCalled();
     });
     it('GET /boards/:id/quests returns quests from board', async () => {
-        const { boardsStore, questsStore } = require('../src/models/stores');
-        boardsStore.read.mockReturnValue([
+        boardsStoreMock.read.mockReturnValue([
             { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
         ]);
-        questsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([
             {
                 id: 'q1',
                 authorId: 'u1',
@@ -284,11 +285,10 @@ describe('route handlers', () => {
         expect(res.body[0].id).toBe('q1');
     });
     it('GET /boards/:id/quests?enrich=true returns enriched quests', async () => {
-        const { boardsStore, questsStore, usersStore } = require('../src/models/stores');
-        boardsStore.read.mockReturnValue([
+        boardsStoreMock.read.mockReturnValue([
             { id: 'b1', title: 'Board', boardType: 'post', description: '', layout: 'grid', items: ['q1'] },
         ]);
-        questsStore.read.mockReturnValue([
+        questsStoreMock.read.mockReturnValue([
             {
                 id: 'q1',
                 authorId: 'u1',
@@ -300,15 +300,14 @@ describe('route handlers', () => {
                 taskGraph: [],
             },
         ]);
-        usersStore.read.mockReturnValue([{ id: 'u1', username: 'test', role: 'user' }]);
+        usersStoreMock.read.mockReturnValue([{ id: 'u1', username: 'test', role: 'user' }]);
         const res = await (0, supertest_1.default)(app).get('/boards/b1/quests?enrich=true');
         expect(res.status).toBe(200);
         expect(res.body[0]).toHaveProperty('logs');
     });
     it('PATCH /boards/:id creates board when not found', async () => {
-        const { boardsStore } = require('../src/models/stores');
         const store = [];
-        boardsStore.read.mockReturnValue(store);
+        boardsStoreMock.read.mockReturnValue(store);
         const res = await (0, supertest_1.default)(app)
             .patch('/boards/new-board')
             .send({ title: 'New Board', items: ['i1'] });
@@ -318,40 +317,36 @@ describe('route handlers', () => {
         expect(store[0].items).toContain('i1');
     });
     it('POST /boards logs creation', async () => {
-        const { boardsStore, boardLogsStore } = require('../src/models/stores');
-        boardsStore.read.mockReturnValue([]);
-        boardLogsStore.read.mockReturnValue([]);
-        boardLogsStore.write.mockClear();
+        boardsStoreMock.read.mockReturnValue([]);
+        boardLogsStoreMock.read.mockReturnValue([]);
+        boardLogsStoreMock.write.mockClear();
         await (0, supertest_1.default)(app)
             .post('/boards')
             .send({ title: 'Board', items: [], layout: 'grid', boardType: 'post' });
-        expect(boardLogsStore.write).toHaveBeenCalled();
-        const log = boardLogsStore.write.mock.calls[0][0][0];
+        expect(boardLogsStoreMock.write).toHaveBeenCalled();
+        const log = boardLogsStoreMock.write.mock.calls[0][0][0];
         expect(log.action).toBe('create');
     });
     it('PATCH /boards/:id logs update', async () => {
-        const { boardsStore, boardLogsStore } = require('../src/models/stores');
-        boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
-        boardLogsStore.read.mockReturnValue([]);
-        boardLogsStore.write.mockClear();
+        boardsStoreMock.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
+        boardLogsStoreMock.read.mockReturnValue([]);
+        boardLogsStoreMock.write.mockClear();
         await (0, supertest_1.default)(app).patch('/boards/b1').send({ title: 'New' });
-        expect(boardLogsStore.write).toHaveBeenCalled();
-        const log = boardLogsStore.write.mock.calls[0][0][0];
+        expect(boardLogsStoreMock.write).toHaveBeenCalled();
+        const log = boardLogsStoreMock.write.mock.calls[0][0][0];
         expect(log.action).toBe('update');
     });
     it('DELETE /boards/:id logs deletion', async () => {
-        const { boardsStore, boardLogsStore } = require('../src/models/stores');
-        boardsStore.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
-        boardLogsStore.read.mockReturnValue([]);
-        boardLogsStore.write.mockClear();
+        boardsStoreMock.read.mockReturnValue([{ id: 'b1', title: 'B', boardType: 'post', layout: 'grid', items: [] }]);
+        boardLogsStoreMock.read.mockReturnValue([]);
+        boardLogsStoreMock.write.mockClear();
         await (0, supertest_1.default)(app).delete('/boards/b1');
-        expect(boardLogsStore.write).toHaveBeenCalled();
-        const log = boardLogsStore.write.mock.calls[0][0][0];
+        expect(boardLogsStoreMock.write).toHaveBeenCalled();
+        const log = boardLogsStoreMock.write.mock.calls[0][0][0];
         expect(log.action).toBe('delete');
     });
     it('GET /boards/thread/:postId paginates replies', async () => {
-        const { postsStore } = require('../src/models/stores');
-        postsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue([
             {
                 id: 'r1',
                 authorId: 'u1',
@@ -395,5 +390,18 @@ describe('route handlers', () => {
         const res2 = await (0, supertest_1.default)(app).get('/boards/thread/p1?page=2&limit=2');
         expect(res2.status).toBe(200);
         expect(res2.body.items).toEqual(['r3']);
+    });
+    it('GET /boards/quest-board/items excludes archived requests', async () => {
+        boardsStoreMock.read.mockReturnValue([
+            { id: 'quest-board', title: 'QB', boardType: 'post', description: '', layout: 'grid', items: [] }
+        ]);
+        postsStoreMock.read.mockReturnValue([
+            { id: 'req1', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: ['archived'], collaborators: [], linkedItems: [] },
+            { id: 'req2', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+        ]);
+        const res = await (0, supertest_1.default)(app).get('/boards/quest-board/items');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0].id).toBe('req2');
     });
 });

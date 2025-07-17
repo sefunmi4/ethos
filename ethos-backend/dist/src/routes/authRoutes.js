@@ -107,6 +107,7 @@ router.post('/register', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
             tags: ['explorer'],
             bio: '',
             links: { github: '', linkedin: '', tiktok: '', website: '' },
+            xp: 0,
             experienceTimeline: [
                 {
                     datetime: new Date().toISOString(),
@@ -156,8 +157,8 @@ router.get('/me', cookieAuth_1.cookieAuth, (req, res) => {
         res.status(404).json({ error: 'User not found' });
         return;
     }
-    const { id, email, username, role, tags, bio, links, experienceTimeline } = user;
-    res.json({ id, email, username, role, tags, bio, links, experienceTimeline });
+    const { id, email, username, role, tags, bio, links, experienceTimeline, xp } = user;
+    res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
 });
 router.patch('/me', cookieAuth_1.cookieAuth, (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const users = loadUsers();

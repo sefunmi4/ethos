@@ -40,9 +40,42 @@ router.get('/:id', (req, res) => {
     }
     res.json(review);
 });
+// GET /api/reviews/summary/:entityType/:id
+router.get('/summary/:entityType/:id', (req, res) => {
+    const { entityType, id } = req.params;
+    const reviews = stores_1.reviewsStore.read().filter(r => {
+        if (r.targetType !== entityType)
+            return false;
+        switch (entityType) {
+            case 'quest':
+                return r.questId === id;
+            case 'ai_app':
+                return r.repoUrl === id;
+            case 'dataset':
+                return r.modelId === id;
+            case 'creator':
+                return r.modelId === id;
+            default:
+                return false;
+        }
+    });
+    if (reviews.length === 0) {
+        res.json({ averageRating: 0, count: 0, tagCounts: {} });
+        return;
+    }
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    const tagCounts = {};
+    reviews.forEach(r => {
+        (r.tags || []).forEach(t => {
+            tagCounts[t] = (tagCounts[t] || 0) + 1;
+        });
+    });
+    const averageRating = parseFloat((total / reviews.length).toFixed(2));
+    res.json({ averageRating, count: reviews.length, tagCounts });
+});
 // POST /api/reviews
 router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
-    const { targetType, rating, tags = [], feedback = '', repoUrl, modelId, questId, postId } = req.body;
+    const { targetType, rating, tags = [], feedback = '', repoUrl, modelId, questId, postId, visibility = 'public', status = 'submitted', } = req.body;
     if (!targetType || !rating) {
         res.status(400).json({ error: 'Missing fields' });
         return;
@@ -57,6 +90,8 @@ router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
         reviewerId: req.user.id,
         targetType,
         rating: Math.min(5, Math.max(1, Number(rating))),
+        visibility,
+        status,
         tags,
         feedback,
         repoUrl,
@@ -68,5 +103,25 @@ router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
     reviews.push(newReview);
     stores_1.reviewsStore.write(reviews);
     res.status(201).json(newReview);
+});
+// PATCH /api/reviews/:id
+router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
+    const reviews = stores_1.reviewsStore.read();
+    const review = reviews.find(r => r.id === req.params.id);
+    if (!review) {
+        res.status(404).json({ error: 'Review not found' });
+        return;
+    }
+    const { feedback } = req.body;
+    if (feedback && bannedWords.some(w => String(feedback).toLowerCase().includes(w))) {
+        res.status(400).json({ error: 'Inappropriate language detected' });
+        return;
+    }
+    Object.assign(review, req.body);
+    if ('rating' in req.body && typeof review.rating === 'number') {
+        review.rating = Math.min(5, Math.max(1, Number(review.rating)));
+    }
+    stores_1.reviewsStore.write(reviews);
+    res.json(review);
 });
 exports.default = router;

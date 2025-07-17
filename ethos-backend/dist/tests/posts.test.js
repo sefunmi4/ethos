@@ -17,9 +17,14 @@ jest.mock('../src/models/stores', () => ({
     usersStore: { read: jest.fn(() => []), write: jest.fn() },
     reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
     questsStore: { read: jest.fn(() => []), write: jest.fn() },
+    notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
-const { postsStore, questsStore, usersStore, reactionsStore } = require('../src/models/stores');
-const { generateNodeId } = require('../src/utils/nodeIdUtils');
+const stores_1 = require("../src/models/stores");
+const postsStoreMock = stores_1.postsStore;
+const questsStoreMock = stores_1.questsStore;
+const usersStoreMock = stores_1.usersStore;
+const reactionsStoreMock = stores_1.reactionsStore;
+const nodeIdUtils_1 = require("../src/utils/nodeIdUtils");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use('/posts', postRoutes_1.default);
@@ -32,22 +37,22 @@ describe('post routes', () => {
         expect(res.body.content).toBe('hello');
     });
     it("POST /posts defaults task status to 'To Do'", async () => {
-        postsStore.read.mockReturnValue([]);
-        postsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([]);
+        postsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app).post('/posts').send({ type: 'task' });
         expect(res.status).toBe(201);
-        const written = postsStore.write.mock.calls[0][0][0];
+        const written = postsStoreMock.write.mock.calls[0][0][0];
         expect(written.status).toBe('To Do');
         expect(res.body.status).toBe('To Do');
     });
     it('POST /posts uses provided task status', async () => {
-        postsStore.read.mockReturnValue([]);
-        postsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([]);
+        postsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app)
             .post('/posts')
             .send({ type: 'task', status: 'Blocked' });
         expect(res.status).toBe(201);
-        const written = postsStore.write.mock.calls[0][0][0];
+        const written = postsStoreMock.write.mock.calls[0][0][0];
         expect(written.status).toBe('Blocked');
         expect(res.body.status).toBe('Blocked');
     });
@@ -61,16 +66,49 @@ describe('post routes', () => {
             collaborators: [],
             taskGraph: [],
         };
-        postsStore.read.mockReturnValue([]);
-        questsStore.read.mockReturnValue([quest]);
-        postsStore.write.mockClear();
-        questsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([]);
+        questsStoreMock.read.mockReturnValue([quest]);
+        postsStoreMock.write.mockClear();
+        questsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app).post('/posts').send({ type: 'task', questId: 'q1' });
         expect(res.status).toBe(201);
-        const newPost = postsStore.write.mock.calls[0][0][0];
+        const newPost = postsStoreMock.write.mock.calls[0][0][0];
         expect(quest.taskGraph).toHaveLength(1);
         expect(quest.taskGraph[0]).toEqual({ from: '', to: newPost.id });
-        expect(questsStore.write).toHaveBeenCalled();
+        expect(questsStoreMock.write).toHaveBeenCalled();
+    });
+    it('POST /posts links task to parent when replyTo is set', async () => {
+        const quest = {
+            id: 'q1',
+            title: 'Quest',
+            status: 'active',
+            headPostId: 'h1',
+            linkedPosts: [],
+            collaborators: [],
+            taskGraph: [],
+        };
+        const parent = {
+            id: 't1',
+            authorId: 'u1',
+            type: 'task',
+            content: '',
+            visibility: 'public',
+            timestamp: '',
+            questId: 'q1',
+            replyTo: null,
+        };
+        postsStoreMock.read.mockReturnValue([parent]);
+        questsStoreMock.read.mockReturnValue([quest]);
+        postsStoreMock.write.mockClear();
+        questsStoreMock.write.mockClear();
+        const res = await (0, supertest_1.default)(app)
+            .post('/posts')
+            .send({ type: 'task', questId: 'q1', replyTo: 't1' });
+        expect(res.status).toBe(201);
+        const newPost = postsStoreMock.write.mock.calls[0][0][1];
+        expect(quest.taskGraph).toHaveLength(1);
+        expect(quest.taskGraph[0]).toEqual({ from: 't1', to: newPost.id });
+        expect(questsStoreMock.write).toHaveBeenCalled();
     });
     it('PATCH /posts/:id regenerates nodeId on quest change for quest post', async () => {
         const posts = [
@@ -86,14 +124,14 @@ describe('post routes', () => {
                 nodeId: 'Q:first_quest:T00',
             },
         ];
-        postsStore.read.mockReturnValue(posts);
-        questsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue(posts);
+        questsStoreMock.read.mockReturnValue([
             { id: 'q1', title: 'First Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
             { id: 'q2', title: 'Second Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
         ]);
-        usersStore.read.mockReturnValue([]);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).patch('/posts/p1').send({ questId: 'q2' });
-        const expected = generateNodeId({
+        const expected = (0, nodeIdUtils_1.generateNodeId)({
             quest: { id: 'q2', title: 'Second Quest' },
             posts: [],
             postType: 'quest',
@@ -128,14 +166,14 @@ describe('post routes', () => {
                 nodeId: 'Q:second_quest:T00',
             },
         ];
-        postsStore.read.mockReturnValue(posts);
-        questsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue(posts);
+        questsStoreMock.read.mockReturnValue([
             { id: 'q1', title: 'First Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
             { id: 'q2', title: 'Second Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
         ]);
-        usersStore.read.mockReturnValue([]);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).patch('/posts/t1').send({ questId: 'q2' });
-        const expected = generateNodeId({
+        const expected = (0, nodeIdUtils_1.generateNodeId)({
             quest: { id: 'q2', title: 'Second Quest' },
             posts: [posts[1]],
             postType: 'task',
@@ -181,13 +219,13 @@ describe('post routes', () => {
                 nodeId: 'Q:first_quest:T00:L00',
             },
         ];
-        postsStore.read.mockReturnValue(posts);
-        questsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue(posts);
+        questsStoreMock.read.mockReturnValue([
             { id: 'q1', title: 'First Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
         ]);
-        usersStore.read.mockReturnValue([]);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).patch('/posts/l1').send({ replyTo: 'p2' });
-        const expected = generateNodeId({
+        const expected = (0, nodeIdUtils_1.generateNodeId)({
             quest: { id: 'q1', title: 'First Quest' },
             posts: posts.filter((p) => p.id !== 'l1'),
             postType: 'log',
@@ -211,13 +249,13 @@ describe('post routes', () => {
                 nodeId: 'Q:first_quest:T00',
             },
         ];
-        postsStore.read.mockReturnValue(posts);
-        questsStore.read.mockReturnValue([
+        postsStoreMock.read.mockReturnValue(posts);
+        questsStoreMock.read.mockReturnValue([
             { id: 'q1', title: 'First Quest', status: 'active', headPostId: '', linkedPosts: [], collaborators: [] },
         ]);
-        usersStore.read.mockReturnValue([]);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).patch('/posts/t1').send({ type: 'issue' });
-        const expected = generateNodeId({
+        const expected = (0, nodeIdUtils_1.generateNodeId)({
             quest: { id: 'q1', title: 'First Quest' },
             posts: [],
             postType: 'issue',
@@ -227,7 +265,7 @@ describe('post routes', () => {
         expect(posts[0].nodeId).toBe(expected);
         expect(res.body.nodeId).toBe(expected);
     });
-    it('POST /posts/:id/archive adds archived tag', async () => {
+    it('POST /posts/:id/archive adds archived tag and DELETE removes it', async () => {
         const posts = [
             {
                 id: 'p1',
@@ -241,23 +279,26 @@ describe('post routes', () => {
                 linkedItems: [],
             },
         ];
-        postsStore.read.mockReturnValue(posts);
-        usersStore.read.mockReturnValue([]);
-        const res = await (0, supertest_1.default)(app).post('/posts/p1/archive');
+        postsStoreMock.read.mockReturnValue(posts);
+        usersStoreMock.read.mockReturnValue([]);
+        let res = await (0, supertest_1.default)(app).post('/posts/p1/archive');
         expect(res.status).toBe(200);
         expect(posts[0].tags).toContain('archived');
+        res = await (0, supertest_1.default)(app).delete('/posts/p1/archive');
+        expect(res.status).toBe(200);
+        expect(posts[0].tags).not.toContain('archived');
     });
     it('POST and DELETE /posts/:id/reactions/:type toggles reaction', async () => {
-        reactionsStore.read.mockReturnValue([]);
+        reactionsStoreMock.read.mockReturnValue([]);
         const resAdd = await (0, supertest_1.default)(app).post('/posts/p1/reactions/like');
         expect(resAdd.status).toBe(200);
-        expect(reactionsStore.write).toHaveBeenCalledWith(['p1_u1_like']);
-        reactionsStore.read.mockReturnValue(['p1_u1_like']);
+        expect(reactionsStoreMock.write).toHaveBeenCalledWith(['p1_u1_like']);
+        reactionsStoreMock.read.mockReturnValue(['p1_u1_like']);
         const resDel = await (0, supertest_1.default)(app).delete('/posts/p1/reactions/like');
         expect(resDel.status).toBe(200);
-        expect(reactionsStore.write).toHaveBeenCalledWith([]);
+        expect(reactionsStoreMock.write).toHaveBeenCalledWith([]);
     });
-    it('POST /tasks/:id/request-help creates request post', async () => {
+    it('POST /tasks/:id/request-help creates request and role posts', async () => {
         const task = {
             id: 't1',
             authorId: 'u1',
@@ -266,18 +307,31 @@ describe('post routes', () => {
             visibility: 'public',
             timestamp: '',
             tags: [],
-            collaborators: [],
+            collaborators: [{ roles: ['dev'] }],
             linkedItems: [],
-            questId: null,
+            questId: 'q1',
+            helpRequest: false,
+            needsHelp: false,
+        };
+        const quest = {
+            id: 'q1',
+            authorId: 'u1',
+            title: 'Quest',
+            status: 'active',
+            headPostId: '',
+            linkedPosts: [],
+            collaborators: [{ roles: ['design'] }],
         };
         const store = [task];
-        postsStore.read.mockReturnValue(store);
-        usersStore.read.mockReturnValue([]);
+        postsStoreMock.read.mockReturnValue(store);
+        questsStoreMock.read.mockReturnValue([quest]);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).post('/posts/tasks/t1/request-help');
         expect(res.status).toBe(201);
-        expect(store).toHaveLength(2);
+        expect(res.body.subRequests).toHaveLength(2);
+        expect(store).toHaveLength(4);
         expect(store[1].type).toBe('request');
-        expect(store[1].linkedItems[0].itemId).toBe('t1');
+        expect(store[2].replyTo).toBe(store[1].id);
     });
     it('POST /:id/request-help creates request post', async () => {
         const post = {
@@ -291,15 +345,20 @@ describe('post routes', () => {
             collaborators: [],
             linkedItems: [],
             questId: null,
+            helpRequest: false,
+            needsHelp: false,
         };
         const store = [post];
-        postsStore.read.mockReturnValue(store);
-        usersStore.read.mockReturnValue([]);
+        postsStoreMock.read.mockReturnValue(store);
+        usersStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app).post('/posts/p2/request-help');
         expect(res.status).toBe(201);
+        expect(res.body.request.type).toBe('request');
         expect(store).toHaveLength(2);
-        expect(store[1].type).toBe('request');
+        expect(res.body.subRequests).toHaveLength(0);
         expect(store[1].linkedItems[0].itemId).toBe('p2');
+        expect(store[0].helpRequest).toBe(true);
+        expect(store[0].needsHelp).toBe(true);
     });
     it('rejects non-request posts on quest board', async () => {
         const res = await (0, supertest_1.default)(app)
@@ -308,24 +367,24 @@ describe('post routes', () => {
         expect(res.status).toBe(400);
     });
     it('allows request post on quest board', async () => {
-        postsStore.read.mockReturnValue([]);
-        postsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([]);
+        postsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app)
             .post('/posts')
             .send({ type: 'request', boardId: 'quest-board' });
         expect(res.status).toBe(201);
-        const written = postsStore.write.mock.calls[0][0][0];
+        const written = postsStoreMock.write.mock.calls[0][0][0];
         expect(written.helpRequest).toBe(true);
     });
     it('rejects task post on quest board', async () => {
-        postsStore.read.mockReturnValue([]);
+        postsStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app)
             .post('/posts')
             .send({ type: 'task', boardId: 'quest-board', helpRequest: true });
         expect(res.status).toBe(400);
     });
     it('rejects quest post on quest board', async () => {
-        postsStore.read.mockReturnValue([]);
+        postsStoreMock.read.mockReturnValue([]);
         const res = await (0, supertest_1.default)(app)
             .post('/posts')
             .send({ type: 'quest', boardId: 'quest-board', helpRequest: true });
@@ -351,13 +410,13 @@ describe('post routes', () => {
             collaborators: [],
             taskGraph: [],
         };
-        postsStore.read.mockReturnValue([post]);
-        questsStore.read.mockReturnValue([quest]);
-        questsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([post]);
+        questsStoreMock.read.mockReturnValue([quest]);
+        questsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app).delete('/posts/p1');
         expect(res.status).toBe(200);
-        expect(questsStore.write).toHaveBeenCalledWith([]);
-        expect(postsStore.write).not.toHaveBeenCalledWith([]); // post not removed
+        expect(questsStoreMock.write).toHaveBeenCalledWith([]);
+        expect(postsStoreMock.write).not.toHaveBeenCalledWith([]); // post not removed
         expect(res.body.questDeleted).toBe('q1');
     });
     it('deleting a normal post removes only the post', async () => {
@@ -369,12 +428,12 @@ describe('post routes', () => {
             visibility: 'public',
             timestamp: '',
         };
-        postsStore.read.mockReturnValue([post]);
-        questsStore.read.mockReturnValue([]);
-        postsStore.write.mockClear();
+        postsStoreMock.read.mockReturnValue([post]);
+        questsStoreMock.read.mockReturnValue([]);
+        postsStoreMock.write.mockClear();
         const res = await (0, supertest_1.default)(app).delete('/posts/p1');
         expect(res.status).toBe(200);
-        expect(postsStore.write).toHaveBeenCalledWith([]);
+        expect(postsStoreMock.write).toHaveBeenCalledWith([]);
         expect(res.body.questDeleted).toBeUndefined();
     });
     it('forbids editing system posts by regular users', async () => {
@@ -387,7 +446,7 @@ describe('post routes', () => {
             timestamp: '',
             systemGenerated: true,
         };
-        postsStore.read.mockReturnValue([post]);
+        postsStoreMock.read.mockReturnValue([post]);
         const res = await (0, supertest_1.default)(app).patch('/posts/s1').send({ content: 'new' });
         expect(res.status).toBe(403);
     });
@@ -400,7 +459,7 @@ describe('post routes', () => {
             visibility: 'private',
             timestamp: '',
         };
-        postsStore.read.mockReturnValue([post]);
+        postsStoreMock.read.mockReturnValue([post]);
         const res = await (0, supertest_1.default)(app).get('/posts/s2');
         expect(res.status).toBe(403);
     });

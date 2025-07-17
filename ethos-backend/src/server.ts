@@ -44,7 +44,23 @@ const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
  * @middleware helmet - basic security headers
  * @middleware rateLimit - basic rate limiting
  */
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://18.118.173.176:4173',
+];
+
+app.use(cors({
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (
     process.env.NODE_ENV === 'production' &&

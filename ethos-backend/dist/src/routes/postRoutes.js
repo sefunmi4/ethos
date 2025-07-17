@@ -76,7 +76,7 @@ router.get('/recent', authOptional_1.default, (req, res) => {
 // ✅ POST create a new post
 //
 router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
-    const { type = 'free_speech', title = '', content = '', details = '', visibility = 'public', tags = [], questId = null, replyTo = null, linkedItems = [], collaborators = [], status, boardId, taskType = 'abstract', helpRequest = false, needsHelp = undefined, } = req.body;
+    const { type = 'free_speech', title = '', content = '', details = '', visibility = 'public', tags = [], questId = null, replyTo = null, linkedItems = [], linkedNodeId, collaborators = [], status, boardId, taskType = 'abstract', helpRequest = false, needsHelp = undefined, rating, } = req.body;
     const finalStatus = status ?? (['task', 'request', 'issue'].includes(type) ? 'To Do' : undefined);
     const posts = stores_1.postsStore.read();
     const quests = stores_1.questsStore.read();
@@ -104,8 +104,10 @@ router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
         replyTo,
         repostedFrom: null,
         linkedItems,
+        linkedNodeId,
         questId,
         ...(type === 'task' ? { taskType } : {}),
+        ...(type === 'review' && rating ? { rating: Math.min(5, Math.max(0, Number(rating))) } : {}),
         status: finalStatus,
         helpRequest: type === 'request' || helpRequest,
         needsHelp: type === 'request' ? needsHelp ?? true : undefined,
@@ -116,14 +118,36 @@ router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
     }
     posts.push(newPost);
     stores_1.postsStore.write(posts);
+    if (replyTo) {
+        const parent = posts.find(p => p.id === replyTo);
+        if (parent) {
+            const users = stores_1.usersStore.read();
+            const author = users.find(u => u.id === req.user.id);
+            const followers = new Set([parent.authorId, ...(parent.followers || [])]);
+            followers.forEach(uid => {
+                if (uid === author?.id)
+                    return;
+                const notes = stores_1.notificationsStore.read();
+                const newNote = {
+                    id: (0, uuid_1.v4)(),
+                    userId: uid,
+                    message: `${author?.username || 'Someone'} replied to a post you follow`,
+                    link: `/posts/${parent.id}`,
+                    read: false,
+                    createdAt: new Date().toISOString(),
+                };
+                stores_1.notificationsStore.write([...notes, newNote]);
+            });
+        }
+    }
     if (questId && type === 'task') {
         const quest = quests.find((q) => q.id === questId);
         if (quest) {
             quest.taskGraph = quest.taskGraph || [];
-            const from = quest.headPostId || '';
-            const exists = quest.taskGraph.some((e) => e.from === from && e.to === newPost.id);
+            const parentId = replyTo || linkedNodeId || quest.headPostId || '';
+            const exists = quest.taskGraph.some((e) => e.from === parentId && e.to === newPost.id);
             if (!exists) {
-                quest.taskGraph.push({ from, to: newPost.id });
+                quest.taskGraph.push({ from: parentId, to: newPost.id });
             }
             stores_1.questsStore.write(quests);
         }
@@ -151,6 +175,9 @@ router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
     const originalReplyTo = post.replyTo;
     const originalType = post.type;
     Object.assign(post, req.body);
+    if (post.type === 'review' && typeof post.rating === 'number') {
+        post.rating = Math.min(5, Math.max(0, post.rating));
+    }
     if (post.type === 'task') {
         post.title = post.content;
     }
@@ -193,6 +220,42 @@ router.get('/:id/replies', (req, res) => {
     const replies = posts.filter((p) => p.replyTo === req.params.id);
     const users = stores_1.usersStore.read();
     res.json({ replies: replies.map((p) => (0, enrich_1.enrichPost)(p, { users })) });
+});
+// POST /api/posts/:id/follow - follow a post
+router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
+    const posts = stores_1.postsStore.read();
+    const users = stores_1.usersStore.read();
+    const post = posts.find(p => p.id === req.params.id);
+    const follower = users.find(u => u.id === req.user.id);
+    if (!post || !follower) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+    }
+    post.followers = Array.from(new Set([...(post.followers || []), follower.id]));
+    stores_1.postsStore.write(posts);
+    const notes = stores_1.notificationsStore.read();
+    const newNote = {
+        id: (0, uuid_1.v4)(),
+        userId: post.authorId,
+        message: `${follower.username} followed your post`,
+        link: `/posts/${post.id}`,
+        read: false,
+        createdAt: new Date().toISOString(),
+    };
+    stores_1.notificationsStore.write([...notes, newNote]);
+    res.json({ followers: post.followers });
+});
+// POST /api/posts/:id/unfollow - unfollow a post
+router.post('/:id/unfollow', authMiddleware_1.authMiddleware, (req, res) => {
+    const posts = stores_1.postsStore.read();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+    }
+    post.followers = (post.followers || []).filter(id => id !== req.user.id);
+    stores_1.postsStore.write(posts);
+    res.json({ followers: post.followers });
 });
 //
 // ✅ POST /api/posts/:id/repost – Repost a post
@@ -328,6 +391,8 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
         content: task.content,
         visibility: task.visibility,
         timestamp: new Date().toISOString(),
+        subtype: 'task',
+        nodeId: task.nodeId,
         tags: [],
         collaborators: [],
         replyTo: null,
@@ -339,10 +404,41 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
         helpRequest: true,
         needsHelp: true,
     };
-    posts.push(requestPost);
+    task.helpRequest = true;
+    task.needsHelp = true;
+    const quests = stores_1.questsStore.read();
+    const quest = task.questId ? quests.find(q => q.id === task.questId) : null;
+    const openRoles = [
+        ...(task.collaborators || []),
+        ...(quest?.collaborators || [])
+    ].filter(c => !c.userId);
+    const subRequests = openRoles.map(role => ({
+        id: (0, uuid_1.v4)(),
+        authorId: req.user.id,
+        type: 'request',
+        content: `Role needed: ${(role.roles || []).join(', ')}`,
+        visibility: task.visibility,
+        timestamp: new Date().toISOString(),
+        subtype: 'task',
+        nodeId: task.nodeId,
+        tags: [],
+        collaborators: [role],
+        replyTo: requestPost.id,
+        repostedFrom: null,
+        linkedItems: [
+            { itemId: task.id, itemType: 'post', linkType: 'reference' },
+        ],
+        questId: task.questId || null,
+        helpRequest: true,
+        needsHelp: true,
+    }));
+    posts.push(requestPost, ...subRequests);
     stores_1.postsStore.write(posts);
     const users = stores_1.usersStore.read();
-    res.status(201).json((0, enrich_1.enrichPost)(requestPost, { users }));
+    res.status(201).json({
+        request: (0, enrich_1.enrichPost)(requestPost, { users }),
+        subRequests: subRequests.map(p => (0, enrich_1.enrichPost)(p, { users })),
+    });
 });
 //
 // ✅ POST /api/posts/:id/request-help – Create a help request from any post
@@ -361,6 +457,8 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => 
         content: original.content,
         visibility: original.visibility,
         timestamp: new Date().toISOString(),
+        subtype: ['task', 'issue'].includes(original.type) ? original.type : undefined,
+        nodeId: ['task', 'issue'].includes(original.type) ? original.nodeId : undefined,
         tags: [],
         collaborators: [],
         replyTo: null,
@@ -372,10 +470,41 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => 
         helpRequest: true,
         needsHelp: true,
     };
+    original.helpRequest = true;
+    original.needsHelp = true;
     posts.push(requestPost);
     stores_1.postsStore.write(posts);
     const users = stores_1.usersStore.read();
-    res.status(201).json((0, enrich_1.enrichPost)(requestPost, { users }));
+    res.status(201).json({
+        request: (0, enrich_1.enrichPost)(requestPost, { users }),
+        subRequests: [],
+    });
+});
+//
+// ❌ DELETE /api/posts/:id/request-help – Cancel help request and remove linked request posts
+//
+router.delete('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => {
+    const posts = stores_1.postsStore.read();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+    }
+    const removedIds = [];
+    for (let i = posts.length - 1; i >= 0; i--) {
+        const p = posts[i];
+        if (p.type === 'request' &&
+            p.authorId === req.user.id &&
+            p.helpRequest === true &&
+            p.linkedItems?.some(li => li.itemId === post.id && li.itemType === 'post' && li.linkType === 'reference')) {
+            removedIds.push(p.id);
+            posts.splice(i, 1);
+        }
+    }
+    post.helpRequest = false;
+    post.needsHelp = false;
+    stores_1.postsStore.write(posts);
+    res.json({ success: true, removedIds });
 });
 //
 // ✅ POST /api/posts/:id/accept – Accept a help request
@@ -425,6 +554,19 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
     stores_1.questsStore.write(quests);
     stores_1.postsStore.write(posts);
     const users = stores_1.usersStore.read();
+    const follower = users.find(u => u.id === req.user.id);
+    if (follower && post.authorId !== follower.id) {
+        const notes = stores_1.notificationsStore.read();
+        const newNote = {
+            id: (0, uuid_1.v4)(),
+            userId: post.authorId,
+            message: `${follower.username} requested to join your post`,
+            link: `/posts/${post.id}`,
+            read: false,
+            createdAt: new Date().toISOString(),
+        };
+        stores_1.notificationsStore.write([...notes, newNote]);
+    }
     res.json({ post: (0, enrich_1.enrichPost)(post, { users }), quest });
 });
 //
@@ -484,6 +626,38 @@ router.post('/:id/archive', authMiddleware_1.authMiddleware, (req, res) => {
         return;
     }
     post.tags = Array.from(new Set([...(post.tags || []), 'archived']));
+    if (post.type === 'task' && post.questId) {
+        const quests = stores_1.questsStore.read();
+        const quest = quests.find(q => q.id === post.questId);
+        if (quest) {
+            const edges = quest.taskGraph || [];
+            const parentEdge = edges.find(e => e.to === post.id);
+            const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+            const childEdges = edges.filter(e => e.from === post.id);
+            quest.taskGraph = edges.filter(e => e.from !== post.id);
+            childEdges.forEach(e => {
+                const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
+                if (!exists) {
+                    quest.taskGraph.push({ ...e, from: parentId });
+                }
+            });
+            stores_1.questsStore.write(quests);
+        }
+    }
+    stores_1.postsStore.write(posts);
+    res.json({ success: true });
+});
+//
+// ✅ DELETE /api/posts/:id/archive – Remove archived tag
+//
+router.delete('/:id/archive', authMiddleware_1.authMiddleware, (req, res) => {
+    const posts = stores_1.postsStore.read();
+    const post = posts.find((p) => p.id === req.params.id);
+    if (!post) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+    }
+    post.tags = (post.tags || []).filter((t) => t !== 'archived');
     stores_1.postsStore.write(posts);
     res.json({ success: true });
 });
@@ -507,6 +681,23 @@ router.delete('/:id', authMiddleware_1.authMiddleware, (req, res) => {
             stores_1.questsStore.write(quests);
             res.json({ success: true, questDeleted: removedQuest.id });
             return;
+        }
+    }
+    if (post.type === 'task' && post.questId) {
+        const quest = quests.find(q => q.id === post.questId);
+        if (quest) {
+            const edges = quest.taskGraph || [];
+            const parentEdge = edges.find(e => e.to === post.id);
+            const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+            const childEdges = edges.filter(e => e.from === post.id);
+            quest.taskGraph = edges.filter(e => e.to !== post.id && e.from !== post.id);
+            childEdges.forEach(e => {
+                const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
+                if (!exists) {
+                    quest.taskGraph.push({ ...e, from: parentId });
+                }
+            });
+            stores_1.questsStore.write(quests);
         }
     }
     posts.splice(index, 1);

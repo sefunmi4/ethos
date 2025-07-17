@@ -16,6 +16,8 @@ exports.archiveHistory = archiveHistory;
 exports.getDiff = getDiff;
 exports.getFileTree = getFileTree;
 exports.getCommits = getCommits;
+exports.commitRepo = commitRepo;
+exports.uploadRepoItem = uploadRepoItem;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const uuid_1 = require("uuid");
@@ -291,4 +293,20 @@ async function getCommits(questId) {
         timestamp: c.date,
         author: { id: c.author_email, username: c.author_name },
     }));
+}
+async function commitRepo(questId, message, filePaths = ['.']) {
+    const repoDir = ensureRepoDir(questId);
+    const git = (0, simple_git_1.default)(repoDir);
+    await git.add(filePaths);
+    await git.commit(message);
+    return (await getQuestRepoMeta(questId));
+}
+async function uploadRepoItem(questId, filePath, content, isFolder, message) {
+    if (isFolder) {
+        await createFolder(questId, filePath);
+    }
+    else {
+        await createFile(questId, filePath, content);
+    }
+    return commitRepo(questId, message, [filePath]);
 }
