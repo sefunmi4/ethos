@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { addPost } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 import { Input, Select, Button } from '../ui';
-import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
+import { TASK_TYPE_OPTIONS, STATUS_OPTIONS, type option } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 import type { Post } from '../../types/postTypes';
 
 interface QuickTaskFormProps {
@@ -48,7 +49,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         ...(boardId ? { boardId } : {}),
         ...(parentId ? { replyTo: parentId, linkedNodeId: parentId } : {}),
       });
-      if (boardId) appendToBoard?.(boardId, newPost);
+      if (boardId) appendToBoard?.(boardId, newPost as BoardItem);
       if (parentId) {
         try {
           const makeHeader = (content: string): string => {
@@ -95,7 +96,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         onChange={(e) =>
           setTaskType(e.target.value as 'file' | 'folder' | 'abstract')
         }
-        options={TASK_TYPE_OPTIONS}
+        options={TASK_TYPE_OPTIONS as option[]}
       />
       {!status && (
         <Select
