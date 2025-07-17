@@ -11,14 +11,12 @@ interface LogThreadPanelProps {
   questId: string;
   node: Post | null;
   user?: User;
-  onCommitSelect?: (p: Post) => void;
 }
 
 const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
   questId,
   node,
   user,
-  onCommitSelect,
 }) => {
   const [entries, setEntries] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +61,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
         {showForm && (
           <CreatePost
             onSave={p => {
-              setEntries(prev => [...prev, p]);
+              setEntries(prev => [...prev, p as Post]);
               setShowForm(false);
             }}
             onCancel={() => setShowForm(false)}
@@ -87,7 +85,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
       {showForm && (
         <CreatePost
           onSave={p => {
-            setEntries(prev => [...prev, p]);
+            setEntries(prev => [...prev, p as Post]);
             setShowForm(false);
           }}
           onCancel={() => setShowForm(false)}

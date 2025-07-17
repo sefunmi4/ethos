@@ -220,7 +220,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         <CreateQuest
           onSave={(q) => onSave?.(q)}
           onCancel={onCancel}
-          boardId={boardId || selectedBoard}
+          boardId={boardId || selectedBoard || undefined}
         />
       </div>
     );

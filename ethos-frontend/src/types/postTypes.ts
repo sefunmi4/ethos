@@ -25,6 +25,8 @@ export interface Post {
 
   questId?: string | null;
   questNodeTitle?: string;
+  /** Title of the quest this post belongs to */
+  questTitle?: string;
   nodeId?: string;
 
   /** Optional rating value for review posts */
@@ -71,6 +73,8 @@ export interface Post {
 
   /** UI hint used when a post is part of a highlighted task path */
   highlight?: boolean;
+
+  [key: string]: unknown;
 }
 
 /**

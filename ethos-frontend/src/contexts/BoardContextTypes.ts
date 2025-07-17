@@ -4,7 +4,6 @@ import type { GitFileNode, GitStatus } from '../types/gitTypes';
 export type BoardItem = BaseBoardItem & {
   gitStatus?: GitStatus;
   fileTree?: GitFileNode[];
-  [key: string]: unknown;
 };
 
 export type BoardMap = Record<string, BoardData>;
