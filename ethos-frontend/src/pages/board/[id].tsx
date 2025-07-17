@@ -17,7 +17,7 @@ import { toTitleCase } from '../../utils/displayUtils';
 
 import { fetchQuestById } from '../../api/quest';
 
-import type { BoardData } from '../../types/boardTypes';
+import type { BoardData, BoardFilters } from '../../types/boardTypes';
 import type { Quest } from '../../types/questTypes';
 
 const BoardPage: React.FC = () => {
@@ -165,7 +165,7 @@ const BoardPage: React.FC = () => {
                 editable={editable}
                 showCreate={editable}
                 hideControls
-                filter={filters}
+                filter={filters as unknown as BoardFilters}
                 onScrollEnd={loadMore}
                 loading={loadingMore}
               />

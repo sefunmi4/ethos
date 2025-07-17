@@ -16,7 +16,7 @@ import { Spinner } from '../components/ui';
 import ActiveQuestBoard from '../components/quest/ActiveQuestBoard';
 
 import type { User } from '../types/userTypes';
-import type { BoardData } from '../types/boardTypes';
+import type { BoardData, BoardFilters } from '../types/boardTypes';
 
 const ProfilePage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
@@ -89,7 +89,7 @@ const ProfilePage: React.FC = () => {
                 user={castUser}
                 compact
                 hideControls
-                filter={filters}
+                filter={filters as unknown as BoardFilters}
                 headerOnly
               />
               {userPostBoard?.enrichedItems?.length === 0 && (
