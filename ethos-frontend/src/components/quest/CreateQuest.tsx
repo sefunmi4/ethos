@@ -73,14 +73,14 @@ const CreateQuest: React.FC<CreateQuestProps> = ({
       }
 
       if (selectedBoard) {
-        appendToBoard(selectedBoard, newQuest as BoardItem);
+        appendToBoard(selectedBoard, newQuest as unknown as BoardItem);
         const items = [newQuest.id, ...(boards?.[selectedBoard]?.items || [])];
         updateBoard(selectedBoard, { items }).catch((err) =>
           console.error('[CreateQuest] Failed to persist board items:', err)
         );
       }
       if (boards?.['my-quests'] && selectedBoard !== 'my-quests') {
-        appendToBoard('my-quests', newQuest as BoardItem);
+        appendToBoard('my-quests', newQuest as unknown as BoardItem);
         const myItems = [newQuest.id, ...(boards['my-quests'].items || [])];
         updateBoard('my-quests', { items: myItems }).catch((err) =>
           console.error('[CreateQuest] Failed to update my-quests board:', err)

@@ -6,6 +6,7 @@ import { updateQuestById } from '../../api/quest';
 import type { Quest } from '../../types/questTypes';  
 import type { CollaberatorRoles } from '../../types/postTypes';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 import { Button, Label, TextArea, FormSection, Input } from '../ui';
 import LinkControls from '../controls/LinkControls'; 
 import CollaberatorControls from '../controls/CollaberatorControls';
@@ -56,14 +57,14 @@ const EditQuest: React.FC<EditQuestProps> = ({
         : {
             description,
             tags,
-            gitRepo: { repoUrl },
+            gitRepo: { repoUrl } as unknown as Quest['gitRepo'],
           }),
     };
 
     try {
       const updated = await updateQuestById(quest.id, payload);
       if (selectedBoard) {
-        updateBoardItem(selectedBoard, updated);
+        updateBoardItem(selectedBoard, updated as unknown as BoardItem);
       }
       onSave(updated);
     } catch (error) {

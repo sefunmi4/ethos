@@ -5,9 +5,9 @@ import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
 import CreateQuest from './CreateQuest';
 import { Spinner, Button, ErrorBoundary } from '../ui';
-import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 
 interface QuestWithLog extends Quest {
   lastLog?: Post;
@@ -153,8 +153,6 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
   if (loading) return <Spinner />;
   if (quests.length === 0) return null;
 
-  const showSeeAll = quests.length > BOARD_PREVIEW_LIMIT;
-
   return (
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
       <div className="flex justify-between items-center">
@@ -196,7 +194,7 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
               }
             >
               <ErrorBoundary>
-                <QuestCard quest={q} user={user} />
+                <QuestCard quest={q} user={user as User} />
               </ErrorBoundary>
             </div>
           ))}
