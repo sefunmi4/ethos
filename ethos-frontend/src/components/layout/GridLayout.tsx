@@ -13,10 +13,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { updatePost, archivePost } from '../../api/post';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Spinner } from '../ui';
-import QuickTaskForm from '../post/QuickTaskForm';
 
 import { ErrorBoundary } from '../ui';
 type GridLayoutProps = {
@@ -32,8 +32,6 @@ type GridLayoutProps = {
   initialExpanded?: boolean;
   /** Board ID for context */
   boardId?: string;
-  /** Quest ID when rendering quest tasks */
-  questId?: string;
   /** Currently expanded item ID */
   expandedId?: string | null;
   /** Set expanded item ID */
@@ -110,7 +108,6 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   boardId,
   expandedId,
   onExpand,
-  questId,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
@@ -167,8 +164,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     setIndex(i => Math.min(i, items.length - 1));
   }, [items.length]);
   useEffect(() => {
-    const handler = (e: CustomEvent) => {
-      const id = e.detail?.taskId;
+    const handler = (e: Event) => {
+      const { detail } = e as CustomEvent<{ taskId: string }>;
+      const id = detail?.taskId;
       if (!id) return;
       const el = document.getElementById(id);
       if (el) {
@@ -177,8 +175,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
         setTimeout(() => el.classList.remove('ring-2', 'ring-accent'), 2000);
       }
     };
-    window.addEventListener('questTaskSelect', handler);
-    return () => window.removeEventListener('questTaskSelect', handler);
+    window.addEventListener('questTaskSelect', handler as EventListener);
+    return () => window.removeEventListener('questTaskSelect', handler as EventListener);
   }, []);
 
   useEffect(() => {
@@ -284,11 +282,11 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     if (!dragged || dragged.status === dest) return;
 
     const optimistic = { ...dragged, status: dest };
-    if (selectedBoard) updateBoardItem(selectedBoard, optimistic);
+    if (selectedBoard) updateBoardItem(selectedBoard, optimistic as unknown as BoardItem);
 
     try {
       const updated = await updatePost(dragged.id, { status: dest });
-      if (selectedBoard) updateBoardItem(selectedBoard, updated);
+      if (selectedBoard) updateBoardItem(selectedBoard, updated as unknown as BoardItem);
       if (dest === 'Done') {
         await archivePost(dragged.id);
         if (selectedBoard) removeItemFromBoard(selectedBoard, dragged.id);
