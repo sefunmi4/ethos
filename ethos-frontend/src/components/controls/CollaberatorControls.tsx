@@ -43,7 +43,7 @@ const CollaberatorControls: React.FC<Props> = ({ value, onChange }) => {
     const trimmed = username.trim();
     const newCollaborator: CollaberatorRoles = trimmed
       ? {
-          userId: crypto.randomUUID(),
+          userId: selectedUser?.id ?? crypto.randomUUID(),
           username: trimmed,
           roles: selectedRoles,
         }

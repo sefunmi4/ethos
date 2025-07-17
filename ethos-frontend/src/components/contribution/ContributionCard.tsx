@@ -6,11 +6,11 @@ import QuestCard from '../quest/QuestCard';
 import { ErrorBoundary } from '../ui';
 
 import type { Post } from '../../types/postTypes';
-import type { Quest } from '../../types/questTypes';
+import type { Quest, EnrichedQuest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 import type { User } from '../../types/userTypes';
 
-type Contribution = Post | Quest | BoardData;
+type Contribution = Post | EnrichedQuest | BoardData;
 
 interface ContributionCardProps {
   contribution: Contribution;
@@ -85,11 +85,11 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
 
   // 🧭 Render Quest
   if ('headPostId' in contribution) {
-    const quest = contribution as Quest;
+    const quest = contribution as EnrichedQuest;
 
     // Display quests on timeline and post history boards like regular posts for consistency
     if (boardId === 'timeline-board' || boardId === 'my-posts') {
-      const headPost = (quest as any).headPost as Post | undefined;
+      const headPost = quest.headPost as Post | undefined;
       const enrichedHeadPost = headPost
         ? {
             ...headPost,
