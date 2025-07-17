@@ -378,7 +378,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
       <MapGraphLayout
         items={logs}
         edges={questData.taskGraph}
-        onEdgesChange={handleEdgesSave}
       />
     );
 

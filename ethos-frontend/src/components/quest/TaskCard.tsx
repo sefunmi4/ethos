@@ -149,7 +149,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
             <MapGraphLayout
               items={displayNodes}
               edges={displayEdges}
-              onEdgesChange={handleEdgesSave}
               {...(!isHeadNode && {
                 onNodeClick: (n: Post) => {
                   if (n.id !== task.id) navigate(ROUTES.POST(n.id));
