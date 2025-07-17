@@ -18,6 +18,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import { useAuth } from '../../contexts/AuthContext';
+import type { User } from '../../types/userTypes';
 import { useBoard } from '../../hooks/useBoard';
 import { useSocketListener } from '../../hooks/useSocket';
 import { fetchBoard } from '../../api/board';
@@ -78,7 +79,7 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
 
   // Refresh the board when a websocket update is received
   useSocketListener('board:update', payload => {
-    if (!boardId || payload.boardId !== boardId) return;
+    if (!boardId || payload.id !== boardId) return;
     fetchBoard(boardId, { enrich: true, userId: user?.id }).then(setBoard);
   });
 
@@ -98,8 +99,6 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
 
   if (!board) return <Spinner />;
 
-  const items = board.enrichedItems || [];
-
   return (
     <Board
       boardId={boardId}
@@ -109,7 +108,7 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
       hideControls
       onScrollEnd={loadMore}
       loading={loading}
-      user={user}
+      user={user as unknown as User}
       headerOnly
     />
   );

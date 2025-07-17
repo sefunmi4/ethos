@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 import { requestHelp, removeHelpRequest } from '../../api/post';
 
 jest.mock('../../api/post', () => ({
@@ -64,7 +65,7 @@ describe('PostCard request help', () => {
   it('calls endpoint and appends to board', async () => {
     render(
       <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' }} />
+        <PostCard post={post} user={{ id: 'u1' } as User} />
       </BrowserRouter>
     );
 

@@ -68,8 +68,8 @@ export const getRenderableBoardItems = (
     seen.add(item.id);
 
     if (!('headPostId' in item)) {
-      const questId = (item as Post | RenderableItem).questId;
-      const linkedQuest = (item as Post | RenderableItem).linkedItems?.find(
+      const questId = (item as Post).questId;
+      const linkedQuest = (item as Post).linkedItems?.find(
         (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)
       );
       if ((questId && questIds.has(questId)) || linkedQuest) {

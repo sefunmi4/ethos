@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 import { fetchPostsByQuestId } from '../../api/post';
 import { linkPostToQuest } from '../../api/quest';
 
@@ -60,7 +61,7 @@ describe.skip('PostCard task_edge linking', () => {
   it('calls linkPostToQuest and refreshes graph on save', async () => {
     render(
       <BrowserRouter>
-        <PostCard post={post} questId="q1" user={{ id: 'u1' }} />
+        <PostCard post={post} questId="q1" user={{ id: 'u1' } as User} />
       </BrowserRouter>
     );
     fireEvent.click(screen.getByLabelText('More options'));

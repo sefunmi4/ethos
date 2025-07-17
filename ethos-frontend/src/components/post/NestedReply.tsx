@@ -7,7 +7,7 @@ interface NestedReplyProps {
   post: Post | EnrichedPost;
   user?: User;
   depth?: number;
-  onUpdate?: (post: Post) => void;
+  onUpdate?: (post: Post | { id: string; removed?: boolean }) => void;
   onDelete?: (id: string) => void;
 }
 

@@ -135,8 +135,8 @@ const Board: React.FC<BoardProps> = ({
   }, [boardId, boardProp, setSelectedBoard, userId]);
 
   useSocketListener('board:update', (data) => {
-    const payload = data as { boardId: string };
-    if (!board?.id || payload.boardId !== board.id) return;
+    const payload = data as BoardData;
+    if (!board?.id || payload.id !== board.id) return;
 
     fetchBoard(board.id, { enrich: true, userId: user?.id }).then(setBoard);
     fetchBoardItems(board.id, { enrich: true, userId: user?.id }).then((items) =>
@@ -283,15 +283,6 @@ const Board: React.FC<BoardProps> = ({
     return board?.id ? canEditBoard(board.id) : false;
   }, [readOnly, forcedEditable, board?.id, canEditBoard]);
 
-  const activeView = useMemo<'map' | 'log' | 'file-change'>(() => {
-    if (['map-graph', 'graph', 'graph-condensed'].includes(resolvedStructure)) {
-      return 'map';
-    }
-    const hasCommit = renderableItems.some(
-      (it) => 'type' in it && (it as Post).type === 'commit'
-    );
-    return hasCommit ? 'file-change' : 'log';
-  }, [resolvedStructure, renderableItems]);
 
   const Layout = {
     grid: GridLayout,
@@ -302,6 +293,7 @@ const Board: React.FC<BoardProps> = ({
     'graph-condensed': GraphLayout,
     'map-graph': MapGraphLayout,
   }[resolvedStructure] ?? GridLayout;
+  const LayoutComponent = Layout as React.ComponentType<any>;
 
   if (loading) {
     return <Spinner />;
@@ -480,7 +472,7 @@ const Board: React.FC<BoardProps> = ({
           />
         </div>
       ) : (
-        <Layout
+        <LayoutComponent
           items={
             resolvedStructure === 'map-graph'
               ? mapGraphItems
@@ -493,7 +485,6 @@ const Board: React.FC<BoardProps> = ({
           user={user}
           onScrollEnd={onScrollEnd}
           loadingMore={loadingMore}
-          contributions={items}
           questId={quest?.id || ''}
           boardId={board?.id}
           initialExpanded={initialExpanded}

@@ -22,6 +22,7 @@ import { ErrorBoundary } from '../ui';
 type GridLayoutProps = {
   items: Post[];
   user?: User;
+  questId?: string;
   layout?: 'vertical' | 'horizontal' | 'kanban' | 'paged';
   compact?: boolean;
   editable?: boolean;
