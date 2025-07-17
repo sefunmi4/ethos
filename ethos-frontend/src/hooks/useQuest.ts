@@ -19,11 +19,11 @@ import {
 
 function isQuest(obj: unknown): obj is Quest {
   return (
-    obj &&
+    !!obj &&
     typeof obj === 'object' &&
     'id' in obj &&
     'headPostId' in obj &&
-    !('type' in obj || 'content' in obj) // Avoid Posts
+    !('type' in obj || 'content' in obj)
   );
 }
 

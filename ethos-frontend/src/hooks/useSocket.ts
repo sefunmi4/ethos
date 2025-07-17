@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import type { BoardData } from '../types/boardTypes';
 
 // ---------------------------
 // 🔌 Define supported socket events
 // ---------------------------
-type SocketEvents = {
-  'board:update': (data: unknown) => void;
+interface SocketEvents {
+  'board:update': (data: BoardData) => void;
   'user_connected': (payload: { userId: string }) => void;
   'auth:reset-page-visited': (payload: { token: string }) => void;
   'auth:password-reset-success': (payload: { userId: string }) => void;
   'navigation:404': (payload: { userId: string | null }) => void;
   [event: string]: (...args: unknown[]) => void;
-};
+}
 
 // ---------------------------
 // 🌐 Singleton socket instance

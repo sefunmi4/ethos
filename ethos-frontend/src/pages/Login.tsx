@@ -16,7 +16,14 @@ import { useGraph } from '../hooks/useGraph';
 
 // Type guard to validate layout of user object
 const isValidAuthUser = (data: unknown): data is AuthUser => {
-  return data && typeof data.id === 'string' && typeof data.email === 'string';
+  return (
+    !!data &&
+    typeof data === 'object' &&
+    'id' in data &&
+    typeof (data as { id?: unknown }).id === 'string' &&
+    'email' in data &&
+    typeof (data as { email?: unknown }).email === 'string'
+  );
 };
 
 // Define form state type
@@ -82,7 +89,7 @@ const Login: React.FC = () => {
         socket.emit('user_connected', { userId: user.id });
       
         // 🔁 Sync boards
-        const userBoards = await fetchBoards({ userId: user.id, enrich: true });
+        const userBoards = await fetchBoards(user.id);
         const defaultBoard =
           userBoards.find(b => b.defaultFor === 'home') || userBoards[0];
         if (defaultBoard) {
