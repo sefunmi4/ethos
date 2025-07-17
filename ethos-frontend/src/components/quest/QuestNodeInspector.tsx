@@ -181,13 +181,13 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
               id="task-type"
               value={type}
               onChange={handleChange}
-              options={TASK_TYPE_OPTIONS as option[]}
+              options={TASK_TYPE_OPTIONS}
             />
             <Select
               id="task-status"
               value={statusVal}
               onChange={handleStatusSelect}
-              options={STATUS_OPTIONS as option[]}
+              options={STATUS_OPTIONS}
             />
           </div>
         )}
