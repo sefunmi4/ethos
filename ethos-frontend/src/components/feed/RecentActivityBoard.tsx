@@ -23,14 +23,17 @@ import { useSocketListener } from '../../hooks/useSocket';
 import { fetchBoard } from '../../api/board';
 import { Spinner } from '../ui';
 import Board from '../board/Board';
-import PostListItem from '../post/PostListItem';
 
 /**
  * RecentActivityBoard renders a board showing the latest activity for the
  * homepage. It loads data using the `useBoard` hook and listens for
  * `board:update` events via websockets to stay up to date.
  */
-const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
+interface RecentActivityBoardProps {
+  boardId?: string;
+}
+
+const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'timeline-board' }) => {
   const { user } = useAuth();
   const { board, setBoard } = useBoard(boardId);
   const [page, setPage] = useState(1);
@@ -79,7 +82,7 @@ const RecentActivityBoard = ({ boardId = 'timeline-board' }) => {
     fetchBoard(boardId, { enrich: true, userId: user?.id }).then(setBoard);
   });
 
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const el = containerRef.current;

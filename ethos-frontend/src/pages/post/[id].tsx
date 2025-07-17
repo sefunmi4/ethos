@@ -164,7 +164,7 @@ const PostPage: React.FC = () => {
             editable={false}
             compact={true}
             initialExpanded={true}
-            user={user || undefined}
+            user={user as User}
           />
         ) : (
           <Spinner />

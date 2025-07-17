@@ -31,7 +31,9 @@ export const createMockBoard = (
     boardType,
     layout: 'grid',
     items: itemIds,
-    enrichedItems: items,
+    enrichedItems: items.filter(
+      (it): it is Post | Quest => typeof it === 'object' && it !== null
+    ),
     createdAt: new Date().toISOString(),
   };
 };
@@ -66,8 +68,8 @@ export const getRenderableBoardItems = (
     seen.add(item.id);
 
     if (!('headPostId' in item)) {
-      const questId = item.questId;
-      const linkedQuest = item.linkedItems?.find(
+      const questId = (item as Post | RenderableItem).questId;
+      const linkedQuest = (item as Post | RenderableItem).linkedItems?.find(
         (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)
       );
       if ((questId && questIds.has(questId)) || linkedQuest) {

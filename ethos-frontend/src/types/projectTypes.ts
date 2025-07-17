@@ -6,4 +6,6 @@ export type ProjectEdge = TaskEdge;
 
 export interface Project extends Quest {
   questIds: string[];
+  deliverables?: string[];
+  mapEdges?: ProjectEdge[];
 }

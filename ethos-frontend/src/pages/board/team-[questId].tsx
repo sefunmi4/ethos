@@ -5,7 +5,7 @@ import { fetchUserById } from '../../api/auth';
 import { Spinner, AvatarStack } from '../../components/ui';
 
 interface Collaborator {
-  userId: string;
+  userId?: string;
   username?: string;
   roles?: string[];
   avatarUrl?: string;

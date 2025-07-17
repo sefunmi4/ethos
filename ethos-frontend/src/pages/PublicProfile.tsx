@@ -56,26 +56,28 @@ const PublicProfilePage: React.FC = () => {
   }, [userId]);
 
   // 🔁 Real-time board updates (via WebSocket)
-  useSocketListener('board:update', async (updatedBoard: BoardData) => {
+  useSocketListener('board:update', (updatedBoard: BoardData) => {
     if (!userId || updatedBoard.userId !== userId) return;
 
-    try {
-      // 🧭 If it's a quest board
-      if (updatedBoard.id === questBoard?.id) {
-        const quests = await fetchQuestsForBoard(updatedBoard.id, userId);
-        const enriched = await enrichQuests(quests);
-        setQuestBoard({ ...updatedBoard, enrichedItems: enriched });
-      }
+    (async () => {
+      try {
+        // 🧭 If it's a quest board
+        if (updatedBoard.id === questBoard?.id) {
+          const quests = await fetchQuestsForBoard(updatedBoard.id, userId);
+          const enriched = await enrichQuests(quests);
+          setQuestBoard({ ...updatedBoard, enrichedItems: enriched });
+        }
 
-      // 📬 If it's a post board
-      if (updatedBoard.id === postBoard?.id) {
-        const posts = await fetchPostsForBoard(updatedBoard.id, userId);
-        const enriched = await enrichPosts(posts);
-        setPostBoard({ ...updatedBoard, enrichedItems: enriched });
+        // 📬 If it's a post board
+        if (updatedBoard.id === postBoard?.id) {
+          const posts = await fetchPostsForBoard(updatedBoard.id, userId);
+          const enriched = await enrichPosts(posts);
+          setPostBoard({ ...updatedBoard, enrichedItems: enriched });
+        }
+      } catch (err) {
+        console.error('[Socket board:update] Failed to fetch or enrich items:', err);
       }
-    } catch (err) {
-      console.error('[Socket board:update] Failed to fetch or enrich items:', err);
-    }
+    })();
   });
 
   if (error) {

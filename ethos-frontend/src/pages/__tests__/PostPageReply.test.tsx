@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostPage from '../post/[id]';
@@ -18,8 +17,8 @@ const fetchReplyBoard = jest.fn(() => Promise.resolve({ id: 'thread-p1', items: 
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
-  fetchPostById: (...args: unknown[]) => fetchPostById(...args),
-  fetchReplyBoard: (...args: unknown[]) => fetchReplyBoard(...args),
+  fetchPostById: (...args: Parameters<typeof fetchPostById>) => fetchPostById(...args),
+  fetchReplyBoard: (...args: Parameters<typeof fetchReplyBoard>) => fetchReplyBoard(...args),
 }));
 
 jest.mock('../../components/board/Board', () => ({

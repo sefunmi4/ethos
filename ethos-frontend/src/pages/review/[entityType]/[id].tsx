@@ -39,7 +39,7 @@ const ReviewSummaryPage: React.FC = () => {
           </div>
           <ul className="list-disc list-inside text-sm">
             {Object.entries(summary.tagCounts).map(([tag, count]) => (
-              <li key={tag}>{tag}: {count}</li>
+              <li key={tag}>{tag}: {count as number}</li>
             ))}
           </ul>
         </div>
