@@ -57,7 +57,10 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       let idx = 0;
       if (itemTypes.includes('quest')) {
         const questRes = results[idx++];
-        if (questRes.status === 'fulfilled') setQuests(questRes.value || []);
+        if (questRes.status === 'fulfilled') {
+          const list = (questRes.value as Quest[]) || [];
+          setQuests(list);
+        }
       }
       if (itemTypes.includes('post')) {
         const postRes = results[idx++];
