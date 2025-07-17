@@ -2,12 +2,12 @@ import React from 'react';
 import { TAG_BASE } from '../../constants/styles';
 import type { User } from '../../types/userTypes';
 import { getRank } from '../../utils/rankUtils';
-import type { Quest } from '../../types/questTypes';
+import type { EnrichedQuest } from '../../types/questTypes';
 import type { CollaberatorRoles } from '../../types/postTypes';
 
 interface BannerProps {
   user?: User;
-  quest?: Quest;
+  quest?: EnrichedQuest;
   /** Optional quest creator display name */
   creatorName?: string;
   readOnly?: boolean;
