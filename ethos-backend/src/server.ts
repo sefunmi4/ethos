@@ -35,6 +35,14 @@ const app: Express = express();
  */
 const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
 
+/**
+ * Comma separated list of allowed origins for CORS.
+ * Allows multiple frontends in different environments.
+ */
+const ALLOWED_ORIGINS: string[] = (process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : [CLIENT_URL]).map((o) => o.trim());
+
 
 /**
  * Middleware setup
@@ -45,10 +53,8 @@ const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
  * @middleware rateLimit - basic rate limiting
  */
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://18.118.173.176:4173',
-];
+// Default set of allowed origins for CORS
+const allowedOrigins = ALLOWED_ORIGINS;
 
 app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -129,5 +135,5 @@ const PORT: number = parseInt(process.env.PORT || '3001', 10);
  */
 app.listen(PORT, () => {
   info(`🚀 Backend server running at http://localhost:${PORT}`);
-  info(`🌐 Accepting requests from: ${CLIENT_URL}`);
+  info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
 });
