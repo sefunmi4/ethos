@@ -4,6 +4,7 @@ import { fetchRecentPosts } from '../../api/post';
 import PostCard from '../post/PostCard';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 
 const ActivityFeed: React.FC = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ const ActivityFeed: React.FC = () => {
   return (
     <div className="space-y-4">
       {posts.map(p => (
-        <PostCard key={p.id} post={p} user={user} />
+        <PostCard key={p.id} post={p} user={user as User} />
       ))}
     </div>
   );

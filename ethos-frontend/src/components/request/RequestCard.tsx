@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Post } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
@@ -6,6 +6,7 @@ import { getRank } from '../../utils/rankUtils';
 import { FaUserPlus, FaUserCheck } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
 import { acceptRequest, unacceptRequest } from '../../api/post';
+import { ROUTES } from '../../constants/routes';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 

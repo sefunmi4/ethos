@@ -157,7 +157,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
           <Select
             value={status}
             onChange={handleStatusChange}
-            options={STATUS_OPTIONS as option[]}
+            options={STATUS_OPTIONS}
             className="text-xs"
           />
         </div>
@@ -165,7 +165,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
           <Select
             value={taskType}
             onChange={handleTypeChange}
-            options={TASK_TYPE_OPTIONS as option[]}
+            options={TASK_TYPE_OPTIONS}
             className="text-xs"
           />
         </div>
@@ -241,7 +241,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
         <Select
           value={status}
           onChange={handleStatusChange}
-          options={STATUS_OPTIONS as option[]}
+          options={STATUS_OPTIONS}
           className="text-xs"
         />
       </div>
@@ -249,7 +249,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
         <Select
           value={taskType}
           onChange={handleTypeChange}
-          options={TASK_TYPE_OPTIONS as option[]}
+          options={TASK_TYPE_OPTIONS}
           className="text-xs"
         />
       </div>

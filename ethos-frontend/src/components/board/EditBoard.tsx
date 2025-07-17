@@ -12,14 +12,18 @@ import type {
   BoardLayout,
   BoardType,
 } from '../../types/boardTypes';
-import { getDisplayTitle } from '../../utils/displayUtils'; 
+import { getDisplayTitle } from '../../utils/displayUtils';
+import type { Post } from '../../types/postTypes';
+import type { Visibility } from '../../types/common';
 
 const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete }) => {
   const [title, setTitle] = useState(board.title || '');
   const [description, setDescription] = useState(board.description || '');
   const [layout, setStructure] = useState(board.layout || 'grid');
   const [boardType, setBoardType] = useState<BoardType>(board.boardType || 'post');
-  const [visibility, setVisibility] = useState(board.filters?.visibility || 'public');
+  const [visibility, setVisibility] = useState<Visibility>(
+    board.filters?.visibility || 'public',
+  );
   const [category, setCategory] = useState(board.category || '');
   const [items, setItems] = useState<(string | null)[]>(board.items || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +108,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
         <Select
           id="visibility"
           value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
+          onChange={(e) => setVisibility(e.target.value as Visibility)}
           options={VISIBILITY_OPTIONS.slice()}
         />
 
@@ -123,7 +127,7 @@ const EditBoard: React.FC<EditBoardProps> = ({ board, onSave, onCancel, onDelete
             {items.map((itemId, i) => {
               const item = enriched.find((p) => p.id === itemId);
               const display = item
-                ? getDisplayTitle(item)
+                ? getDisplayTitle(item as Post)
                 : itemId
                 ? `Item ${i + 1}: ${itemId.slice(-6)}`
                 : `Missing Item ${i + 1}`;

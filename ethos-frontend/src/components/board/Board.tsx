@@ -62,18 +62,24 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [localFilter, setLocalFilter] = useState({
-    itemType: filter.itemType || '',
-    postType: filter.postType || '',
-    linkType: filter.linkType || '',
+  interface LocalFilter {
+    itemType: string;
+    postType: string;
+    linkType: string;
+  }
+
+  const [localFilter, setLocalFilter] = useState<LocalFilter>({
+    itemType: (filter as Record<string, string>).itemType || '',
+    postType: (filter as Record<string, string>).postType || '',
+    linkType: (filter as Record<string, string>).linkType || '',
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setLocalFilter({
-      itemType: filter.itemType || '',
-      postType: filter.postType || '',
-      linkType: filter.linkType || '',
+      itemType: (filter as Record<string, string>).itemType || '',
+      postType: (filter as Record<string, string>).postType || '',
+      linkType: (filter as Record<string, string>).linkType || '',
     });
   }, [filter.itemType, filter.postType, filter.linkType]);
 
@@ -128,7 +134,8 @@ const Board: React.FC<BoardProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId, boardProp, setSelectedBoard, userId]);
 
-  useSocketListener('board:update', (payload: { boardId: string }) => {
+  useSocketListener('board:update', (data) => {
+    const payload = data as { boardId: string };
     if (!board?.id || payload.boardId !== board.id) return;
 
     fetchBoard(board.id, { enrich: true, userId: user?.id }).then(setBoard);
@@ -221,7 +228,7 @@ const Board: React.FC<BoardProps> = ({
   );
   const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
 
-  const isItemRelatedToQuest = (item: Post | Quest, qid: string) =>
+  const isItemRelatedToQuest = (item: BoardItem, qid: string) =>
     'headPostId' in item ||
     (item as Post).questId === qid ||
     (item as Post).linkedItems?.some(
@@ -259,7 +266,7 @@ const Board: React.FC<BoardProps> = ({
     setItems((prev) => [item as Post, ...prev]);
     setShowCreateForm(false);
     if (board) {
-      appendToBoard(board.id, item as BoardItem);
+      appendToBoard(board.id, item as unknown as BoardItem);
     }
   };
 
@@ -445,7 +452,6 @@ const Board: React.FC<BoardProps> = ({
               onSave={handleAdd}
               onCancel={() => setShowCreateForm(false)}
               boardId={board.id}
-              currentView={activeView}
               initialType={
                 (localFilter.postType ||
                   (board.id === 'quest-board' ? 'request' : 'free_speech')) as PostType
@@ -480,8 +486,8 @@ const Board: React.FC<BoardProps> = ({
               ? mapGraphItems
               : resolvedStructure === 'graph' ||
                 resolvedStructure === 'graph-condensed'
-              ? graphItems
-              : renderableItems
+              ? (graphItems as Post[])
+              : (renderableItems as Post[])
           }
           compact={compact}
           user={user}

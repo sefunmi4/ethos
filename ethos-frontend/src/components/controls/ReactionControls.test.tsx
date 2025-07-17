@@ -1,7 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import ReactionControls from './ReactionControls';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
@@ -15,7 +17,9 @@ jest.mock('../../api/post', () => ({
 
 const navigateMock = jest.fn();
 
-const useBoardContextMock = jest.fn(() => ({ selectedBoard: null }));
+const useBoardContextMock = jest.fn(
+  (): { selectedBoard: string | null } => ({ selectedBoard: null })
+);
 
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
@@ -44,11 +48,22 @@ describe.skip('ReactionControls', () => {
     linkedItems: [],
     questId: 'q1',
   };
+  const user = {
+    id: 'u1',
+    email: 'u1@example.com',
+    username: 'u1',
+    password: 'pw',
+    role: 'user',
+    bio: '',
+    tags: [],
+    links: {},
+    experienceTimeline: [],
+  } as User;
 
   it('shows Quest Log for task posts', async () => {
     render(
       <BrowserRouter>
-        <ReactionControls post={basePost} user={{ id: 'u1' }} />
+        <ReactionControls post={basePost} user={user} />
       </BrowserRouter>
     );
     expect(await screen.findByText('Quest Log')).toBeInTheDocument();
@@ -58,7 +73,7 @@ describe.skip('ReactionControls', () => {
     const commitPost = { ...basePost, type: 'commit' } as Post;
     render(
       <BrowserRouter>
-        <ReactionControls post={commitPost} user={{ id: 'u1' }} />
+        <ReactionControls post={commitPost} user={user} />
       </BrowserRouter>
     );
     expect(await screen.findByText('File Change View')).toBeInTheDocument();
@@ -68,7 +83,7 @@ describe.skip('ReactionControls', () => {
     const fsPost = { ...basePost, type: 'free_speech' } as Post;
     render(
       <BrowserRouter>
-        <ReactionControls post={fsPost} user={{ id: 'u1' }} />
+        <ReactionControls post={fsPost} user={user} />
       </BrowserRouter>
     );
     expect(await screen.findByText('Reply')).toBeInTheDocument();
@@ -77,7 +92,7 @@ describe.skip('ReactionControls', () => {
   it('toggles expanded view for tasks', async () => {
     render(
       <BrowserRouter>
-        <ReactionControls post={basePost} user={{ id: 'u1' }} />
+        <ReactionControls post={basePost} user={user} />
       </BrowserRouter>
     );
     const expand = await screen.findByText('Expand View');
@@ -91,7 +106,7 @@ describe.skip('ReactionControls', () => {
       <BrowserRouter>
         <ReactionControls
           post={{ ...basePost, type: 'free_speech' } as Post}
-          user={{ id: 'u1' }}
+          user={user}
           replyOverride={{ label: 'Add Item', onClick: handler }}
         />
       </BrowserRouter>
@@ -106,7 +121,7 @@ describe.skip('ReactionControls', () => {
     const fsPost = { ...basePost, type: 'free_speech' } as Post;
     render(
       <BrowserRouter>
-        <ReactionControls post={fsPost} user={{ id: 'u1' }} />
+        <ReactionControls post={fsPost} user={user} />
       </BrowserRouter>
     );
     fireEvent.click(screen.getByText('Reply'));
