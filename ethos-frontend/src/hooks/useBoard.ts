@@ -96,6 +96,7 @@ export const useBoard = (
       : {
           id: 'my-quests',
           title: 'Quests',
+          boardType: 'quest',
           layout: 'grid',
           items: quests.map(q => q.id),
           createdAt: '',
@@ -107,6 +108,7 @@ export const useBoard = (
       : {
           id: 'my-posts',
           title: 'Posts',
+          boardType: 'post',
           layout: 'grid',
           items: posts.map(p => p.id),
           createdAt: '',
