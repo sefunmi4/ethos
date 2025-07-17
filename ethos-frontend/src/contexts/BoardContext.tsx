@@ -210,27 +210,30 @@ export const useBoardContextEnhanced = () => {
   const context = useBoardContext();
 
   const convertToBoardData = (raw: unknown): BoardData => {
-    const r = raw as Record<string, unknown>;
+    const r = raw as Partial<BoardData> & {
+      name?: string;
+      enrichedItems?: Array<{ id?: string } | null>;
+    };
     return {
-      id: r.id,
-      title: r.name || 'Untitled',
-      createdAt: r.createdAt || new Date().toISOString(),
-      boardType: r.boardType || 'post',
-      layout: r.layout as BoardData['layout'],
-      items: (r.enrichedItems || []).map((item: unknown) => (item as { id?: string }).id ?? null),
+      id: String(r.id),
+      title: String(r.name ?? r.title ?? 'Untitled'),
+      createdAt: String(r.createdAt ?? new Date().toISOString()),
+      boardType: (r.boardType as BoardData['boardType']) ?? 'post',
+      layout: (r.layout as BoardData['layout']) ?? 'grid',
+      items: (r.enrichedItems ?? []).map((item) => item?.id ?? null),
     };
   };
 
   const userQuestBoard = useMemo<BoardData | undefined>(() => {
     const found = Object.values(context.boards).find((b) =>
-      b.enrichedItems?.some((item) => item.type === 'quest')
+      b.enrichedItems?.some((item) => 'type' in item && item.type === 'quest')
     );
     return found ? convertToBoardData(found) : undefined;
   }, [context.boards]);
 
   const userPostBoard = useMemo<BoardData | undefined>(() => {
     const found = Object.values(context.boards).find((b) =>
-      b.enrichedItems?.some((item) => item.type === 'post')
+      b.enrichedItems?.some((item) => 'type' in item && item.type === 'post')
     );
     return found ? convertToBoardData(found) : undefined;
   }, [context.boards]);

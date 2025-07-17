@@ -1,12 +1,11 @@
-import type { BoardData } from '../types/boardTypes';
+import type { BoardData, BoardItem as BaseBoardItem } from '../types/boardTypes';
 import type { GitFileNode, GitStatus } from '../types/gitTypes';
 
-export interface BoardItem {
-  id: string;
+export type BoardItem = BaseBoardItem & {
   gitStatus?: GitStatus;
   fileTree?: GitFileNode[];
   [key: string]: unknown;
-}
+};
 
 export type BoardMap = Record<string, BoardData>;
 
