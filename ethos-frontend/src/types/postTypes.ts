@@ -25,6 +25,8 @@ export interface Post {
 
   questId?: string | null;
   questNodeTitle?: string;
+  /** Title of the quest this post belongs to */
+  questTitle?: string;
   nodeId?: string;
 
   /** Optional rating value for review posts */
