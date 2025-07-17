@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchReviewSummary, type ReviewSummary } from '../../api/review';
-import FeaturedQuestBoard from '../../components/quest/FeaturedQuestBoard';
-import { Spinner } from '../../components/ui';
+import { fetchReviewSummary, type ReviewSummary } from '../../../api/review';
+import FeaturedQuestBoard from '../../../components/quest/FeaturedQuestBoard';
+import { Spinner } from '../../../components/ui';
 
 const ReviewSummaryPage: React.FC = () => {
   const { entityType, id } = useParams<{ entityType: string; id: string }>();

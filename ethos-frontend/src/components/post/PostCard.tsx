@@ -8,7 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest } from '../../api/post';
+import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
 import { linkPostToQuest, fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
@@ -52,7 +52,7 @@ type PostWithExtras = Post & Partial<EnrichedPost>;
 
 interface PostCardProps {
   post: PostWithExtras;
-  user?: Partial<User>;
+  user?: User;
   onUpdate?: (post: Post | { id: string; removed?: boolean }) => void;
   onDelete?: (id: string) => void;
   compact?: boolean;

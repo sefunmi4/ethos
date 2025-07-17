@@ -96,7 +96,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         onChange={(e) =>
           setTaskType(e.target.value as 'file' | 'folder' | 'abstract')
         }
-        options={TASK_TYPE_OPTIONS as option[]}
+        options={TASK_TYPE_OPTIONS as unknown as option[]}
       />
       {!status && (
         <Select

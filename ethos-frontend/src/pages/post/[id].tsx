@@ -5,6 +5,7 @@ import PostCard from '../../components/post/PostCard';
 import CreatePost from '../../components/post/CreatePost';
 import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
+import type { User } from '../../types/userTypes';
 import { useAuth } from '../../contexts/AuthContext';
 
 import { ROUTES } from '../../constants/routes';

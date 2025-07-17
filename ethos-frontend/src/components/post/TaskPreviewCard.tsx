@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
-import type { option } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';

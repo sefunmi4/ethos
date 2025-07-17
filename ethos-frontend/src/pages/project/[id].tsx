@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { useProject } from '../../hooks/useProject';
 import { fetchPostById } from '../../api/post';
 import { Spinner } from '../../components/ui';
-import type { Project } from '../../types/projectTypes';
 
 const ProjectPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

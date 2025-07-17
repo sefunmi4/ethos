@@ -356,15 +356,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const renderMap = () => {
     if (!expanded) return null;
 
-    const handleEdgesSave = async (edges: TaskEdge[]) => {
-      try {
-        await updateQuestTaskGraph(quest.id, edges);
-        setQuestData((prev) => ({ ...prev, taskGraph: edges }));
-      } catch (err) {
-        console.error('[QuestCard] Failed to save quest map', err);
-      }
-    };
-
     const canvas = (
       <MapGraphLayout
         items={logs}

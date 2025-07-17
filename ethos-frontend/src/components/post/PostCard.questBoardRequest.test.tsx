@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 import { jest } from '@jest/globals';
 
 jest.mock('../../api/post', () => ({
@@ -47,7 +48,7 @@ const post: Post = {
 it('hides status controls and shows only request tag', () => {
   render(
     <BrowserRouter>
-      <PostCard post={post} user={{ id: 'u1' }} />
+      <PostCard post={post} user={{ id: 'u1' } as User} />
     </BrowserRouter>
   );
 

@@ -6,7 +6,7 @@ import QuestCard from '../quest/QuestCard';
 import { ErrorBoundary } from '../ui';
 
 import type { Post } from '../../types/postTypes';
-import type { Quest, EnrichedQuest } from '../../types/questTypes';
+import type { EnrichedQuest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 import type { User } from '../../types/userTypes';
 

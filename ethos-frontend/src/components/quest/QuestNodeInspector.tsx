@@ -11,7 +11,6 @@ import { useGitDiff } from '../../hooks/useGit';
 import { Select } from '../ui';
 import { updatePost } from '../../api/post';
 import { TASK_TYPE_OPTIONS, STATUS_OPTIONS } from '../../constants/options';
-import type { option } from '../../constants/options';
 import type { QuestTaskStatus } from '../../types/postTypes';
 
 interface QuestNodeInspectorProps {
