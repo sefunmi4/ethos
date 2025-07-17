@@ -34,20 +34,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
       apply(getSystemTheme());
       const handler = (e: MediaQueryListEvent) => apply(e.matches ? 'dark' : 'light');
-      if (mql.addEventListener) {
+      if (typeof mql.addEventListener === 'function') {
         mql.addEventListener('change', handler);
-      } else {
-        // @ts-expect-error addListener is deprecated but required for older browsers/tests
-        mql.addListener(handler);
+        return () => mql.removeEventListener('change', handler);
       }
-      return () => {
-        if (mql.removeEventListener) {
-          mql.removeEventListener('change', handler);
-        } else {
-          // @ts-expect-error removeListener is deprecated but required for older browsers/tests
-          mql.removeListener(handler);
-        }
-      };
+      if (typeof mql.addListener === 'function') {
+        mql.addListener(handler);
+        return () => mql.removeListener(handler);
+      }
+      return;
     }
 
     apply(theme);
