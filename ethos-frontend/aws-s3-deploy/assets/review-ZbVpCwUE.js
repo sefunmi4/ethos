@@ -1,0 +1,1 @@
+import{k as s}from"./index-CxzMjhE-.js";const e="/reviews",c=async a=>(await s.post(e,a)).data,o=async(a,t)=>(await s.patch(`${e}/${a}`,t)).data,i=async(a,t)=>(await s.get(`${e}/summary/${a}/${t}`)).data;export{c as a,i as f,o as u};
