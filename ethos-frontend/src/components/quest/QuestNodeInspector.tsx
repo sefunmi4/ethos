@@ -4,11 +4,8 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import LogThreadPanel from './LogThreadPanel';
 import FileEditorPanel from './FileEditorPanel';
-import TaskKanbanBoard from './TaskKanbanBoard';
-import QuickTaskForm from '../post/QuickTaskForm';
 import TeamPanel from './TeamPanel';
 import SubtaskChecklist from './SubtaskChecklist';
-import { useGraph } from '../../hooks/useGraph';
 import GitDiffViewer from '../git/GitDiffViewer';
 import { useGitDiff } from '../../hooks/useGit';
 import { Select } from '../ui';
@@ -42,10 +39,7 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
 }) => {
   const [type, setType] = useState<string>(node?.taskType || 'abstract');
   const [activeTab, setActiveTab] = useState<'file' | 'logs' | 'options'>('file');
-  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
-  const [boardOpen, setBoardOpen] = useState(true);
   const [statusVal, setStatusVal] = useState<QuestTaskStatus>(status || node?.status || 'To Do');
-  const { loadGraph } = useGraph();
   const { data: diffData, isLoading: diffLoading } = useGitDiff({
     questId,
     filePath: node?.gitFilePath,
@@ -76,7 +70,9 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
         })
       );
       try {
-        const updated = await updatePost(node.id, { taskType: val });
+        const updated = await updatePost(node.id, {
+          taskType: val as 'file' | 'folder' | 'abstract',
+        });
         onUpdate?.(updated);
         document.dispatchEvent(
           new CustomEvent('taskUpdated', {
@@ -119,10 +115,6 @@ const QuestNodeInspector: React.FC<QuestNodeInspectorProps> = ({
     }
   };
 
-  const handleAddSubtask = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setShowSubtaskForm((prev) => !prev);
-  };
 
   if (!node) return <div className="p-2 text-sm">Select a task</div>;
 
