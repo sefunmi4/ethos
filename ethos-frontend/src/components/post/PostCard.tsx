@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatDistanceToNow } from 'date-fns';
 
-import type { Post } from '../../types/postTypes';
+import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId, acceptRequest, unacceptRequest } from '../../api/post';
@@ -48,10 +48,12 @@ const renderStars = (count: number) => (
   </span>
 );
 
+type PostWithExtras = Post & Partial<EnrichedPost>;
+
 interface PostCardProps {
-  post: Post;
-  user?: User;
-  onUpdate?: (post: Post) => void;
+  post: PostWithExtras;
+  user?: Partial<User>;
+  onUpdate?: (post: Post | { id: string; removed?: boolean }) => void;
   onDelete?: (id: string) => void;
   compact?: boolean;
   questId?: string;
@@ -145,7 +147,6 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const isQuestBoardRequest =
     post.type === 'request' && ctxBoardId === 'quest-board';
-  const isTimelineRequest = post.type === 'request' && ctxBoardId === 'timeline-board';
 
   const widthClass =
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
@@ -171,30 +172,6 @@ const PostCard: React.FC<PostCardProps> = ({
       console.error('[PostCard] Failed to update status:', err);
     }
   };
-
-  const [accepting, setAccepting] = useState(false);
-  const [accepted, setAccepted] = useState(
-    !!user && post.tags?.includes(`pending:${user.id}`)
-  );
-
-
-  const handleAccept = async () => {
-    try {
-      setAccepting(true);
-      if (accepted) {
-        await unacceptRequest(post.id);
-        setAccepted(false);
-      } else {
-        await acceptRequest(post.id);
-        setAccepted(true);
-      }
-    } catch (err) {
-      console.error('[PostCard] Failed to accept request:', err);
-    } finally {
-      setAccepting(false);
-    }
-  };
-
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
@@ -761,7 +738,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {showBrowser && (
             <div className="mt-2">
               <GitFileBrowserInline
-                questId={post.questId}
+                questId={post.questId as string}
                 onClose={() => setShowBrowser(false)}
               />
             </div>
@@ -823,19 +800,20 @@ const PostCard: React.FC<PostCardProps> = ({
           </label>
           <CreatePost
             initialType={asCommit ? 'commit' : createType}
-            questId={post.questId}
+            questId={post.questId || undefined}
             boardId={post.questId ? `log-${post.questId}` : undefined}
             initialGitFilePath={asCommit ? post.gitFilePath : undefined}
             initialLinkedNodeId={asCommit ? post.nodeId : undefined}
             onSave={async (newPost) => {
               if (post.questId) {
                 try {
+                  const np = newPost as Post;
                   await linkPostToQuest(post.questId, {
-                    postId: newPost.id,
+                    postId: np.id,
                     parentId: post.id,
-                    title: newPost.questNodeTitle || makeHeader(newPost.content),
+                    title: np.questNodeTitle || makeHeader(np.content),
                   });
-                  appendToBoard?.(`log-${post.questId}`, newPost);
+                  appendToBoard?.(`log-${post.questId}`, np);
                   loadGraph(post.questId);
                 } catch (err) {
                   console.error('[PostCard] Failed to link new post:', err);
@@ -856,18 +834,19 @@ const PostCard: React.FC<PostCardProps> = ({
         <div className="mt-2">
           <CreatePost
             initialType="task"
-            questId={post.questId}
+            questId={post.questId || undefined}
             boardId={post.questId ? `map-${post.questId}` : undefined}
             replyTo={post}
             onSave={async (newPost) => {
               if (post.questId) {
                 try {
+                  const np = newPost as Post;
                   await linkPostToQuest(post.questId, {
-                    postId: newPost.id,
+                    postId: np.id,
                     parentId: post.id,
-                    title: newPost.questNodeTitle || makeHeader(newPost.content),
+                    title: np.questNodeTitle || makeHeader(np.content),
                   });
-                  appendToBoard?.(`map-${post.questId}`, newPost);
+                  appendToBoard?.(`map-${post.questId}`, np);
                   loadGraph(post.questId);
                 } catch (err) {
                   console.error('[PostCard] Failed to link new subtask:', err);
