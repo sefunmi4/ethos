@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Quest, TaskEdge } from '../../types/questTypes';
-import type { Post, QuestTaskStatus } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, SummaryTag, Select } from '../ui';
+import { Button, SummaryTag } from '../ui';
 import { FaBell } from 'react-icons/fa';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
@@ -18,14 +18,10 @@ import ActionMenu from '../ui/ActionMenu';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import FileEditorPanel from './FileEditorPanel';
 import StatusBoardPanel from './StatusBoardPanel';
-import GitFileBrowserInline from '../git/GitFileBrowserInline';
 import GitDiffViewer from '../git/GitDiffViewer';
 import { useGitDiff } from '../../hooks/useGit';
 import SubtaskChecklist from './SubtaskChecklist';
 import { getRank } from '../../utils/rankUtils';
-import { STATUS_OPTIONS } from '../../constants/options';
-import type { option } from '../../constants/options';
-import { updatePost } from '../../api/post';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 import LogThreadPanel from './LogThreadPanel';
@@ -73,11 +69,9 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [selectedNode, setSelectedNode] = useState<Post | null>(null);
   const [rootNode, setRootNode] = useState<Post | null>(null);
   const [mapWidth, setMapWidth] = useState(240);
-  const [showTaskForm, setShowTaskForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showFolderForm, setShowFolderForm] = useState(false);
   const [showLinkEditor, setShowLinkEditor] = useState(false);
-  const [statusVal, setStatusVal] = useState<QuestTaskStatus>('To Do');
   const [linkDraft, setLinkDraft] = useState(quest.linkedPosts || []);
   const [joinRequested, setJoinRequested] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
@@ -278,9 +272,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
     return () => window.removeEventListener('taskUpdated', handler);
   }, [selectedNode, rootNode]);
 
-  useEffect(() => {
-    setStatusVal(selectedNode?.status || 'To Do');
-  }, [selectedNode?.status]);
 
 
 
@@ -482,7 +473,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               boardId={`task-${selectedNode.id}`}
               allowIssue
               onSave={(p) => {
-                setLogs((prev) => [...prev, p]);
+                setLogs((prev) => [...prev, p as Post]);
                 setShowFolderForm(false);
               }}
               onCancel={() => setShowFolderForm(false)}
@@ -551,7 +542,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                     questId={quest.id}
                     boardId={`log-${quest.id}`}
                     onSave={(p) => {
-                      setLogs((prev) => [...prev, p]);
+                      setLogs((prev) => [...prev, p as Post]);
                       setShowLogForm(false);
                     }}
                     onCancel={() => setShowLogForm(false)}
