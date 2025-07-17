@@ -2,7 +2,7 @@ import React from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
-import type { Post } from '../../types/postTypes';
+import type { PostWithQuestTitle } from '../../utils/displayUtils';
 import { getDisplayTitle, buildSummaryTags } from '../../utils/displayUtils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -23,7 +23,7 @@ const renderStars = (count: number) => (
 );
 
 interface PostListItemProps {
-  post: Post;
+  post: PostWithQuestTitle;
 }
 
 const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
