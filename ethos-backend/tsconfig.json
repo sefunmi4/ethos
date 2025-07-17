@@ -8,8 +8,8 @@
     "baseUrl": "./src",
     "resolveJsonModule": true,
     "typeRoots": [
-      "./src/types",
-      "../node_modules/@types"
+      "./node_modules/@types",
+      "./src/types"
     ],
     "types": [
       "node",
