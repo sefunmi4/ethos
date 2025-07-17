@@ -43,6 +43,7 @@ import {
 import type { Post, ReactionType, ReactionCountMap, Reaction, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { Quest } from '../../types/questTypes';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 
 interface ReactionControlsProps {
   post: Post;
@@ -197,11 +198,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           post.id,
           post.type
         );
-        appendToBoard?.('quest-board', reqPost);
-        appendToBoard?.('timeline-board', reqPost);
+        appendToBoard?.('quest-board', reqPost as unknown as BoardItem);
+        appendToBoard?.('timeline-board', reqPost as unknown as BoardItem);
         subRequests.forEach(sr => {
-          appendToBoard?.('quest-board', sr);
-          appendToBoard?.('timeline-board', sr);
+          appendToBoard?.('quest-board', sr as unknown as BoardItem);
+          appendToBoard?.('timeline-board', sr as unknown as BoardItem);
           onUpdate?.(sr);
         });
         setHelpRequested(true);
@@ -425,8 +426,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         <div className="mt-3">
           <CreatePost
             replyTo={post}
-            onSave={(newReply: Post) => {
-              onUpdate?.(newReply);
+            onSave={(newReply) => {
+              onUpdate?.(newReply as Post);
               setShowReplyPanel(false);
             }}
             onCancel={() => setShowReplyPanel(false)}
