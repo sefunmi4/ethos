@@ -64,7 +64,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
       }
       const visited = new Set<string>();
       const posts: Post[] = [];
-      let current = post.replyTo;
+      let current: string | undefined = post.replyTo ?? undefined;
       while (current && !visited.has(current)) {
         try {
           const p = await fetchPostById(current);
