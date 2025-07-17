@@ -7,6 +7,7 @@ import MarkdownRenderer from '../ui/MarkdownRenderer';
 import { updatePost } from '../../api/post';
 import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
 import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
 
 import { Select, Button, Label, FormSection, Input, MarkdownEditor } from '../ui';
@@ -60,7 +61,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 
     try {
       const updatedPost = await updatePost(post.id, payload);
-      if (selectedBoard) updateBoardItem(selectedBoard, updatedPost);
+      if (selectedBoard) updateBoardItem(selectedBoard, updatedPost as BoardItem);
       if (onUpdated) onUpdated(updatedPost);
     } catch (error) {
       console.error('[EditPost] Failed to update post:', error);

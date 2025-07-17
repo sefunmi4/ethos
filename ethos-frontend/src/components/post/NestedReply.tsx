@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import PostCard from './PostCard';
-import type { Post } from '../../types/postTypes';
+import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
 interface NestedReplyProps {
-  post: Post;
+  post: Post | EnrichedPost;
   user?: User;
   depth?: number;
   onUpdate?: (post: Post) => void;
@@ -22,7 +22,8 @@ const NestedReply: React.FC<NestedReplyProps> = ({
   onDelete,
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const content = post.renderedContent || post.content;
+  const enriched = post as EnrichedPost;
+  const content = enriched.renderedContent || post.content;
   const isLong = content.length > PREVIEW_LIMIT;
 
   const indent = Math.min(depth * 16, MAX_INDENT);

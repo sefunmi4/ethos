@@ -71,6 +71,8 @@ export interface Post {
 
   /** UI hint used when a post is part of a highlighted task path */
   highlight?: boolean;
+
+  [key: string]: unknown;
 }
 
 /**
