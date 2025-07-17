@@ -10,6 +10,8 @@ import CreatePost from '../post/CreatePost';
 import { Button } from '../ui';
 
 import type { Post } from '../../types/postTypes';
+import type { Quest } from '../../types/questTypes';
+import type { User } from '../../types/userTypes';
 
 const PostCard = lazy(() => import('../post/PostCard'));
 
@@ -51,8 +53,8 @@ const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' 
     load();
   }, [user]);
 
-  const handleAdd = async (post: Post) => {
-    setItems(prev => [post, ...prev]);
+  const handleAdd = (post: Post | Quest) => {
+    setItems(prev => [post as Post, ...prev]);
     setShowForm(false);
   };
 
@@ -83,7 +85,7 @@ const TimelineFeed: React.FC<TimelineFeedProps> = ({ boardId = 'timeline-board' 
         <Suspense fallback={<Spinner />}>
           {items.map(item => (
             <div key={item.id} className="snap-start">
-              <PostCard post={item} user={user} />
+              <PostCard post={item} user={user as User} />
             </div>
           ))}
         </Suspense>
