@@ -266,7 +266,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
       };
       setLocalItems((prev) => [...prev, newNode]);
       setEdgeList((prev) => {
-        const updated = [...prev, { from: parentId, to: newId }];
+        const newEdge: TaskEdge = { from: parentId, to: newId };
+        const updated: TaskEdge[] = [...prev, newEdge];
         onEdgesChange?.(updated);
         return updated;
       });
@@ -294,7 +295,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
           (e) => e.from === targetId && e.to === nodeId && e.type === 'abstract'
         );
         if (exists) return prev;
-        const updated = [...prev, { from: targetId, to: nodeId, type: 'abstract' }];
+        const newEdge: TaskEdge = { from: targetId, to: nodeId, type: 'abstract' };
+        const updated: TaskEdge[] = [...prev, newEdge];
         onEdgesChange?.(updated);
         return updated;
       });
@@ -306,7 +308,8 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
       const exists = filtered.some(
         (e) => e.from === targetId && e.to === nodeId,
       );
-      const updated = exists ? filtered : [...filtered, { from: targetId, to: nodeId }];
+      const newEdge: TaskEdge = { from: targetId, to: nodeId };
+      const updated: TaskEdge[] = exists ? filtered : [...filtered, newEdge];
       if (updated !== prev) onEdgesChange?.(updated);
       return updated;
     });
