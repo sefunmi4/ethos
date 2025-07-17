@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useProject } from '../../hooks/useProject';
 import { fetchPostById } from '../../api/post';
 import { Spinner } from '../../components/ui';
+import type { Project } from '../../types/projectTypes';
 
 const ProjectPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +14,7 @@ const ProjectPage: React.FC = () => {
     const load = async () => {
       if (!project) return;
       const posts = await Promise.all(
-        (project.deliverables || []).map((pid) =>
+        (project.deliverables || []).map((pid: string) =>
           fetchPostById(pid).catch(() => null),
         ),
       );

@@ -97,7 +97,9 @@ export interface SummaryTagData {
     | "quest_task"
     | "meta_system"
     | "meta_announcement"
-    | "solved";
+    | "solved"
+    | "request"
+    | "party_request";
   label: string;
   link?: string;
   username?: string;

@@ -120,15 +120,15 @@ const QuestPage: React.FC = () => {
       <section>
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">🗺 Quest Map</h2>
         {mapBoard && boardContextAvailable && process.env.NODE_ENV !== 'test' ? (
-          <Board
-            boardId={`map-${id}`}
-            board={mapBoard}
-            layout="map-graph"
-            editable={user?.id === quest.ownerId}
-            quest={quest}
-            user={user as User}
-            showCreate
-          />
+            <Board
+              boardId={`map-${id}`}
+              board={mapBoard}
+              layout="map-graph"
+              editable={user?.id === quest.authorId}
+              quest={quest}
+              user={user as User}
+              showCreate
+            />
         ) : (
           <Spinner />
         )}
