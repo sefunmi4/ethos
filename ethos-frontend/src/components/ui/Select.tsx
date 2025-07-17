@@ -7,7 +7,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   id?: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: option[];
+  options: readonly option[];
   className?: string;
   helperText?: string;
   error?: boolean;
