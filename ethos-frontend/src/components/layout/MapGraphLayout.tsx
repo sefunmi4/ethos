@@ -13,8 +13,6 @@ interface MapGraphLayoutProps {
   compact?: boolean;
   onScrollEnd?: () => void;
   loadingMore?: boolean;
-  /** Notify parent when the edge list updates */
-  onEdgesChange?: (edges: TaskEdge[]) => void;
   /** Custom handler when a node is clicked */
   onNodeClick?: (node: Post) => void;
 }
@@ -22,10 +20,9 @@ interface MapGraphLayoutProps {
 const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   items,
   edges = [],
-  onEdgesChange,
   onNodeClick,
 }) => {
-  const fgRef = useRef<ForceGraphMethods>();
+  const fgRef = useRef<ForceGraphMethods>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
@@ -48,33 +45,6 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
     };
   }, [items, edgeList]);
 
-  const emitEdges = (updated: TaskEdge[]) => {
-    if (onEdgesChange) {
-      onEdgesChange(updated);
-    } else {
-      window.dispatchEvent(
-        new CustomEvent('questGraphUpdate', { detail: { edges: updated } }),
-      );
-    }
-  };
-
-  const isDescendant = (parentId: string, childId: string): boolean => {
-    const visited = new Set<string>();
-    const stack = [parentId];
-    while (stack.length > 0) {
-      const current = stack.pop()!;
-      if (current === childId) return true;
-      edgeList
-        .filter((e) => e.from === current)
-        .forEach((e) => {
-          if (!visited.has(e.to)) {
-            visited.add(e.to);
-            stack.push(e.to);
-          }
-        });
-    }
-    return false;
-  };
 
   const handleNodeClick = (node: unknown) => {
     const n = node as Post;
