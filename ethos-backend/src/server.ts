@@ -31,9 +31,9 @@ const app: Express = express();
 /**
  * Define allowed frontend origin.
  * @constant
- * @default 'http://localhost:4173'
+ * @default 'http://localhost:5173'
  */
-const CLIENT_URL: string = process.env.CLIENT_URL || 'http://18.118.173.176:4173';
+const CLIENT_URL: string = process.env.CLIENT_URL || 'http://localhost:5173';
 
 /**
  * Comma separated list of allowed origins for CORS.

@@ -96,6 +96,8 @@ cd ethos-frontend
 npm install
 npm run dev
 ```
+The Vite dev server runs at http://localhost:5173 by default.
+
 
 Vite looks for `postcss.config.cjs` in this directory. If you encounter
 "Failed to load PostCSS config" errors, ensure there is no leftover
@@ -169,6 +171,8 @@ This runs the frontend Jest tests in `ethos-frontend/tests`.
 
 ```env
 PORT=4173
+CLIENT_URL=http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:4173
 ACCESS_SECRET=your_access_secret
 REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
