@@ -117,6 +117,10 @@ VITE_API_URL=http://localhost:4173/api
 VITE_SOCKET_URL=http://localhost:4173
 ```
 
+If you deploy the frontend to a remote host, replace `localhost` with your
+server's public address in these variables so API calls point to the correct
+backend.
+
 ### Theme Tokens
 
 UI colors are centralized in `ethos-frontend/src/theme.ts` and mirrored in the
@@ -182,6 +186,11 @@ ACCESS_SECRET=your_access_secret
 REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
+
+When running on a public server, make sure `CLIENT_URL` and
+`ALLOWED_ORIGINS` include the public URL of your frontend
+(e.g. `http://203.0.113.10:5173`). Otherwise requests will be blocked by
+CORS and return a 500 error.
 
 The backend logger supports a `LOG_LEVEL` environment variable. Set it to
 `error`, `warn`, `info` (default), or `debug` to control the verbosity of

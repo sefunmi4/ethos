@@ -114,6 +114,10 @@ app.use(
     _next: NextFunction
   ): void => {
     console.error(err);
+    if (err.message === 'Not allowed by CORS') {
+      res.status(403).json({ error: err.message });
+      return;
+    }
     if (process.env.NODE_ENV === 'production') {
       res.status(500).json({ error: 'Internal Server Error' });
     } else {
