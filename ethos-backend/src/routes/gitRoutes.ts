@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { pool } from '../db';
 import {
   getQuestRepoMeta,
   connectRepo,
@@ -21,6 +22,8 @@ import {
 import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
+
+const usePg = process.env.NODE_ENV !== 'test';
 
 //
 // ✅ GET /api/git/status/:questId
