@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore } from '../models/stores';
+import { pool } from '../db';
 import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
@@ -19,10 +20,14 @@ const router = express.Router();
 //
 // ✅ GET all posts
 //
-router.get('/', authOptional, (_req: Request, res: Response): void => {
-  const posts = postsStore.read();
-  const users = usersStore.read();
-  res.json(posts.map((p) => enrichPost(p, { users, currentUserId: (_req as any).user?.id || null })));
+router.get('/', authOptional, async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await pool.query('SELECT * FROM posts');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // GET recent posts. If userId is provided, return posts related to that user.
@@ -113,7 +118,7 @@ router.get(
 router.post(
   '/',
   authMiddleware,
-  (req: AuthenticatedRequest, res: Response): void => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const {
       type = 'free_speech',
       title = '',
@@ -179,8 +184,16 @@ router.post(
       newPost.questNodeTitle = makeQuestNodeTitle(content);
     }
 
-    posts.push(newPost);
-    postsStore.write(posts);
+    try {
+      await pool.query(
+        'INSERT INTO posts (id, authorid, type, content, title) VALUES ($1, $2, $3, $4, $5)',
+        [newPost.id, newPost.authorId, newPost.type, newPost.content, newPost.title]
+      );
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
 
     if (replyTo) {
       const parent = posts.find(p => p.id === replyTo);
