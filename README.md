@@ -98,6 +98,11 @@ npm run dev
 ```
 The Vite dev server runs at http://localhost:5173 by default.
 
+By default the frontend assumes the backend is available at
+`http://localhost:4173`. If your backend runs on a different port (for example
+when a global `PORT` environment variable is set), update `VITE_API_URL` in your
+`.env` file to match the backend address.
+
 
 Vite looks for `postcss.config.cjs` in this directory. If you encounter
 "Failed to load PostCSS config" errors, ensure there is no leftover
