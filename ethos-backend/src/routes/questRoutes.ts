@@ -3,12 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { boardsStore, questsStore, projectsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
+import { pool } from '../db';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/api';
 import type { DBQuest, DBPost, DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
+
+const usePg = process.env.NODE_ENV !== 'test';
 
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();
@@ -83,7 +86,18 @@ router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
 });
 
 // GET all quests
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
+  if (usePg) {
+    try {
+      const result = await pool.query('SELECT * FROM quests');
+      res.json(result.rows);
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+  }
   const quests: Quest[] = questsStore.read().map((q) => ({
     ...q,
     gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
@@ -92,7 +106,42 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // CREATE a new quest
-router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
+router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  if (usePg) {
+    const { title, description = '', visibility = 'public' } = req.body;
+    const authorId = req.user?.id;
+    if (!authorId || !title) {
+      res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+    const id = uuidv4();
+    try {
+      await pool.query(
+        'INSERT INTO quests (id, authorid, title, description, visibility) VALUES ($1,$2,$3,$4,$5)',
+        [id, authorId, title, description, visibility]
+      );
+      const quest: Quest = {
+        id,
+        authorId,
+        title,
+        description,
+        visibility,
+        approvalStatus: 'approved',
+        status: 'active',
+        tags: [],
+        linkedPosts: [],
+        collaborators: [],
+        headPostId: '',
+        taskGraph: [],
+      } as any;
+      res.status(201).json(quest);
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+  }
   const {
     title,
     description = '',
@@ -203,14 +252,38 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response): void => {
 // PATCH quest (e.g. add a log)
 router.patch(
   '/:id',
-  (
+  async (
     req: Request<
       { id: string },
       any,
       Partial<Quest> & { itemId?: string }
     >,
     res: Response
-  ): void => {
+  ): Promise<void> => {
+    if (usePg) {
+      try {
+        const fields = Object.keys(req.body);
+        const values = Object.values(req.body);
+        if (fields.length > 0) {
+          const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+          values.push(req.params.id);
+          const result = await pool.query(
+            `UPDATE quests SET ${sets} WHERE id = $${fields.length + 1} RETURNING *`,
+            values
+          );
+          if (result.rows.length === 0) {
+            res.status(404).json({ error: 'Quest not found' });
+            return;
+          }
+          res.json(result.rows[0]);
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
     const { id } = req.params;
     const { itemId, gitRepo, title, description, tags, displayOnBoard } = req.body;
 
@@ -381,17 +454,34 @@ router.get(
     req: AuthRequest<{ id: string }, any, any, { enrich?: string }>,
     res: Response
   ): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query('SELECT * FROM quests WHERE id = $1', [req.params.id]);
+        const quest = result.rows[0];
+        if (!quest) {
+          res.status(404).json({ error: 'Quest not found' });
+          return;
+        }
+        res.json(quest);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const { id } = req.params;
     const { enrich } = req.query;
     const userId = req.user?.id || null;
 
-  const quests = questsStore.read();
-  const quest = quests.find((q) => q.id === id);
-  if (!quest) {
-    logQuest404(id, req.originalUrl);
-    res.status(404).json({ error: 'Quest not found' });
-    return;
-  }
+    const quests = questsStore.read();
+    const quest = quests.find((q) => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
+    }
 
     if (enrich === 'true') {
       const posts = postsStore.read();
@@ -727,7 +817,24 @@ router.delete(
 router.delete(
   '/:id',
   authMiddleware,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
+  if (usePg) {
+    try {
+      const result = await pool.query('DELETE FROM quests WHERE id = $1 RETURNING *', [req.params.id]);
+      const quest = result.rows[0];
+      if (!quest) {
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+      }
+      res.json({ success: true });
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+  }
+
   const { id } = req.params;
   const quests = questsStore.read();
   const index = quests.findIndex(q => q.id === id);
