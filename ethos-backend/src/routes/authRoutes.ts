@@ -19,6 +19,9 @@ import { error } from '../utils/logger';
 import { generateRandomUsername } from '../utils/usernameUtils';
 
 import type { AuthenticatedRequest } from '../types/express';
+import { pool } from '../db';
+
+const usePg = process.env.NODE_ENV !== 'test';
 
 
 
@@ -116,118 +119,256 @@ router.post('/reset-password/:token', asyncHandler(async (req: Request, res: Res
   res.json({ message: 'Password updated successfully' });
 }));
 
-router.post('/register', asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { email, password, username } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
+router.post(
+  '/register',
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { email, password, username } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password required' });
+      }
+
+      if (usePg) {
+        const existing = await pool.query('SELECT id FROM users WHERE email = $1', [
+          email,
+        ]);
+        if (existing.rows.length > 0) {
+          return res.status(409).json({ error: 'Email already registered' });
+        }
+
+        let newUsername = username || generateRandomUsername();
+        // ensure unique username
+        let check = await pool.query('SELECT id FROM users WHERE username = $1', [
+          newUsername,
+        ]);
+        while (check.rows.length > 0) {
+          newUsername = generateRandomUsername();
+          check = await pool.query('SELECT id FROM users WHERE username = $1', [
+            newUsername,
+          ]);
+        }
+
+        const userId = `u_${uuidv4()}`;
+        const hashed = await hashPassword(password);
+        await pool.query(
+          'INSERT INTO users (id, username, email, password, role) VALUES ($1, $2, $3, $4, $5)',
+          [userId, newUsername, email, hashed, 'user']
+        );
+        res.status(201).json({ message: 'User registered', userId });
+        return;
+      }
+
+      const users = loadUsers();
+      if (users.find(u => u.email === email)) {
+        return res.status(409).json({ error: 'Email already registered' });
+      }
+
+      let newUsername = username || generateRandomUsername();
+      while (users.find(u => u.username === newUsername)) {
+        newUsername = generateRandomUsername();
+      }
+
+      const newUser: User = {
+        id: `u_${uuidv4()}`,
+        username: newUsername,
+        email,
+        password: await hashPassword(password),
+        role: 'user',
+        tags: ['explorer'],
+        bio: '',
+        links: { github: '', linkedin: '', tiktok: '', website: '' },
+        xp: 0,
+        experienceTimeline: [
+          {
+            datetime: new Date().toISOString(),
+            title: 'Journey begins',
+            tags: ['registered'],
+          },
+        ],
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+
+      res.status(201).json({ message: 'User registered', userId: newUser.id });
+    } catch (err) {
+      error('[REGISTER ERROR]', err);
+      res.status(500).json({ error: 'Registration failed' });
+    }
+  })
+);
+
+router.post(
+  '/login',
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+
+      let user: User | any = null;
+      if (usePg) {
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [
+          email,
+        ]);
+        user = result.rows[0];
+      } else {
+        const users = loadUsers();
+        user = users.find(u => u.email === email);
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const valid = await comparePasswords(password, user.password);
+      if (!valid) {
+        return res.status(401).json({ error: 'Invalid password' });
+      }
+
+      const refreshToken = signRefreshToken({ id: user.id, role: user.role });
+      const accessToken = generateAccessToken({ id: user.id, role: user.role });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.json({ message: 'Login successful', accessToken });
+    } catch (err) {
+      error('[LOGIN ERROR]', err);
+      res.status(500).json({ error: 'Internal error' });
+    }
+  })
+);
+
+router.get(
+  '/me',
+  cookieAuth,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query('SELECT * FROM users WHERE id = $1', [
+          req.user?.id,
+        ]);
+        const user = result.rows[0];
+        if (!user) {
+          res.status(404).json({ error: 'User not found' });
+          return;
+        }
+        const { id, email, username, role, tags, bio, links, experienceTimeline, xp } =
+          user;
+        res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
+        return;
+      } catch (err) {
+        error('[LOGIN ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+        return;
+      }
     }
 
     const users = loadUsers();
-    if (users.find(u => u.email === email)) {
-      return res.status(409).json({ error: 'Email already registered' });
+    const user = users.find(u => u.id === req.user?.id);
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
     }
 
-    let newUsername = username || generateRandomUsername();
-    while (users.find(u => u.username === newUsername)) {
-      newUsername = generateRandomUsername();
-    }
-
-    const newUser: User = {
-      id: `u_${uuidv4()}`,
-      username: newUsername,
-      email,
-      password: await hashPassword(password),
-      role: 'user',
-      tags: ['explorer'],
-      bio: '',
-      links: { github: '', linkedin: '', tiktok: '', website: '' },
-      xp: 0,
-      experienceTimeline: [
-        {
-          datetime: new Date().toISOString(),
-          title: 'Journey begins',
-          tags: ['registered'],
-        },
-      ],
-    };
-
-    users.push(newUser);
-    saveUsers(users);
-
-    res.status(201).json({ message: 'User registered', userId: newUser.id });
-  } catch (err) {
-    error('[REGISTER ERROR]', err);
-    res.status(500).json({ error: 'Registration failed' });
+    const { id, email, username, role, tags, bio, links, experienceTimeline, xp } =
+      user;
+    res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
   }
-}));
+);
 
-router.post('/login', asyncHandler( async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
+router.patch(
+  '/me',
+  cookieAuth,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if (usePg) {
+      try {
+        const fields = Object.keys(req.body);
+        const values = Object.values(req.body);
+        if (fields.length === 0) {
+          res.status(400).json({ error: 'No fields provided' });
+          return;
+        }
+        const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+        values.push(req.user?.id);
+        const result = await pool.query(
+          `UPDATE users SET ${sets} WHERE id = $${fields.length + 1} RETURNING *`,
+          values
+        );
+        res.json(result.rows[0]);
+        return;
+      } catch (err) {
+        error('[UPDATE ME ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+        return;
+      }
+    }
+
     const users = loadUsers();
-    const user = users.find(u => u.email === email);
+    const user = users.find(u => u.id === req.user?.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const valid = await comparePasswords(password, user.password);
-    if (!valid) return res.status(401).json({ error: 'Invalid password' });
+    Object.assign(user, req.body); // validate if needed
+    saveUsers(users);
+    res.json(user);
+  })
+);
 
-    const refreshToken = signRefreshToken({ id: user.id, role: user.role });
-    const accessToken = generateAccessToken({ id: user.id, role: user.role });
+router.post(
+  '/archive',
+  cookieAuth,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if (usePg) {
+      try {
+        await pool.query('UPDATE users SET status = $1 WHERE id = $2', [
+          'archived',
+          req.user?.id,
+        ]);
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        error('[ARCHIVE ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+        return;
+      }
+    }
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    const users = loadUsers();
+    const user = users.find(u => u.id === req.user?.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-    res.json({ message: 'Login successful', accessToken });
-  } catch (err) {
-    error('[LOGIN ERROR]', err);
-    res.status(500).json({ error: 'Internal error' });
-  }
-}));
+    user.status = 'archived';
+    saveUsers(users);
+    res.json({ success: true });
+  })
+);
 
-router.get('/me', cookieAuth, (req: AuthenticatedRequest, res: Response): void => {
-  const users = loadUsers();
-  const user = users.find(u => u.id === req.user?.id);
+router.delete(
+  '/me',
+  cookieAuth,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if (usePg) {
+      try {
+        await pool.query('DELETE FROM users WHERE id = $1', [req.user?.id]);
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        error('[DELETE USER ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+        return;
+      }
+    }
 
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
-  }
-
-  const { id, email, username, role, tags, bio, links, experienceTimeline, xp } = user;
-  res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
-});
-
-router.patch('/me', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const users = loadUsers();
-  const user = users.find(u => u.id === req.user?.id);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-
-  Object.assign(user, req.body); // validate if needed
-  saveUsers(users);
-  res.json(user);
-}));
-
-router.post('/archive', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const users = loadUsers();
-  const user = users.find(u => u.id === req.user?.id);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-
-  user.status = 'archived';
-  saveUsers(users);
-  res.json({ success: true });
-}));
-
-router.delete('/me', cookieAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  let users = loadUsers();
-  users = users.filter(u => u.id !== req.user?.id);
-  saveUsers(users);
-  res.json({ success: true });
-}));
+    let users = loadUsers();
+    users = users.filter(u => u.id !== req.user?.id);
+    saveUsers(users);
+    res.json({ success: true });
+  })
+);
 router.post('/refresh', (req: Request, res: Response): void => {
   const token = req.cookies?.refreshToken;
   if (!token) {
