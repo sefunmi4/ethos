@@ -313,6 +313,24 @@ export async function commitRepo(
 ): Promise<GitRepo> {
   const repoDir = ensureRepoDir(questId);
   const git = simpleGit(repoDir);
+  // ensure git user config exists to allow committing
+  try {
+    const list = await git.listConfig();
+    if (!list.all['user.name']) {
+      await git.addConfig('user.name', 'Ethos Bot');
+    }
+    if (!list.all['user.email']) {
+      await git.addConfig('user.email', 'bot@example.com');
+    }
+  } catch {
+    // ignore errors fetching config; attempt to set values directly
+    try {
+      await git.addConfig('user.name', 'Ethos Bot');
+      await git.addConfig('user.email', 'bot@example.com');
+    } catch {
+      /* noop */
+    }
+  }
   await git.add(filePaths);
   await git.commit(message);
   return (await getQuestRepoMeta(questId)) as GitRepo;
