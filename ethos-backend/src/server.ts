@@ -134,6 +134,6 @@ const PORT: number = parseInt(process.env.PORT || '4173', 10);
  * Logs a message with the active port and frontend origin
  */
 app.listen(PORT, () => {
-  info(`🚀 Backend server running at http://18.118.173.176:${PORT}`);
+  info(`🚀 Backend server running at http://localhost:${PORT}`);
   info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
 });
