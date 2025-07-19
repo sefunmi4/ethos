@@ -10,6 +10,8 @@ const ProjectPage: React.FC = () => {
   const { project, error, isLoading } = useProject(id ?? '');
   const [deliverables, setDeliverables] = useState<Post[]>([]);
 
+  const isPost = (p: Post | null): p is Post => p !== null;
+
   useEffect(() => {
     const load = async () => {
       if (!project) return;
@@ -18,7 +20,7 @@ const ProjectPage: React.FC = () => {
           fetchPostById(pid).catch(() => null),
         ),
       );
-      setDeliverables(posts.filter(Boolean));
+      setDeliverables(posts.filter(isPost));
     };
     load();
   }, [project]);

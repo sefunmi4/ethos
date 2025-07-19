@@ -1,5 +1,9 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import ForceGraph2D, { type ForceGraphMethods } from 'react-force-graph-2d';
+import ForceGraph2D, {
+  type ForceGraphMethods,
+  type NodeObject,
+  type LinkObject,
+} from 'react-force-graph-2d';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
@@ -23,9 +27,13 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   onNodeClick,
 }) => {
   const fgRef =
-    useRef<ForceGraphMethods<Post, { source: string; target: string }> | undefined>(
-      undefined,
-    );
+    useRef<
+      | ForceGraphMethods<
+          NodeObject<Post>,
+          LinkObject<Post, { source: string; target: string }>
+        >
+      | undefined
+    >(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
