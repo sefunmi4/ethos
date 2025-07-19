@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import TaskKanbanBoard from '../src/components/quest/TaskKanbanBoard';
+import type { Post } from '../src/types/postTypes';
 
 jest.mock('../src/api/post', () => ({
   __esModule: true,
@@ -30,7 +31,7 @@ describe('QuickTaskForm persistence', () => {
       visibility: 'public',
       questId: 'q1',
       replyTo: 'n1',
-    } as any;
+    } as unknown as Post;
 
     (fetchPostsByQuestId as jest.Mock).mockResolvedValueOnce([]);
     (addPost as jest.Mock).mockResolvedValueOnce(newPost);

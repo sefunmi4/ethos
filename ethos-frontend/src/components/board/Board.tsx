@@ -293,7 +293,7 @@ const Board: React.FC<BoardProps> = ({
     'graph-condensed': GraphLayout,
     'map-graph': MapGraphLayout,
   }[resolvedStructure] ?? GridLayout;
-  const LayoutComponent = Layout as React.ComponentType<any>;
+  const LayoutComponent = Layout as React.ComponentType<Record<string, unknown>>;
 
   if (loading) {
     return <Spinner />;

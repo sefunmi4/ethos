@@ -22,7 +22,10 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   edges = [],
   onNodeClick,
 }) => {
-  const fgRef = useRef<ForceGraphMethods<any, any> | undefined>(undefined);
+  const fgRef =
+    useRef<ForceGraphMethods<Post, { source: string; target: string }> | undefined>(
+      undefined,
+    );
   const containerRef = useRef<HTMLDivElement>(null);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
