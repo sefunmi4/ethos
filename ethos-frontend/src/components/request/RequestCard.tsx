@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Post } from '../../types/postTypes';
+import type { Post, EnrichedPost } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { getRank } from '../../utils/rankUtils';
@@ -11,15 +11,15 @@ import { ROUTES } from '../../constants/routes';
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
 
 interface RequestCardProps {
-  post: Post;
+  post: EnrichedPost;
   onUpdate?: (post: Post) => void;
   className?: string;
 }
 
 const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) => {
   const { user } = useAuth();
-  const collaboratorUsers = (post as any).enrichedCollaborators || [];
-  const collaboratorCount = collaboratorUsers.filter((c: any) => c.userId).length || 0;
+  const collaboratorUsers = post.enrichedCollaborators || [];
+  const collaboratorCount = collaboratorUsers.filter(c => c.userId).length || 0;
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(
     !!user && post.tags?.includes(`pending:${user.id}`)

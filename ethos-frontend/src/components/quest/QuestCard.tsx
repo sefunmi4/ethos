@@ -396,7 +396,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
       selectedNode.taskType === 'folder' ||
       selectedNode.id === rootNode?.id ||
       children.length > 0;
-    const isPlanner = Boolean((selectedNode as any).planner);
+    const isPlanner = Boolean(selectedNode.planner);
 
     const statusBoard = (
       <StatusBoardPanel

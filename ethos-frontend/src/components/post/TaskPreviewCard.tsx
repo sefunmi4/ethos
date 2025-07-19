@@ -4,6 +4,7 @@ import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags } from '../../utils/displayUtils';
+import type { SummaryTagData } from '../ui/SummaryTag';
 import { ROUTES } from '../../constants/routes';
 import { updatePost } from '../../api/post';
 import { createRepoFolder } from '../../api/git';
@@ -120,7 +121,9 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
   };
 
   const summaryTags = buildSummaryTags(post);
-  let taskTag = summaryTags.find(t => t.type === 'task');
+  let taskTag: SummaryTagData | undefined = summaryTags.find(
+    t => t.type === 'task',
+  );
   if (taskTag) {
     taskTag = {
       ...taskTag,
@@ -130,7 +133,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
       username: undefined,
       usernameLink: undefined,
       link: ROUTES.POST(post.id),
-    } as any;
+    };
   } else {
     const label = post.nodeId ? post.nodeId.replace(/^Q:[^:]+:/, '') : 'Task';
     taskTag = {
@@ -138,7 +141,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
       label,
       detailLink: ROUTES.POST(post.id),
       link: ROUTES.POST(post.id),
-    } as any;
+    };
   }
 
   const tagNode = !hideSummaryTag && taskTag ? (
