@@ -5,10 +5,13 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
+import { pool } from '../db';
 import type { BoardData } from '../types/api';
 import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
+
+const usePg = process.env.NODE_ENV !== 'test';
 
 // Only request posts should appear on the quest board. Other post types can
 // generate request posts, but the board itself shows requests only.
@@ -32,10 +35,22 @@ const router = express.Router();
 //
 router.get(
   '/',
-  (
+  async (
     req: Request<{}, BoardData[], undefined, { featured?: string; enrich?: string; userId?: string }>,
     res: Response
-  ): void => {
+  ): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query('SELECT * FROM boards');
+        res.json(result.rows);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const { featured, enrich, userId } = req.query;
     const boards = boardsStore.read();
     const posts = postsStore.read();
@@ -184,10 +199,27 @@ router.get(
 //
 router.get(
   '/:id',
-  (
+  async (
     req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string; page?: string; limit?: string; userId?: string }>,
     res: Response
-  ): void => {
+  ): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query('SELECT * FROM boards WHERE id = $1', [req.params.id]);
+        const board = result.rows[0];
+        if (!board) {
+          res.status(404).json({ error: 'Board not found' });
+          return;
+        }
+        res.json(board);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const { id } = req.params;
     const { enrich, page = '1', limit, userId } = req.query;
 
@@ -489,7 +521,61 @@ router.get(
 router.post(
   '/',
   authMiddleware,
-  (req: AuthenticatedRequest, res: Response): void => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (usePg) {
+      const {
+        id: customId,
+        title,
+        description = '',
+        items = [],
+        filters = {},
+        featured = false,
+        defaultFor = null,
+        layout = 'grid',
+        boardType = 'post',
+        questId,
+      } = req.body;
+      const id = customId || uuidv4();
+      try {
+        await pool.query(
+          'INSERT INTO boards (id, title, description, boardType, layout, items, filters, featured, defaultFor, createdAt, userId, questId) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+          [
+            id,
+            title,
+            description,
+            boardType,
+            layout,
+            JSON.stringify(items),
+            JSON.stringify(filters),
+            featured,
+            defaultFor,
+            new Date().toISOString(),
+            (req.user as any)?.id || '',
+            questId,
+          ]
+        );
+        const newBoard: BoardData = {
+          id,
+          title,
+          description,
+          boardType,
+          items,
+          filters,
+          featured,
+          defaultFor,
+          layout,
+          createdAt: new Date().toISOString(),
+          userId: (req.user as any)?.id || '',
+          questId,
+        };
+        res.status(201).json(newBoard);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
     const {
       id: customId,
       title,
@@ -532,7 +618,32 @@ router.post(
 router.patch(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        const fields = Object.keys(req.body);
+        const values = Object.values(req.body);
+        if (fields.length > 0) {
+          const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+          values.push(req.params.id);
+          const result = await pool.query(
+            `UPDATE boards SET ${sets} WHERE id = $${fields.length + 1} RETURNING *`,
+            values
+          );
+          if (result.rows.length === 0) {
+            res.status(404).json({ error: 'Board not found' });
+            return;
+          }
+          res.json(result.rows[0]);
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const boards = boardsStore.read();
     let board = boards.find(b => b.id === req.params.id);
 
@@ -591,7 +702,24 @@ router.post(
 router.delete(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query('DELETE FROM boards WHERE id = $1 RETURNING *', [req.params.id]);
+        const removed = result.rows[0];
+        if (!removed) {
+          res.status(404).json({ error: 'Board not found' });
+          return;
+        }
+        res.json(removed);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const boards = boardsStore.read();
     const index = boards.findIndex(b => b.id === req.params.id);
     if (index === -1) {
