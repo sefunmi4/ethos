@@ -3,11 +3,12 @@ import { useParams } from 'react-router-dom';
 import { useProject } from '../../hooks/useProject';
 import { fetchPostById } from '../../api/post';
 import { Spinner } from '../../components/ui';
+import type { Post } from '../../types/postTypes';
 
 const ProjectPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { project, error, isLoading } = useProject(id ?? '');
-  const [deliverables, setDeliverables] = useState<any[]>([]);
+  const [deliverables, setDeliverables] = useState<Post[]>([]);
 
   useEffect(() => {
     const load = async () => {

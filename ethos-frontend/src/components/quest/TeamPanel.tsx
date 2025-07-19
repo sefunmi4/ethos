@@ -79,7 +79,10 @@ const TeamPanel: React.FC<TeamPanelProps> = ({ questId, node, canEdit = true }) 
           <AvatarStack
             users={(quest.collaborators || [])
               .filter(c => c.userId)
-              .map(c => ({ avatarUrl: (c as any).avatarUrl, username: c.username }))}
+              .map(c => ({
+                avatarUrl: (c as { avatarUrl?: string }).avatarUrl,
+                username: c.username,
+              }))}
           />
           <Link
             to={ROUTES.TEAM_BOARD(quest.id)}

@@ -181,7 +181,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || makeHeader(post.content);
-  let summaryTags = buildSummaryTags(post, questTitle, questId);
+  const summaryTags = buildSummaryTags(post, questTitle, questId);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
