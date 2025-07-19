@@ -9,6 +9,8 @@ import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
+const usePg = process.env.NODE_ENV !== 'test';
+
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();
   // TODO: Replace simple truncation with AI-generated summaries
@@ -21,13 +23,19 @@ const router = express.Router();
 // ✅ GET all posts
 //
 router.get('/', authOptional, async (_req: Request, res: Response): Promise<void> => {
-  try {
-    const result = await pool.query('SELECT * FROM posts');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
+  if (usePg) {
+    try {
+      const result = await pool.query('SELECT * FROM posts');
+      res.json(result.rows);
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
   }
+  const posts = postsStore.read();
+  res.json(posts);
 });
 
 // GET recent posts. If userId is provided, return posts related to that user.
@@ -184,15 +192,20 @@ router.post(
       newPost.questNodeTitle = makeQuestNodeTitle(content);
     }
 
-    try {
-      await pool.query(
-        'INSERT INTO posts (id, authorid, type, content, title) VALUES ($1, $2, $3, $4, $5)',
-        [newPost.id, newPost.authorId, newPost.type, newPost.content, newPost.title]
-      );
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
-      return;
+    if (usePg) {
+      try {
+        await pool.query(
+          'INSERT INTO posts (id, authorid, type, content, title) VALUES ($1, $2, $3, $4, $5)',
+          [newPost.id, newPost.authorId, newPost.type, newPost.content, newPost.title]
+        );
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    } else {
+      posts.push(newPost);
+      postsStore.write(posts);
     }
 
     if (replyTo) {
@@ -954,7 +967,23 @@ router.get('/:id/propagation-status', (req: Request<{ id: string }>, res: Respon
 //
 // ✅ GET single post (placed last to avoid route conflicts)
 //
-router.get('/:id', authOptional, (req: Request<{ id: string }>, res: Response): void => {
+router.get('/:id', authOptional, async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  if (usePg) {
+    try {
+      const result = await pool.query('SELECT * FROM posts WHERE id = $1', [req.params.id]);
+      const row = result.rows[0];
+      if (!row) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+      }
+      res.json(row);
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+  }
   const posts = postsStore.read();
   const post = posts.find((p) => p.id === req.params.id);
   if (!post) {
