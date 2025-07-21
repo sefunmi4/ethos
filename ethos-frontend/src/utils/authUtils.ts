@@ -15,7 +15,9 @@ const getEnv = () => {
 const API_BASE =
   getEnv().VITE_API_URL ||
   (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
-  'http://localhost:4173/api';
+  (typeof window !== 'undefined'
+    ? `${window.location.origin}/api`
+    : 'http://localhost:4173/api');
 
 /**
  * 🔐 In-memory access token used for Authorization header
