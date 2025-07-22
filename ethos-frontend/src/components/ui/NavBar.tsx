@@ -41,7 +41,7 @@ const NavBar: React.FC = () => {
             <>
               <Link to="/notifications" className="relative hover:text-accent transition" aria-label="Notifications">
                 <FaBell />
-                {notifications.filter(n => !n.read).length > 0 && (
+                {Array.isArray(notifications) && notifications.filter(n => !n.read).length > 0 && (
                   <span className="absolute -top-2 -right-2 text-xs bg-red-600 text-white rounded-full px-1">
                     {notifications.filter(n => !n.read).length}
                   </span>
