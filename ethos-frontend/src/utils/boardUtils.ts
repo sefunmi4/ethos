@@ -57,13 +57,14 @@ export const getRenderableBoardItems = (
   const seen = new Set<string>();
   const questIds = new Set<string>();
   items.forEach((item) => {
-    if ('headPostId' in item) {
+    if (item && typeof item === 'object' && 'headPostId' in item) {
       questIds.add(item.id);
     }
   });
 
   const result: BoardItem[] = [];
   for (const item of items) {
+    if (!item || typeof item !== 'object') continue;
     if (seen.has(item.id)) continue;
     seen.add(item.id);
 
