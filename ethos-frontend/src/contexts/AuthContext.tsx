@@ -10,6 +10,7 @@ import {
   archiveUserAccount as apiArchiveUser,
   deleteUserAccount as apiDeleteUser,
 } from '../api/auth';
+import { setAccessToken } from '../utils/authUtils';
 
 import { AuthContext } from './AuthContextBase';
 
@@ -26,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData as AuthUser);
       } catch {
         setUser(null);
+        setAccessToken(null);
       } finally {
         setLoading(false);
       }
@@ -42,6 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err: unknown) {
       console.error('Login failed:', err);
       setError('Login failed');
+      setUser(null);
+      setAccessToken(null);
     }
   };
 
@@ -54,6 +58,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err: unknown) {
       console.error('Registration failed:', err);
       setError('Registration failed');
+      setUser(null);
+      setAccessToken(null);
     }
   };
 
