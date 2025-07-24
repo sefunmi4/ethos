@@ -399,7 +399,9 @@ router.post('/logout', (_req: Request, res: Response) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    // Use the same SameSite setting as the login cookie so
+    // the browser properly removes it on logout
+    sameSite: 'lax',
   });
   res.sendStatus(204);
 });
