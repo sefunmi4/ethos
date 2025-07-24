@@ -187,6 +187,10 @@ REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
 
+If a valid `DATABASE_URL` is provided, the backend will always use PostgreSQL for
+data persistence in every environment, including tests. Without this variable,
+the server falls back to its local JSON store.
+
 When running on a public server, make sure `CLIENT_URL` and
 `ALLOWED_ORIGINS` include the public URL of your frontend
 (e.g. `http://203.0.113.10:5173`). Otherwise requests will be blocked by

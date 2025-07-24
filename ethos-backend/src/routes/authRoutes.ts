@@ -21,7 +21,7 @@ import { generateRandomUsername } from '../utils/usernameUtils';
 import type { AuthenticatedRequest } from '../types/express';
 import { pool } from '../db';
 
-const usePg = process.env.NODE_ENV !== 'test' && !!process.env.DATABASE_URL;
+const usePg = !!process.env.DATABASE_URL;
 
 
 
