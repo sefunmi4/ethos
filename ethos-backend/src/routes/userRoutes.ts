@@ -5,7 +5,7 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { usersStore, notificationsStore } from '../models/stores';
 import { pool } from '../db';
 
-const usePg = process.env.NODE_ENV !== 'test' && !!process.env.DATABASE_URL;
+const usePg = !!process.env.DATABASE_URL;
 
 const router = express.Router();
 
