@@ -8,7 +8,7 @@ import { pool } from '../db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
+const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
 
 // GET all projects
 router.get('/', async (_req: Request, res: Response): Promise<void> => {

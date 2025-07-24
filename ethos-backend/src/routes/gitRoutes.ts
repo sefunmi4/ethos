@@ -23,7 +23,7 @@ import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
+const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
 
 //
 // ✅ GET /api/git/status/:questId

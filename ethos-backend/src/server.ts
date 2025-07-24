@@ -19,9 +19,13 @@ import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import healthRoutes from './routes/healthRoutes';
+import { initializeDatabase } from './db';
 
 // Load environment variables from `.env` file
 dotenv.config();
+initializeDatabase().catch((err) =>
+  console.error('[DB INIT ERROR]', err)
+);
 
 /**
  * Initialize the Express app.

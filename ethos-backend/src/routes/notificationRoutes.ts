@@ -9,7 +9,7 @@ import type { DBNotification } from '../types/db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
+const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
 
 // GET /api/notifications - return notifications for current user
 router.get('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
