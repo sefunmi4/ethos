@@ -19,8 +19,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch current user on initial load
+  // Fetch current user on initial load if an access token exists
   useEffect(() => {
+    const token =
+      typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     const fetchUser = async () => {
       try {
         const userData = await fetchCurrentUser();
