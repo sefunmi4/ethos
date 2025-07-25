@@ -1,9 +1,6 @@
-import { useContext } from 'react';
 import { FaBell } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContextBase';
-import type { AuthContextType } from '../../types/authTypes';
-import { logoutUser } from '../../utils/authUtils';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 
@@ -12,8 +9,8 @@ import { useNotifications } from '../../contexts/NotificationContext';
  * Adjusts links based on authentication status.
  */
 const NavBar: React.FC = () => {
-  // Access authenticated user context
-  const { user } = useContext(AuthContext as React.Context<AuthContextType>);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { notifications } = useNotifications();
 
@@ -51,7 +48,10 @@ const NavBar: React.FC = () => {
                 Account
               </Link>
               <button
-                onClick={logoutUser}
+                onClick={async () => {
+                  await logout();
+                  navigate('/login');
+                }}
                 className="hover:underline text-left"
                 aria-label="Logout"
               >
