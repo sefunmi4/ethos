@@ -119,7 +119,7 @@ VITE_SOCKET_URL=http://localhost:4173
 
 If you deploy the frontend to a remote host, replace `localhost` with your
 server's public address in these variables so API calls point to the correct
-backend.
+backend and Socket.IO connects properly.
 
 ### Theme Tokens
 
@@ -186,6 +186,10 @@ ACCESS_SECRET=your_access_secret
 REFRESH_SECRET=your_refresh_secret
 DATABASE_URL=your_postgresql_uri
 ```
+
+The backend now also starts a Socket.IO server using the same `PORT` as the
+HTTP API. Ensure your frontend's `VITE_SOCKET_URL` matches this address when
+connecting to real-time features.
 
 If a valid `DATABASE_URL` is provided, the backend will always use PostgreSQL for
 data persistence in every environment, including tests. Without this variable,

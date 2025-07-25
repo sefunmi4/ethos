@@ -1,6 +1,8 @@
 // src/server.ts
 
 import express, { Express } from 'express';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import type { Request, Response, NextFunction } from 'express';
@@ -137,11 +139,24 @@ app.use(
 const PORT: number = parseInt(process.env.PORT || '4173', 10);
 
 /**
- * Start the server
- * @function listen
- * Logs a message with the active port and frontend origin
+ * Create HTTP and Socket.IO servers and start listening.
  */
-app.listen(PORT, () => {
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    origin: ALLOWED_ORIGINS,
+    credentials: true,
+  },
+});
+
+io.on('connection', (socket) => {
+  info(`🔌 Socket connected: ${socket.id}`);
+  socket.on('disconnect', (reason) => {
+    info(`🔌 Socket disconnected: ${reason}`);
+  });
+});
+
+httpServer.listen(PORT, () => {
   info(`🚀 Backend server running at http://localhost:${PORT}`);
   info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
 });
