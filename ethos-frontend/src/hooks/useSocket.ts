@@ -11,7 +11,7 @@ interface SocketEvents {
   'auth:reset-page-visited': (payload: { token: string }) => void;
   'auth:password-reset-success': (payload: { userId: string }) => void;
   'navigation:404': (payload: { userId: string | null }) => void;
-  [event: string]: (...args: any[]) => void;
+  [event: string]: (...args: unknown[]) => void;
 }
 
 // ---------------------------
