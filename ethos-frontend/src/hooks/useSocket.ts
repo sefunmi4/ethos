@@ -23,16 +23,16 @@ let socket: Socket | null = null;
  */
 export const getSocket = (): Socket => {
   if (!socket) {
-    const getEnv = () => {
+    const metaEnv = (() => {
       try {
-        return Function('return import.meta.env')();
+        return Function('return import.meta.env')() as ImportMetaEnv;
       } catch {
-        return {};
+        return {} as ImportMetaEnv;
       }
-    };
+    })();
 
     const SOCKET_URL =
-      getEnv().VITE_SOCKET_URL ||
+      metaEnv.VITE_SOCKET_URL ||
       (typeof process !== 'undefined' ? process.env.VITE_SOCKET_URL : undefined) ||
       (typeof window !== 'undefined'
         ? window.location.origin
