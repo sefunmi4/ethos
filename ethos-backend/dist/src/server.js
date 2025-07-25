@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const http_1 = require("http");
+const socket_io_1 = require("socket.io");
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
@@ -109,11 +111,22 @@ app.use((err, _req, res, _next) => {
  */
 const PORT = parseInt(process.env.PORT || '4173', 10);
 /**
- * Start the server
- * @function listen
- * Logs a message with the active port and frontend origin
+ * Create HTTP and Socket.IO servers and start listening.
  */
-app.listen(PORT, () => {
+const httpServer = (0, http_1.createServer)(app);
+const io = new socket_io_1.Server(httpServer, {
+    cors: {
+        origin: ALLOWED_ORIGINS,
+        credentials: true,
+    },
+});
+io.on('connection', (socket) => {
+    (0, logger_1.info)(`🔌 Socket connected: ${socket.id}`);
+    socket.on('disconnect', (reason) => {
+        (0, logger_1.info)(`🔌 Socket disconnected: ${reason}`);
+    });
+});
+httpServer.listen(PORT, () => {
     (0, logger_1.info)(`🚀 Backend server running at http://localhost:${PORT}`);
     (0, logger_1.info)(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
 });
