@@ -25,7 +25,7 @@ export const getSocket = (): Socket => {
   if (!socket) {
     const SOCKET_URL =
       (typeof import.meta !== 'undefined'
-        ? (import.meta as any).env?.VITE_SOCKET_URL
+        ? import.meta.env?.VITE_SOCKET_URL
         : undefined) ||
       (typeof process !== 'undefined' ? process.env.VITE_SOCKET_URL : undefined) ||
       (typeof window !== 'undefined'

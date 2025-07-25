@@ -6,7 +6,7 @@ import axios, { type AxiosInstance, AxiosError, type AxiosRequestConfig } from '
  */
 const API_BASE =
   (typeof import.meta !== 'undefined'
-    ? (import.meta as any).env?.VITE_API_URL
+    ? import.meta.env?.VITE_API_URL
     : undefined) ||
   (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
   (typeof window !== 'undefined'
