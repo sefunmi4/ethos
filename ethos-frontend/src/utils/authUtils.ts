@@ -4,16 +4,10 @@ import axios, { type AxiosInstance, AxiosError, type AxiosRequestConfig } from '
 /**
  * 📡 Base API URL — should be environment-configurable
  */
-const getEnv = () => {
-  try {
-    return Function('return import.meta.env')();
-  } catch {
-    return {};
-  }
-};
-
 const API_BASE =
-  getEnv().VITE_API_URL ||
+  (typeof import.meta !== 'undefined'
+    ? (import.meta as any).env?.VITE_API_URL
+    : undefined) ||
   (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
   (typeof window !== 'undefined'
     ? `${window.location.origin}/api`
