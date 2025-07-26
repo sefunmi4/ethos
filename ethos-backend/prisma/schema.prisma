@@ -13,12 +13,15 @@ model User {
   username String?
   password String
   role     String?
+  status   String?
   posts    Post[]
 }
 
 model Post {
   id        String   @id @default(uuid())
   authorId  String
+  type      String
+  title     String?
   content   String
   createdAt DateTime @default(now())
 
