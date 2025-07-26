@@ -15,6 +15,11 @@ model User {
   role     String?
   status   String?
   posts    Post[]
+  quests   Quest[]
+  boards   Board[]
+  projects Project[]
+  reviews  Review[]
+  notifications Notification[]
 }
 
 model Post {
@@ -26,6 +31,8 @@ model Post {
   createdAt DateTime @default(now())
 
   author User @relation(fields: [authorId], references: [id])
+  reviews Review[]
+  headOfQuest Quest? @relation("QuestHeadPost")
 }
 
 model Quest {
