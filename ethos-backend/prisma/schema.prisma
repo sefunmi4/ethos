@@ -85,7 +85,7 @@ model Project {
   tags        String[]
   createdAt   DateTime @default(now())
   questIds    String[]
-  deliverables String[]
+  deliverables String[]?
   mapEdges    Json?
 
   author User   @relation(fields: [authorId], references: [id])
