@@ -13,14 +13,112 @@ model User {
   username String?
   password String
   role     String?
+  status   String?
   posts    Post[]
 }
 
 model Post {
   id        String   @id @default(uuid())
   authorId  String
+  type      String
+  title     String?
   content   String
   createdAt DateTime @default(now())
 
   author User @relation(fields: [authorId], references: [id])
+}
+
+model Quest {
+  id            String   @id @default(uuid())
+  authorId      String
+  title         String
+  description   String?
+  visibility    String
+  approvalStatus String?
+  status        String?
+  projectId     String?
+  headPostId    String?
+  linkedPosts   Json?
+  collaborators Json?
+  gitRepo       Json?
+  createdAt     DateTime @default(now())
+  tags          String[]
+  displayOnBoard Boolean?
+  defaultBoardId String?
+  taskGraph     Json?
+  helpRequest   Boolean?
+  followers     String[]
+
+  author  User    @relation(fields: [authorId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+  headPost Post?   @relation("QuestHeadPost", fields: [headPostId], references: [id])
+  boards   Board[]
+  reviews  Review[]
+}
+
+model Board {
+  id          String  @id
+  title       String
+  description String?
+  boardType   String
+  layout      String
+  items       Json
+  filters     Json?
+  featured    Boolean?
+  defaultFor  String?
+  createdAt   DateTime @default(now())
+  category    String?
+  userId      String
+  questId     String?
+
+  user  User  @relation(fields: [userId], references: [id])
+  quest Quest? @relation(fields: [questId], references: [id])
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  authorId    String
+  title       String
+  description String?
+  visibility  String
+  status      String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+  questIds    String[]
+  deliverables String[]
+  mapEdges    Json?
+
+  author User   @relation(fields: [authorId], references: [id])
+  quests Quest[]
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  reviewerId String
+  targetType String
+  rating     Int
+  visibility String
+  status     String
+  tags       String[]
+  feedback   String?
+  repoUrl    String?
+  modelId    String?
+  questId    String?
+  postId     String?
+  createdAt  DateTime @default(now())
+
+  reviewer User  @relation(fields: [reviewerId], references: [id])
+  quest    Quest? @relation(fields: [questId], references: [id])
+  post     Post?  @relation(fields: [postId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
