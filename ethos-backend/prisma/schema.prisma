@@ -44,7 +44,7 @@ model Quest {
   approvalStatus String?
   status        String?
   projectId     String?
-  headPostId    String?
+  headPostId    String? @unique
   linkedPosts   Json?
   collaborators Json?
   gitRepo       Json?
