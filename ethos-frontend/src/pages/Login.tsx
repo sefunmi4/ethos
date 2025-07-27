@@ -1,6 +1,7 @@
 // src/pages/Login.tsx
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import type { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { login, fetchCurrentUser, addUserAccount, addResetPasswordRequest } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
@@ -119,7 +120,11 @@ const Login: React.FC = () => {
       }
     } catch (err: unknown) {
       console.error('Auth failed:', err);
-      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error;
+      const axiosErr = err as AxiosError & { response?: { data?: { error?: string } } };
+      const msg =
+        axiosErr.code === 'ERR_NETWORK'
+          ? 'Unable to reach the server. Please ensure the backend is running and accessible.'
+          : axiosErr.response?.data?.error;
       setError(msg || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
