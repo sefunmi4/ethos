@@ -209,19 +209,27 @@ router.post(
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [
           email,
         ]);
+        if (!result || result.rowCount === 0) {
+          return res
+            .status(401)
+            .json({ error: 'Request empty or invalid credentials' });
+        }
         user = result.rows[0];
       } else {
         const users = loadUsers();
         user = users.find(u => u.email === email);
-      }
-
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        if (!user) {
+          return res
+            .status(401)
+            .json({ error: 'Request empty or invalid credentials' });
+        }
       }
 
       const valid = await comparePasswords(password, user.password);
       if (!valid) {
-        return res.status(401).json({ error: 'Invalid password' });
+        return res
+          .status(401)
+          .json({ error: 'Request empty or invalid credentials' });
       }
 
       const refreshToken = signRefreshToken({ id: user.id, role: user.role });
