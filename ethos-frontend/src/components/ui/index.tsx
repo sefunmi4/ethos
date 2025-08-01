@@ -18,3 +18,4 @@ export { default as MarkdownEditor } from './MarkdownEditor';
 export { default as AvatarStack } from './AvatarStack';
 export { default as SummaryTag } from './SummaryTag';
 export { default as ErrorBoundary } from "./ErrorBoundary";
+export { default as NodeTypeBadge } from './NodeTypeBadge';
