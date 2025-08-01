@@ -8,6 +8,7 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 import { getDisplayTitle } from '../../utils/displayUtils';
+import { getNodeStyle } from '../ui/NodeTypeBadge';
 
 interface MapGraphLayoutProps {
   items: Post[];
@@ -97,6 +98,21 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         linkDirectionalArrowLength={6}
         linkDirectionalArrowRelPos={1}
         nodeLabel={(node: unknown) => getDisplayTitle(node as Post)}
+        nodeCanvasObject={(node: unknown, ctx, globalScale) => {
+          const n = node as Post & { x: number; y: number };
+          const { label, bgColor, textColor } = getNodeStyle(n);
+          const size = 8 / globalScale; // keep size consistent during zoom
+          ctx.fillStyle = bgColor;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, size, 0, 2 * Math.PI, false);
+          ctx.fill();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = `${10}px sans-serif`;
+          ctx.fillStyle = textColor;
+          ctx.fillText(label, n.x, n.y);
+        }}
+        nodeCanvasObjectMode={() => 'replace'}
         onNodeClick={handleNodeClick}
         onNodeDragEnd={handleNodeDragEnd}
       />

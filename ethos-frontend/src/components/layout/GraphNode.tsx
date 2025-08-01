@@ -5,6 +5,7 @@ import ContributionCard from '../contribution/ContributionCard';
 import GitDiffViewer from '../git/GitDiffViewer';
 import EditPost from '../post/EditPost';
 import { Spinner } from '../ui';
+import NodeTypeBadge from '../ui/NodeTypeBadge';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
@@ -57,8 +58,6 @@ const GraphNode: React.FC<GraphNodeProps> = ({
   onRemoveEdge,
   boardId,
 }) => {
-  const isFolder = node.type === 'quest' || node.tags.includes('quest');
-  const icon = isFolder ? '📁' : '📄';
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: node.id });
   const {
@@ -167,7 +166,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
             }}
             title={snippet}
           >
-            <span className="mr-1 select-none">{icon}</span>
+            <NodeTypeBadge post={node} className="mr-1 flex-shrink-0" />
             <span className="truncate">{snippet}{node.content && node.content.length > 30 ? '…' : ''}</span>
             {edge && (
               <span className="text-[10px] text-gray-500 dark:text-gray-400 ml-1 flex items-center">
@@ -263,7 +262,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
           }}
         >
           <span
-            className="text-xl select-none cursor-grab"
+            className="cursor-grab"
             {...attributes}
             {...listeners}
             onDoubleClick={() => {
@@ -277,7 +276,7 @@ const GraphNode: React.FC<GraphNodeProps> = ({
               }
             }}
           >
-            {icon}
+            <NodeTypeBadge post={node} />
           </span>
           <ContributionCard
             contribution={node}
