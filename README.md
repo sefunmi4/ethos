@@ -32,6 +32,7 @@ It’s a new operating system for solving problems together.
 * **Interactive Task Lists** – Check off markdown tasks directly within posts.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
+* **VS Code Git Graph Extension** – Visualize repository history directly inside Visual Studio Code.
 
 ---
 
@@ -74,6 +75,15 @@ ethos-backend/
 ├── .env
 ├── package.json
 └── prisma/             # PostgreSQL if used
+```
+
+### VS Code Extension (`vscode-git-graph/`)
+
+```bash
+vscode-git-graph/
+├── extension.js     # Command implementation
+├── package.json     # Extension manifest
+└── test.js          # Placeholder test script
 ```
 
 ---
