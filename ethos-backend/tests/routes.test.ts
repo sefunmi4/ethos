@@ -449,8 +449,8 @@ describe('route handlers', () => {
       { id: 'quest-board', title: 'QB', boardType: 'post', description: '', layout: 'grid', items: [] }
     ]);
     postsStoreMock.read.mockReturnValue([
-      { id: 'req1', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: ['archived'], collaborators: [], linkedItems: [] },
-      { id: 'req2', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [] }
+      { id: 'req1', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: ['archived'], collaborators: [], linkedItems: [], boardId: 'quest-board' },
+      { id: 'req2', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [], boardId: 'quest-board' }
     ]);
 
     const res = await request(app).get('/boards/quest-board/items');

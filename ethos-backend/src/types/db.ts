@@ -62,6 +62,9 @@ export interface DBPost {
   questNodeTitle?: string;
   nodeId?: string;
 
+  /** Optional board association */
+  boardId?: string;
+
   /** Optional rating value for review posts */
   rating?: number;
 

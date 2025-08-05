@@ -110,6 +110,9 @@ export interface Post {
   questTitle?: string;
   nodeId?: string;
 
+  /** Optional board association */
+  boardId?: string;
+
   tags: PostTag[];
   status?: QuestTaskStatus;
   /** Optional classification for task posts */
