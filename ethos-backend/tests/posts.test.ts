@@ -376,6 +376,8 @@ describe('post routes', () => {
     expect(store).toHaveLength(4);
     expect(store[1].type).toBe('request');
     expect(store[2].replyTo).toBe(store[1].id);
+    expect(store[1].boardId).toBe('quest-board');
+    expect(store[2].boardId).toBe('quest-board');
   });
 
   it('POST /:id/request-help creates request post', async () => {
@@ -392,7 +394,7 @@ describe('post routes', () => {
       questId: null,
       helpRequest: false,
       needsHelp: false,
-    };
+    } as any;
 
     const store = [post];
     postsStoreMock.read.mockReturnValue(store);
@@ -407,6 +409,7 @@ describe('post routes', () => {
     expect((store[1].linkedItems as any[])[0].itemId).toBe('p2');
     expect(store[0].helpRequest).toBe(true);
     expect(store[0].needsHelp).toBe(true);
+    expect(store[1].boardId).toBe('quest-board');
   });
 
   it('rejects non-request posts on quest board', async () => {
@@ -425,6 +428,7 @@ describe('post routes', () => {
     expect(res.status).toBe(201);
     const written = postsStoreMock.write.mock.calls[0][0][0];
     expect(written.helpRequest).toBe(true);
+    expect(written.boardId).toBe('quest-board');
   });
 
   it('rejects task post on quest board', async () => {

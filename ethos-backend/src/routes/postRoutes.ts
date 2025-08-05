@@ -164,6 +164,8 @@ router.post(
       }
     }
 
+    const effectiveBoardId = boardId || (type === 'request' ? 'quest-board' : undefined);
+
     const newPost: DBPost = {
       id: uuidv4(),
       authorId: req.user!.id,
@@ -186,6 +188,7 @@ router.post(
       helpRequest: type === 'request' || helpRequest,
       needsHelp: type === 'request' ? needsHelp ?? true : undefined,
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
+      boardId: effectiveBoardId,
     };
 
     if (questId && (!newPost.questNodeTitle || newPost.questNodeTitle.trim() === '')) {
@@ -561,6 +564,7 @@ router.post(
       questId: task.questId || null,
       helpRequest: true,
       needsHelp: true,
+      boardId: 'quest-board',
     };
 
     task.helpRequest = true;
@@ -592,6 +596,7 @@ router.post(
       questId: task.questId || null,
       helpRequest: true,
       needsHelp: true,
+      boardId: 'quest-board',
     }));
 
     posts.push(requestPost, ...subRequests);
@@ -637,6 +642,7 @@ router.post(
       questId: original.questId || null,
       helpRequest: true,
       needsHelp: true,
+      boardId: 'quest-board',
     };
 
     original.helpRequest = true;

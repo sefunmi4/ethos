@@ -21,8 +21,13 @@ const getQuestBoardItems = (
   const ids = posts
     .filter((p) => {
       if (p.type !== 'request') return false;
+      if (p.boardId !== 'quest-board') return false;
       if (p.tags?.includes('archived')) return false;
-      return p.visibility === 'public' || p.visibility === 'request_board';
+      return (
+        p.visibility === 'public' ||
+        p.visibility === 'request_board' ||
+        p.needsHelp === true
+      );
     })
     .map((p) => p.id);
   return ids;
@@ -435,6 +440,7 @@ router.get(
         if ('type' in item) {
           const p = item as DBPost;
           if (p.type !== 'request') return false;
+          if (p.boardId !== 'quest-board') return false;
           if (p.tags?.includes('archived')) return false;
           return (
             p.visibility === 'public' ||
