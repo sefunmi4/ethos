@@ -10,7 +10,7 @@ import type { User } from '../types/userTypes';
  * @param password - User password
  */
 export const addUserAccount = async (email: string, password: string): Promise<void> => {
-  await axiosWithAuth.post('/auth/register', { email, password });
+  await axiosWithAuth.post('auth/register', { email, password });
 };
 
 /**
@@ -24,7 +24,7 @@ export const login = async (
   email: string,
   password: string
 ): Promise<{ accessToken: string }> => {
-  const res = await axiosWithAuth.post('/auth/login', { email, password });
+  const res = await axiosWithAuth.post('auth/login', { email, password });
   // Store access token for subsequent authenticated requests
   if (res.data?.accessToken) {
     setAccessToken(res.data.accessToken);
@@ -37,7 +37,7 @@ export const login = async (
  * 🚪 Logout and clear the user's session cookie
  */
 export const logout = async (): Promise<void> => {
-  await axiosWithAuth.post('/auth/logout');
+  await axiosWithAuth.post('auth/logout');
   setAccessToken(null);
 };
 
@@ -47,7 +47,7 @@ export const logout = async (): Promise<void> => {
  * @returns Authenticated user data
  */
 export const fetchCurrentUser = async (): Promise<User> => {
-  const res = await axiosWithAuth.get('/auth/me');
+  const res = await axiosWithAuth.get('auth/me');
   return res.data;
 };
 
@@ -60,7 +60,7 @@ export const fetchCurrentUser = async (): Promise<User> => {
 export const addResetPasswordRequest = async (
   email: string
 ): Promise<{ message: string }> => {
-  const res = await axiosWithAuth.post('/auth/forgot-password', { email });
+  const res = await axiosWithAuth.post('auth/forgot-password', { email });
   return res.data;
 };
 
@@ -75,7 +75,7 @@ export const updatePasswordViaToken = async (
   token: string,
   newPassword: string
 ): Promise<{ user: User }> => {
-  const res = await axiosWithAuth.post('/auth/forgot-password/confirm', {
+  const res = await axiosWithAuth.post('auth/forgot-password/confirm', {
     token,
     newPassword,
   });
@@ -91,7 +91,7 @@ export const updatePasswordViaToken = async (
 export const updateUserInfo = async (
   updates: Partial<Omit<User, 'id' | 'email' | 'role'>>
 ): Promise<User> => {
-  const res = await axiosWithAuth.patch('/auth/me', updates);
+  const res = await axiosWithAuth.patch('auth/me', updates);
   return res.data;
 };
 
@@ -101,7 +101,7 @@ export const updateUserInfo = async (
  * @returns Success status
  */
 export const archiveUserAccount = async (): Promise<{ success: boolean }> => {
-  const res = await axiosWithAuth.post('/auth/archive');
+  const res = await axiosWithAuth.post('auth/archive');
   return res.data;
 };
 
@@ -111,7 +111,7 @@ export const archiveUserAccount = async (): Promise<{ success: boolean }> => {
  * @returns Success status
  */
 export const deleteUserAccount = async (): Promise<{ success: boolean }> => {
-  const res = await axiosWithAuth.delete('/auth/me');
+  const res = await axiosWithAuth.delete('auth/me');
   return res.data;
 };
 
@@ -123,7 +123,7 @@ export const deleteUserAccount = async (): Promise<{ success: boolean }> => {
  * @returns A full User object (public fields only)
  */
 export const fetchUserById = async (userId: string): Promise<User> => {
-  const res = await axiosWithAuth.get(`/users/${userId}`);
+  const res = await axiosWithAuth.get(`users/${userId}`);
   return res.data;
 };
 
@@ -138,7 +138,7 @@ export const searchUsers = async (
 ): Promise<{ id: string; username: string }[]> => {
   const params = new URLSearchParams();
   if (query) params.set('search', query);
-  const url = `/users${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `users${params.toString() ? `?${params.toString()}` : ''}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
