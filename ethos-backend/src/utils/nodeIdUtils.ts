@@ -18,6 +18,7 @@ const typeMap: Record<string, string> = {
   quest: 'T',
   task: 'T',
   change: 'C',
+  free_speech: 'L',
 };
 
 export const generateNodeId = ({ quest, posts, postType, parentPost = null }: NodeIdParams): string => {

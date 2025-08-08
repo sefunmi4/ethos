@@ -3,7 +3,7 @@ import type { Post } from './postTypes';
 import type { Quest } from './questTypes';
 import type { Visibility, ItemType } from './common';
 
-export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
+export type BoardType = 'post' | 'quest' | 'map' | 'custom';
 
 /** Generic board interface shared across profile, quests, etc. */
 export interface BoardFilters {

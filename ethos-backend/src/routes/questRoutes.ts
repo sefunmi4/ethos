@@ -146,7 +146,6 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
     description = '',
     tags = [],
     fromPostId = '',
-    headType = 'task',
     taskType = 'folder',
     helpRequest = false,
   } = req.body;
@@ -192,8 +191,8 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
   const headPost: DBPost = {
     id: uuidv4(),
     authorId,
-    type: headType === 'task' ? 'task' : 'log',
-    ...(headType === 'task' ? { taskType } : {}),
+    type: 'task',
+    taskType,
     content: rootContent,
     visibility: 'public',
     timestamp: new Date().toISOString(),
@@ -203,7 +202,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
     repostedFrom: null,
     linkedItems: [],
     questId: newQuest.id,
-    nodeId: generateNodeId({ quest: newQuest, posts, postType: headType === 'task' ? 'task' : 'log', parentPost: null }),
+    nodeId: generateNodeId({ quest: newQuest, posts, postType: 'task', parentPost: null }),
     questNodeTitle: makeQuestNodeTitle(rootContent),
   };
   posts.push(headPost);
@@ -298,8 +297,6 @@ router.patch(
     const posts = postsStore.read();
     const post = posts.find(p => p.id === itemId);
     if (post && post.type === 'free_speech') {
-      post.type = 'task';
-      post.subtype = 'log';
       post.questId = id;
       postsStore.write(posts);
     }
@@ -530,8 +527,6 @@ router.post(
   const posts = postsStore.read();
   const post = posts.find(p => p.id === postId);
   if (post && post.type === 'free_speech') {
-    post.type = 'task';
-    post.subtype = 'log';
     post.questId = id;
     postsStore.write(posts);
   }

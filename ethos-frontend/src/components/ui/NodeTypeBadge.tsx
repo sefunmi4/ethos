@@ -71,7 +71,7 @@ export function getNodeVisualType(post: Post): NodeVisualType {
     return (post.tags || []).includes('project') ? 'project' : 'quest';
   }
   if (post.type === 'task') return 'task';
-  if (post.type === 'commit' || post.type === 'log' || post.type === 'issue') return 'subtask';
+  if (post.type === 'change' || post.type === 'free_speech') return 'subtask';
   return 'task';
 }
 

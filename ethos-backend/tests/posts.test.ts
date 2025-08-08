@@ -205,7 +205,7 @@ describe('post routes', () => {
     expect(res.body.nodeId).toBe(expected);
   });
 
-  it('PATCH /posts/:id regenerates nodeId on replyTo change for log', async () => {
+  it('PATCH /posts/:id regenerates nodeId on replyTo change for reply post', async () => {
     const posts = [
       {
         id: 'p1',
@@ -232,7 +232,7 @@ describe('post routes', () => {
       {
         id: 'l1',
         authorId: 'u1',
-        type: 'log',
+        type: 'free_speech',
         content: '',
         visibility: 'public',
         timestamp: '',
@@ -253,7 +253,7 @@ describe('post routes', () => {
     const expected = generateNodeId({
       quest: { id: 'q1', title: 'First Quest' },
       posts: posts.filter((p) => p.id !== 'l1'),
-      postType: 'log',
+      postType: 'free_speech',
       parentPost: posts[1],
     });
 
@@ -451,7 +451,7 @@ describe('post routes', () => {
     const post = {
       id: 'p1',
       authorId: 'u1',
-      type: 'log',
+      type: 'task',
       content: '',
       visibility: 'public',
       timestamp: '',
@@ -484,7 +484,7 @@ describe('post routes', () => {
     const post = {
       id: 'p1',
       authorId: 'u1',
-      type: 'log',
+      type: 'free_speech',
       content: '',
       visibility: 'public',
       timestamp: '',

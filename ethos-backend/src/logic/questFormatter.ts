@@ -19,7 +19,8 @@ export const formatQuest = (
 ): EnrichedQuest => {
   const logs: EnrichedPost[] = posts
     .filter(
-      p => p.type === 'task' && p.subtype === 'log' && p.questId === quest.id
+      (p) =>
+        p.type === 'free_speech' && p.questId === quest.id && p.replyTo
     ) as EnrichedPost[];
   const tasks: EnrichedPost[] = posts
     .filter((p): p is EnrichedPost => p.type === 'task' && p.questId === quest.id)

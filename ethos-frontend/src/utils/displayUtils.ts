@@ -44,7 +44,7 @@ export const getQuestLinkLabel = (
 
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
-  const isLog = post.type === 'task' && post.subtype === 'log';
+  const isLog = post.type === 'free_speech' && !!post.replyTo;
   const isTask = post.type === 'task';
 
   if (isLog) {
@@ -199,7 +199,7 @@ export const buildSummaryTags = (
     });
   }
 
-  if (post.type === "task" && post.subtype === "log") {
+  if (post.type === "free_speech" && post.replyTo) {
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
@@ -294,7 +294,7 @@ export const getPostSummary = (
     return parts.join(" ").trim();
   }
 
-  if (post.type === "task" && post.subtype === "log") {
+  if (post.type === "free_speech" && post.replyTo) {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
       parts.push(`(Log - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);

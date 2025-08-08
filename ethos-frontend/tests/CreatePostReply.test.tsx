@@ -39,7 +39,7 @@ describe('CreatePost replying', () => {
     const options = Array.from(
       screen.getByLabelText('Item Type').querySelectorAll('option')
     ).map((o) => o.textContent);
-    expect(options).toEqual(['Quest Log']);
+    expect(options).toEqual(['Free Speech']);
   });
 
   it('includes reply questId in payload', async () => {

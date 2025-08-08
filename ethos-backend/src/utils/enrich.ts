@@ -181,12 +181,14 @@ export const enrichQuest = (
   const allPosts = enrichPosts(posts, users, questsStore.read(), currentUserId);
   const normalizedQuest = normalizeQuest(quest);
   const logs = allPosts.filter(
-    (p) => p.questId === quest.id && p.type === 'task' && p.subtype === 'log'
+    (p) => p.questId === quest.id && p.type === 'free_speech' && p.replyTo
   );
   const tasks = allPosts.filter(
-    (p) => p.questId === quest.id && p.type === 'task' && p.subtype !== 'log'
+    (p) => p.questId === quest.id && p.type === 'task'
   );
-  const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech');
+  const discussion = allPosts.filter(
+    (p) => p.questId === quest.id && p.type === 'free_speech' && !p.replyTo
+  );
 
   const linkedPostsResolved = allPosts.filter((p) =>
     quest.linkedPosts?.some((l) => l.itemId === p.id)

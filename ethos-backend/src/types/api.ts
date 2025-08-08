@@ -81,7 +81,7 @@ export type ItemType = 'post' | 'quest' | 'board' | 'project';
 export type GitItemType = 'post' | 'quest';
 
 /** Supported board categories used for grouping items like posts, quests, maps, or logs */
-export type BoardType = 'post' | 'quest' | 'map' | 'log' | 'custom';
+export type BoardType = 'post' | 'quest' | 'map' | 'custom';
 
 
 // from types/api.ts

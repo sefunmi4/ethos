@@ -21,7 +21,6 @@ export const BOARD_TYPE_OPTIONS: { value: BoardType; label: string }[] = [
   { value: 'post', label: 'Post' },
   { value: 'quest', label: 'Quest' },
   { value: 'map', label: 'Map' },
-  { value: 'log', label: 'Log' },
   { value: 'custom', label: 'Custom' },
 ];
 

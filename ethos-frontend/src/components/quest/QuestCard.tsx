@@ -527,16 +527,17 @@ const QuestCard: React.FC<QuestCardProps> = ({
             <>
               {showLogForm && (
                 <div className="mb-4">
-                  <CreatePost
-                    initialType="log"
-                    questId={quest.id}
-                    boardId={`log-${quest.id}`}
-                    onSave={(p) => {
-                      setLogs((prev) => [...prev, p as Post]);
-                      setShowLogForm(false);
-                    }}
-                    onCancel={() => setShowLogForm(false)}
-                  />
+              <CreatePost
+                initialType="free_speech"
+                questId={quest.id}
+                replyTo={rootNode || undefined}
+                boardId={`log-${quest.id}`}
+                onSave={(p) => {
+                  setLogs((prev) => [...prev, p as Post]);
+                  setShowLogForm(false);
+                }}
+                onCancel={() => setShowLogForm(false)}
+              />
                 </div>
               )}
               <GridLayout

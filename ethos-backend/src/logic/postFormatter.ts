@@ -22,7 +22,7 @@ export const formatPost = (
     displayHints: {
       isPublic: post.visibility === 'public',
       isRequest: post.type === 'request',
-      isQuestLog: post.type === 'task' && post.subtype === 'log',
+      isQuestLog: post.type === 'free_speech' && !!post.replyTo,
     },
     userActions: {
       canEdit: canEditPost(post, currentUserId),

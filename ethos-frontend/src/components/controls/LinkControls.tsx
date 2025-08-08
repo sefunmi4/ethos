@@ -4,7 +4,7 @@ import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
 import { toTitleCase } from '../../utils/displayUtils';
 import { fetchAllPosts } from '../../api/post';
-import type { LinkedItem, Post } from '../../types/postTypes';
+import type { LinkedItem, Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 interface LinkControlsProps {
@@ -32,7 +32,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
   const [postTypeFilter, setPostTypeFilter] =
-    useState<'all' | 'request' | 'task' | 'log' | 'commit' | 'issue' | 'meta_system'>('all');
+    useState<'all' | PostType>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
 
   const linkTypes = [
@@ -181,21 +181,12 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         <> 
           {itemTypes.includes('post') && (
             <div className="flex gap-1 mb-1 flex-wrap">
-              {['all', 'request', 'task', 'log', 'commit', 'issue', 'meta_system'].map((t) => (
+              {['all', 'free_speech', 'request', 'project', 'quest', 'task', 'change', 'review'].map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() =>
-                    setPostTypeFilter(
-                      t as
-                        | 'all'
-                        | 'request'
-                        | 'task'
-                        | 'log'
-                        | 'commit'
-                        | 'issue'
-                        | 'meta_system'
-                    )
+                    setPostTypeFilter(t as 'all' | PostType)
                   }
                   className={`text-xs px-2 py-0.5 rounded ${
                     postTypeFilter === t
