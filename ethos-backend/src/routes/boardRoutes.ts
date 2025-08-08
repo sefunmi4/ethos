@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
+import { EMPTY_BOARD_CONTEXT } from '../data/boardContextDefaults';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import { pool } from '../db';
@@ -57,7 +58,11 @@ router.get(
     }
 
     const { featured, enrich, userId } = req.query;
-    const boards = boardsStore.read();
+    let boards = boardsStore.read();
+    if (boards.length === 0) {
+      boards = [EMPTY_BOARD_CONTEXT];
+      boardsStore.write(boards);
+    }
     const posts = postsStore.read();
     const quests = questsStore.read();
 

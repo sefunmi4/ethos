@@ -2,8 +2,9 @@
 // src/models/GitModel.ts
 import type { DBSchema } from '../types/db';
 import { createDataStore } from '../utils/loaders';
+import { NEW_USER_BOARD_CONTEXT } from '../data/boardContextDefaults';
 
-export const boardsStore = createDataStore<DBSchema['boards']>('boards.json', []);
+export const boardsStore = createDataStore<DBSchema['boards']>('boards.json', NEW_USER_BOARD_CONTEXT);
 export const gitStore = createDataStore<DBSchema['git']>('git.json', []);
 export const postsStore = createDataStore<DBSchema['posts']>('posts.json', []);
 export const questsStore = createDataStore<DBSchema['quests']>('quests.json', []);
