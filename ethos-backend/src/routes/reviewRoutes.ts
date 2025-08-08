@@ -8,7 +8,7 @@ import type { DBReview } from '../types/db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
+const usePg = !!process.env.DATABASE_URL;
 
 const bannedWords = ['badword'];
 
