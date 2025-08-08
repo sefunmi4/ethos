@@ -7,6 +7,17 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
+## Environment variables
+
+The development server reads settings from a local `.env` file. Make sure to create `ethos-frontend/.env` with the API and socket URLs:
+
+```env
+VITE_API_URL=http://localhost:4173/api
+VITE_SOCKET_URL=http://localhost:4173
+```
+
+These variables are used by the frontend to connect to the backend during development.
+
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
