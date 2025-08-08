@@ -9,10 +9,15 @@ declare const VITE_API_URL: string | undefined;
  * 📡 Base API URL — should be environment-configurable
  */
 // Resolve the base API URL from multiple environments
-const metaEnv =
-  typeof import.meta !== 'undefined'
-    ? (import.meta as unknown as { env?: { VITE_API_URL?: string } }).env
-    : undefined;
+// Access `import.meta.env` safely using runtime evaluation so CommonJS environments
+// (like Jest) don't throw a SyntaxError when parsing this file.
+let metaEnv: { VITE_API_URL?: string } | undefined;
+try {
+  // `new Function` avoids referencing `import.meta` during parsing.
+  metaEnv = new Function('return import.meta.env')();
+} catch {
+  metaEnv = undefined;
+}
 
 const rawBase =
   // Prefer the compile-time define if present
