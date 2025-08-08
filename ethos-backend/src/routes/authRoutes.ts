@@ -148,7 +148,7 @@ router.post(
           ]);
         }
 
-        const userId = `u_${uuidv4()}`;
+        const userId = uuidv4();
         const hashed = await hashPassword(password);
         await pool.query(
           'INSERT INTO users (id, username, email, password, role) VALUES ($1, $2, $3, $4, $5)',
