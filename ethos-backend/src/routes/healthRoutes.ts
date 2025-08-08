@@ -3,7 +3,7 @@ import { pool } from '../db';
 
 const router = Router();
 
-const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
+const usePg = !!process.env.DATABASE_URL;
 
 router.get('/', async (_req, res): Promise<void> => {
   if (usePg) {

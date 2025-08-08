@@ -11,7 +11,7 @@ import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/
 import type { DBQuest, DBPost, DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
-const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
+const usePg = !!process.env.DATABASE_URL;
 
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();
