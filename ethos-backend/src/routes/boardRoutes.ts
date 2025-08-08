@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
-import { EMPTY_BOARD_CONTEXT } from '../data/boardContextDefaults';
+import { DEFAULT_BOARDS } from '../data/boardContextDefaults';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import { pool, usePg } from '../db';
@@ -59,7 +59,7 @@ router.get(
     const { featured, enrich, userId } = req.query;
     let boards = boardsStore.read();
     if (boards.length === 0) {
-      boards = [EMPTY_BOARD_CONTEXT];
+      boards = DEFAULT_BOARDS;
       boardsStore.write(boards);
     }
     const posts = postsStore.read();
@@ -236,7 +236,7 @@ router.get(
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const board = boards.find(b => b.id === id);
+    const board = boards.find(b => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
@@ -350,7 +350,7 @@ router.get(
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const board = boards.find((b) => b.id === id);
+    const board = boards.find((b) => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
@@ -485,7 +485,7 @@ router.get(
     const quests = questsStore.read();
     const users = usersStore.read();
 
-    const board = boards.find((b) => b.id === id);
+    const board = boards.find((b) => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
