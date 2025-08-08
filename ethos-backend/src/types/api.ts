@@ -57,18 +57,14 @@ export type PostTag =
  */
 export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | string;
 
-export type PostType = 'free_speech'
+export type PostType =
+  | 'free_speech'
   | 'request'
-  | 'log'
-  | 'quest_log'
+  | 'project'
+  | 'quest'
   | 'task'
-  | 'review'
-  | 'quest' 
-  | 'meta_system' 
-  | 'meta_announcement' 
-  | 'commit' 
-  | 'issue' 
-  | 'solved';
+  | 'change'
+  | 'review';
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 

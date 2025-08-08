@@ -7,16 +7,11 @@ export const toTitleCase = (str: string): string =>
 export const POST_TYPE_LABELS: Record<PostType, string> = {
   free_speech: "Free Speech",
   request: "Request",
-  log: "Log",
-  quest_log: "Log",
-  task: "Task",
+  project: "Project",
   quest: "Quest",
-  meta_system: "System",
-  meta_announcement: "Announcement",
-  commit: "Commit",
-  issue: "Issue",
+  task: "Task",
+  change: "Change",
   review: "Review",
-  solved: "Solved",
 };
 
 /**
@@ -49,8 +44,8 @@ export const getQuestLinkLabel = (
 
   const suffix = post.id.slice(-4); // used for post-specific log IDs
 
-  const isLog = post.type === 'log' || post.type === 'quest_log';
-  const isTask = post.type === 'task' || post.type === 'issue';
+  const isLog = post.type === 'task' && post.subtype === 'log';
+  const isTask = post.type === 'task';
 
   if (isLog) {
     // If nodeId exists use it, otherwise fall back to generated suffix
@@ -86,19 +81,15 @@ export interface SummaryTagData {
   type:
     | "quest"
     | "task"
-    | "issue"
-    | "log"
     | "review"
     | "category"
     | "status"
     | "free_speech"
     | "type"
-    | "commit"
-    | "quest_task"
-    | "meta_system"
-    | "meta_announcement"
-    | "solved"
+    | "change"
+    | "log"
     | "request"
+    | "project"
     | "party_request";
   label: string;
   link?: string;
@@ -152,11 +143,6 @@ export const buildSummaryTags = (
           ? getQuestLinkLabel(post, "", false)
           : undefined;
         label = id ? `Task Request - ${id}` : "Task Request";
-      } else if (post.subtype === "issue") {
-        const id = post.nodeId
-          ? getQuestLinkLabel(post, "", false)
-          : undefined;
-        label = id ? `Issue Request - ${id}` : "Issue Request";
       } else if (post.subtype === "party") {
         const id = post.nodeId
           ? getQuestLinkLabel(post, "", false)
@@ -213,24 +199,7 @@ export const buildSummaryTags = (
     });
   }
 
-  if (post.type === "task" && post.nodeId) {
-    const label = post.nodeId.replace(/^Q:[^:]+:/, "");
-    tags.push({
-      type: "task",
-      label,
-      detailLink: ROUTES.POST(post.id),
-    });
-  } else if (post.type === "issue") {
-    const label =
-      post.nodeId && !multipleSources
-        ? post.nodeId.replace(/^Q:[^:]+:/, "")
-        : "Issue";
-    tags.push({
-      type: "issue",
-      label,
-      detailLink: ROUTES.POST(post.id),
-    });
-  } else if (post.type === "log" || post.type === "quest_log") {
+  if (post.type === "task" && post.subtype === "log") {
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
@@ -243,40 +212,29 @@ export const buildSummaryTags = (
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === "commit") {
+  } else if (post.type === "task" && post.nodeId) {
+    const label = post.nodeId.replace(/^Q:[^:]+:/, "");
+    tags.push({
+      type: "task",
+      label,
+      detailLink: ROUTES.POST(post.id),
+    });
+  } else if (post.type === "change") {
     const user = post.author?.username || post.authorId;
     const label =
       post.nodeId && !multipleSources
-        ? `Commit - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}`
-        : "Commit";
+        ? `Change - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}`
+        : "Change";
     tags.push({
-      type: "commit",
+      type: "change",
       label,
       detailLink: ROUTES.POST(post.id),
       username: user,
       usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
-  } else if (post.type === "meta_system") {
-    tags.push({
-      type: "meta_system",
-      label: "System",
-      detailLink: ROUTES.POST(post.id),
-    });
-  } else if (post.type === "meta_announcement") {
-    tags.push({
-      type: "meta_announcement",
-      label: "Announcement",
-      detailLink: ROUTES.POST(post.id),
-    });
-  } else if (post.type === "solved") {
-    tags.push({
-      type: "solved",
-      label: "Solved",
-      detailLink: ROUTES.POST(post.id),
-    });
   }
 
-  if (post.status && ["task", "issue"].includes(post.type)) {
+  if (post.status && post.type === "task") {
     tags.push({
       type: "status",
       label: post.status,
@@ -328,12 +286,6 @@ export const getPostSummary = (
     if (post.subtype === "task") {
       if (post.nodeId) parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)})`);
       else parts.push("(Task)");
-    } else if (post.subtype === "issue") {
-      if (post.nodeId)
-        parts.push(
-          `(Issue - ${getQuestLinkLabel(post, title ?? '', false)})`
-        );
-      else parts.push("(Issue)");
     } else if (post.subtype === "party") {
       if (post.nodeId)
         parts.push(`(Party - ${getQuestLinkLabel(post, title ?? '', false)})`);
@@ -342,41 +294,28 @@ export const getPostSummary = (
     return parts.join(" ").trim();
   }
 
-  if (post.type === "task" && post.nodeId) {
-    const user = post.author?.username || post.authorId;
-    parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
-  } else if (post.type === "issue") {
+  if (post.type === "task" && post.subtype === "log") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-        parts.push(`(Issue - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
-    } else {
-      parts.push(`(Issue @${user})`);
-    }
-  } else if (post.type === "log" || post.type === "quest_log") {
-    const user = post.author?.username || post.authorId;
-    if (post.nodeId && !multipleSources) {
-        parts.push(`(Log - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
+      parts.push(`(Log - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
     } else {
       parts.push(`(Log @${user})`);
     }
-  } else if (post.type === "commit") {
+  } else if (post.type === "task" && post.nodeId) {
+    const user = post.author?.username || post.authorId;
+    parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
+  } else if (post.type === "change") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Commit - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')} @${user})`);
+      parts.push(`(Change - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')} @${user})`);
     } else {
-      parts.push(`(Commit @${user})`);
+      parts.push(`(Change @${user})`);
     }
-  } else if (post.type === "meta_system") {
-    parts.push("(System)");
-  } else if (post.type === "meta_announcement") {
-    parts.push("(Announcement)");
-  } else if (post.type === "solved") {
-    parts.push("(Solved)");
   } else if (post.type) {
     parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);
   }
 
-  if (post.status && ["task", "issue"].includes(post.type)) {
+  if (post.status && post.type === "task") {
     parts.push(`(${post.status})`);
   }
 

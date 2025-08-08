@@ -71,7 +71,6 @@ router.get(
           .filter(
             p =>
               p.authorId === userId &&
-              p.type !== 'meta_system' &&
               p.systemGenerated !== true
           )
           .sort((a, b) =>
@@ -268,9 +267,7 @@ router.get(
 
       const withMeta = posts
         .filter(
-          p =>
-            p.type !== 'meta_system' &&
-            p.visibility !== 'private'
+          p => p.visibility !== 'private'
         )
         .map(p => {
           let weight = 0;
@@ -296,20 +293,17 @@ router.get(
 
       highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
       boardItems = withMeta.map(it => it.id);
-    } else if (userId && board.id === 'my-posts') {
-      boardItems = posts
-        .filter(
-          p =>
-            p.authorId === userId &&
-            p.type !== 'meta_system' &&
-            p.systemGenerated !== true
-        )
-        .sort((a, b) =>
-          (b.timestamp || b.createdAt || '').localeCompare(
-            a.timestamp || a.createdAt || ''
+      } else if (userId && board.id === 'my-posts') {
+        boardItems = posts
+          .filter(
+            p => p.authorId === userId && p.systemGenerated !== true
           )
-        )
-        .map(p => p.id);
+          .sort((a, b) =>
+            (b.timestamp || b.createdAt || '').localeCompare(
+              a.timestamp || a.createdAt || ''
+            )
+          )
+          .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
       boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
     }
@@ -377,12 +371,10 @@ router.get(
             .map(p => p.id)
         : [];
 
-      const withMeta = posts
-        .filter(
-          p =>
-            p.type !== 'meta_system' &&
-            p.visibility !== 'private'
-        )
+        const withMeta = posts
+          .filter(
+            p => p.visibility !== 'private'
+          )
         .map(p => {
           let weight = 0;
           let highlight = false;
@@ -410,10 +402,7 @@ router.get(
     } else if (userId && board.id === 'my-posts') {
       boardItems = posts
         .filter(
-          p =>
-            p.authorId === userId &&
-            p.type !== 'meta_system' &&
-            p.systemGenerated !== true
+          p => p.authorId === userId && p.systemGenerated !== true
         )
         .sort((a, b) =>
           (b.timestamp || b.createdAt || '').localeCompare(

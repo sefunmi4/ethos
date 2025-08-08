@@ -180,8 +180,12 @@ export const enrichQuest = (
 ): EnrichedQuest => {
   const allPosts = enrichPosts(posts, users, questsStore.read(), currentUserId);
   const normalizedQuest = normalizeQuest(quest);
-  const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
-  const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');
+  const logs = allPosts.filter(
+    (p) => p.questId === quest.id && p.type === 'task' && p.subtype === 'log'
+  );
+  const tasks = allPosts.filter(
+    (p) => p.questId === quest.id && p.type === 'task' && p.subtype !== 'log'
+  );
   const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech');
 
   const linkedPostsResolved = allPosts.filter((p) =>

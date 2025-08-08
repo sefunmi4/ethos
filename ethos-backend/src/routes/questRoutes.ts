@@ -298,8 +298,8 @@ router.patch(
     const posts = postsStore.read();
     const post = posts.find(p => p.id === itemId);
     if (post && post.type === 'free_speech') {
-      post.type = 'quest_log';
-      post.subtype = 'comment';
+      post.type = 'task';
+      post.subtype = 'log';
       post.questId = id;
       postsStore.write(posts);
     }
@@ -371,7 +371,7 @@ router.post('/:id/flag', authMiddleware, (req: AuthRequest<{ id: string }>, res:
     const reviewPost: DBPost = {
       id: uuidv4(),
       authorId: req.user!.id,
-      type: 'meta_system',
+      type: 'review',
       subtype: 'mod_review',
       content: `Quest ${quest.id} flagged for review`,
       visibility: 'hidden',
@@ -530,8 +530,8 @@ router.post(
   const posts = postsStore.read();
   const post = posts.find(p => p.id === postId);
   if (post && post.type === 'free_speech') {
-    post.type = 'quest_log';
-    post.subtype = 'comment';
+    post.type = 'task';
+    post.subtype = 'log';
     post.questId = id;
     postsStore.write(posts);
   }

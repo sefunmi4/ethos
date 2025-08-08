@@ -17,9 +17,7 @@ const zeroPad = (num: number): string => num.toString().padStart(2, '0');
 const typeMap: Record<string, string> = {
   quest: 'T',
   task: 'T',
-  log: 'L',
-  commit: 'C',
-  issue: 'I',
+  change: 'C',
 };
 
 export const generateNodeId = ({ quest, posts, postType, parentPost = null }: NodeIdParams): string => {
