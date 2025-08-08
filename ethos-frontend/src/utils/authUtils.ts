@@ -1,23 +1,34 @@
 // src/utils/authUtils.ts
 import axios, { type AxiosInstance, AxiosError, type AxiosRequestConfig } from 'axios';
 
+// These globals are replaced at build time by Vite's `define`
+// and help when `import.meta.env` is not available (e.g. tests)
+declare const VITE_API_URL: string | undefined;
+
 /**
  * 📡 Base API URL — should be environment-configurable
  */
-const metaEnv = (() => {
-  try {
-    return Function('return import.meta.env')() as ImportMetaEnv;
-  } catch {
-    return {} as ImportMetaEnv;
-  }
-})();
+// Resolve the base API URL from multiple environments
+const metaEnv =
+  typeof import.meta !== 'undefined'
+    ? (import.meta as unknown as { env?: { VITE_API_URL?: string } }).env
+    : undefined;
 
-const API_BASE =
-  metaEnv.VITE_API_URL ||
-  (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
+const rawBase =
+  // Prefer the compile-time define if present
+  (typeof VITE_API_URL !== 'undefined' && VITE_API_URL) ||
+  // Then fall back to Vite's runtime import.meta.env
+  metaEnv?.VITE_API_URL ||
+  // Or Node's process.env when running outside the browser
+  (typeof process !== 'undefined' ? process.env?.VITE_API_URL : undefined) ||
+  // Finally default to the current window origin in dev
   (typeof window !== 'undefined'
     ? `${window.location.origin}/api`
     : 'http://localhost:4173/api');
+
+// Ensure the base URL always ends with a trailing slash so relative
+// request paths concatenate correctly
+export const API_BASE = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 /**
  * 🔐 In-memory access token used for Authorization header
@@ -41,7 +52,7 @@ export const setAccessToken = (token: string | null): void => {
  */
 export const refreshAccessToken = async (): Promise<string | null> => {
   try {
-    const res = await axiosWithAuth.post('/auth/refresh');
+    const res = await axiosWithAuth.post('auth/refresh');
     if (res.data?.accessToken) {
       setAccessToken(res.data.accessToken);
       return res.data.accessToken as string;
@@ -62,6 +73,10 @@ export const axiosWithAuth: AxiosInstance = axios.create({
 
 // Attach Authorization header with access token if available
 axiosWithAuth.interceptors.request.use((config) => {
+  // Strip any leading slash so URLs remain relative to API_BASE
+  if (config.url?.startsWith('/')) {
+    config.url = config.url.slice(1);
+  }
   if (accessToken) {
     config.headers = config.headers || {};
     (config.headers as Record<string, string>).Authorization = `Bearer ${accessToken}`;
@@ -77,7 +92,7 @@ axiosWithAuth.interceptors.response.use(
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/refresh')
+      !originalRequest.url?.includes('auth/refresh')
     ) {
       originalRequest._retry = true;
       const newToken = await refreshAccessToken();
@@ -96,7 +111,7 @@ axiosWithAuth.interceptors.response.use(
  */
 export const logoutUser = async (): Promise<void> => {
   try {
-    await axiosWithAuth.post('/auth/logout');
+    await axiosWithAuth.post('auth/logout');
     setAccessToken(null);
   } catch (err) {
     console.error('[AuthUtils] Logout failed:', err);
