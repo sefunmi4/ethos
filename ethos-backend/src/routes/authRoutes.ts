@@ -19,9 +19,8 @@ import { error } from '../utils/logger';
 import { generateRandomUsername } from '../utils/usernameUtils';
 
 import type { AuthenticatedRequest } from '../types/express';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 
-const usePg = !!process.env.DATABASE_URL;
 
 
 

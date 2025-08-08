@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { boardsStore, questsStore, projectsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
@@ -11,7 +11,6 @@ import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/
 import type { DBQuest, DBPost, DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
-const usePg = !!process.env.DATABASE_URL;
 
 const makeQuestNodeTitle = (content: string): string => {
   const text = content.trim();

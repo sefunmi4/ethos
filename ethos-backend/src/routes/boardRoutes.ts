@@ -6,13 +6,12 @@ import { boardsStore, postsStore, questsStore, usersStore } from '../models/stor
 import { EMPTY_BOARD_CONTEXT } from '../data/boardContextDefaults';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 import type { BoardData } from '../types/api';
 import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
-const usePg = !!process.env.DATABASE_URL;
 
 // Only request posts should appear on the quest board. Other post types can
 // generate request posts, but the board itself shows requests only.

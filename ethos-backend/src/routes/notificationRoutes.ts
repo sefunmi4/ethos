@@ -3,13 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { notificationsStore } from '../models/stores';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 
 import type { DBNotification } from '../types/db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
 
 // GET /api/notifications - return notifications for current user
 router.get('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {

@@ -4,11 +4,10 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { projectsStore } from '../models/stores';
 import type { DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
 
 // GET all projects
 router.get('/', async (_req: Request, res: Response): Promise<void> => {
