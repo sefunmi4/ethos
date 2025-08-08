@@ -14,7 +14,9 @@ import {
   FaBullhorn,
   FaCodeBranch,
   FaCheckCircle,
-  FaUsers
+  FaUsers,
+  FaFolder,
+  FaExchangeAlt
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
@@ -30,6 +32,8 @@ export type SummaryTagType =
   | 'free_speech'
   | 'type'
   | 'request'
+  | 'project'
+  | 'change'
   | 'party_request'
   | 'quest_task'
   | 'commit'
@@ -62,6 +66,8 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
   free_speech: FaCommentAlt,
   type: FaUser,
   request: FaHandsHelping,
+  project: FaFolder,
+  change: FaExchangeAlt,
   party_request: FaUsers,
   quest_task: FaUserCheck,
   commit: FaCodeBranch,
@@ -81,6 +87,8 @@ const colors: Record<SummaryTagType, string> = {
   free_speech: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
   type: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
   request: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
+  project: 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+  change: 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200',
   party_request: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',
   quest_task: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-200',
   commit: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',

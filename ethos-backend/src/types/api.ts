@@ -64,7 +64,9 @@ export type PostType =
   | 'quest'
   | 'task'
   | 'change'
-  | 'review';
+  | 'review'
+  | 'issue'
+  | 'commit';
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 
