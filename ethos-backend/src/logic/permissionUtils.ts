@@ -11,8 +11,8 @@ export const canEditPost = (post: Post, userId: UUID | null): boolean => {
   return (
     post.authorId === userId ||
     (post.type === 'free_speech' &&
-      post.replyTo &&
-      post.collaborators?.some((c) => c.userId === userId))
+      !!post.replyTo &&
+      post.collaborators?.some((c) => c.userId === userId) === true)
   );
 };
 
