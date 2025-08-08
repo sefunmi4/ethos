@@ -4,17 +4,12 @@ import axios, { type AxiosInstance, AxiosError, type AxiosRequestConfig } from '
 /**
  * 📡 Base API URL — should be environment-configurable
  */
-const metaEnv = (() => {
-  try {
-    return Function('return import.meta.env')() as ImportMetaEnv;
-  } catch {
-    return {} as ImportMetaEnv;
-  }
-})();
-
 const API_BASE =
-  metaEnv.VITE_API_URL ||
-  (typeof process !== 'undefined' ? process.env.VITE_API_URL : undefined) ||
+  // Prefer Vite's injected environment variable when available
+  (import.meta as any)?.env?.VITE_API_URL ||
+  // Fall back to Node's process.env when running outside the browser
+  (typeof process !== 'undefined' ? process.env?.VITE_API_URL : undefined) ||
+  // Otherwise derive the API path from the current window location
   (typeof window !== 'undefined'
     ? `${window.location.origin}/api`
     : 'http://localhost:4173/api');
