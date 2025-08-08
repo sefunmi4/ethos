@@ -101,7 +101,7 @@ const LinkViewer: React.FC<LinkViewerProps> = ({ items, post, showReplyChain, op
   }, {});
 
   const getTagType = (p: Post): SummaryTagType => {
-    if (p.type === 'quest_log') return 'log';
+    if (p.type === 'free_speech' && p.replyTo) return 'log';
     return (p.type as SummaryTagType) || 'type';
   };
 

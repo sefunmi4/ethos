@@ -243,7 +243,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     if (joinAndNavigate) {
       const isPrivate =
         post.visibility === 'private' || questData?.visibility === 'private';
-      const type: PostType = isPrivate ? 'request' : 'log';
+      const type: PostType = isPrivate ? 'request' : 'free_speech';
       navigate(
         ROUTES.POST(post.id) + `?reply=1&initialType=${type}&intro=1`
       );

@@ -43,21 +43,21 @@ describe.skip('CreatePost view filtering', () => {
     expect(getOptions()).toEqual(['Quest Task']);
   });
 
-  it('allows log posts in log view', () => {
+  it('allows free speech posts in log view', () => {
     render(
       <BrowserRouter>
         <CreatePost onCancel={() => {}} currentView="log" />
       </BrowserRouter>
     );
-    expect(getOptions()).toEqual(['Quest Log']);
+    expect(getOptions()).toEqual(['Free Speech']);
   });
 
-  it('allows commit and log posts in file-change view', () => {
+  it('allows change and free speech posts in file-change view', () => {
     render(
       <BrowserRouter>
         <CreatePost onCancel={() => {}} currentView="file-change" />
       </BrowserRouter>
     );
-    expect(getOptions()).toEqual(['Commit', 'Quest Log']);
+    expect(getOptions()).toEqual(['Change', 'Free Speech']);
   });
 });

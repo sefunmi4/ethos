@@ -187,10 +187,10 @@ export const enrichQuestWithData = async (quest: Quest): Promise<EnrichedQuest> 
     fetchQuestMapData(quest.id),
   ]);
 
-  const logs = allPosts.filter(p => p.type === 'log');
+  const logs = allPosts.filter(p => p.type === 'free_speech' && p.replyTo);
   const tasks = allPosts.filter(p => p.type === 'task');
   const discussion = allPosts.filter(
-    p => p.type === 'free_speech' || p.type === 'meta_system'
+    p => p.type === 'free_speech' && !p.replyTo
   );
 
   const completedTasks = tasks.filter(t => t.status === 'Done').length;

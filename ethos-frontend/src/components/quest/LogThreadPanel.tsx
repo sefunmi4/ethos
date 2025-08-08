@@ -38,9 +38,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
     fetchPostsByQuestId(questId)
       .then(posts => {
         const related = posts.filter(
-          p =>
-            ['log', 'quest_log', 'task', 'issue', 'commit'].includes(p.type) &&
-            p.replyTo === node.id,
+          (p) => p.type === 'free_speech' && p.replyTo === node.id,
         );
         related.sort((a, b) => {
           const aTime = a.createdAt || a.timestamp;
@@ -65,7 +63,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
               setShowForm(false);
             }}
             onCancel={() => setShowForm(false)}
-            initialType={isCollaborator ? 'log' : 'free_speech'}
+            initialType="free_speech"
             questId={questId}
             replyTo={node}
             boardId={`log-${questId}`}
@@ -89,7 +87,7 @@ const LogThreadPanel: React.FC<LogThreadPanelProps> = ({
             setShowForm(false);
           }}
           onCancel={() => setShowForm(false)}
-          initialType={isCollaborator ? 'log' : 'free_speech'}
+          initialType="free_speech"
           questId={questId}
           replyTo={node}
           boardId={`log-${questId}`}

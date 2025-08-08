@@ -8,6 +8,7 @@ import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
+import type { PostType } from '../types/api';
 
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -106,7 +107,7 @@ router.get(
     }
 
     const recent = filtered
-      .filter(p => p.type !== 'meta_system' && p.systemGenerated !== true)
+      .filter(p => p.systemGenerated !== true)
       .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
       .slice(0, 20)
       .map(p => enrichPost(p, { users, currentUserId: userId || null }));
@@ -146,8 +147,22 @@ router.post(
       rating,
     } = req.body;
 
+    const allowedTypes: PostType[] = [
+      'free_speech',
+      'request',
+      'project',
+      'quest',
+      'task',
+      'change',
+      'review',
+    ];
+    if (!allowedTypes.includes(type)) {
+      res.status(400).json({ error: 'Invalid post type' });
+      return;
+    }
+
     const finalStatus =
-      status ?? (['task', 'request', 'issue'].includes(type) ? 'To Do' : undefined);
+      status ?? (['task', 'request'].includes(type) ? 'To Do' : undefined);
 
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -280,10 +295,7 @@ router.patch(
     res.status(404).json({ error: 'Post not found' });
     return;
   }
-  if (
-    (post.type === 'meta_system' || post.systemGenerated === true) &&
-    req.user?.role !== 'admin'
-  ) {
+  if (post.systemGenerated === true && req.user?.role !== 'admin') {
     res.status(403).json({ error: 'Cannot modify system post' });
     return;
   }
@@ -643,8 +655,8 @@ router.post(
       content: original.content,
       visibility: original.visibility,
       timestamp: new Date().toISOString(),
-      subtype: ['task', 'issue'].includes(original.type) ? original.type : undefined,
-      nodeId: ['task', 'issue'].includes(original.type) ? original.nodeId : undefined,
+      subtype: original.type === 'task' ? original.type : undefined,
+      nodeId: original.type === 'task' ? original.nodeId : undefined,
       tags: [],
       collaborators: [],
       replyTo: null,
@@ -1009,10 +1021,7 @@ router.get('/:id', authOptional, async (req: Request<{ id: string }>, res: Respo
     res.status(404).json({ error: 'Post not found' });
     return;
   }
-  if (
-    (post.type === 'meta_system' || post.systemGenerated === true) &&
-    (req as any).user?.role !== 'admin'
-  ) {
+  if (post.systemGenerated === true && (req as any).user?.role !== 'admin') {
     res.status(403).json({ error: 'Access denied' });
     return;
   }

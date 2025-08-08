@@ -10,7 +10,9 @@ export const canEditPost = (post: Post, userId: UUID | null): boolean => {
   if (!post || !userId) return false;
   return (
     post.authorId === userId ||
-    (post.type === 'log' && post.collaborators?.some(c => c.userId === userId))
+    (post.type === 'free_speech' &&
+      post.replyTo &&
+      post.collaborators?.some((c) => c.userId === userId))
   );
 };
 

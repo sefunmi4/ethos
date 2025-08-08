@@ -112,10 +112,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'>('sub_problem');
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
-  const [createType, setCreateType] = useState<'log' | 'issue' | null>(null);
+  const [createType, setCreateType] = useState<'free_speech' | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
-  const [asCommit, setAsCommit] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -633,7 +632,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {['request','quest','task','log','commit','issue', 'meta_system'].includes(post.type) && (
+      {['request','quest','task','free_speech','change','review','project'].includes(post.type) && (
         <div className="text-xs text-secondary space-y-1">
           {showLinkEditor && (
             <div className="mt-2">
@@ -758,21 +757,12 @@ const PostCard: React.FC<PostCardProps> = ({
             <div className="absolute z-10 mt-1 bg-surface border border-secondary rounded shadow text-xs">
               <button
                 onClick={() => {
-                  setCreateType('log');
+                  setCreateType('free_speech');
                   setShowAddMenu(false);
                 }}
                 className="block w-full text-left px-2 py-1 hover:bg-background"
               >
-                Log
-              </button>
-              <button
-                onClick={() => {
-                  setCreateType('issue');
-                  setShowAddMenu(false);
-                }}
-                className="block w-full text-left px-2 py-1 hover:bg-background"
-              >
-                Issue
+                Comment
               </button>
               <button
                 onClick={() => {
@@ -790,20 +780,11 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {createType && (
         <div className="mt-2 space-y-1">
-          <label className="text-xs flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={asCommit}
-              onChange={(e) => setAsCommit(e.target.checked)}
-            />
-            Create commit entry
-          </label>
           <CreatePost
-            initialType={asCommit ? 'commit' : createType}
+            initialType={createType}
             questId={post.questId || undefined}
             boardId={post.questId ? `log-${post.questId}` : undefined}
-            initialGitFilePath={asCommit ? post.gitFilePath : undefined}
-            initialLinkedNodeId={asCommit ? post.nodeId : undefined}
+            replyTo={post}
             onSave={async (newPost) => {
               if (post.questId) {
                 try {
@@ -820,11 +801,9 @@ const PostCard: React.FC<PostCardProps> = ({
                 }
               }
               setCreateType(null);
-              setAsCommit(false);
             }}
             onCancel={() => {
               setCreateType(null);
-              setAsCommit(false);
             }}
           />
         </div>

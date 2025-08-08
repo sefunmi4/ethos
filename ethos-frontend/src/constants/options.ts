@@ -21,18 +21,16 @@ export const BOARD_TYPE_OPTIONS: { value: BoardType; label: string }[] = [
   { value: 'post', label: 'Post' },
   { value: 'quest', label: 'Quest' },
   { value: 'map', label: 'Map' },
-  { value: 'log', label: 'Log' },
   { value: 'custom', label: 'Custom' },
 ];
 
 export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
   { value: 'request', label: 'Request' },
+  { value: 'project', label: 'Project' },
   { value: 'quest', label: 'Quest' },
-  { value: 'task', label: 'Quest Task' },
-  { value: 'log', label: 'Quest Log' },
-  { value: 'commit', label: 'Commit' },
-  { value: 'issue', label: 'Issue' },
+  { value: 'task', label: 'Task' },
+  { value: 'change', label: 'Change' },
   { value: 'review', label: 'Review' },
 ];
 

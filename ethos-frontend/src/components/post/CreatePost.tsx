@@ -51,11 +51,10 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialLinkedNodeId,
   initialContent,
 }) => {
-  const restrictedReply =
-    replyTo && ['task', 'log', 'commit', 'issue'].includes(replyTo.type);
+  const restrictedReply = !!replyTo;
 
   const [type, setType] = useState<PostType>(
-    restrictedReply ? 'log' : initialType
+    restrictedReply ? 'free_speech' : initialType
   );
   const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
@@ -73,13 +72,13 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
   const allowedPostTypes: PostType[] = restrictedReply
-    ? ['log']
+    ? ['free_speech']
     : boardId === 'quest-board'
     ? ['request']
     : boardType === 'quest'
-    ? ['quest', 'task', 'log']
+    ? ['quest', 'task', 'free_speech']
     : boardType === 'post'
-    ? ['quest', 'free_speech', 'request', 'review']
+    ? ['quest', 'free_speech', 'request', 'review', 'project', 'change']
     : POST_TYPES.map((p) => p.value as PostType);
 
   const renderQuestForm = type === 'quest';
@@ -390,15 +389,15 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 };
 
 function requiresQuestLink(type: PostType): boolean {
-  return ['log', 'task'].includes(type);
+  return ['task', 'free_speech'].includes(type);
 }
 
 function requiresQuestRoles(type: PostType): boolean {
-  return ['log', 'task'].includes(type);
+  return type === 'task';
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'quest', 'task', 'log', 'commit', 'issue', 'meta_system'].includes(type);
+  return ['request', 'quest', 'task', 'free_speech', 'change', 'review', 'project'].includes(type);
 }
 
 export default CreatePost;
