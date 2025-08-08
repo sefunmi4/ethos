@@ -524,6 +524,7 @@ describe('post routes', () => {
       content: 'sys',
       visibility: 'private',
       timestamp: '',
+      systemGenerated: true,
     };
     postsStoreMock.read.mockReturnValue([post]);
     const res = await request(app).get('/posts/s2');

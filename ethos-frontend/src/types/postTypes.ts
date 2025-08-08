@@ -191,7 +191,9 @@ export type PostType =
   | 'quest'
   | 'task'
   | 'change'
-  | 'review';
+  | 'review'
+  | 'issue'
+  | 'commit';
   
 /**
  * Supported tags for labeling and filtering posts.
