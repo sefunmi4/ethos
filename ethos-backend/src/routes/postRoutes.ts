@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore } from '../models/stores';
+import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore, boardsStore } from '../models/stores';
 import { pool } from '../db';
 import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
@@ -201,6 +201,12 @@ router.post(
           'INSERT INTO posts (id, authorid, type, content, title) VALUES ($1, $2, $3, $4, $5)',
           [newPost.id, newPost.authorId, newPost.type, newPost.content, newPost.title]
         );
+        if (effectiveBoardId && effectiveBoardId !== 'quest-board') {
+          await pool.query(
+            "UPDATE boards SET items = COALESCE(items, '[]'::jsonb) || $1::jsonb WHERE id = $2",
+            [JSON.stringify([newPost.id]), effectiveBoardId]
+          );
+        }
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Database error' });
@@ -209,6 +215,14 @@ router.post(
     } else {
       posts.push(newPost);
       postsStore.write(posts);
+      if (effectiveBoardId && effectiveBoardId !== 'quest-board') {
+        const boards = boardsStore.read();
+        const board = boards.find(b => b.id === effectiveBoardId);
+        if (board) {
+          board.items = Array.from(new Set([...(board.items || []), newPost.id]));
+          boardsStore.write(boards);
+        }
+      }
     }
 
     if (replyTo) {
