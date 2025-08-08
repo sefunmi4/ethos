@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 jest.mock('../src/api/post', () => ({
   __esModule: true,
   addPost: jest.fn(() => Promise.resolve({ id: 'p1' })),
+  fetchAllPosts: jest.fn(() => Promise.resolve([])),
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -37,6 +38,6 @@ describe('Timeline board post types', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Quest', 'Free Speech', 'Request', 'Review']);
+    expect(options).toEqual(['Quest', 'Free Speech', 'Request', 'Review', 'Project', 'Change']);
   });
 });
