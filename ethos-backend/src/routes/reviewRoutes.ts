@@ -2,13 +2,12 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { reviewsStore } from '../models/stores';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 import type { AuthenticatedRequest } from '../types/express';
 import type { DBReview } from '../types/db';
 
 const router = express.Router();
 
-const usePg = !!process.env.DATABASE_URL;
 
 const bannedWords = ['badword'];
 

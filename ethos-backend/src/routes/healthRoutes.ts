@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 
 const router = Router();
 
-const usePg = !!process.env.DATABASE_URL;
 
 router.get('/', async (_req, res): Promise<void> => {
   if (usePg) {

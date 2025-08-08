@@ -3,16 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+export const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
+
+export const pool: Pool = usePg
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : ({} as Pool);
 
 /**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
 export async function initializeDatabase(): Promise<void> {
-  if (!process.env.DATABASE_URL) return;
+  if (!usePg) return;
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
