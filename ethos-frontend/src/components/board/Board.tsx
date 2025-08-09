@@ -74,21 +74,19 @@ const Board: React.FC<BoardProps> = ({
     linkType: (filter as Record<string, string>).linkType || '',
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setLocalFilter({
       itemType: (filter as Record<string, string>).itemType || '',
       postType: (filter as Record<string, string>).postType || '',
       linkType: (filter as Record<string, string>).linkType || '',
     });
-  }, [filter.itemType, filter.postType, filter.linkType]);
+  }, [filter]);
 
   // Keep items state in sync with BoardContext updates
-  const boardItemsKey = board?.id ? boards[board.id]?.enrichedItems : undefined;
+  const boardItemsKey = board?.id ? (boards[board.id]?.enrichedItems as BoardItem[] | undefined) : undefined;
   useEffect(() => {
     if (!board?.id) return;
-    const enriched = boards[board.id]?.enrichedItems || [];
-    setItems(enriched as BoardItem[]);
+    setItems(boardItemsKey || []);
   }, [board?.id, boardItemsKey]);
 
   const userId = user?.id;
@@ -170,16 +168,19 @@ const Board: React.FC<BoardProps> = ({
       );
     }
 
+    const resolveTitle = (item: BoardItem): string =>
+      'headPostId' in item || 'content' in item
+        ? getDisplayTitle(item as Quest | Post) ?? ''
+        : item.title ?? '';
+
     return result
       .filter((item: BoardItem) => {
-        const title = getDisplayTitle(item as any) ?? '';
+        const title = resolveTitle(item);
         return title.toLowerCase().includes(filterText.toLowerCase());
       })
       .sort((a, b) => {
-        const aVal =
-          sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a as any) ?? '';
-        const bVal =
-          sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as any) ?? '';
+        const aVal = sortKey === 'createdAt' ? a.createdAt ?? '' : resolveTitle(a);
+        const bVal = sortKey === 'createdAt' ? b.createdAt ?? '' : resolveTitle(b);
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
   }, [items, filter, localFilter, filterText, sortKey, sortOrder]);
