@@ -20,6 +20,7 @@ model User {
   projects Project[]
   reviews  Review[]
   notifications Notification[]
+  @@map("users")
 }
 
 model Post {
@@ -33,6 +34,7 @@ model Post {
   author User @relation(fields: [authorId], references: [id])
   reviews Review[]
   headOfQuest Quest? @relation("QuestHeadPost")
+  @@map("posts")
 }
 
 model Quest {
@@ -61,6 +63,7 @@ model Quest {
   headPost Post?   @relation("QuestHeadPost", fields: [headPostId], references: [id])
   boards   Board[]
   reviews  Review[]
+  @@map("quests")
 }
 
 model Board {
@@ -80,6 +83,7 @@ model Board {
 
   user  User  @relation(fields: [userId], references: [id])
   quest Quest? @relation(fields: [questId], references: [id])
+  @@map("boards")
 }
 
 model Project {
@@ -97,6 +101,7 @@ model Project {
 
   author User   @relation(fields: [authorId], references: [id])
   quests Quest[]
+  @@map("projects")
 }
 
 model Review {
@@ -117,6 +122,7 @@ model Review {
   reviewer User  @relation(fields: [reviewerId], references: [id])
   quest    Quest? @relation(fields: [questId], references: [id])
   post     Post?  @relation(fields: [postId], references: [id])
+  @@map("reviews")
 }
 
 model Notification {
@@ -128,4 +134,5 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+  @@map("notifications")
 }
