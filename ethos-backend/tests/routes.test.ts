@@ -443,20 +443,27 @@ describe('route handlers', () => {
 
   });
 
-  it('GET /boards/quest-board/items excludes archived requests', async () => {
+  it('GET /boards/quest-board/items returns active quests', async () => {
 
     boardsStoreMock.read.mockReturnValue([
-      { id: 'quest-board', title: 'QB', boardType: 'post', description: '', layout: 'grid', items: [] }
+      { id: 'quest-board', title: 'QB', boardType: 'quest', description: '', layout: 'grid', items: [] }
     ]);
-    postsStoreMock.read.mockReturnValue([
-      { id: 'req1', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: ['archived'], collaborators: [], linkedItems: [], boardId: 'quest-board' },
-      { id: 'req2', authorId: 'u1', type: 'request', content: '', visibility: 'public', timestamp: '', tags: [], collaborators: [], linkedItems: [], boardId: 'quest-board' }
+    questsStoreMock.read.mockReturnValue([
+      {
+        id: 'q1', authorId: 'u1', title: 'Old Quest', visibility: 'public', approvalStatus: 'approved', status: 'archived',
+        headPostId: 'p1', linkedPosts: [], collaborators: [], createdAt: '2024-01-01'
+      },
+      {
+        id: 'q2', authorId: 'u2', title: 'Active Quest', visibility: 'public', approvalStatus: 'approved', status: 'active',
+        headPostId: 'p2', linkedPosts: [], collaborators: [], createdAt: '2024-01-02'
+      }
     ]);
+    postsStoreMock.read.mockReturnValue([]);
 
     const res = await request(app).get('/boards/quest-board/items');
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
-    expect(res.body[0].id).toBe('req2');
+    expect(res.body[0].id).toBe('q2');
   });
 });
