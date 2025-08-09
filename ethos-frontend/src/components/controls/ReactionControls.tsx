@@ -20,10 +20,7 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
-import QuestCard from '../quest/QuestCard';
-import { ErrorBoundary } from '../ui';
 import TaskCard from '../quest/TaskCard';
-import { fetchQuestById } from '../../api/quest';
 import {
   updateReaction,
   addRepost,
@@ -42,7 +39,6 @@ import {
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction, PostType } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import type { Quest } from '../../types/questTypes';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
 
 interface ReactionControlsProps {
@@ -100,7 +96,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     !!user && (post.followers || []).includes(user.id)
   );
   const [followerCount, setFollowerCount] = useState(post.followers?.length || 0);
-  const [questData, setQuestData] = useState<Quest | null>(null);
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
@@ -241,8 +236,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     const joinAndNavigate =
       ctxBoardId === 'my-posts' && post.type === 'request' && post.questId && roleTag;
     if (joinAndNavigate) {
-      const isPrivate =
-        post.visibility === 'private' || questData?.visibility === 'private';
+      const isPrivate = post.visibility === 'private';
       const type: PostType = isPrivate ? 'request' : 'free_speech';
       navigate(
         ROUTES.POST(post.id) + `?reply=1&initialType=${type}&intro=1`
@@ -282,13 +276,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (expanded && post.type === 'quest' && post.questId && !questData) {
-      fetchQuestById(post.questId)
-        .then(setQuestData)
-        .catch(err => console.error('[ReactionControls] Failed to fetch quest:', err));
-    }
-  }, [expanded, post.type, post.questId, questData]);
+  // no additional effects required when expanding
 
   return (
     <>
@@ -320,7 +308,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {!isQuestRequest && ['quest', 'task', 'issue'].includes(post.type) && (
+        {!isQuestRequest && ['task', 'issue'].includes(post.type) && (
           <button
             className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
             onClick={handleRequestHelp}
@@ -359,7 +347,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           )
         )}
 
-        {['task', 'request', 'quest'].includes(post.type) && !isRequestCard && !joined && (
+        {['task', 'request'].includes(post.type) && !isRequestCard && !joined && (
           <button className="flex items-center gap-1" onClick={handleFollow} disabled={!user}>
             <FaBell /> {following ? 'Following' : 'Follow'} {followerCount}
           </button>
@@ -371,7 +359,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </span>
         )}
 
-        {(post.type === 'task' || post.type === 'quest') &&
+        {post.type === 'task' &&
           !onToggleExpand && (
             <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
               {expanded ? <FaCompress /> : <FaExpand />}{' '}
@@ -438,17 +426,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </div>
       )}
 
-      {expanded && post.type === 'quest' && post.questId && (
-        <div className="mt-3">
-          {questData ? (
-            <ErrorBoundary>
-              <QuestCard quest={questData} user={user} defaultExpanded hideToggle />
-            </ErrorBoundary>
-          ) : (
-            <div className="text-sm">Loading...</div>
-          )}
-        </div>
-      )}
     </>
   );
 };

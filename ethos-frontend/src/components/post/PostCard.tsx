@@ -395,7 +395,7 @@ const PostCard: React.FC<PostCardProps> = ({
             {post.type === 'review' && post.rating && renderStars(post.rating)}
           </div>
           <div className="flex items-center gap-2">
-            {['task', 'quest'].includes(post.type) && (
+            {post.type === 'task' && (
               <button
                 className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
                 onClick={() =>
@@ -484,7 +484,7 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {['task', 'quest'].includes(post.type) && (
+          {post.type === 'task' && (
             <button
               className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
               onClick={() =>
@@ -632,7 +632,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {['request','quest','task','free_speech','change','review'].includes(post.type) && (
+      {['request','task','free_speech','change','review'].includes(post.type) && (
         <div className="text-xs text-secondary space-y-1">
           {showLinkEditor && (
             <div className="mt-2">

@@ -215,7 +215,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
                         questId={questId}
                         parentId={selected.id}
                         boardId={`task-${selected.id}`}
-                        allowIssue
                         onSave={() => setShowFolderForm(false)}
                         onCancel={() => setShowFolderForm(false)}
                       />

@@ -5,7 +5,7 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { Button, SummaryTag } from '../ui';
 import { FaBell } from 'react-icons/fa';
-import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
+import { toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
 import GridLayout from '../layout/GridLayout';
 import MapGraphLayout from '../layout/MapGraphLayout';
@@ -283,7 +283,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <SummaryTag type="quest" label={POST_TYPE_LABELS.quest} />
+          <SummaryTag type="quest" label="Quest" />
           <Link
             to={ROUTES.QUEST(quest.id)}
             className="text-xl font-bold text-primary underline"
@@ -461,7 +461,6 @@ const QuestCard: React.FC<QuestCardProps> = ({
               questId={quest.id}
               parentId={selectedNode.id}
               boardId={`task-${selectedNode.id}`}
-              allowIssue
               onSave={(p) => {
                 setLogs((prev) => [...prev, p as Post]);
                 setShowFolderForm(false);
