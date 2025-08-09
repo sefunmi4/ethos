@@ -25,9 +25,6 @@ jest.mock('../../api/quest', () => ({
   fetchAllQuests: jest.fn(() => Promise.resolve([])),
 }));
 
-jest.mock('../../api/project', () => ({
-  fetchAllProjects: jest.fn(() => Promise.resolve([])),
-}));
 
 describe('LinkControls', () => {
   it('shows free speech posts in options', async () => {

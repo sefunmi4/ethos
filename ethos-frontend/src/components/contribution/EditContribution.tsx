@@ -9,7 +9,7 @@ import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 
-type ContributionType = 'post' | 'quest' | 'project';
+type ContributionType = 'post' | 'quest';
 
 export interface EditContributionProps {
   /** Existing item to edit */
@@ -35,12 +35,12 @@ export interface EditContributionProps {
  * EditContribution
  *
  * Dynamically renders the correct editor form for a given contribution (Post, Quest).
- * Used when editing an existing post, quest, or project.
+ * Used when editing an existing post or quest.
  *
  * @param item - The original contribution to edit
  * @param onSave - Callback on successful edit
  * @param onCancel - Callback on cancel
- * @param boards - Optional board list for project editing
+ * @param boards - Optional board list
  * @param quests - Optional quest list for linking
  * @param typeOverride - Lock form to specific type (if set)
  */

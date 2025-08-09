@@ -44,7 +44,7 @@ describe('post routes', () => {
     postsStoreMock.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'task', linkedItems: [{ itemId: 'proj1', itemType: 'project' }] });
+      .send({ type: 'task' });
     expect(res.status).toBe(201);
     const written = postsStoreMock.write.mock.calls[0][0][0];
     expect(written.status).toBe('To Do');
@@ -59,7 +59,6 @@ describe('post routes', () => {
       .send({
         type: 'task',
         status: 'Blocked',
-        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
       });
     expect(res.status).toBe(201);
     const written = postsStoreMock.write.mock.calls[0][0][0];
@@ -87,7 +86,6 @@ describe('post routes', () => {
       .send({
         type: 'task',
         questId: 'q1',
-        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
       });
 
     expect(res.status).toBe(201);
@@ -129,7 +127,6 @@ describe('post routes', () => {
         type: 'task',
         questId: 'q1',
         replyTo: 't1',
-        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
       });
 
     expect(res.status).toBe(201);
@@ -300,12 +297,12 @@ describe('post routes', () => {
     ]);
     usersStoreMock.read.mockReturnValue([]);
 
-    const res = await request(app).patch('/posts/t1').send({ type: 'issue' });
+    const res = await request(app).patch('/posts/t1').send({ type: 'change' });
 
     const expected = generateNodeId({
       quest: { id: 'q1', title: 'First Quest' },
       posts: [],
-      postType: 'issue',
+      postType: 'change',
       parentPost: null,
     });
 
@@ -401,7 +398,7 @@ describe('post routes', () => {
     const post = {
       id: 'p2',
       authorId: 'u1',
-      type: 'issue',
+      type: 'task',
       content: 'issue content',
       visibility: 'public',
       timestamp: '',
@@ -595,7 +592,7 @@ describe('post routes', () => {
     expect(res.body.tags).toContain('summary:task');
   });
 
-  it('accepting unlinked request creates project post', async () => {
+  it('accepting unlinked request creates task post', async () => {
     const reqPost = {
       id: 'r1',
       authorId: 'u2',
@@ -616,8 +613,8 @@ describe('post routes', () => {
     const res = await request(app).post('/posts/r1/accept');
     expect(res.status).toBe(200);
     const written = postsStoreMock.write.mock.calls[0][0];
-    expect(written[1].type).toBe('project');
-    expect(res.body.created.type).toBe('project');
+    expect(written[1].type).toBe('task');
+    expect(res.body.created.type).toBe('task');
   });
 
   it('accepting request linked to task creates change post', async () => {

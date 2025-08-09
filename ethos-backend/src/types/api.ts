@@ -60,13 +60,9 @@ export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | str
 export type PostType =
   | 'free_speech'
   | 'request'
-  | 'project'
-  | 'quest'
   | 'task'
   | 'change'
-  | 'review'
-  | 'issue'
-  | 'commit';
+  | 'review';
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 
@@ -78,7 +74,7 @@ export type LinkType =
   | 'reference'
   | 'task_edge';
 
-export type ItemType = 'post' | 'quest' | 'board' | 'project';
+export type ItemType = 'post' | 'quest' | 'board';
 
 export type GitItemType = 'post' | 'quest';
 

@@ -632,7 +632,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {['request','quest','task','free_speech','change','review','project'].includes(post.type) && (
+      {['request','quest','task','free_speech','change','review'].includes(post.type) && (
         <div className="text-xs text-secondary space-y-1">
           {showLinkEditor && (
             <div className="mt-2">

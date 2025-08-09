@@ -383,13 +383,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button
             className={clsx(
               'flex items-center gap-1',
-              post.type !== 'commit' && showReplyPanel && 'text-green-600'
+              showReplyPanel && 'text-green-600'
             )}
             onClick={() => {
               if (replyOverride) {
                 replyOverride.onClick();
-              } else if (post.type === 'commit') {
-                navigate(ROUTES.POST(post.id));
               } else if (
                 post.type === 'request' ||
                 isTimelineBoard ||
@@ -408,8 +406,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             <FaReply />{' '}
             {replyOverride
               ? replyOverride.label
-              : post.type === 'commit'
-              ? 'File Change View'
               : showReplyPanel
               ? 'Cancel'
               : 'Reply'}

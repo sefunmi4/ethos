@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import type { Post } from '../../types/postTypes';
 
 export type NodeVisualType =
-  | 'project'
   | 'quest'
   | 'task'
   | 'subtask'
@@ -19,13 +18,6 @@ interface NodeStyle {
 }
 
 const NODE_STYLES: Record<NodeVisualType, NodeStyle> = {
-  project: {
-    label: 'P',
-    bgClass: 'bg-blue-200',
-    textClass: 'text-blue-800',
-    bgColor: '#bfdbfe',
-    textColor: '#1e3a8a',
-  },
   quest: {
     label: 'Q',
     bgClass: 'bg-purple-200',
@@ -68,7 +60,7 @@ export function getNodeVisualType(post: Post): NodeVisualType {
     return post.needsHelp === false ? 'request-accepted' : 'request-open';
   }
   if (post.type === 'quest') {
-    return (post.tags || []).includes('project') ? 'project' : 'quest';
+    return 'quest';
   }
   if (post.type === 'task') return 'task';
   if (post.type === 'change' || post.type === 'free_speech') return 'subtask';

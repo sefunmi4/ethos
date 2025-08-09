@@ -187,8 +187,6 @@ export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | str
 export type PostType =
   | 'free_speech'
   | 'request'
-  | 'project'
-  | 'quest'
   | 'task'
   | 'change'
   | 'review'

@@ -9,7 +9,7 @@ import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 
-type ContributionType = 'post' | 'quest' | 'project';
+type ContributionType = 'post' | 'quest';
 
 export interface CreateContributionProps {
   onSave: (item: Post | Quest) => void | Promise<void>; 
@@ -24,17 +24,16 @@ export interface CreateContributionProps {
 const CONTRIBUTION_TYPES: { value: ContributionType; label: string }[] = [
   { value: 'post', label: 'Post' },
   { value: 'quest', label: 'Quest' },
-  { value: 'project', label: 'Project' },
 ];
 
 /**
  * A dynamic wrapper component that renders the appropriate contribution form
- * (Post, Quest, or Project) based on user selection or a predefined override.
+ * (Post or Quest) based on user selection or a predefined override.
  *
  * @param onSave - Callback when the form is submitted successfully.
  * @param onCancel - Callback when the form is cancelled.
  * @param quests - Optional list of quests to associate with the contribution.
- * @param boards - Optional list of boards for context (mainly for project creation).
+ * @param boards - Optional list of boards for context.
  * @param typeOverride - If provided, forces the form to only show that contribution type.
  * @param replyTo - Optional post the new post is replying to.
  * @param repostSource - Optional post being reposted.
