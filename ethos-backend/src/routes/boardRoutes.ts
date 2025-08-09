@@ -38,10 +38,55 @@ router.get(
     req: Request<{}, BoardData[], undefined, { featured?: string; enrich?: string; userId?: string }>,
     res: Response
   ): Promise<void> => {
+    const { featured, enrich, userId } = req.query;
+
     if (usePg) {
       try {
-        const result = await pool.query('SELECT * FROM boards');
-        res.json(result.rows);
+        const boardsResult = await pool.query('SELECT * FROM boards');
+        const [postsRes, questsRes] = await Promise.all([
+          pool.query('SELECT * FROM posts'),
+          pool.query('SELECT * FROM quests'),
+        ]);
+
+        const posts: DBPost[] = postsRes.rows.map((r: any) => ({
+          ...r,
+          authorId: r.authorid,
+          createdAt: r.createdat,
+        }));
+        const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
+          ...r,
+          authorId: r.authorid,
+          createdAt: r.createdat,
+        }));
+
+        let boards = boardsResult.rows.map(b => ({ ...b, items: b.items || [] }));
+
+        boards = boards.map(b => {
+          if (userId && b.id === 'my-posts') {
+            b.items = posts
+              .filter(p => p.authorId === userId && p.systemGenerated !== true)
+              .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+              .map(p => p.id);
+          } else if (userId && b.id === 'my-quests') {
+            b.items = quests.filter(q => q.authorId === userId).map(q => q.id);
+          } else if (b.id === 'quest-board') {
+            b.items = getQuestBoardItems(quests, userId);
+          }
+          return b;
+        });
+
+        if (featured === 'true') {
+          boards = boards.filter(b => b.featured === true);
+        }
+
+        if (enrich === 'true') {
+          boards = boards.map(b => {
+            const enriched = enrichBoard(b, { posts, quests, currentUserId: userId || null });
+            return { ...enriched, layout: b.layout ?? 'grid', items: b.items } as EnrichedBoard;
+          });
+        }
+
+        res.json(boards);
         return;
       } catch (err) {
         console.error(err);
@@ -50,7 +95,6 @@ router.get(
       }
     }
 
-    const { featured, enrich, userId } = req.query;
     let boards = boardsStore.read();
     if (boards.length === 0) {
       boards = DEFAULT_BOARDS;
@@ -205,15 +249,39 @@ router.get(
     req: Request<{ id: string }, BoardData | { error: string }, undefined, { enrich?: string; page?: string; limit?: string; userId?: string }>,
     res: Response
   ): Promise<void> => {
+    const { id } = req.params;
+    const { enrich, page = '1', limit, userId } = req.query;
+
     if (usePg) {
       try {
-        const result = await pool.query('SELECT * FROM boards WHERE id = $1', [req.params.id]);
+        const result = await pool.query('SELECT * FROM boards WHERE id = $1', [id]);
         const board = result.rows[0];
         if (!board) {
           res.status(404).json({ error: 'Board not found' });
           return;
         }
-        res.json(board);
+        board.items = board.items || [];
+
+        if (enrich === 'true') {
+          const [postsRes, questsRes] = await Promise.all([
+            pool.query('SELECT * FROM posts'),
+            pool.query('SELECT * FROM quests'),
+          ]);
+          const posts: DBPost[] = postsRes.rows.map((r: any) => ({
+            ...r,
+            authorId: r.authorid,
+            createdAt: r.createdat,
+          }));
+          const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
+            ...r,
+            authorId: r.authorid,
+            createdAt: r.createdat,
+          }));
+          const enriched = enrichBoard(board, { posts, quests, currentUserId: userId || null });
+          res.json({ ...enriched, layout: board.layout ?? 'grid', items: board.items });
+        } else {
+          res.json(board);
+        }
         return;
       } catch (err) {
         console.error(err);
@@ -221,9 +289,6 @@ router.get(
         return;
       }
     }
-
-    const { id } = req.params;
-    const { enrich, page = '1', limit, userId } = req.query;
 
     const boards = boardsStore.read();
     const posts = postsStore.read();
