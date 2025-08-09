@@ -334,12 +334,145 @@ router.get(
 //
 router.get(
   '/:id/items',
-  (
+  async (
     req: Request<{ id: string }, any, undefined, { enrich?: string; userId?: string }>,
     res: Response
-  ): void => {
+  ): Promise<void> => {
     const { id } = req.params;
     const { enrich, userId } = req.query;
+
+    if (usePg) {
+      try {
+        const boardResult = await pool.query('SELECT * FROM boards WHERE id = $1', [id]);
+        if (boardResult.rowCount === 0) {
+          res.status(404).json({ error: 'Board not found' });
+          return;
+        }
+        const board = boardResult.rows[0] as BoardData;
+        board.items = board.items || [];
+
+        const postsRes = await pool.query('SELECT * FROM posts');
+        const questsRes = await pool.query('SELECT * FROM quests');
+
+        const posts: DBPost[] = postsRes.rows.map((r: any) => ({
+          ...r,
+          authorId: r.authorid,
+          createdAt: r.createdat,
+        }));
+        const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
+          ...r,
+          authorId: r.authorid,
+          createdAt: r.createdat,
+        }));
+
+        let boardItems = board.items as string[];
+        let highlightMap: Record<string, boolean> = {};
+
+        if (board.id === 'quest-board') {
+          boardItems = getQuestBoardItems(posts);
+        } else if (board.id === 'timeline-board') {
+          const userQuestIds = userId
+            ? quests
+                .filter(
+                  q =>
+                    q.authorId === userId ||
+                    (q.collaborators || []).some(c => c.userId === userId) ||
+                    posts.some(p => p.questId === q.id && p.authorId === userId)
+                )
+                .map(q => q.id)
+            : [];
+          const userTaskIds = userId
+            ? posts.filter(p => p.authorId === userId && p.type === 'task').map(p => p.id)
+            : [];
+
+          const withMeta = posts
+            .filter(p => p.visibility !== 'private')
+            .map(p => {
+              let weight = 0;
+              let highlight = false;
+              if (userId) {
+                if (p.questId && userQuestIds.includes(p.questId)) {
+                  weight = p.type === 'task' ? 3 : 2;
+                  if (p.type === 'task') highlight = true;
+                } else if (
+                  p.linkedItems?.some(
+                    li =>
+                      (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                      (li.itemType === 'post' && userTaskIds.includes(li.itemId))
+                  )
+                ) {
+                  weight = 1;
+                  highlight = true;
+                }
+              }
+              return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+            })
+            .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+
+          highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
+          boardItems = withMeta.map(it => it.id);
+        } else if (userId && board.id === 'my-posts') {
+          boardItems = posts
+            .filter(p => p.authorId === userId && p.systemGenerated !== true)
+            .sort((a, b) =>
+              (b.timestamp || b.createdAt || '').localeCompare(
+                a.timestamp || a.createdAt || ''
+              )
+            )
+            .map(p => p.id);
+        } else if (userId && board.id === 'my-quests') {
+          boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+        }
+
+        if (enrich === 'true') {
+          const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
+          const items = enriched.enrichedItems.map(item => {
+            if ('id' in item && highlightMap[item.id]) {
+              (item as any).highlight = true;
+            }
+            return item;
+          });
+          res.json(items);
+          return;
+        }
+
+        const items = boardItems
+          .map(itemId => posts.find(p => p.id === itemId) || quests.find(q => q.id === itemId))
+          .filter((i): i is DBPost | DBQuest => Boolean(i))
+          .filter(item => {
+            if ('type' in item) {
+              const p = item as DBPost;
+              if (p.type !== 'request') return false;
+              if (p.boardId !== 'quest-board') return false;
+              if (p.tags?.includes('archived')) return false;
+              return (
+                p.visibility === 'public' ||
+                p.visibility === 'request_board' ||
+                p.needsHelp === true
+              );
+            }
+            const q = item as DBQuest;
+            if (q.displayOnBoard === false) return false;
+            if (q.status === 'active' && userId) {
+              const participant =
+                q.authorId === userId ||
+                (q.collaborators || []).some(
+                  (c: { userId?: string }) => c.userId === userId
+                );
+              if (!participant) return false;
+            }
+            return true;
+          });
+
+        res.json(items);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const boards = boardsStore.read();
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -454,7 +587,7 @@ router.get(
         return true;
       });
 
-  res.json(items);
+    res.json(items);
   }
 );
 
