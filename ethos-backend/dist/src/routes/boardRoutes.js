@@ -12,17 +12,13 @@ const enrich_1 = require("../utils/enrich");
 const constants_1 = require("../constants");
 // Only request posts should appear on the quest board. Other post types can
 // generate request posts, but the board itself shows requests only.
-const getQuestBoardItems = (posts) => {
-    const ids = posts
-        .filter((p) => {
-        if (p.type !== 'request')
-            return false;
-        if (p.tags?.includes('archived'))
-            return false;
-        return p.visibility === 'public' || p.visibility === 'request_board';
-    })
-        .map((p) => p.id);
-    return ids;
+const getQuestBoardItems = (quests, userId) => {
+    return quests
+        .filter(q => q.status === 'active' && q.visibility === 'public')
+        .filter(q => !userId || q.authorId !== userId)
+        .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+        .slice(0, 10)
+        .map(q => q.id);
 };
 const router = express_1.default.Router();
 //
@@ -50,7 +46,7 @@ router.get('/', (req, res) => {
             return { ...board, items: filtered };
         }
         if (board.id === 'quest-board') {
-            const items = getQuestBoardItems(posts);
+            const items = getQuestBoardItems(quests, userId);
             return { ...board, items };
         }
         return board;
@@ -152,7 +148,7 @@ router.get('/:id', (req, res) => {
     let boardItems = board.items;
     let highlightMap = {};
     if (board.id === 'quest-board') {
-        boardItems = getQuestBoardItems(posts);
+        boardItems = getQuestBoardItems(quests, userId);
     }
     else if (board.id === 'timeline-board') {
         const userQuestIds = userId
@@ -236,7 +232,7 @@ router.get('/:id/items', (req, res) => {
     let boardItems = board.items;
     let highlightMap = {};
     if (board.id === 'quest-board') {
-        boardItems = getQuestBoardItems(posts);
+        boardItems = getQuestBoardItems(quests, userId);
     }
     else if (board.id === 'timeline-board') {
         const userQuestIds = userId
@@ -341,7 +337,7 @@ router.get('/:id/quests', (req, res) => {
     }
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-        boardItems = getQuestBoardItems(posts).filter(id => quests.find(q => q.id === id));
+        boardItems = getQuestBoardItems(quests, userId).filter(id => quests.find(q => q.id === id));
     }
     else if (userId && board.id === 'my-quests') {
         boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);

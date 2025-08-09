@@ -1,4 +1,5 @@
 import type { Post, PostType } from "../types/postTypes";
+import type { Quest } from "../types/questTypes";
 import { ROUTES } from "../constants/routes";
 
 export const toTitleCase = (str: string): string =>
@@ -66,10 +67,15 @@ export const getQuestLinkLabel = (
  * Used when a post isn’t specifically quest-linked.
  */
 export const getDisplayTitle = (
-  post: Post,
+  item: Post | Quest,
   questName?: string,
   includeQuestName = false,
 ): string => {
+  if ("headPostId" in item) {
+    return item.title;
+  }
+
+  const post = item as Post;
   if (post.nodeId || post.questId) {
     return getQuestLinkLabel(post, questName, includeQuestName);
   }

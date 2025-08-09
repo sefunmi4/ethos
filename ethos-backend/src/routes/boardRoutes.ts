@@ -13,24 +13,18 @@ import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
 
-// Only request posts should appear on the quest board. Other post types can
-// generate request posts, but the board itself shows requests only.
+// Gather active quests for the quest board. Returns up to 10 recent quests
+// excluding those authored by the requesting user.
 const getQuestBoardItems = (
-  posts: ReturnType<typeof postsStore.read>
+  quests: ReturnType<typeof questsStore.read>,
+  userId?: string
 ) => {
-  const ids = posts
-    .filter((p) => {
-      if (p.type !== 'request') return false;
-      if (p.boardId !== 'quest-board') return false;
-      if (p.tags?.includes('archived')) return false;
-      return (
-        p.visibility === 'public' ||
-        p.visibility === 'request_board' ||
-        p.needsHelp === true
-      );
-    })
-    .map((p) => p.id);
-  return ids;
+  return quests
+    .filter(q => q.status === 'active' && q.visibility === 'public')
+    .filter(q => !userId || q.authorId !== userId)
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .slice(0, 10)
+    .map(q => q.id);
 };
 
 const router = express.Router();
@@ -90,7 +84,7 @@ router.get(
       }
 
       if (board.id === 'quest-board') {
-        const items = getQuestBoardItems(posts);
+        const items = getQuestBoardItems(quests, userId);
         return { ...board, items };
       }
 
@@ -247,7 +241,7 @@ router.get(
     let boardItems = board.items;
     let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts);
+      boardItems = getQuestBoardItems(quests, userId);
     } else if (board.id === 'timeline-board') {
       const userQuestIds = userId
         ? quests
@@ -369,7 +363,7 @@ router.get(
         let highlightMap: Record<string, boolean> = {};
 
         if (board.id === 'quest-board') {
-          boardItems = getQuestBoardItems(posts);
+          boardItems = getQuestBoardItems(quests, userId);
         } else if (board.id === 'timeline-board') {
           const userQuestIds = userId
             ? quests
@@ -486,7 +480,7 @@ router.get(
     let boardItems = board.items;
     let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts);
+      boardItems = getQuestBoardItems(quests, userId);
     } else if (board.id === 'timeline-board') {
       const userQuestIds = userId
         ? quests
@@ -615,7 +609,7 @@ router.get(
 
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(posts).filter(id =>
+      boardItems = getQuestBoardItems(quests, userId).filter(id =>
         quests.find(q => q.id === id)
       );
     } else if (userId && board.id === 'my-quests') {

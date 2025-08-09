@@ -16,7 +16,7 @@ export const DEFAULT_BOARDS: DBBoard[] = [
   {
     id: 'quest-board',
     title: 'Quest Board',
-    boardType: 'post',
+    boardType: 'quest',
     layout: 'grid',
     items: [],
     createdAt: new Date().toISOString(),

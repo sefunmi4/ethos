@@ -44,7 +44,7 @@ const Board: React.FC<BoardProps> = ({
 }) => {
   const [board, setBoard] = useState<BoardData | null>(boardProp ?? null);
   const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState<Post[]>([]);
+  const [items, setItems] = useState<BoardItem[]>([]);
   const [viewMode, setViewMode] = useState<BoardLayout | null>(null);
 
   const isQuestBoard = (boardId || boardProp?.id || board?.id) === 'quest-board';
@@ -88,7 +88,7 @@ const Board: React.FC<BoardProps> = ({
   useEffect(() => {
     if (!board?.id) return;
     const enriched = boards[board.id]?.enrichedItems || [];
-    setItems(enriched as Post[]);
+    setItems(enriched as BoardItem[]);
   }, [board?.id, boardItemsKey]);
 
   const userId = user?.id;
@@ -114,7 +114,7 @@ const Board: React.FC<BoardProps> = ({
         setSelectedBoard(boardId);
 
         setBoard(boardData);
-        setItems(boardItems as Post[]);
+        setItems(boardItems as BoardItem[]);
       } catch (error) {
         console.error('Error loading board:', error);
       } finally {
@@ -125,7 +125,7 @@ const Board: React.FC<BoardProps> = ({
     if (boardProp) {
       setSelectedBoard(boardProp.id);
       setBoard(boardProp);
-      setItems((boardProp.enrichedItems || []) as Post[]);
+      setItems((boardProp.enrichedItems || []) as BoardItem[]);
       setLoading(false);
     } else {
       if (boardId) setSelectedBoard(boardId); // set early to avoid flicker
@@ -140,7 +140,7 @@ const Board: React.FC<BoardProps> = ({
 
     fetchBoard(board.id, { enrich: true, userId: user?.id }).then(setBoard);
     fetchBoardItems(board.id, { enrich: true, userId: user?.id }).then((items) =>
-      setItems(items as Post[])
+      setItems(items as BoardItem[])
     );
   });
 
@@ -171,15 +171,15 @@ const Board: React.FC<BoardProps> = ({
     }
 
     return result
-      .filter((item: Post) => {
-        const title = getDisplayTitle(item as Post) ?? '';
+      .filter((item: BoardItem) => {
+        const title = getDisplayTitle(item as any) ?? '';
         return title.toLowerCase().includes(filterText.toLowerCase());
       })
       .sort((a, b) => {
         const aVal =
-          sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a as Post) ?? '';
+          sortKey === 'createdAt' ? a.createdAt ?? '' : getDisplayTitle(a as any) ?? '';
         const bVal =
-          sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as Post) ?? '';
+          sortKey === 'createdAt' ? b.createdAt ?? '' : getDisplayTitle(b as any) ?? '';
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
   }, [items, filter, localFilter, filterText, sortKey, sortOrder]);
@@ -263,7 +263,7 @@ const Board: React.FC<BoardProps> = ({
   }, [mapGraphItems, quest?.taskGraph]);
 
   const handleAdd = async (item: Post | Quest) => {
-    setItems((prev) => [item as Post, ...prev]);
+    setItems((prev) => [item as BoardItem, ...prev]);
     setShowCreateForm(false);
     if (board) {
       appendToBoard(board.id, item as unknown as BoardItem);
@@ -465,7 +465,7 @@ const Board: React.FC<BoardProps> = ({
                   setBoard(updatedBoard);
                   setEditMode(false);
                   fetchBoardItems(board.id, { enrich: true, userId: user?.id }).then((items) =>
-                    setItems(items as Post[])
+                    setItems(items as BoardItem[])
                   );
                 });
             }}
@@ -478,8 +478,8 @@ const Board: React.FC<BoardProps> = ({
               ? mapGraphItems
               : resolvedStructure === 'graph' ||
                 resolvedStructure === 'graph-condensed'
-              ? (graphItems as Post[])
-              : (renderableItems as Post[])
+              ? (graphItems as BoardItem[])
+              : (renderableItems as BoardItem[])
           }
           compact={compact}
           user={user}
