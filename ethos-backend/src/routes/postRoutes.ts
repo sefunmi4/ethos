@@ -8,7 +8,7 @@ import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
-import type { PostType } from '../types/api';
+import type { PostType, LinkedItem } from '../types/api';
 
 
 const makeQuestNodeTitle = (content: string): string => {
@@ -168,33 +168,38 @@ router.post(
     // Validate required links based on post type
     if (type === 'request') {
       const linkedTask = linkedItems
-        .filter(li => li.itemType === 'post')
-        .map(li => posts.find(p => p.id === li.itemId))
-        .find(p => p && p.type === 'task');
+        .filter((li: LinkedItem) => li.itemType === 'post')
+        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
+        .find((p: DBPost | undefined) => p && p.type === 'task');
       if (!linkedTask) {
         res.status(400).json({ error: 'Requests must link to a task' });
         return;
       }
     } else if (type === 'task') {
-      const hasProject = linkedItems.some(li => li.itemType === 'project');
+      const hasProject = linkedItems.some(
+        (li: LinkedItem) => li.itemType === 'project'
+      );
       if (!hasProject) {
         res.status(400).json({ error: 'Tasks must link to a project' });
         return;
       }
     } else if (type === 'change') {
       const target = linkedItems
-        .filter(li => li.itemType === 'post')
-        .map(li => posts.find(p => p.id === li.itemId))
-        .find(p => p && (p.type === 'task' || p.type === 'request'));
+        .filter((li: LinkedItem) => li.itemType === 'post')
+        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
+        .find(
+          (p: DBPost | undefined) =>
+            p && (p.type === 'task' || p.type === 'request')
+        );
       if (!target) {
         res.status(400).json({ error: 'Changes must link to a task or request' });
         return;
       }
     } else if (type === 'review') {
       const target = linkedItems
-        .filter(li => li.itemType === 'post')
-        .map(li => posts.find(p => p.id === li.itemId))
-        .find(p => p && p.type === 'change');
+        .filter((li: LinkedItem) => li.itemType === 'post')
+        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
+        .find((p: DBPost | undefined) => p && p.type === 'change');
       if (!target) {
         res.status(400).json({ error: 'Reviews must link to a change' });
         return;
