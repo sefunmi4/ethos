@@ -166,16 +166,7 @@ router.post(
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
     // Validate required links based on post type
-    if (type === 'request') {
-      const linkedTask = linkedItems
-        .filter((li: LinkedItem) => li.itemType === 'post')
-        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
-        .find((p: DBPost | undefined) => p && p.type === 'task');
-      if (!linkedTask) {
-        res.status(400).json({ error: 'Requests must link to a task' });
-        return;
-      }
-    } else if (type === 'task') {
+    if (type === 'task') {
       const hasProject = linkedItems.some(
         (li: LinkedItem) => li.itemType === 'project'
       );
@@ -244,6 +235,20 @@ router.post(
       nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
       boardId: effectiveBoardId,
     };
+
+    if (type === 'request') {
+      const summaryTags = new Set([...(newPost.tags || []), 'summary:request']);
+      const linkedPosts = linkedItems
+        ?.filter((li: LinkedItem) => li.itemType === 'post')
+        .map((li: LinkedItem) => posts.find((p: DBPost) => p.id === li.itemId))
+        .filter((p: DBPost | undefined): p is DBPost => !!p);
+      if (linkedPosts?.some((p: DBPost) => p.type === 'task')) {
+        summaryTags.add('summary:task');
+      } else if (linkedPosts?.some((p: DBPost) => p.type === 'change')) {
+        summaryTags.add('summary:change');
+      }
+      newPost.tags = Array.from(summaryTags);
+    }
 
     if (questId && (!newPost.questNodeTitle || newPost.questNodeTitle.trim() === '')) {
       newPost.questNodeTitle = makeQuestNodeTitle(content);
@@ -813,6 +818,58 @@ router.post(
       post.questNodeTitle = makeQuestNodeTitle(post.content);
     }
 
+    // Determine if the request links to a task or change
+    const linkedPosts = (post.linkedItems || [])
+      .filter(li => li.itemType === 'post')
+      .map(li => posts.find(p => p.id === li.itemId))
+      .filter((p): p is DBPost => !!p);
+    const linkedTask = linkedPosts.find(p => p.type === 'task');
+    const linkedChange = linkedPosts.find(p => p.type === 'change');
+
+    let created: DBPost | null = null;
+    if (linkedChange) {
+      created = {
+        id: uuidv4(),
+        authorId: userId,
+        type: 'review',
+        title: makeQuestNodeTitle(post.content),
+        content: '',
+        visibility: 'public',
+        timestamp: new Date().toISOString(),
+        replyTo: linkedChange.id,
+        linkedItems: [
+          { itemId: linkedChange.id, itemType: 'post', linkType: 'reference' },
+        ],
+      } as DBPost;
+    } else if (linkedTask) {
+      created = {
+        id: uuidv4(),
+        authorId: userId,
+        type: 'change',
+        title: makeQuestNodeTitle(post.content),
+        content: '',
+        visibility: 'public',
+        timestamp: new Date().toISOString(),
+        replyTo: linkedTask.id,
+        linkedItems: [
+          { itemId: linkedTask.id, itemType: 'post', linkType: 'reference' },
+        ],
+      } as DBPost;
+    } else {
+      created = {
+        id: uuidv4(),
+        authorId: userId,
+        type: 'project',
+        title: makeQuestNodeTitle(post.content),
+        content: '',
+        visibility: 'public',
+        timestamp: new Date().toISOString(),
+        replyTo: post.id,
+      } as DBPost;
+    }
+
+    posts.push(created);
+
     questsStore.write(quests);
     postsStore.write(posts);
 
@@ -832,7 +889,11 @@ router.post(
       notificationsStore.write([...notes, newNote]);
     }
 
-    res.json({ post: enrichPost(post, { users }), quest });
+    res.json({
+      post: enrichPost(post, { users }),
+      quest,
+      created: enrichPost(created, { users }),
+    });
   }
 );
 
