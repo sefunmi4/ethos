@@ -23,6 +23,7 @@ export default {
     '<rootDir>/src/components/post/PostCard.requestHelp.test.tsx',
     '<rootDir>/src/components/post/PostListItem.test.tsx',
     '<rootDir>/tests/CreatePostReply.test.tsx',
+    '<rootDir>/tests/CreatePostRequestNoTask.test.tsx',
     '<rootDir>/tests/PostTypeFilterOptions.test.tsx',
     '<rootDir>/tests/ThemeProvider.test.js',
     '<rootDir>/tests/TimelineBoardPostTypes.test.tsx'
