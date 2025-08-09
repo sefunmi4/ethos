@@ -28,7 +28,7 @@ const getQuestBoardQuests = (
 };
 
 // Gather recent request posts for the quest board. Excludes the requesting user
-// and archived requests.
+// and archived requests. Returns up to DEFAULT_PAGE_SIZE recent requests.
 const getQuestBoardRequests = (
   posts: ReturnType<typeof postsStore.read>,
   userId?: string
@@ -44,7 +44,7 @@ const getQuestBoardRequests = (
     )
     .filter(p => !userId || p.authorId !== userId)
     .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
-    .slice(0, 10)
+    .slice(0, DEFAULT_PAGE_SIZE)
     .map(p => p.id);
 };
 
