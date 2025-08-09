@@ -357,9 +357,8 @@ function validateLinks(type: PostType, items: LinkedItem[]): {
 } {
   switch (type) {
     case 'request':
-      return items.some(i => i.itemType === 'post')
-        ? { valid: true }
-        : { valid: false, message: 'Please link a task before submitting.' };
+      // Requests no longer require a linked task
+      return { valid: true };
     case 'task':
       return items.some(i => i.itemType === 'project')
         ? { valid: true }
