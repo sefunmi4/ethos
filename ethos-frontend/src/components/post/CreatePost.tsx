@@ -29,8 +29,6 @@ type CreatePostProps = {
    * When provided this overrides the currently selected board context.
    */
   boardId?: string;
-  initialGitFilePath?: string;
-  initialLinkedNodeId?: string;
   /**
    * Optional active board view. When provided and the board is a quest board
    * this limits the available post types to those relevant for the view.
@@ -45,8 +43,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialType = 'free_speech',
   questId,
   boardId,
-  initialGitFilePath,
-  initialLinkedNodeId,
   initialContent,
 }) => {
   const restrictedReply = !!replyTo;
