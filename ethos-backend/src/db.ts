@@ -3,7 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const usePg = !!process.env.DATABASE_URL && process.env.NODE_ENV !== 'test';
+// Use PostgreSQL whenever a DATABASE_URL is provided. This now applies even
+// when NODE_ENV is set to `test` so that test runs can exercise the same
+// persistence layer. Previous logic disabled Postgres during tests, which led
+// to data being stored in the transient JSON fallback and not persisting.
+export const usePg = !!process.env.DATABASE_URL;
 
 export const pool: Pool = usePg
   ? new Pool({ connectionString: process.env.DATABASE_URL })
