@@ -19,9 +19,16 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import { Button, Input, Select, Spinner } from '../ui';
 import { POST_TYPES } from '../../constants/options';
 
-import type { BoardData, BoardProps, BoardLayout } from '../../types/boardTypes';
+import type {
+  BoardData,
+  BoardProps,
+  BoardLayout,
+  BoardFilters,
+} from '../../types/boardTypes';
 import type { Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
+
+const EMPTY_FILTER: BoardFilters = {};
 
 const Board: React.FC<BoardProps> = ({
   boardId,
@@ -34,7 +41,7 @@ const Board: React.FC<BoardProps> = ({
   compact = false,
   showCreate = true,
   hideControls = false,
-  filter = {},
+  filter = EMPTY_FILTER,
   onScrollEnd,
   loading: loadingMore = false,
   quest,
@@ -68,19 +75,21 @@ const Board: React.FC<BoardProps> = ({
     linkType: string;
   }
 
+  const {
+    itemType = '',
+    postType = '',
+    linkType = '',
+  } = filter as Record<string, string>;
+
   const [localFilter, setLocalFilter] = useState<LocalFilter>({
-    itemType: (filter as Record<string, string>).itemType || '',
-    postType: (filter as Record<string, string>).postType || '',
-    linkType: (filter as Record<string, string>).linkType || '',
+    itemType,
+    postType,
+    linkType,
   });
 
   useEffect(() => {
-    setLocalFilter({
-      itemType: (filter as Record<string, string>).itemType || '',
-      postType: (filter as Record<string, string>).postType || '',
-      linkType: (filter as Record<string, string>).linkType || '',
-    });
-  }, [filter]);
+    setLocalFilter({ itemType, postType, linkType });
+  }, [itemType, postType, linkType]);
 
   // Keep items state in sync with BoardContext updates
   const boardItemsKey = board?.id ? (boards[board.id]?.enrichedItems as BoardItem[] | undefined) : undefined;
