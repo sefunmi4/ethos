@@ -15,7 +15,7 @@ import type { AuthenticatedRequest } from '../types/express';
 
 // Gather active quests for the quest board. Returns up to 10 recent quests
 // excluding those authored by the requesting user.
-const getQuestBoardItems = (
+const getQuestBoardQuests = (
   quests: ReturnType<typeof questsStore.read>,
   userId?: string
 ) => {
@@ -25,6 +25,27 @@ const getQuestBoardItems = (
     .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
     .slice(0, 10)
     .map(q => q.id);
+};
+
+// Gather recent request posts for the quest board. Excludes the requesting user
+// and archived requests.
+const getQuestBoardRequests = (
+  posts: ReturnType<typeof postsStore.read>,
+  userId?: string
+) => {
+  return posts
+    .filter(p => p.type === 'request' && p.boardId === 'quest-board')
+    .filter(p => !p.tags?.includes('archived'))
+    .filter(
+      p =>
+        (p.visibility === 'public' ||
+          p.visibility === 'request_board' ||
+          p.needsHelp === true)
+    )
+    .filter(p => !userId || p.authorId !== userId)
+    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+    .slice(0, 10)
+    .map(p => p.id);
 };
 
 const router = express.Router();
@@ -70,7 +91,7 @@ router.get(
           } else if (userId && b.id === 'my-quests') {
             b.items = quests.filter(q => q.authorId === userId).map(q => q.id);
           } else if (b.id === 'quest-board') {
-            b.items = getQuestBoardItems(quests, userId);
+            b.items = getQuestBoardRequests(posts, userId);
           }
           return b;
         });
@@ -128,7 +149,7 @@ router.get(
       }
 
       if (board.id === 'quest-board') {
-        const items = getQuestBoardItems(quests, userId);
+        const items = getQuestBoardRequests(posts, userId);
         return { ...board, items };
       }
 
@@ -306,7 +327,7 @@ router.get(
     let boardItems = board.items;
     let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(quests, userId);
+      boardItems = getQuestBoardRequests(posts, userId);
     } else if (board.id === 'timeline-board') {
       const userQuestIds = userId
         ? quests
@@ -428,7 +449,7 @@ router.get(
         let highlightMap: Record<string, boolean> = {};
 
         if (board.id === 'quest-board') {
-          boardItems = getQuestBoardItems(quests, userId);
+          boardItems = getQuestBoardRequests(posts, userId);
         } else if (board.id === 'timeline-board') {
           const userQuestIds = userId
             ? quests
@@ -501,16 +522,20 @@ router.get(
           .filter(item => {
             if ('type' in item) {
               const p = item as DBPost;
-              if (p.type !== 'request') return false;
-              if (p.boardId !== 'quest-board') return false;
               if (p.tags?.includes('archived')) return false;
-              return (
-                p.visibility === 'public' ||
-                p.visibility === 'request_board' ||
-                p.needsHelp === true
-              );
+              if (board.id === 'quest-board') {
+                if (p.type !== 'request') return false;
+                if (p.boardId !== 'quest-board') return false;
+                return (
+                  p.visibility === 'public' ||
+                  p.visibility === 'request_board' ||
+                  p.needsHelp === true
+                );
+              }
+              return true;
             }
             const q = item as DBQuest;
+            if (board.id === 'quest-board') return false;
             if (q.displayOnBoard === false) return false;
             if (q.status === 'active' && userId) {
               const participant =
@@ -545,7 +570,7 @@ router.get(
     let boardItems = board.items;
     let highlightMap: Record<string, boolean> = {};
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(quests, userId);
+      boardItems = getQuestBoardRequests(posts, userId);
     } else if (board.id === 'timeline-board') {
       const userQuestIds = userId
         ? quests
@@ -624,16 +649,20 @@ router.get(
       .filter((item) => {
         if ('type' in item) {
           const p = item as DBPost;
-          if (p.type !== 'request') return false;
-          if (p.boardId !== 'quest-board') return false;
           if (p.tags?.includes('archived')) return false;
-          return (
-            p.visibility === 'public' ||
-            p.visibility === 'request_board' ||
-            p.needsHelp === true
-          );
+          if (board.id === 'quest-board') {
+            if (p.type !== 'request') return false;
+            if (p.boardId !== 'quest-board') return false;
+            return (
+              p.visibility === 'public' ||
+              p.visibility === 'request_board' ||
+              p.needsHelp === true
+            );
+          }
+          return true;
         }
         const q = item as DBQuest;
+        if (board.id === 'quest-board') return false;
         if (q.displayOnBoard === false) return false;
         if (q.status === 'active' && userId) {
           const participant =
@@ -674,7 +703,7 @@ router.get(
 
     let boardItems = board.items;
     if (board.id === 'quest-board') {
-      boardItems = getQuestBoardItems(quests, userId).filter(id =>
+      boardItems = getQuestBoardQuests(quests, userId).filter(id =>
         quests.find(q => q.id === id)
       );
     } else if (userId && board.id === 'my-quests') {
