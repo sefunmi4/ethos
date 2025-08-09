@@ -560,4 +560,129 @@ describe('post routes', () => {
     const res = await request(app).get('/posts/s2');
     expect(res.status).toBe(403);
   });
+
+  it('allows request without link and adds summary tag', async () => {
+    postsStoreMock.read.mockReturnValue([]);
+    postsStoreMock.write.mockClear();
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'request', content: 'help', visibility: 'public' });
+    expect(res.status).toBe(201);
+    expect(res.body.tags).toContain('summary:request');
+  });
+
+  it('adds task summary tag when request links to task', async () => {
+    const task = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: 't',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([task]);
+    postsStoreMock.write.mockClear();
+    const res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'request',
+        linkedItems: [{ itemId: 't1', itemType: 'post' }],
+        content: 'help',
+        visibility: 'public',
+      });
+    expect(res.status).toBe(201);
+    expect(res.body.tags).toContain('summary:request');
+    expect(res.body.tags).toContain('summary:task');
+  });
+
+  it('accepting unlinked request creates project post', async () => {
+    const reqPost = {
+      id: 'r1',
+      authorId: 'u2',
+      type: 'request',
+      content: 'req',
+      visibility: 'public',
+      timestamp: '',
+      linkedItems: [],
+    };
+    const posts = [reqPost];
+    postsStoreMock.read.mockReturnValue(posts);
+    postsStoreMock.write.mockClear();
+    questsStoreMock.read.mockReturnValue([]);
+    usersStoreMock.read.mockReturnValue([
+      { id: 'u1', username: 'user1' },
+      { id: 'u2', username: 'author' },
+    ]);
+    const res = await request(app).post('/posts/r1/accept');
+    expect(res.status).toBe(200);
+    const written = postsStoreMock.write.mock.calls[0][0];
+    expect(written[1].type).toBe('project');
+    expect(res.body.created.type).toBe('project');
+  });
+
+  it('accepting request linked to task creates change post', async () => {
+    const task = {
+      id: 't1',
+      authorId: 'u2',
+      type: 'task',
+      content: 'task',
+      visibility: 'public',
+      timestamp: '',
+    };
+    const reqPost = {
+      id: 'r1',
+      authorId: 'u2',
+      type: 'request',
+      content: 'req',
+      visibility: 'public',
+      timestamp: '',
+      linkedItems: [{ itemId: 't1', itemType: 'post' }],
+    };
+    const posts = [task, reqPost];
+    postsStoreMock.read.mockReturnValue(posts);
+    postsStoreMock.write.mockClear();
+    questsStoreMock.read.mockReturnValue([]);
+    usersStoreMock.read.mockReturnValue([
+      { id: 'u1', username: 'user1' },
+      { id: 'u2', username: 'author' },
+    ]);
+    const res = await request(app).post('/posts/r1/accept');
+    expect(res.status).toBe(200);
+    const written = postsStoreMock.write.mock.calls[0][0];
+    expect(written[2].type).toBe('change');
+    expect(res.body.created.type).toBe('change');
+  });
+
+  it('accepting request linked to change creates review post', async () => {
+    const change = {
+      id: 'c1',
+      authorId: 'u2',
+      type: 'change',
+      content: 'chg',
+      visibility: 'public',
+      timestamp: '',
+    };
+    const reqPost = {
+      id: 'r1',
+      authorId: 'u2',
+      type: 'request',
+      content: 'req',
+      visibility: 'public',
+      timestamp: '',
+      linkedItems: [{ itemId: 'c1', itemType: 'post' }],
+    };
+    const posts = [change, reqPost];
+    postsStoreMock.read.mockReturnValue(posts);
+    postsStoreMock.write.mockClear();
+    questsStoreMock.read.mockReturnValue([]);
+    usersStoreMock.read.mockReturnValue([
+      { id: 'u1', username: 'user1' },
+      { id: 'u2', username: 'author' },
+    ]);
+    const res = await request(app).post('/posts/r1/accept');
+    expect(res.status).toBe(200);
+    const written = postsStoreMock.write.mock.calls[0][0];
+    expect(written[2].type).toBe('review');
+    expect(res.body.created.type).toBe('review');
+  });
 });
