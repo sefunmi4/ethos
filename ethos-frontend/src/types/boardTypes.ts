@@ -66,6 +66,7 @@ export interface RenderableItem {
   visibility?: Visibility;
   tags?: string[];
   enriched?: boolean;
+  createdAt?: string;
   // You can safely add more based on shared fields
 }
 

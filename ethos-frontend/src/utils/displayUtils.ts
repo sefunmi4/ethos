@@ -70,9 +70,9 @@ export const getDisplayTitle = (
   item: Post | Quest,
   questName?: string,
   includeQuestName = false,
-): string => {
+  ): string => {
   if ("headPostId" in item) {
-    return item.title;
+    return item.title ?? "";
   }
 
   const post = item as Post;
