@@ -5,15 +5,13 @@ import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
-import CreateQuest from '../quest/CreateQuest';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
-import type { Quest } from '../../types/questTypes';
 
 type CreatePostProps = {
-  onSave?: (post: Post | Quest) => void;
+  onSave?: (post: Post) => void;
   onCancel: () => void;
   replyTo?: Post | null;
   repostSource?: Post | null;
@@ -56,7 +54,9 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [type, setType] = useState<PostType>(
     restrictedReply ? 'free_speech' : initialType
   );
-  const [status, setStatus] = useState<string>('To Do');
+  const [status, setStatus] = useState<string>(
+    initialType === 'request' ? 'In Progress' : 'To Do'
+  );
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>(initialContent || '');
   const [details, setDetails] = useState<string>('');
@@ -76,12 +76,10 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     : boardId === 'quest-board'
     ? ['request']
     : boardType === 'quest'
-    ? ['quest', 'task', 'free_speech']
+    ? ['task', 'free_speech']
     : boardType === 'post'
-    ? ['quest', 'free_speech', 'request', 'review', 'project', 'change']
+    ? ['free_speech', 'request', 'review', 'project', 'change']
     : POST_TYPES.map((p) => p.value as PostType);
-
-  const renderQuestForm = type === 'quest';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,18 +92,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       ? boardQuestMatch[1]
       : questId || replyTo?.questId || null;
 
-    // Check for quest linkage if required
-    if (requiresQuestLink(type)) {
-      const hasQuestLink =
-        linkedItems.some((item) => item.itemType === 'quest') ||
-        Boolean(questIdFromBoard);
-      if (!hasQuestLink) {
-        alert('Please link a quest before submitting.');
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
     if (type === 'review' && rating === 0) {
       alert('Please provide a rating.');
       setIsSubmitting(false);
@@ -117,6 +103,13 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
+    const validation = validateLinks(type, autoLinkItems);
+    if (!validation.valid) {
+      alert(validation.message);
+      setIsSubmitting(false);
+      return;
+    }
+
       const payload: Partial<Post> = {
         type,
         title: type === 'task' ? content : title || undefined,
@@ -125,7 +118,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         visibility: 'public',
         linkedItems: autoLinkItems,
         helpRequest: type === 'request' || helpRequest || undefined,
-        ...(type === 'task' || type === 'issue'
+        ...(type === 'task' || type === 'request'
           ? { status }
           : {}),
         ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
@@ -186,45 +179,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     }
   };
 
-  if (renderQuestForm) {
-    return (
-      <div className="space-y-6">
-        <FormSection title="Item Details">
-          <Label htmlFor="post-type">Item Type</Label>
-          <Select
-            id="post-type"
-            value={type}
-            onChange={(e) => {
-              const val = e.target.value as PostType;
-              setType(val);
-              if (['task', 'issue'].includes(val)) setStatus('To Do');
-            }}
-            options={allowedPostTypes.map((t) => {
-              const opt = POST_TYPES.find((o) => o.value === t)!;
-              return { value: opt.value, label: opt.label };
-            })}
-          />
-          {(boardId || selectedBoard) === 'quest-board' && (
-            <label className="inline-flex items-center mt-2 space-x-2">
-              <input
-                type="checkbox"
-                checked={helpRequest}
-                onChange={(e) => setHelpRequest(e.target.checked)}
-                className="form-checkbox"
-              />
-              <span>Ask for help</span>
-            </label>
-          )}
-        </FormSection>
-        <CreateQuest
-          onSave={(q) => onSave?.(q)}
-          onCancel={onCancel}
-          boardId={boardId || selectedBoard || undefined}
-        />
-      </div>
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection title="Item Details">
@@ -235,7 +189,8 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           onChange={(e) => {
             const val = e.target.value as PostType;
             setType(val);
-            if (['task', 'issue'].includes(val)) setStatus('To Do');
+            if (val === 'task') setStatus('To Do');
+            else if (val === 'request') setStatus('In Progress');
           }}
           options={allowedPostTypes.map((t) => {
             const opt = POST_TYPES.find((o) => o.value === t)!;
@@ -243,7 +198,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           })}
         />
 
-        {['task', 'issue'].includes(type) && (
+        {type === 'task' && (
           <>
             <Label htmlFor="task-status">Status</Label>
             <Select
@@ -349,7 +304,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             onChange={setLinkedItems}
             allowCreateNew
             allowNodeSelection
-            itemTypes={['quest', 'post']}
+            itemTypes={['quest', 'post', 'project']}
           />
         </FormSection>
       )}
@@ -388,16 +343,38 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   );
 };
 
-function requiresQuestLink(type: PostType): boolean {
-  return ['task', 'free_speech'].includes(type);
-}
-
 function requiresQuestRoles(type: PostType): boolean {
   return type === 'task';
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'quest', 'task', 'free_speech', 'change', 'review', 'project'].includes(type);
+  return ['request', 'task', 'free_speech', 'change', 'review', 'project'].includes(type);
+}
+
+function validateLinks(type: PostType, items: LinkedItem[]): {
+  valid: boolean;
+  message?: string;
+} {
+  switch (type) {
+    case 'request':
+      return items.some(i => i.itemType === 'post')
+        ? { valid: true }
+        : { valid: false, message: 'Please link a task before submitting.' };
+    case 'task':
+      return items.some(i => i.itemType === 'project')
+        ? { valid: true }
+        : { valid: false, message: 'Please link a project before submitting.' };
+    case 'change':
+      return items.some(i => i.itemType === 'post')
+        ? { valid: true }
+        : { valid: false, message: 'Please link a task or request before submitting.' };
+    case 'review':
+      return items.some(i => i.itemType === 'post')
+        ? { valid: true }
+        : { valid: false, message: 'Please link a change before submitting.' };
+    default:
+      return { valid: true };
+  }
 }
 
 export default CreatePost;
