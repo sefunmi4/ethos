@@ -151,7 +151,6 @@ router.post(
       'free_speech',
       'request',
       'project',
-      'quest',
       'task',
       'change',
       'review',
@@ -161,13 +160,49 @@ router.post(
       return;
     }
 
-    const finalStatus =
-      status ?? (['task', 'request'].includes(type) ? 'To Do' : undefined);
-
     const posts = postsStore.read();
     const quests = questsStore.read();
     const quest = questId ? quests.find(q => q.id === questId) : null;
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
+
+    // Validate required links based on post type
+    if (type === 'request') {
+      const linkedTask = linkedItems
+        .filter(li => li.itemType === 'post')
+        .map(li => posts.find(p => p.id === li.itemId))
+        .find(p => p && p.type === 'task');
+      if (!linkedTask) {
+        res.status(400).json({ error: 'Requests must link to a task' });
+        return;
+      }
+    } else if (type === 'task') {
+      const hasProject = linkedItems.some(li => li.itemType === 'project');
+      if (!hasProject) {
+        res.status(400).json({ error: 'Tasks must link to a project' });
+        return;
+      }
+    } else if (type === 'change') {
+      const target = linkedItems
+        .filter(li => li.itemType === 'post')
+        .map(li => posts.find(p => p.id === li.itemId))
+        .find(p => p && (p.type === 'task' || p.type === 'request'));
+      if (!target) {
+        res.status(400).json({ error: 'Changes must link to a task or request' });
+        return;
+      }
+    } else if (type === 'review') {
+      const target = linkedItems
+        .filter(li => li.itemType === 'post')
+        .map(li => posts.find(p => p.id === li.itemId))
+        .find(p => p && p.type === 'change');
+      if (!target) {
+        res.status(400).json({ error: 'Reviews must link to a change' });
+        return;
+      }
+    }
+
+    const finalStatus =
+      status ?? (type === 'task' ? 'To Do' : type === 'request' ? 'In Progress' : undefined);
 
     if (boardId === 'quest-board') {
       if (type !== 'request') {

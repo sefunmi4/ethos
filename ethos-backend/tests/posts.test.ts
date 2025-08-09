@@ -42,7 +42,9 @@ describe('post routes', () => {
   it("POST /posts defaults task status to 'To Do'", async () => {
     postsStoreMock.read.mockReturnValue([]);
     postsStoreMock.write.mockClear();
-    const res = await request(app).post('/posts').send({ type: 'task' });
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', linkedItems: [{ itemId: 'proj1', itemType: 'project' }] });
     expect(res.status).toBe(201);
     const written = postsStoreMock.write.mock.calls[0][0][0];
     expect(written.status).toBe('To Do');
@@ -54,7 +56,11 @@ describe('post routes', () => {
     postsStoreMock.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'task', status: 'Blocked' });
+      .send({
+        type: 'task',
+        status: 'Blocked',
+        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
+      });
     expect(res.status).toBe(201);
     const written = postsStoreMock.write.mock.calls[0][0][0];
     expect(written.status).toBe('Blocked');
@@ -76,7 +82,13 @@ describe('post routes', () => {
     postsStoreMock.write.mockClear();
     questsStoreMock.write.mockClear();
 
-    const res = await request(app).post('/posts').send({ type: 'task', questId: 'q1' });
+    const res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'task',
+        questId: 'q1',
+        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
+      });
 
     expect(res.status).toBe(201);
     const newPost = postsStoreMock.write.mock.calls[0][0][0];
@@ -113,7 +125,12 @@ describe('post routes', () => {
 
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'task', questId: 'q1', replyTo: 't1' });
+      .send({
+        type: 'task',
+        questId: 'q1',
+        replyTo: 't1',
+        linkedItems: [{ itemId: 'proj1', itemType: 'project' }],
+      });
 
     expect(res.status).toBe(201);
     const newPost = postsStoreMock.write.mock.calls[0][0][1];
@@ -420,13 +437,26 @@ describe('post routes', () => {
   });
 
   it('allows request post on quest board', async () => {
-    postsStoreMock.read.mockReturnValue([]);
+    postsStoreMock.read.mockReturnValue([
+      {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      },
+    ]);
     postsStoreMock.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'request', boardId: 'quest-board' });
+      .send({
+        type: 'request',
+        boardId: 'quest-board',
+        linkedItems: [{ itemId: 't1', itemType: 'post' }],
+      });
     expect(res.status).toBe(201);
-    const written = postsStoreMock.write.mock.calls[0][0][0];
+    const written = postsStoreMock.write.mock.calls[0][0][1];
     expect(written.helpRequest).toBe(true);
     expect(written.boardId).toBe('quest-board');
   });
