@@ -150,7 +150,6 @@ router.post(
     const allowedTypes: PostType[] = [
       'free_speech',
       'request',
-      'project',
       'task',
       'change',
       'review',
@@ -166,15 +165,7 @@ router.post(
     const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
 
     // Validate required links based on post type
-    if (type === 'task') {
-      const hasProject = linkedItems.some(
-        (li: LinkedItem) => li.itemType === 'project'
-      );
-      if (!hasProject) {
-        res.status(400).json({ error: 'Tasks must link to a project' });
-        return;
-      }
-    } else if (type === 'change') {
+    if (type === 'change') {
       const target = linkedItems
         .filter((li: LinkedItem) => li.itemType === 'post')
         .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
@@ -859,12 +850,13 @@ router.post(
       created = {
         id: uuidv4(),
         authorId: userId,
-        type: 'project',
+        type: 'task',
         title: makeQuestNodeTitle(post.content),
         content: '',
         visibility: 'public',
         timestamp: new Date().toISOString(),
         replyTo: post.id,
+        status: 'To Do',
       } as DBPost;
     }
 

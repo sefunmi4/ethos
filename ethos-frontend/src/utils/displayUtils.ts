@@ -8,8 +8,6 @@ export const toTitleCase = (str: string): string =>
 export const POST_TYPE_LABELS: Record<PostType, string> = {
   free_speech: "Free Speech",
   request: "Request",
-  project: "Project",
-  quest: "Quest",
   task: "Task",
   change: "Change",
   review: "Review",
@@ -97,7 +95,6 @@ export interface SummaryTagData {
     | "change"
     | "log"
     | "request"
-    | "project"
     | "party_request";
   label: string;
   link?: string;

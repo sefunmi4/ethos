@@ -8,11 +8,10 @@ import { updatePost } from '../../api/post';
 import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { useBoardContext } from '../../contexts/BoardContext';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
-import type { PostType, Post, CollaberatorRoles, LinkedItem } from '../../types/postTypes';
+import type { PostType, Post, LinkedItem } from '../../types/postTypes';
 
 import { Select, Button, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import LinkControls from '../controls/LinkControls';
-import CollaberatorControls from '../controls/CollaberatorControls';
 
 interface EditPostProps {
   post: Post;
@@ -26,7 +25,6 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
   const [title, setTitle] = useState<string>(post.title || '');
   const [content, setContent] = useState<string>(post.content || '');
   const [details, setDetails] = useState<string>(post.details || '');
-  const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>(post.collaborators || []);
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>(post.linkedItems || []);
   const [repostedFrom] = useState(post.repostedFrom || null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -39,19 +37,11 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // Validation: For 'quest' post type, require at least one linked quest
-    if (type === 'quest' && linkedItems.length === 0) {
-      alert('Please link at least one quest.');
-      setIsSubmitting(false);
-      return;
-    }
-
     const payload: Partial<Post> = {
       type,
       title: type === 'task' ? content : title || undefined,
       content,
       ...(type === 'task' && details ? { details } : {}),
-      ...(type === 'quest' && { collaborators }),
       ...(type === 'task' || type === 'issue'
         ? { status }
         : {}),
@@ -156,12 +146,6 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
             )}
         </div>
       </FormSection>
-
-      {type === 'quest' && (
-        <FormSection title="Assigned Roles">
-          <CollaberatorControls value={collaborators} onChange={setCollaborators} />
-        </FormSection>
-      )}
 
       <FormSection title="Linked Items">
         <LinkControls

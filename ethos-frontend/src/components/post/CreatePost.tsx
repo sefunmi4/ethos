@@ -29,8 +29,6 @@ type CreatePostProps = {
    * When provided this overrides the currently selected board context.
    */
   boardId?: string;
-  initialGitFilePath?: string;
-  initialLinkedNodeId?: string;
   /**
    * Optional active board view. When provided and the board is a quest board
    * this limits the available post types to those relevant for the view.
@@ -45,8 +43,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialType = 'free_speech',
   questId,
   boardId,
-  initialGitFilePath,
-  initialLinkedNodeId,
   initialContent,
 }) => {
   const restrictedReply = !!replyTo;
@@ -78,7 +74,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     : boardType === 'quest'
     ? ['task', 'free_speech']
     : boardType === 'post'
-    ? ['free_speech', 'request', 'review', 'project', 'change']
+    ? ['free_speech', 'request', 'review', 'change']
     : POST_TYPES.map((p) => p.value as PostType);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -137,8 +133,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             }
           : {}),
         ...(requiresQuestRoles(type) && { collaborators }),
-        ...(type === 'commit' && initialGitFilePath ? { gitFilePath: initialGitFilePath } : {}),
-        ...(type === 'commit' && initialLinkedNodeId ? { linkedNodeId: initialLinkedNodeId } : {}),
         ...(type === 'review' && rating ? { rating } : {}),
       };
 
@@ -304,7 +298,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             onChange={setLinkedItems}
             allowCreateNew
             allowNodeSelection
-            itemTypes={['quest', 'post', 'project']}
+            itemTypes={['quest', 'post']}
           />
         </FormSection>
       )}
@@ -348,7 +342,7 @@ function requiresQuestRoles(type: PostType): boolean {
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'task', 'free_speech', 'change', 'review', 'project'].includes(type);
+  return ['request', 'task', 'free_speech', 'change', 'review'].includes(type);
 }
 
 function validateLinks(type: PostType, items: LinkedItem[]): {
@@ -360,9 +354,7 @@ function validateLinks(type: PostType, items: LinkedItem[]): {
       // Requests no longer require a linked task
       return { valid: true };
     case 'task':
-      return items.some(i => i.itemType === 'project')
-        ? { valid: true }
-        : { valid: false, message: 'Please link a project before submitting.' };
+      return { valid: true };
     case 'change':
       return items.some(i => i.itemType === 'post')
         ? { valid: true }

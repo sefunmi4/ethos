@@ -27,7 +27,7 @@ const LineVersionThread: React.FC<LineVersionThreadProps> = ({
       try {
         const posts = await fetchPostsByQuestId(questId);
         const commitPosts = posts.filter(
-          (p) => p.type === 'commit' && p.gitFilePath === filePath
+          (p) => p.gitFilePath === filePath
         );
         setCommits(commitPosts);
       } catch (err) {

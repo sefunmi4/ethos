@@ -120,7 +120,6 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
                 questId={questId}
                 boardId={`log-${questId}`}
                 parentId={linkedNodeId}
-                allowIssue
                 onSave={(p) => {
                   setItems((prev) => [...prev, p]);
                   setShowForm(false);

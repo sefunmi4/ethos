@@ -14,7 +14,6 @@ interface QuickTaskFormProps {
   parentId?: string;
   onSave?: (post: Post) => void;
   onCancel: () => void;
-  allowIssue?: boolean;
 }
 
 const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
@@ -24,13 +23,11 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
   parentId,
   onSave,
   onCancel,
-  allowIssue = false,
 }) => {
   const [title, setTitle] = useState('');
   const [taskType, setTaskType] = useState<'file' | 'folder' | 'abstract'>('file');
   const [taskStatus, setTaskStatus] = useState(status || 'To Do');
   const [submitting, setSubmitting] = useState(false);
-  const [postType, setPostType] = useState<'task' | 'issue'>('task');
   const { appendToBoard } = useBoardContext() || {};
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +37,7 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
     setSubmitting(true);
     try {
       const newPost = await addPost({
-        type: postType,
+        type: 'task',
         content: title,
         visibility: 'public',
         questId,
@@ -81,16 +78,6 @@ const QuickTaskForm: React.FC<QuickTaskFormProps> = ({
         placeholder="Item name"
         required
       />
-      {allowIssue && (
-        <Select
-          value={postType}
-          onChange={(e) => setPostType(e.target.value as 'task' | 'issue')}
-          options={[
-            { value: 'task', label: 'Task' },
-            { value: 'issue', label: 'Issue' },
-          ]}
-        />
-      )}
       <Select
         value={taskType}
         onChange={(e) =>

@@ -69,16 +69,6 @@ describe.skip('ReactionControls', () => {
     expect(await screen.findByText('Quest Log')).toBeInTheDocument();
   });
 
-  it('shows File Change View for commit posts', async () => {
-    const commitPost = { ...basePost, type: 'commit' } as Post;
-    render(
-      <BrowserRouter>
-        <ReactionControls post={commitPost} user={user} />
-      </BrowserRouter>
-    );
-    expect(await screen.findByText('File Change View')).toBeInTheDocument();
-  });
-
   it('defaults to Reply for other post types', async () => {
     const fsPost = { ...basePost, type: 'free_speech' } as Post;
     render(

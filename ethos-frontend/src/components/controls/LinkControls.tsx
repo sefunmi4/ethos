@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Spinner } from '../ui';
 import Select from '../ui/Select';
 import { addQuest, fetchAllQuests } from '../../api/quest';
-import { fetchAllProjects } from '../../api/project';
 import { toTitleCase } from '../../utils/displayUtils';
 import { fetchAllPosts } from '../../api/post';
 import type { LinkedItem, Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
-import type { Project } from '../../types/projectTypes';
 
 interface LinkControlsProps {
   value: LinkedItem[];
@@ -16,7 +14,7 @@ interface LinkControlsProps {
   allowNodeSelection?: boolean;
   label?: string;
   currentPostId?: string | null;
-  itemTypes?: ('quest' | 'post' | 'project')[];
+  itemTypes?: ('quest' | 'post')[];
 }
 
 const LinkControls: React.FC<LinkControlsProps> = ({
@@ -29,7 +27,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 }) => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -55,7 +52,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
 
       if (itemTypes.includes('quest')) promises.push(fetchAllQuests());
       if (itemTypes.includes('post')) promises.push(fetchAllPosts());
-      if (itemTypes.includes('project')) promises.push(fetchAllProjects());
 
       const results = await Promise.allSettled(promises);
       let idx = 0;
@@ -73,13 +69,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
           setPosts(list);
         }
       }
-      if (itemTypes.includes('project')) {
-        const projectRes = results[idx++];
-        if (projectRes.status === 'fulfilled') {
-          const list = (projectRes.value || []) as Project[];
-          setProjects(list);
-        }
-      }
       setLoading(false);
     };
 
@@ -89,7 +78,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const handleLinkSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const [type, id] = e.target.value.split(':');
     const alreadyLinked = value.find(
-      v => v.itemId === id && v.itemType === (type as 'quest' | 'post' | 'project')
+      v => v.itemId === id && v.itemType === (type as 'quest' | 'post')
     );
     if (!alreadyLinked) {
       let header = '';
@@ -99,15 +88,14 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         // TODO: replace simple truncation with AI-generated summaries
         header = text.length <= 50 ? text : text.slice(0, 50) + '…';
       } else {
-        const list = type === 'project' ? projects : quests;
-        const item = list.find((x) => x.id === id);
+        const item = quests.find((x) => x.id === id);
         header = toTitleCase(item?.title || '');
       }
       onChange([
         ...value,
         {
           itemId: id,
-          itemType: type as 'quest' | 'post' | 'project',
+          itemType: type as 'quest' | 'post',
           nodeId: '',
           title: header,
           linkType: 'related',
@@ -166,14 +154,6 @@ const LinkControls: React.FC<LinkControlsProps> = ({
           type: 'quest',
         }))
       : []),
-    ...(itemTypes.includes('project')
-      ? projects.map((p) => ({
-          value: `project:${p.id}`,
-          label: `📁 Project: ${toTitleCase(p.title)}`,
-          nodeId: p.title,
-          type: 'project',
-        }))
-      : []),
     ...(itemTypes.includes('post')
       ? filteredPosts.map((p) => ({
           value: `post:${p.id}`,
@@ -204,7 +184,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         <> 
           {itemTypes.includes('post') && (
             <div className="flex gap-1 mb-1 flex-wrap">
-              {['all', 'free_speech', 'request', 'project', 'quest', 'task', 'change', 'review'].map((t) => (
+              {['all', 'free_speech', 'request', 'task', 'change', 'review'].map((t) => (
                 <button
                   key={t}
                   type="button"

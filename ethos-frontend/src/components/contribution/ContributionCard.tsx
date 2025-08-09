@@ -102,7 +102,8 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
         : undefined;
       const postLike = enrichedHeadPost ?? ({
         id: quest.headPostId,
-        type: 'quest',
+        // represent quests as tasks for timeline/post history displays
+        type: 'task',
         authorId: quest.authorId,
         author: quest.author
           ? { id: quest.author.id, username: quest.author.username }
