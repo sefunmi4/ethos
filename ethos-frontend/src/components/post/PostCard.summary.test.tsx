@@ -36,15 +36,20 @@ const post: Post = {
   linkedItems: [],
 } as unknown as Post;
 
-describe.skip('PostCard summary tags', () => {
-  it('renders summary tags with quest title and node id', () => {
+describe('PostCard summary tags', () => {
+  it('renders type, quest, status, and username tags', () => {
+    const enriched = { ...post, author: { id: 'u1', username: 'alice' } } as Post;
     render(
       <BrowserRouter>
-        <PostCard post={post} questTitle="Quest A" />
+        <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
+    expect(screen.getByText('Task')).toBeInTheDocument();
     expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
-    expect(screen.getByText('Task: T1')).toBeInTheDocument();
     expect(screen.getByText('In Progress')).toBeInTheDocument();
+    const userLink = screen.getByRole('link', { name: '@alice' });
+    expect(userLink).toHaveAttribute('href', '/user/u1');
+    const typeLink = screen.getByRole('link', { name: 'Task' });
+    expect(typeLink).toHaveAttribute('href', '/post/p1');
   });
 });

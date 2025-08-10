@@ -52,7 +52,8 @@ it('hides status controls and shows only request tag', () => {
     </BrowserRouter>
   );
 
-  expect(screen.getByText('Request: @u1')).toBeInTheDocument();
+  expect(screen.getByText('Request')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
   expect(screen.queryByText('In Progress')).toBeNull();
   expect(screen.queryByRole('combobox')).toBeNull();
   expect(screen.getByText('1 day ago')).toBeInTheDocument();
