@@ -43,7 +43,7 @@ router.get('/featured', authOptional_1.default, (req, res) => {
 });
 // GET active quests (optionally excluding a user)
 router.get('/active', authOptional_1.default, (req, res) => {
-    const { userId } = req.query;
+    const { userId, includeTasks } = req.query;
     const quests = stores_1.questsStore.read();
     const posts = stores_1.postsStore.read();
     const active = quests
@@ -60,6 +60,26 @@ router.get('/active', authOptional_1.default, (req, res) => {
         ...q,
         gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
     }));
+    if (includeTasks) {
+        const taskPosts = posts.filter((p) => p.type === 'task');
+        const rootTasks = active.flatMap((q) => {
+            const edges = q.taskGraph || [];
+            return taskPosts
+                .filter((p) => p.questId === q.id)
+                .filter((p) => {
+                const hasChild = edges.some((e) => e.from === p.id);
+                const hasParent = edges.some((e) => e.to === p.id);
+                if (!hasChild || hasParent)
+                    return false;
+                if (userId) {
+                    return p.authorId !== userId;
+                }
+                return true;
+            });
+        });
+        res.json({ quests: active, tasks: rootTasks });
+        return;
+    }
     res.json(active);
 });
 // GET all quests
@@ -341,6 +361,8 @@ router.post('/:id/link', authMiddleware_1.authMiddleware, (req, res) => {
         if (post && post.type === 'task') {
             quest.taskGraph = quest.taskGraph || [];
             const from = parentId || quest.headPostId;
+            // ensure single parent edge per task
+            quest.taskGraph = quest.taskGraph.filter(e => e.to !== postId);
             const edgeExists = quest.taskGraph.some(e => e.to === postId && e.from === from);
             if (!edgeExists) {
                 quest.taskGraph.push({ from, to: postId, type: edgeType, label: edgeLabel });
