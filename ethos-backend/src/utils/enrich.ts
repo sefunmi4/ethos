@@ -194,7 +194,10 @@ export const enrichQuest = (
     quest.linkedPosts?.some((l) => l.itemId === p.id)
   );
 
-  const enrichedCollaborators: EnrichedCollaborator[] = quest.collaborators.map((c) => {
+  // Some quests may not have collaborators defined (e.g. when coming from
+  // certain Postgres tables). To avoid runtime errors, gracefully handle
+  // missing collaborator arrays.
+  const enrichedCollaborators: EnrichedCollaborator[] = (quest.collaborators ?? []).map((c) => {
     if (!c.userId) {
       return { roles: c.roles, isOpenRole: true };
     }
