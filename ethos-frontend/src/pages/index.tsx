@@ -19,18 +19,31 @@ const HomePage: React.FC = () => {
 
   const questBoard = boards['quest-board'];
   const timelineBoard = boards['timeline-board'];
-  const showQuestSeeAll = (questBoard?.enrichedItems?.length || 0) > BOARD_PREVIEW_LIMIT;
-  const showTimelineSeeAll =
-    (timelineBoard?.enrichedItems?.length || 0) >= BOARD_PREVIEW_LIMIT;
+
+  const questItems = useMemo(
+    () => getRenderableBoardItems(questBoard?.enrichedItems || []),
+    [questBoard?.enrichedItems]
+  );
+
+  const timelineItems = useMemo(
+    () => getRenderableBoardItems(timelineBoard?.enrichedItems || []),
+    [timelineBoard?.enrichedItems]
+  );
+
+  const showQuestSeeAll = questItems.length > BOARD_PREVIEW_LIMIT;
+  const showTimelineSeeAll = timelineItems.length >= BOARD_PREVIEW_LIMIT;
+
   const postTypes = useMemo(() => {
-    if (!questBoard?.enrichedItems) return [] as string[];
+    if (!questItems.length) return [] as string[];
     const types = new Set<string>();
-    getRenderableBoardItems(questBoard.enrichedItems).forEach((it) => {
+    questItems.forEach((it) => {
       if ('type' in it) types.add((it as { type?: string }).type as string);
     });
     return Array.from(types);
-  }, [questBoard?.enrichedItems]);
-  const showPostFilter = postTypes.length > 1 && (questBoard?.enrichedItems?.length || 0) > 0;
+  }, [questItems]);
+  const showPostFilter = postTypes.length > 1 && questItems.length > 0;
+  const hasQuestItems = questItems.length > 0;
+  const hasTimelineItems = timelineItems.length > 0;
 
   if (authLoading) {
     return (
@@ -51,40 +64,44 @@ const HomePage: React.FC = () => {
         </p>
       </header>
 
-      <section className="space-y-4">
-        {showPostFilter && (
-          <PostTypeFilter value={postType} onChange={setPostType} />
-        )}
-        <Board
-          boardId="quest-board"
-          title="🗺️ Quest Board"
-          layout="grid"
-          gridLayout="horizontal"
-          compact
-          user={user as User}
-          hideControls
-          filter={postType ? { postType } : {}}
-        />
-        {showQuestSeeAll && (
-          <div className="text-right">
-            <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
-              → See all
-            </Link>
-          </div>
-        )}
-      </section>
+      {hasQuestItems && (
+        <section className="space-y-4">
+          {showPostFilter && (
+            <PostTypeFilter value={postType} onChange={setPostType} />
+          )}
+          <Board
+            boardId="quest-board"
+            title="🗺️ Quest Board"
+            layout="grid"
+            gridLayout="horizontal"
+            compact
+            user={user as User}
+            hideControls
+            filter={postType ? { postType } : {}}
+          />
+          {showQuestSeeAll && (
+            <div className="text-right">
+              <Link to={ROUTES.BOARD('quest-board')} className="text-blue-600 underline text-sm">
+                → See all
+              </Link>
+            </div>
+          )}
+        </section>
+      )}
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
-        <RecentActivityBoard />
-        {showTimelineSeeAll && (
-          <div className="text-right">
-            <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
-              → See all
-            </Link>
-          </div>
-        )}
-      </section>
+      {hasTimelineItems && (
+        <section>
+          <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
+          <RecentActivityBoard />
+          {showTimelineSeeAll && (
+            <div className="text-right">
+              <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
+                → See all
+              </Link>
+            </div>
+          )}
+        </section>
+      )}
 
     </main>
   );
