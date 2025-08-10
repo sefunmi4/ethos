@@ -15,6 +15,9 @@ import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 
 import type { Post, PostType } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
+import QuestNodeInspector from '../../components/quest/QuestNodeInspector';
+import GitFileBrowserInline from '../../components/git/GitFileBrowserInline';
+import TeamPanel from '../../components/quest/TeamPanel';
 
 const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +35,7 @@ const PostPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [parentPost, setParentPost] = useState<Post | null>(null);
 
   const boardWithPost = useMemo<BoardData | null>(() => {
     if (!replyBoard || !post) return null;
@@ -43,11 +47,35 @@ const PostPage: React.FC = () => {
     };
   }, [replyBoard, post]);
 
+  const taskBoard = useMemo<BoardData | null>(() => {
+    if (!replyBoard) return null;
+    const tasks =
+      replyBoard.enrichedItems?.filter(
+        (item): item is Post => 'type' in item && (item as Post).type === 'task'
+      ) || [];
+    if (!tasks.length) return null;
+    return {
+      ...replyBoard,
+      items: tasks.map(t => t.id),
+      enrichedItems: tasks,
+    };
+  }, [replyBoard]);
+
   useEffect(() => {
     if (searchParams.get('reply') === '1') {
       setShowReplyForm(true);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (post?.type === 'review' && post.replyTo) {
+      fetchPostById(post.replyTo)
+        .then(setParentPost)
+        .catch(() => setParentPost(null));
+    } else {
+      setParentPost(null);
+    }
+  }, [post]);
 
   const fetchPostData = useCallback(async () => {
     if (!id) return;
@@ -121,13 +149,12 @@ const PostPage: React.FC = () => {
 
   return (
     <main className="container mx-auto max-w-3xl px-4 py-10 space-y-12 bg-soft dark:bg-soft-dark text-primary">
-      {post.repostedFrom && (
-        <section className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-secondary">
-          ♻️ Reposted from @{post.repostedFrom.username}
-        </section>
-      )}
-
       <section>
+        {post.repostedFrom && (
+          <div className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 mb-4 text-sm text-secondary">
+            ♻️ Reposted from @{post.repostedFrom.username}
+          </div>
+        )}
         <PostCard post={post} showDetails />
         {showReplyForm && (
           <div className="mt-4">
@@ -153,6 +180,33 @@ const PostPage: React.FC = () => {
         )}
       </section>
 
+      <section>
+        {post.type === 'request' && taskBoard && (
+          <Board
+            boardId={`tasks-${id}`}
+            board={taskBoard}
+            layout="grid"
+            editable={false}
+            compact={true}
+            user={user as User}
+          />
+        )}
+        {post.type === 'task' && post.questId && (
+          <div className="grid md:grid-cols-2 gap-4">
+            <QuestNodeInspector questId={post.questId} node={post} user={user as User} showPost={false} />
+            <div className="space-y-4">
+              <GitFileBrowserInline questId={post.questId} />
+              <TeamPanel questId={post.questId} node={post} canEdit={!!user} />
+            </div>
+          </div>
+        )}
+        {post.type === 'change' && post.questId && (
+          <GitFileBrowserInline questId={post.questId} />
+        )}
+        {post.type === 'review' && parentPost && (
+          <PostCard post={parentPost} />
+        )}
+      </section>
 
       <section>
         {boardWithPost ? (

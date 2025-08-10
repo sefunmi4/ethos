@@ -69,12 +69,9 @@ describe('PostListItem', () => {
         <PostListItem post={reviewPost} />
       </BrowserRouter>
     );
-
-    expect(
-      screen.getAllByText((_, element) =>
-        element?.textContent === 'Review: Quest B @u1'
-      ).length
-    ).toBeGreaterThan(0);
+    expect(screen.getByText('Review')).toBeInTheDocument();
+    expect(screen.getByText('Quest: Quest B')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
   });
 
   it('renders generic review tag when quest title missing', () => {
@@ -89,11 +86,7 @@ describe('PostListItem', () => {
         <PostListItem post={reviewPost} />
       </BrowserRouter>
     );
-
-    expect(
-      screen.getAllByText((_, element) =>
-        element?.textContent === 'Review @u1'
-      ).length
-    ).toBeGreaterThan(0);
+    expect(screen.getByText('Review')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
   });
 });
