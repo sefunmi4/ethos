@@ -211,7 +211,7 @@ const Board: React.FC<BoardProps> = ({
 
   const postTypes = useMemo(() => {
     if (board?.id === 'quest-board') {
-      return ['request', 'review', 'issue'];
+      return ['request', 'review'];
     }
     const types = new Set<string>();
     renderableItems.forEach((it) => {

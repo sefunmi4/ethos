@@ -28,7 +28,7 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
   initialOpen = false,
 }) => {
   const [items, setItems] = useState<Post[]>([]);
-  const [filter, setFilter] = useState<'all' | 'issues' | 'tasks'>('all');
+  const [filter, setFilter] = useState<'all' | 'tasks'>('all');
   const [showForm, setShowForm] = useState(false);
   const [open, setOpen] = useState(initialOpen);
 
@@ -40,8 +40,8 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
         setItems(
           posts.filter(
             (p) =>
-              (p.type === 'issue' && p.linkedNodeId === linkedNodeId) ||
-              (p.type === 'task' && p.replyTo === linkedNodeId),
+              p.type === 'task' &&
+              (p.linkedNodeId === linkedNodeId || p.replyTo === linkedNodeId),
           ),
         );
       })
@@ -51,7 +51,6 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
   }, [questId, linkedNodeId]);
 
   const filtered = items.filter((i) => {
-    if (filter === 'issues') return i.type === 'issue';
     if (filter === 'tasks') return i.type === 'task';
     return true;
   });
@@ -89,14 +88,6 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
                 onClick={() => setFilter('all')}
               >
                 All
-              </button>
-              <button
-                className={`px-2 py-0.5 rounded border ${
-                  filter === 'issues' ? 'bg-accent text-white border-accent' : 'border-secondary'
-                }`}
-                onClick={() => setFilter('issues')}
-              >
-                Issues
               </button>
               <button
                 className={`px-2 py-0.5 rounded border ${
@@ -144,22 +135,22 @@ const StatusBoardPanel: React.FC<StatusBoardPanelProps> = ({
                 {grouped[value].length === 0 ? (
                   <div className="text-xs text-secondary">No items</div>
                 ) : (
-                  grouped[value].map((issue) => (
+                  grouped[value].map((task) => (
                     <div
-                      key={issue.id}
+                      key={task.id}
                       className="text-xs border border-secondary rounded p-1 bg-background space-y-1"
                     >
                       <span
-                        title={issue.title || issue.content}
+                        title={task.title || task.content}
                         className="block truncate"
                       >
                         <SummaryTag
-                          type={issue.type as 'task' | 'issue'}
-                          label={getQuestLinkLabel(issue, '', false)}
-                          link={ROUTES.POST(issue.id)}
+                          type="task"
+                          label={getQuestLinkLabel(task, '', false)}
+                          link={ROUTES.POST(task.id)}
                         />
                       </span>
-                      {issue.status && <StatusBadge status={issue.status} />}
+                      {task.status && <StatusBadge status={task.status} />}
                     </div>
                   ))
                 )}

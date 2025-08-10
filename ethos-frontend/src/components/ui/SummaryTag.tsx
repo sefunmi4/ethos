@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import {
   FaBookOpen,
   FaTasks,
-  FaBug,
   FaStickyNote,
   FaStar,
   FaCommentAlt,
@@ -12,7 +11,6 @@ import {
   FaUserCheck,
   FaCog,
   FaBullhorn,
-  FaCodeBranch,
   FaCheckCircle,
   FaUsers,
   FaExchangeAlt
@@ -23,7 +21,6 @@ import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
 export type SummaryTagType =
   | 'quest'
   | 'task'
-  | 'issue'
   | 'log'
   | 'review'
   | 'category'
@@ -34,7 +31,6 @@ export type SummaryTagType =
   | 'change'
   | 'party_request'
   | 'quest_task'
-  | 'commit'
   | 'meta_system'
   | 'meta_announcement'
   | 'solved';
@@ -56,7 +52,6 @@ export interface SummaryTagData {
 const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> = {
   quest: FaBookOpen,
   task: FaTasks,
-  issue: FaBug,
   log: FaStickyNote,
   review: FaStar,
   category: FaStickyNote,
@@ -67,7 +62,6 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
   change: FaExchangeAlt,
   party_request: FaUsers,
   quest_task: FaUserCheck,
-  commit: FaCodeBranch,
   meta_system: FaCog,
   meta_announcement: FaBullhorn,
   solved: FaCheckCircle,
@@ -76,7 +70,6 @@ const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> =
 const colors: Record<SummaryTagType, string> = {
   quest: 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200',
   task: 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-200',
-  issue: 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-200',
   log: 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
   review: 'bg-teal-100 text-teal-800 dark:bg-teal-800 dark:text-teal-200',
   category: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200',
@@ -87,7 +80,6 @@ const colors: Record<SummaryTagType, string> = {
   change: 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200',
   party_request: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',
   quest_task: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-200',
-  commit: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',
   meta_system: 'bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-200',
   meta_announcement: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200',
   solved: 'bg-lime-100 text-lime-800 dark:bg-lime-800 dark:text-lime-200',

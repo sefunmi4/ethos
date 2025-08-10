@@ -42,7 +42,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
       title: type === 'task' ? content : title || undefined,
       content,
       ...(type === 'task' && details ? { details } : {}),
-      ...(type === 'task' || type === 'issue'
+      ...(type === 'task'
         ? { status }
         : {}),
       linkedItems,
@@ -71,12 +71,12 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
           onChange={(e) => {
             const val = e.target.value as PostType;
             setType(val);
-            if (['task', 'issue'].includes(val)) setStatus('To Do');
+            if (val === 'task') setStatus('To Do');
           }}
           options={POST_TYPES.map(({ value, label }) => ({ value, label }))}
         />
 
-        {['task', 'issue'].includes(type) && (
+        {type === 'task' && (
           <>
             <Label htmlFor="task-status">Status</Label>
             <Select
