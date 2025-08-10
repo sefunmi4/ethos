@@ -66,6 +66,11 @@ export const fetchActiveQuests = async (userId?: string): Promise<Quest[]> => {
   return res.data;
 };
 
+export const fetchActiveQuestBoard = async (): Promise<{ quests: Quest[]; tasks: Post[] }> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/active?includeTasks=1`);
+  return res.data;
+};
+
 /**
  * Update a quest by ID  
  * @function updateQuestById  

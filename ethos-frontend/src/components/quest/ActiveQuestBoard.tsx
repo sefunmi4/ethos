@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { fetchActiveQuests } from '../../api/quest';
+import { fetchActiveQuestBoard } from '../../api/quest';
 import { fetchRecentPosts, fetchPostById } from '../../api/post';
 import QuestCard from './QuestCard';
 import CreateQuest from './CreateQuest';
 import { Spinner, Button, ErrorBoundary } from '../ui';
+import TaskCard from './TaskCard';
 import type { Quest } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -21,11 +22,17 @@ interface ActiveQuestBoardProps {
 const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
   const { user } = useAuth();
   const [quests, setQuests] = useState<QuestWithLog[]>([]);
+  const [tasks, setTasks] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
+
+  const items = [
+    ...quests.map(q => ({ type: 'quest' as const, quest: q })),
+    ...tasks.map(t => ({ type: 'task' as const, task: t })),
+  ];
 
   useEffect(() => {
     if (!user) return;
@@ -33,17 +40,12 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
     const load = async () => {
       setLoading(true);
       try {
-        const [quests, recent] = await Promise.all([
-          // Fetch all active quests. Passing a userId would exclude
-          // quests the current user participates in, which leads to
-          // an empty board when all quests belong to this user.
-          fetchActiveQuests(),
-          // Recent posts from any user help identify the latest log
-          // entry for each quest.
+        const [boardData, recent] = await Promise.all([
+          fetchActiveQuestBoard(),
           fetchRecentPosts(undefined, 1),
         ]);
         const questMap: Record<string, QuestWithLog> = {};
-        quests.forEach(q => {
+        boardData.quests.forEach(q => {
           questMap[q.id] = { ...q };
         });
         recent.forEach(p => {
@@ -56,9 +58,8 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
             questMap[p.questId] = { ...current, lastLog: p };
           }
         });
-
         await Promise.all(
-          quests.map(async q => {
+          boardData.quests.map(async q => {
             if (!questMap[q.id].lastLog && q.headPostId) {
               try {
                 const head = await fetchPostById(q.headPostId);
@@ -73,11 +74,15 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
         let enriched = Object.values(questMap);
         if (onlyMine) {
           enriched = enriched.filter(q => q.authorId === user?.id);
+          setTasks(boardData.tasks.filter(t => t.authorId === user?.id));
+        } else {
+          setTasks(boardData.tasks);
         }
         setQuests(enriched);
       } catch (err) {
         console.warn('[ActiveQuestBoard] Failed to load quests', err);
         setQuests([]);
+        setTasks([]);
       } finally {
         setLoading(false);
       }
@@ -97,7 +102,7 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
 
   const updateIndex = (delta: number) => {
     setIndex(prev => {
-      const next = (prev + delta + quests.length) % quests.length;
+      const next = (prev + delta + items.length) % items.length;
       scrollToIndex(next);
       indexRef.current = next;
       return next;
@@ -109,10 +114,10 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
   }, [index]);
 
   useEffect(() => {
-    if (quests.length > 0) {
+    if (items.length > 0) {
       scrollToIndex(indexRef.current);
     }
-  }, [quests.length]);
+  }, [items.length]);
 
   // Update index when user scrolls manually
   useEffect(() => {
@@ -142,7 +147,7 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
     return () => {
       el.removeEventListener('scroll', handleScroll);
     };
-  }, [quests]);
+  }, [quests, tasks]);
 
   const handleCreateSave = (quest: Quest) => {
     setQuests(q => [quest, ...q]);
@@ -151,7 +156,7 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
 
   if (!user) return null;
   if (loading) return <Spinner />;
-  if (quests.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
@@ -181,9 +186,9 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
           ref={containerRef}
           className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
         >
-          {quests.map((q, idx) => (
+          {items.map((item, idx) => (
             <div
-              key={q.id}
+              key={item.type === 'quest' ? item.quest.id : item.task.id}
               className={
                 'snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-transform duration-300 ' +
                 (idx === index
@@ -194,12 +199,16 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
               }
             >
               <ErrorBoundary>
-                <QuestCard quest={q} user={user as User} />
+                {item.type === 'quest' ? (
+                  <QuestCard quest={item.quest} user={user as User} />
+                ) : (
+                  <TaskCard task={item.task} questId={item.task.questId!} user={user as User} />
+                )}
               </ErrorBoundary>
             </div>
           ))}
         </div>
-        {quests.length > 1 && (
+        {items.length > 1 && (
           <>
             <button
               type="button"
@@ -220,9 +229,9 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
       </div>
       <div className="flex justify-center mt-2">
         {(() => {
-          const dots = quests.length > 3 ? [index - 1, index, index + 1] : quests.map((_, i) => i);
+          const dots = items.length > 3 ? [index - 1, index, index + 1] : items.map((_, i) => i);
           return dots.map((i, idx) => {
-            const actual = ((i % quests.length) + quests.length) % quests.length;
+            const actual = ((i % items.length) + items.length) % items.length;
             const isActive = actual === index;
             const isEdge = idx === 0 || idx === dots.length - 1;
             return (
