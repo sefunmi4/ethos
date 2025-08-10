@@ -962,7 +962,22 @@ router.post(
 router.post(
   '/:id/archive',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        await pool.query(
+          "UPDATE posts SET tags = ARRAY(SELECT DISTINCT UNNEST(COALESCE(tags, '{}'::text[]) || ARRAY['archived'])) WHERE id = $1",
+          [req.params.id]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const posts = postsStore.read();
     const post = posts.find((p) => p.id === req.params.id);
     if (!post) {
@@ -1000,7 +1015,22 @@ router.post(
 router.delete(
   '/:id/archive',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        await pool.query(
+          "UPDATE posts SET tags = array_remove(tags, 'archived') WHERE id = $1",
+          [req.params.id]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const posts = postsStore.read();
     const post = posts.find((p) => p.id === req.params.id);
     if (!post) {
@@ -1020,7 +1050,27 @@ router.delete(
 router.delete(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        const result = await pool.query(
+          'DELETE FROM posts WHERE id = $1 RETURNING *',
+          [req.params.id]
+        );
+        const post = result.rows[0];
+        if (!post) {
+          res.status(404).json({ error: 'Post not found' });
+          return;
+        }
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const posts = postsStore.read();
     const quests = questsStore.read();
     const index = posts.findIndex((p) => p.id === req.params.id);
