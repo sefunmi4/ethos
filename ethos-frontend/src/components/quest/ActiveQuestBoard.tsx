@@ -156,7 +156,6 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
 
   if (!user) return null;
   if (loading) return <Spinner />;
-  if (items.length === 0) return null;
 
   return (
     <div className="space-y-4 bg-background p-4 rounded shadow-md">
@@ -181,74 +180,82 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
           />
         </div>
       )}
-      <div className="relative">
-        <div
-          ref={containerRef}
-          className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
-        >
-          {items.map((item, idx) => (
-            <div
-              key={item.type === 'quest' ? item.quest.id : item.task.id}
-              className={
-                'snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-transform duration-300 ' +
-                (idx === index
-                  ? 'scale-100'
-                  : Math.abs(idx - index) === 1
-                  ? 'scale-95 opacity-80'
-                  : 'scale-90 opacity-50')
-              }
-            >
-              <ErrorBoundary>
-                {item.type === 'quest' ? (
-                  <QuestCard quest={item.quest} user={user as User} />
-                ) : (
-                  <TaskCard task={item.task} questId={item.task.questId!} user={user as User} />
-                )}
-              </ErrorBoundary>
-            </div>
-          ))}
+      {items.length === 0 ? (
+        <div className="text-center text-secondary py-8">
+          No posts available to view.
         </div>
-        {items.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() => updateIndex(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
+      ) : (
+        <>
+          <div className="relative">
+            <div
+              ref={containerRef}
+              className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
             >
-              ◀
-            </button>
-            <button
-              type="button"
-              onClick={() => updateIndex(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
-            >
-              ▶
-            </button>
-          </>
-        )}
-      </div>
-      <div className="flex justify-center mt-2">
-        {(() => {
-          const dots = items.length > 3 ? [index - 1, index, index + 1] : items.map((_, i) => i);
-          return dots.map((i, idx) => {
-            const actual = ((i % items.length) + items.length) % items.length;
-            const isActive = actual === index;
-            const isEdge = idx === 0 || idx === dots.length - 1;
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setIndex(actual)}
-                className={
-                  'mx-1 w-2 h-2 rounded-full transition-all ' +
-                  (isActive ? 'bg-accent opacity-100' : 'bg-secondary/40 opacity-70') +
-                  (isEdge && !isActive ? ' scale-75' : '')
-                }
-              />
-            );
-          });
-        })()}
-      </div>
+              {items.map((item, idx) => (
+                <div
+                  key={item.type === 'quest' ? item.quest.id : item.task.id}
+                  className={
+                    'snap-center flex-shrink-0 w-[90%] sm:w-[850px] transition-transform duration-300 ' +
+                    (idx === index
+                      ? 'scale-100'
+                      : Math.abs(idx - index) === 1
+                      ? 'scale-95 opacity-80'
+                      : 'scale-90 opacity-50')
+                  }
+                >
+                  <ErrorBoundary>
+                    {item.type === 'quest' ? (
+                      <QuestCard quest={item.quest} user={user as User} />
+                    ) : (
+                      <TaskCard task={item.task} questId={item.task.questId!} user={user as User} />
+                    )}
+                  </ErrorBoundary>
+                </div>
+              ))}
+            </div>
+            {items.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => updateIndex(-1)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
+                >
+                  ◀
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateIndex(1)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-surface hover:bg-background rounded-full shadow p-1"
+                >
+                  ▶
+                </button>
+              </>
+            )}
+          </div>
+          <div className="flex justify-center mt-2">
+            {(() => {
+              const dots = items.length > 3 ? [index - 1, index, index + 1] : items.map((_, i) => i);
+              return dots.map((i, idx) => {
+                const actual = ((i % items.length) + items.length) % items.length;
+                const isActive = actual === index;
+                const isEdge = idx === 0 || idx === dots.length - 1;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setIndex(actual)}
+                    className={
+                      'mx-1 w-2 h-2 rounded-full transition-all ' +
+                      (isActive ? 'bg-accent opacity-100' : 'bg-secondary/40 opacity-70') +
+                      (isEdge && !isActive ? ' scale-75' : '')
+                    }
+                  />
+                );
+              });
+            })()}
+          </div>
+        </>
+      )}
     </div>
 
   );
