@@ -12,6 +12,11 @@ import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
 import type { AuthenticatedRequest } from '../types/express';
 
+const toMs = (value?: string | number | Date) => {
+  const t = new Date(value ?? 0).getTime();
+  return Number.isNaN(t) ? 0 : t;
+};
+
 
 // Gather active quests for the quest board. Returns up to 10 recent quests
 // excluding those authored by the requesting user.
@@ -22,7 +27,7 @@ const getQuestBoardQuests = (
   return quests
     .filter(q => q.status === 'active' && q.visibility === 'public')
     .filter(q => !userId || q.authorId !== userId)
-    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .sort((a, b) => toMs(b.createdAt) - toMs(a.createdAt))
     .slice(0, 10)
     .map(q => q.id);
 };
@@ -43,7 +48,7 @@ const getQuestBoardRequests = (
           p.needsHelp === true)
     )
     .filter(p => !userId || p.authorId !== userId)
-    .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+    .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
     .slice(0, DEFAULT_PAGE_SIZE)
     .map(p => p.id);
 };
@@ -92,9 +97,9 @@ const getTimelineBoardItems = (
           highlight = true;
         }
       }
-      return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
+      return { id: p.id, timestamp: toMs(p.timestamp || (p as any).createdAt), weight, highlight };
     })
-    .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
+    .sort((a, b) => b.weight - a.weight || b.timestamp - a.timestamp);
 
   return {
     items: withMeta.map(it => it.id),
@@ -140,7 +145,7 @@ router.get(
           if (userId && b.id === 'my-posts') {
             b.items = posts
               .filter(p => p.authorId === userId && p.systemGenerated !== true)
-              .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+              .sort((a, b) => toMs(b.timestamp || b.createdAt) - toMs(a.timestamp || a.createdAt))
               .map(p => p.id);
           } else if (userId && b.id === 'my-quests') {
             b.items = quests.filter(q => q.authorId === userId).map(q => q.id);
@@ -189,9 +194,8 @@ router.get(
               p.systemGenerated !== true
           )
           .sort((a, b) =>
-            (b.timestamp || b.createdAt || '').localeCompare(
-              a.timestamp || a.createdAt || ''
-            )
+            toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt)
           )
           .map(p => p.id);
         return { ...board, items: filtered };
@@ -259,11 +263,7 @@ router.get(
 
     const replies = posts
       .filter(p => p.replyTo === postId)
-      .sort((a, b) => {
-        const ta = a.timestamp || '';
-        const tb = b.timestamp || '';
-        return tb.localeCompare(ta);
-      })
+      .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
       .slice(start, end);
 
     const board: BoardData = {
@@ -399,9 +399,8 @@ router.get(
             p => p.authorId === userId && p.systemGenerated !== true
           )
           .sort((a, b) =>
-            (b.timestamp || b.createdAt || '').localeCompare(
-              a.timestamp || a.createdAt || ''
-            )
+            toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt)
           )
           .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
@@ -478,9 +477,8 @@ router.get(
           boardItems = posts
             .filter(p => p.authorId === userId && p.systemGenerated !== true)
             .sort((a, b) =>
-              (b.timestamp || b.createdAt || '').localeCompare(
-                a.timestamp || a.createdAt || ''
-              )
+              toMs(b.timestamp || b.createdAt) -
+              toMs(a.timestamp || a.createdAt)
             )
             .map(p => p.id);
         } else if (userId && board.id === 'my-quests') {
@@ -564,9 +562,8 @@ router.get(
           p => p.authorId === userId && p.systemGenerated !== true
         )
         .sort((a, b) =>
-          (b.timestamp || b.createdAt || '').localeCompare(
-            a.timestamp || a.createdAt || ''
-          )
+          toMs(b.timestamp || b.createdAt) -
+          toMs(a.timestamp || a.createdAt)
         )
         .map(p => p.id);
     } else if (userId && board.id === 'my-quests') {
