@@ -472,7 +472,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {post.type === 'review' && post.rating && renderStars(post.rating)}
           {!isQuestBoardRequest &&
             canEdit &&
-            ['task', 'request', 'issue'].includes(post.type) &&
+            ['task', 'request'].includes(post.type) &&
             showStatusControl && (
             <div className="ml-1 w-28">
               <Select

@@ -52,7 +52,7 @@ const GitFileBrowserInline: React.FC<GitFileBrowserInlineProps> = ({ questId, on
       const diff = await fetchGitDiff(questId, editingFile.path);
       const commitMsg = message || `Update ${editingFile.path}`;
       await addPost({
-        type: 'commit',
+        type: 'change',
         questId,
         content: issueId ? `${commitMsg} (Issue #${issueId})` : commitMsg,
         commitSummary: issueId ? `${commitMsg} (Issue #${issueId})` : commitMsg,

@@ -308,7 +308,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {!isQuestRequest && ['task', 'issue'].includes(post.type) && (
+        {!isQuestRequest && post.type === 'task' && (
           <button
             className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
             onClick={handleRequestHelp}

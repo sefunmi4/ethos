@@ -12,8 +12,6 @@ export const POST_TYPE_LABELS: Record<PostType, string> = {
   task: "Task",
   change: "Change",
   review: "Review",
-  issue: "Issue",
-  commit: "Commit",
 };
 
 /**

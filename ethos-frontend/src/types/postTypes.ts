@@ -189,9 +189,7 @@ export type PostType =
   | 'request'
   | 'task'
   | 'change'
-  | 'review'
-  | 'issue'
-  | 'commit';
+  | 'review';
   
 /**
  * Supported tags for labeling and filtering posts.
