@@ -69,12 +69,16 @@ export const getRenderableBoardItems = (
     seen.add(item.id);
 
     if (!('headPostId' in item)) {
-      const questId = (item as Post).questId;
-      const linkedQuest = (item as Post).linkedItems?.find(
-        (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)
-      );
-      if ((questId && questIds.has(questId)) || linkedQuest) {
-        continue;
+      const post = item as Post;
+      // Allow request posts to always render even if a linked quest is present
+      if (post.type !== 'request') {
+        const questId = post.questId;
+        const linkedQuest = post.linkedItems?.find(
+          (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)
+        );
+        if ((questId && questIds.has(questId)) || linkedQuest) {
+          continue;
+        }
       }
     }
 
