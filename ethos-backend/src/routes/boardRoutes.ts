@@ -6,7 +6,7 @@ import { boardsStore, postsStore, questsStore, usersStore } from '../models/stor
 import { DEFAULT_BOARDS } from '../data/boardContextDefaults';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
-import { pool, usePg } from '../db';
+import { pool, usePg, disablePg } from '../db';
 import type { BoardData } from '../types/api';
 import type { DBPost, DBQuest } from '../types/db';
 import type { EnrichedBoard } from '../types/enriched';
@@ -172,8 +172,8 @@ router.get(
         return;
       } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Database error' });
-        return;
+        disablePg();
+        // fall back to JSON store below
       }
     }
 
