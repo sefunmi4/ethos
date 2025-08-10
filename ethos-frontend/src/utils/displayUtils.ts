@@ -1,6 +1,7 @@
 import type { Post, PostType } from "../types/postTypes";
 import type { Quest } from "../types/questTypes";
 import { ROUTES } from "../constants/routes";
+import type { SummaryTagType } from "../components/ui/SummaryTag";
 
 export const toTitleCase = (str: string): string =>
   str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
@@ -121,146 +122,39 @@ export const buildSummaryTags = (
   const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
-  if (post.type === "review") {
-    const user = post.author?.username || post.authorId;
-    tags.push({
-      type: "review",
-      label: title ? `Review: ${title}` : "Review",
-      detailLink: post.id ? ROUTES.POST(post.id) : undefined,
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-    });
-    if (post.subtype) {
-      tags.push({
-        type: "category",
-        label: post.subtype,
-        detailLink: ROUTES.POST(post.id),
-      });
-    }
-    return tags;
+  // Primary type tag linking to the post itself
+  let primaryType: SummaryTagType = post.type;
+  let primaryLabel = toTitleCase(post.type);
+  if (post.type === 'free_speech') {
+    primaryType = post.replyTo ? 'log' : 'free_speech';
+    primaryLabel = post.replyTo ? 'Log' : 'Free Speech';
+  } else if (post.type === 'request') {
+    primaryLabel = post.subtype ? `${toTitleCase(post.subtype)} Request` : 'Request';
   }
+  tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
 
-  if (post.type === "request") {
-    let label = "Request";
-    if (post.questId && title) {
-      if (post.subtype === "task") {
-        const id = post.nodeId
-          ? getQuestLinkLabel(post, "", false)
-          : undefined;
-        label = id ? `Task Request - ${id}` : "Task Request";
-      } else if (post.subtype === "party") {
-        const id = post.nodeId
-          ? getQuestLinkLabel(post, "", false)
-          : undefined;
-        label = id ? `Party Request - ${id}` : "Party Request";
-        const user = post.author?.username || post.authorId;
-        tags.push({
-          type: "party_request",
-          label,
-          detailLink: ROUTES.POST(post.id),
-          username: user,
-          usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-        });
-        if (post.status && post.status !== "To Do") {
-          tags.push({
-            type: "status",
-            label: post.status,
-            detailLink: ROUTES.POST(post.id),
-          });
-        }
-        return tags;
-      } else {
-        label = "Request - Quest";
-      }
-      tags.push({ type: "request", label, detailLink: ROUTES.POST(post.id) });
-    } else {
-      const user = post.author?.username || post.authorId;
-      tags.push({
-        type: "request",
-        label,
-        detailLink: ROUTES.POST(post.id),
-        username: user,
-        usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-      });
-    }
-    if (post.status && post.status !== "To Do") {
-      tags.push({
-        type: "status",
-        label: post.status,
-        detailLink: ROUTES.POST(post.id),
-      });
-    }
-    return tags;
-  }
-
+  // Quest association tag
   if (!multipleSources && title) {
     tags.push({
-      type: "quest",
+      type: 'quest',
       label: `Quest: ${title}`,
-      link:
-        questId || post.questId
-          ? ROUTES.QUEST(questId || post.questId!)
-          : undefined,
+      link: questId || post.questId ? ROUTES.QUEST(questId || post.questId!) : undefined,
     });
   }
 
-  if (post.type === "free_speech" && post.replyTo) {
-    const user = post.author?.username || post.authorId;
-    const label =
-      post.nodeId && !multipleSources
-        ? `Log - ${getQuestLinkLabel(post, title ?? '', false)}`
-        : "Log";
-    tags.push({
-      type: "log",
-      label,
-      detailLink: ROUTES.POST(post.id),
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-    });
-  } else if (post.type === "task" && post.nodeId) {
-    const label = post.nodeId.replace(/^Q:[^:]+:/, "");
-    tags.push({
-      type: "task",
-      label,
-      detailLink: ROUTES.POST(post.id),
-    });
-  } else if (post.type === "change") {
-    const user = post.author?.username || post.authorId;
-    const label =
-      post.nodeId && !multipleSources
-        ? `Change - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')}`
-        : "Change";
-    tags.push({
-      type: "change",
-      label,
-      detailLink: ROUTES.POST(post.id),
-      username: user,
-      usernameLink: ROUTES.PUBLIC_PROFILE(post.authorId),
-    });
+  // Status tag for task posts
+  if (post.status && post.type === 'task') {
+    tags.push({ type: 'status', label: post.status, detailLink: ROUTES.POST(post.id) });
   }
 
-  if (post.status && post.type === "task") {
-    tags.push({
-      type: "status",
-      label: post.status,
-      detailLink: ROUTES.POST(post.id),
-    });
-  }
-
-  if (post.type === "free_speech") {
+  // Separate user tag linking to profile
+  if (post.authorId) {
     const user = post.author?.username || post.authorId;
-    tags.push({
-      type: "free_speech",
-      label: `Free Speech: @${user}`,
-      link: ROUTES.PUBLIC_PROFILE(post.authorId),
-    });
+    tags.push({ type: 'type', label: `@${user}`, link: ROUTES.PUBLIC_PROFILE(post.authorId) });
   }
 
   // Remove duplicate entries by label in case of redundant inputs
-  return tags.filter(
-    (t, idx) =>
-      tags.findIndex((o) => o.label === t.label && o.type === t.type) === idx,
-  );
+  return tags.filter((t, idx) => tags.findIndex(o => o.label === t.label && o.type === t.type) === idx);
 };
 
 /**
