@@ -466,4 +466,46 @@ describe('route handlers', () => {
     expect(res.body).toHaveLength(1);
     expect(res.body[0].id).toBe('r1');
   });
+
+  it('GET /boards/timeline-board/items includes request posts', async () => {
+    boardsStoreMock.read.mockReturnValue([
+      { id: 'timeline-board', title: 'TL', boardType: 'post', description: '', layout: 'grid', items: [] }
+    ]);
+    postsStoreMock.read.mockReturnValue([
+      {
+        id: 'r1', authorId: 'u1', type: 'request', content: '', visibility: 'public',
+        timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
+      },
+      {
+        id: 'p1', authorId: 'u2', type: 'free_speech', content: '', visibility: 'public',
+        timestamp: '2024-01-03', boardId: '', tags: [], collaborators: [], linkedItems: []
+      }
+    ]);
+    questsStoreMock.read.mockReturnValue([]);
+
+    const res = await request(app).get('/boards/timeline-board/items');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
+    const types = res.body.map((p: any) => p.type);
+    expect(types).toContain('request');
+  });
+
+  it('GET /boards?enrich=true returns timeline board with request posts', async () => {
+    boardsStoreMock.read.mockReturnValue([
+      { id: 'timeline-board', title: 'TL', boardType: 'post', description: '', layout: 'grid', items: [] }
+    ]);
+    postsStoreMock.read.mockReturnValue([
+      {
+        id: 'r1', authorId: 'u1', type: 'request', content: '', visibility: 'public',
+        timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
+      }
+    ]);
+    questsStoreMock.read.mockReturnValue([]);
+
+    const res = await request(app).get('/boards?enrich=true');
+
+    expect(res.status).toBe(200);
+    expect(res.body[0].enrichedItems[0].type).toBe('request');
+  });
 });

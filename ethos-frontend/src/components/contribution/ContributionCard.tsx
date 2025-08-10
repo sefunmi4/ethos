@@ -3,9 +3,10 @@
 import React from 'react';
 import PostCard from '../post/PostCard';
 import QuestCard from '../quest/QuestCard';
+import RequestCard from '../request/RequestCard';
 import { ErrorBoundary } from '../ui';
 
-import type { Post } from '../../types/postTypes';
+import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { EnrichedQuest } from '../../types/questTypes';
 import type { BoardData } from '../../types/boardTypes';
 import type { User } from '../../types/userTypes';
@@ -72,12 +73,14 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   // ✅ Render Post types
   if ('type' in contribution) {
     const post = contribution as Post;
+    if (post.type === 'request' && boardId === 'quest-board') {
+      return <RequestCard post={post as EnrichedPost} onUpdate={onEdit ? (p) => onEdit(p.id) : undefined} />;
+    }
     return (
       <PostCard
         post={post}
         questId={questId}
         {...sharedProps}
-        headerOnly={headerOnly || post.type === 'request'}
         boardId={boardId}
       />
     );
