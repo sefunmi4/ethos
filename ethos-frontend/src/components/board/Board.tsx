@@ -481,7 +481,7 @@ const Board: React.FC<BoardProps> = ({
             }}
           />
         </div>
-      ) : (
+      ) : hasItems ? (
         <LayoutComponent
           items={
             resolvedStructure === 'map-graph'
@@ -513,6 +513,8 @@ const Board: React.FC<BoardProps> = ({
             ? { layout: resolvedStructure === 'grid' ? gridLayout : resolvedStructure }
             : {})}
         />
+      ) : (
+        <div className="text-center text-secondary py-8">No posts available to view.</div>
       )}
     </div>
   );
