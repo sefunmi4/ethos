@@ -18,6 +18,15 @@ export let pool: Pool = usePg
   : ({} as Pool);
 
 /**
+ * Disable PostgreSQL usage and fall back to the JSON store.
+ * This helper is useful if a database error occurs after startup.
+ */
+export function disablePg(): void {
+  usePg = false;
+  pool = {} as Pool;
+}
+
+/**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
@@ -30,8 +39,7 @@ export async function initializeDatabase(): Promise<void> {
     await pool.query('SELECT 1');
   } catch (_err) {
     console.warn('PostgreSQL not available, using JSON store instead');
-    usePg = false;
-    pool = {} as Pool;
+    disablePg();
     return;
   }
 
