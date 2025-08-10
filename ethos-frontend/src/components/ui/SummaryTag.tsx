@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import {
   FaBookOpen,
   FaTasks,
-  FaBug,
   FaStickyNote,
   FaStar,
   FaCommentAlt,
@@ -12,7 +11,6 @@ import {
   FaUserCheck,
   FaCog,
   FaBullhorn,
-  FaCodeBranch,
   FaCheckCircle,
   FaUsers,
   FaExchangeAlt
