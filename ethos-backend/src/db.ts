@@ -104,6 +104,8 @@ export async function initializeDatabase(): Promise<void> {
       read BOOLEAN,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS tags TEXT[];
   `);
 
   const { rows } = await pool.query(

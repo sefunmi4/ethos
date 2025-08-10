@@ -753,7 +753,22 @@ router.patch(
 router.post(
   '/:id/archive',
   authMiddleware,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        await pool.query(
+          "UPDATE quests SET tags = ARRAY(SELECT DISTINCT UNNEST(COALESCE(tags, '{}'::text[]) || ARRAY['archived'])) WHERE id = $1",
+          [req.params.id]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const { id } = req.params;
     const quests = questsStore.read();
     const quest = quests.find(q => q.id === id);
@@ -783,7 +798,22 @@ router.post(
 router.delete(
   '/:id/archive',
   authMiddleware,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
+    if (usePg) {
+      try {
+        await pool.query(
+          "UPDATE quests SET tags = array_remove(tags, 'archived') WHERE id = $1",
+          [req.params.id]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const { id } = req.params;
     const quests = questsStore.read();
     const quest = quests.find(q => q.id === id);
