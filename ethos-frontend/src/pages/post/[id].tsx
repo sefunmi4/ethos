@@ -49,7 +49,10 @@ const PostPage: React.FC = () => {
 
   const taskBoard = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
-    const tasks = replyBoard.enrichedItems?.filter(p => p.type === 'task') || [];
+    const tasks =
+      replyBoard.enrichedItems?.filter(
+        (item): item is Post => 'type' in item && (item as Post).type === 'task'
+      ) || [];
     if (!tasks.length) return null;
     return {
       ...replyBoard,

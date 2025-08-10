@@ -85,18 +85,7 @@ export const getDisplayTitle = (
 };
 
 export interface SummaryTagData {
-  type:
-    | "quest"
-    | "task"
-    | "review"
-    | "category"
-    | "status"
-    | "free_speech"
-    | "type"
-    | "change"
-    | "log"
-    | "request"
-    | "party_request";
+  type: SummaryTagType;
   label: string;
   link?: string;
   username?: string;
