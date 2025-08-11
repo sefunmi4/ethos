@@ -342,7 +342,7 @@ function requiresQuestRoles(type: PostType): boolean {
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'task', 'free_speech', 'change', 'review'].includes(type);
+  return ['request', 'task', 'change', 'review'].includes(type);
 }
 
 function validateLinks(type: PostType, items: LinkedItem[]): {
@@ -350,6 +350,10 @@ function validateLinks(type: PostType, items: LinkedItem[]): {
   message?: string;
 } {
   switch (type) {
+    case 'free_speech':
+      return items.some(i => i.itemType === 'post')
+        ? { valid: false, message: 'Free speech posts cannot have links.' }
+        : { valid: true };
     case 'request':
       // Requests no longer require a linked task
       return { valid: true };
@@ -360,9 +364,7 @@ function validateLinks(type: PostType, items: LinkedItem[]): {
         ? { valid: true }
         : { valid: false, message: 'Please link a task or request before submitting.' };
     case 'review':
-      return items.some(i => i.itemType === 'post')
-        ? { valid: true }
-        : { valid: false, message: 'Please link a change before submitting.' };
+      return { valid: true };
     default:
       return { valid: true };
   }
