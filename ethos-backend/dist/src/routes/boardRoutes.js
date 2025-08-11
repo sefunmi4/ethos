@@ -22,16 +22,13 @@ const getQuestBoardQuests = (quests, userId) => {
         .slice(0, 10)
         .map(q => q.id);
 };
-// Gather recent request posts for the quest board. Excludes the requesting user
-// and archived requests. Returns up to DEFAULT_PAGE_SIZE recent requests.
-const getQuestBoardRequests = (posts, userId) => {
+// Gather recent request posts for the quest board. Returns up to DEFAULT_PAGE_SIZE
+// recent requests excluding archived or private ones.
+const getQuestBoardRequests = (posts) => {
     return posts
-        .filter(p => p.type === 'request' && p.boardId === 'quest-board')
+        .filter(p => p.type === 'request')
+        .filter(p => p.visibility !== 'private')
         .filter(p => !p.tags?.includes('archived'))
-        .filter(p => (p.visibility === 'public' ||
-        p.visibility === 'request_board' ||
-        p.needsHelp === true))
-        .filter(p => !userId || p.authorId !== userId)
         .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
         .slice(0, constants_1.DEFAULT_PAGE_SIZE)
         .map(p => p.id);
@@ -71,7 +68,7 @@ router.get('/', async (req, res) => {
                     b.items = quests.filter(q => q.authorId === userId).map(q => q.id);
                 }
                 else if (b.id === 'quest-board') {
-                    b.items = getQuestBoardRequests(posts, userId);
+                    b.items = getQuestBoardRequests(posts);
                 }
                 return b;
             });
@@ -116,7 +113,7 @@ router.get('/', async (req, res) => {
             return { ...board, items: filtered };
         }
         if (board.id === 'quest-board') {
-            const items = getQuestBoardRequests(posts, userId);
+            const items = getQuestBoardRequests(posts);
             return { ...board, items };
         }
         return board;
@@ -256,7 +253,7 @@ router.get('/:id', async (req, res) => {
     let boardItems = board.items;
     let highlightMap = {};
     if (board.id === 'quest-board') {
-        boardItems = getQuestBoardRequests(posts, userId);
+        boardItems = getQuestBoardRequests(posts);
     }
     else if (board.id === 'timeline-board') {
         const userQuestIds = userId
@@ -350,7 +347,7 @@ router.get('/:id/items', async (req, res) => {
             let boardItems = board.items;
             let highlightMap = {};
             if (board.id === 'quest-board') {
-                boardItems = getQuestBoardRequests(posts, userId);
+                boardItems = getQuestBoardRequests(posts);
             }
             else if (board.id === 'timeline-board') {
                 const userQuestIds = userId
@@ -417,11 +414,9 @@ router.get('/:id/items', async (req, res) => {
                     if (board.id === 'quest-board') {
                         if (p.type !== 'request')
                             return false;
-                        if (p.boardId !== 'quest-board')
+                        if (p.visibility === 'private')
                             return false;
-                        return (p.visibility === 'public' ||
-                            p.visibility === 'request_board' ||
-                            p.needsHelp === true);
+                        return true;
                     }
                     return true;
                 }
@@ -458,7 +453,7 @@ router.get('/:id/items', async (req, res) => {
     let boardItems = board.items;
     let highlightMap = {};
     if (board.id === 'quest-board') {
-        boardItems = getQuestBoardRequests(posts, userId);
+        boardItems = getQuestBoardRequests(posts);
     }
     else if (board.id === 'timeline-board') {
         const userQuestIds = userId
@@ -527,11 +522,9 @@ router.get('/:id/items', async (req, res) => {
             if (board.id === 'quest-board') {
                 if (p.type !== 'request')
                     return false;
-                if (p.boardId !== 'quest-board')
+                if (p.visibility === 'private')
                     return false;
-                return (p.visibility === 'public' ||
-                    p.visibility === 'request_board' ||
-                    p.needsHelp === true);
+                return true;
             }
             return true;
         }
