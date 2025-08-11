@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,8 @@ import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowserInline from '../git/GitFileBrowserInline';
+import MapGraphLayout from '../layout/MapGraphLayout';
+import TeamPanel from '../quest/TeamPanel';
 import NestedReply from './NestedReply';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
@@ -122,7 +124,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const [internalExpandedView, setInternalExpandedView] = useState(
     post.type === 'task'
   );
-  const { loadGraph } = useGraph();
+  const [activeTab, setActiveTab] = useState<'files' | 'options'>('files');
+  const { nodes, edges, loadGraph } = useGraph();
 
   const navigate = useNavigate();
   const {
@@ -155,6 +158,34 @@ const PostCard: React.FC<PostCardProps> = ({
         : 'max-w-prose';
 
   const expandedView = expanded !== undefined ? expanded : internalExpandedView;
+
+  const qid = questId || post.questId;
+
+  useEffect(() => {
+    if (expandedView && qid) {
+      loadGraph(qid);
+    }
+  }, [expandedView, qid, loadGraph]);
+
+  const subgraphIds = useMemo(() => {
+    const ids = new Set<string>();
+    const gather = (id: string) => {
+      if (ids.has(id)) return;
+      ids.add(id);
+      edges.filter((e) => e.from === id).forEach((e) => gather(e.to));
+    };
+    gather(post.id);
+    return ids;
+  }, [post.id, edges]);
+
+  const displayNodes = useMemo(
+    () => nodes.filter((n) => subgraphIds.has(n.id)),
+    [nodes, subgraphIds]
+  );
+  const displayEdges = useMemo(
+    () => edges.filter((e) => subgraphIds.has(e.from) && subgraphIds.has(e.to)),
+    [edges, subgraphIds]
+  );
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
@@ -725,8 +756,38 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
+      {expandedView && post.type === 'task' && qid && (
+        <div className="mt-4 flex flex-col md:flex-row gap-4" data-testid="task-expanded-view">
+          <div className="md:w-1/2">
+            <MapGraphLayout items={displayNodes} edges={displayEdges} />
+          </div>
+          <div className="md:w-1/2">
+            <div className="flex border-b text-sm">
+              <button
+                className={clsx('px-2 py-1', activeTab === 'files' && 'border-b-2 border-accent')}
+                onClick={() => setActiveTab('files')}
+              >
+                Files
+              </button>
+              <button
+                className={clsx('px-2 py-1', activeTab === 'options' && 'border-b-2 border-accent')}
+                onClick={() => setActiveTab('options')}
+              >
+                Options
+              </button>
+            </div>
+            <div className="mt-2">
+              {activeTab === 'files' && qid && <GitFileBrowserInline questId={qid} />}
+              {activeTab === 'options' && qid && (
+                <TeamPanel questId={qid} node={post} canEdit={canEdit} />
+              )}
+              {!qid && <div className="text-sm text-secondary">No quest linked.</div>}
+            </div>
+          </div>
+        </div>
+      )}
 
-      {post.type === 'task' && post.linkedNodeId && post.questId && (
+      {post.type === 'task' && post.linkedNodeId && post.questId && !expandedView && (
         <>
           <button
             onClick={() => setShowBrowser(true)}
