@@ -451,7 +451,7 @@ describe('route handlers', () => {
     postsStoreMock.read.mockReturnValue([
       {
         id: 'r1', authorId: 'u2', type: 'request', content: '', visibility: 'public',
-        timestamp: '2024-01-02', boardId: 'quest-board', tags: [], collaborators: [], linkedItems: []
+        timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
       },
       {
         id: 't1', authorId: 'u2', type: 'task', content: '', visibility: 'public',
