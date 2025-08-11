@@ -99,7 +99,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
-    const validation = validateLinks(type, autoLinkItems);
+    const validation = validateLinks(type, autoLinkItems, !!replyTo);
     if (!validation.valid) {
       alert(validation.message);
       setIsSubmitting(false);
@@ -345,7 +345,11 @@ function showLinkControls(type: PostType): boolean {
   return ['request', 'task', 'change', 'review'].includes(type);
 }
 
-function validateLinks(type: PostType, items: LinkedItem[]): {
+function validateLinks(
+  type: PostType,
+  items: LinkedItem[],
+  hasParent: boolean = false
+): {
   valid: boolean;
   message?: string;
 } {
@@ -360,7 +364,7 @@ function validateLinks(type: PostType, items: LinkedItem[]): {
     case 'task':
       return { valid: true };
     case 'change':
-      return items.some(i => i.itemType === 'post')
+      return hasParent || items.some(i => i.itemType === 'post')
         ? { valid: true }
         : { valid: false, message: 'Please link a task or request before submitting.' };
     case 'review':
