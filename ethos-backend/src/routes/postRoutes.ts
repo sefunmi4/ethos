@@ -183,8 +183,24 @@ router.post(
         return;
       }
     } else if (type === 'change') {
+      const parentIsValid =
+        parent && ['task', 'request', 'change'].includes(parent.type);
+
       if (
-        linkedPosts.length === 0 ||
+        linkedPosts.length === 0 &&
+        !parentIsValid
+      ) {
+        res
+          .status(400)
+          .json({
+            error:
+              'Changes must link to a task or request, or reply to an existing change',
+          });
+        return;
+      }
+
+      if (
+        linkedPosts.length > 0 &&
         !linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'request')
       ) {
         res

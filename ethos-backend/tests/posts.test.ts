@@ -58,21 +58,46 @@ describe('post routes', () => {
     expect(res.status).toBe(400);
   });
 
-  it('allows change post linked to task', async () => {
-    const task = {
-      id: 't1',
-      authorId: 'u1',
-      type: 'task',
-      content: '',
-      visibility: 'public',
-      timestamp: '',
-    };
-    postsStoreMock.read.mockReturnValue([task]);
-    const res = await request(app)
-      .post('/posts')
-      .send({ type: 'change', linkedItems: [{ itemId: 't1', itemType: 'post' }] });
-    expect(res.status).toBe(201);
-  });
+    it('allows change post linked to task', async () => {
+      const task = {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      };
+      postsStoreMock.read.mockReturnValue([task]);
+      const res = await request(app)
+        .post('/posts')
+        .send({ type: 'change', linkedItems: [{ itemId: 't1', itemType: 'post' }] });
+      expect(res.status).toBe(201);
+    });
+
+    it('allows change post replying to a change', async () => {
+      const task = {
+        id: 't1',
+        authorId: 'u1',
+        type: 'task',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+      };
+      const parentChange = {
+        id: 'c1',
+        authorId: 'u1',
+        type: 'change',
+        content: '',
+        visibility: 'public',
+        timestamp: '',
+        linkedItems: [{ itemId: 't1', itemType: 'post' }],
+      };
+      postsStoreMock.read.mockReturnValue([task, parentChange]);
+      const res = await request(app)
+        .post('/posts')
+        .send({ type: 'change', replyTo: 'c1' });
+      expect(res.status).toBe(201);
+    });
 
   it('rejects task linked to change', async () => {
     const change = {
