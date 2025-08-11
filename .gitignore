@@ -2,5 +2,4 @@ node_modules/
 package-lock.json
 package.json
 ethos-backend-ts/dist/
-ethos-backend/dist/
 .DS_Store
