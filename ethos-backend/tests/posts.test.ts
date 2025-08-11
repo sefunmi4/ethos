@@ -39,6 +39,123 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
+  it('rejects linking free speech posts', async () => {
+    postsStoreMock.read.mockReturnValue([
+      { id: 't1', authorId: 'u1', type: 'task', content: '', visibility: 'public', timestamp: '' },
+    ]);
+    const res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'free_speech',
+        linkedItems: [{ itemId: 't1', itemType: 'post' }],
+      });
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects change post without valid link', async () => {
+    postsStoreMock.read.mockReturnValue([]);
+    const res = await request(app).post('/posts').send({ type: 'change' });
+    expect(res.status).toBe(400);
+  });
+
+  it('allows change post linked to task', async () => {
+    const task = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([task]);
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'change', linkedItems: [{ itemId: 't1', itemType: 'post' }] });
+    expect(res.status).toBe(201);
+  });
+
+  it('rejects task linked to change', async () => {
+    const change = {
+      id: 'c1',
+      authorId: 'u1',
+      type: 'change',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([change]);
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', linkedItems: [{ itemId: 'c1', itemType: 'post' }] });
+    expect(res.status).toBe(400);
+  });
+
+  it('allows request linked to change', async () => {
+    const change = {
+      id: 'c1',
+      authorId: 'u1',
+      type: 'change',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([change]);
+    const res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'request',
+        content: 'req',
+        visibility: 'public',
+        linkedItems: [{ itemId: 'c1', itemType: 'post' }],
+      });
+    expect(res.status).toBe(201);
+  });
+
+  it('allows review without link or with request link only', async () => {
+    // review without link
+    postsStoreMock.read.mockReturnValue([]);
+    let res = await request(app)
+      .post('/posts')
+      .send({ type: 'review', content: '', visibility: 'public' });
+    expect(res.status).toBe(201);
+
+    // review linked to request
+    const reqPost = {
+      id: 'r1',
+      authorId: 'u1',
+      type: 'request',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([reqPost]);
+    res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'review',
+        linkedItems: [{ itemId: 'r1', itemType: 'post' }],
+      });
+    expect(res.status).toBe(201);
+
+    // review linked to change should fail
+    const change = {
+      id: 'c1',
+      authorId: 'u1',
+      type: 'change',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([change]);
+    res = await request(app)
+      .post('/posts')
+      .send({
+        type: 'review',
+        linkedItems: [{ itemId: 'c1', itemType: 'post' }],
+      });
+    expect(res.status).toBe(400);
+  });
+
   it("POST /posts defaults task status to 'To Do'", async () => {
     postsStoreMock.read.mockReturnValue([]);
     postsStoreMock.write.mockClear();

@@ -159,31 +159,51 @@ router.post(
       return;
     }
 
-    const posts = postsStore.read();
-    const quests = questsStore.read();
-    const quest = questId ? quests.find(q => q.id === questId) : null;
-    const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
+    const posts: DBPost[] = postsStore.read();
+    const quests: DBQuest[] = questsStore.read();
+    const quest = questId ? quests.find((q: DBQuest) => q.id === questId) : null;
+    const parent = replyTo ? posts.find((p: DBPost) => p.id === replyTo) : null;
 
-    // Validate required links based on post type
-    if (type === 'change') {
-      const target = linkedItems
-        .filter((li: LinkedItem) => li.itemType === 'post')
-        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
-        .find(
-          (p: DBPost | undefined) =>
-            p && (p.type === 'task' || p.type === 'request')
-        );
-      if (!target) {
-        res.status(400).json({ error: 'Changes must link to a task or request' });
+    // Validate links based on post type
+    const linkedPosts: DBPost[] = linkedItems
+      .filter((li: LinkedItem) => li.itemType === 'post')
+      .map((li: LinkedItem) => posts.find((p: DBPost) => p.id === li.itemId))
+      .filter((p: DBPost | undefined): p is DBPost => !!p);
+
+    if (type === 'free_speech') {
+      if (linkedPosts.length > 0) {
+        res.status(400).json({ error: 'Free speech posts cannot link to other posts' });
+        return;
+      }
+    } else if (type === 'task') {
+      if (!linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'request')) {
+        res
+          .status(400)
+          .json({ error: 'Tasks can only link to tasks or requests' });
+        return;
+      }
+    } else if (type === 'change') {
+      if (
+        linkedPosts.length === 0 ||
+        !linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'request')
+      ) {
+        res
+          .status(400)
+          .json({ error: 'Changes must link to a task or request' });
+        return;
+      }
+    } else if (type === 'request') {
+      if (!linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'change')) {
+        res
+          .status(400)
+          .json({ error: 'Requests can only link to tasks or changes' });
         return;
       }
     } else if (type === 'review') {
-      const target = linkedItems
-        .filter((li: LinkedItem) => li.itemType === 'post')
-        .map((li: LinkedItem) => posts.find(p => p.id === li.itemId))
-        .find((p: DBPost | undefined) => p && p.type === 'change');
-      if (!target) {
-        res.status(400).json({ error: 'Reviews must link to a change' });
+      if (!linkedPosts.every((p: DBPost) => p.type === 'request')) {
+        res
+          .status(400)
+          .json({ error: 'Reviews can only link to requests' });
         return;
       }
     }
@@ -837,9 +857,9 @@ router.post(
         content: '',
         visibility: 'public',
         timestamp: new Date().toISOString(),
-        replyTo: linkedChange.id,
+        replyTo: post.id,
         linkedItems: [
-          { itemId: linkedChange.id, itemType: 'post', linkType: 'reference' },
+          { itemId: post.id, itemType: 'post', linkType: 'reference' },
         ],
       } as DBPost;
     } else if (linkedTask) {
