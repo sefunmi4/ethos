@@ -248,8 +248,18 @@ router.post(
     if (usePg) {
       try {
         await pool.query(
-          'INSERT INTO posts (id, authorid, type, content, title) VALUES ($1, $2, $3, $4, $5)',
-          [newPost.id, newPost.authorId, newPost.type, newPost.content, newPost.title]
+          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+          [
+            newPost.id,
+            newPost.authorId,
+            newPost.type,
+            newPost.content,
+            newPost.title,
+            newPost.visibility,
+            newPost.tags,
+            effectiveBoardId,
+            newPost.timestamp,
+          ]
         );
         if (effectiveBoardId && effectiveBoardId !== 'quest-board') {
           await pool.query(
