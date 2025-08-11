@@ -125,6 +125,8 @@ router.get(
           ...r,
           authorId: r.authorid,
           createdAt: r.createdat,
+          boardId: r.boardid,
+          timestamp: r.timestamp,
         }));
         const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
           ...r,
@@ -346,6 +348,8 @@ router.get(
             ...r,
             authorId: r.authorid,
             createdAt: r.createdat,
+            boardId: r.boardid,
+            timestamp: r.timestamp,
           }));
           const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
             ...r,
@@ -450,6 +454,8 @@ router.get(
           ...r,
           authorId: r.authorid,
           createdAt: r.createdat,
+          boardId: r.boardid,
+          timestamp: r.timestamp,
         }));
         const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
           ...r,

@@ -12,13 +12,17 @@ const boardContextDefaults_1 = require("../data/boardContextDefaults");
 const enrich_1 = require("../utils/enrich");
 const constants_1 = require("../constants");
 const db_1 = require("../db");
+const toMs = (value) => {
+    const t = new Date(value ?? 0).getTime();
+    return Number.isNaN(t) ? 0 : t;
+};
 // Gather active quests for the quest board. Returns up to 10 recent quests
 // excluding those authored by the requesting user.
 const getQuestBoardQuests = (quests, userId) => {
     return quests
         .filter(q => q.status === 'active' && q.visibility === 'public')
         .filter(q => !userId || q.authorId !== userId)
-        .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+        .sort((a, b) => toMs(b.createdAt) - toMs(a.createdAt))
         .slice(0, 10)
         .map(q => q.id);
 };
@@ -29,9 +33,49 @@ const getQuestBoardRequests = (posts) => {
         .filter(p => p.type === 'request')
         .filter(p => p.visibility !== 'private')
         .filter(p => !p.tags?.includes('archived'))
-        .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
+        .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
         .slice(0, constants_1.DEFAULT_PAGE_SIZE)
         .map(p => p.id);
+};
+// Gather posts for the timeline board. Includes all public/request posts
+// visible to the requesting user and sorts them with highlight metadata.
+const getTimelineBoardItems = (posts, quests, userId) => {
+    const userQuestIds = userId
+        ? quests
+            .filter(q => q.authorId === userId ||
+            (q.collaborators || []).some(c => c.userId === userId) ||
+            posts.some(p => p.questId === q.id && p.authorId === userId))
+            .map(q => q.id)
+        : [];
+    const userTaskIds = userId
+        ? posts
+            .filter(p => p.authorId === userId && p.type === 'task')
+            .map(p => p.id)
+        : [];
+    const withMeta = posts
+        .filter(p => p.visibility !== 'private')
+        .map(p => {
+        let weight = 0;
+        let highlight = false;
+        if (userId) {
+            if (p.questId && userQuestIds.includes(p.questId)) {
+                weight = p.type === 'task' ? 3 : 2;
+                if (p.type === 'task')
+                    highlight = true;
+            }
+            else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
+                (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
+                weight = 1;
+                highlight = true;
+            }
+        }
+        return { id: p.id, timestamp: toMs(p.timestamp || p.createdAt), weight, highlight };
+    })
+        .sort((a, b) => b.weight - a.weight || b.timestamp - a.timestamp);
+    return {
+        items: withMeta.map(it => it.id),
+        highlightMap: Object.fromEntries(withMeta.map(it => [it.id, it.highlight])),
+    };
 };
 const router = express_1.default.Router();
 //
@@ -50,6 +94,8 @@ router.get('/', async (req, res) => {
                 ...r,
                 authorId: r.authorid,
                 createdAt: r.createdat,
+                boardId: r.boardid,
+                timestamp: r.timestamp,
             }));
             const quests = questsRes.rows.map((r) => ({
                 ...r,
@@ -61,7 +107,7 @@ router.get('/', async (req, res) => {
                 if (userId && b.id === 'my-posts') {
                     b.items = posts
                         .filter(p => p.authorId === userId && p.systemGenerated !== true)
-                        .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+                        .sort((a, b) => toMs(b.timestamp || b.createdAt) - toMs(a.timestamp || a.createdAt))
                         .map(p => p.id);
                 }
                 else if (userId && b.id === 'my-quests') {
@@ -69,6 +115,9 @@ router.get('/', async (req, res) => {
                 }
                 else if (b.id === 'quest-board') {
                     b.items = getQuestBoardRequests(posts);
+                }
+                else if (b.id === 'timeline-board') {
+                    b.items = getTimelineBoardItems(posts, quests, userId).items;
                 }
                 return b;
             });
@@ -86,8 +135,8 @@ router.get('/', async (req, res) => {
         }
         catch (err) {
             console.error(err);
-            res.status(500).json({ error: 'Database error' });
-            return;
+            (0, db_1.disablePg)();
+            // fall back to JSON store below
         }
     }
     let boards = stores_1.boardsStore.read();
@@ -102,7 +151,8 @@ router.get('/', async (req, res) => {
             const filtered = posts
                 .filter(p => p.authorId === userId &&
                 p.systemGenerated !== true)
-                .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+                .sort((a, b) => toMs(b.timestamp || b.createdAt) -
+                toMs(a.timestamp || a.createdAt))
                 .map(p => p.id);
             return { ...board, items: filtered };
         }
@@ -114,6 +164,10 @@ router.get('/', async (req, res) => {
         }
         if (board.id === 'quest-board') {
             const items = getQuestBoardRequests(posts);
+            return { ...board, items };
+        }
+        if (board.id === 'timeline-board') {
+            const { items } = getTimelineBoardItems(posts, quests, userId);
             return { ...board, items };
         }
         return board;
@@ -148,11 +202,7 @@ router.get('/thread/:postId', (req, res) => {
     const end = start + pageSize;
     const replies = posts
         .filter(p => p.replyTo === postId)
-        .sort((a, b) => {
-        const ta = a.timestamp || '';
-        const tb = b.timestamp || '';
-        return tb.localeCompare(ta);
-    })
+        .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
         .slice(start, end);
     const board = {
         id: `thread-${postId}`,
@@ -218,6 +268,8 @@ router.get('/:id', async (req, res) => {
                     ...r,
                     authorId: r.authorid,
                     createdAt: r.createdat,
+                    boardId: r.boardid,
+                    timestamp: r.timestamp,
                 }));
                 const quests = questsRes.rows.map((r) => ({
                     ...r,
@@ -256,45 +308,15 @@ router.get('/:id', async (req, res) => {
         boardItems = getQuestBoardRequests(posts);
     }
     else if (board.id === 'timeline-board') {
-        const userQuestIds = userId
-            ? quests
-                .filter(q => q.authorId === userId ||
-                (q.collaborators || []).some(c => c.userId === userId) ||
-                posts.some(p => p.questId === q.id && p.authorId === userId))
-                .map(q => q.id)
-            : [];
-        const userTaskIds = userId
-            ? posts
-                .filter(p => p.authorId === userId && p.type === 'task')
-                .map(p => p.id)
-            : [];
-        const withMeta = posts
-            .filter(p => p.visibility !== 'private')
-            .map(p => {
-            let weight = 0;
-            let highlight = false;
-            if (userId) {
-                if (p.questId && userQuestIds.includes(p.questId)) {
-                    weight = p.type === 'task' ? 3 : 2;
-                    if (p.type === 'task')
-                        highlight = true;
-                }
-                else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
-                    (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
-                    weight = 1;
-                    highlight = true;
-                }
-            }
-            return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
-        })
-            .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
-        highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
-        boardItems = withMeta.map(it => it.id);
+        const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
+        boardItems = items;
+        highlightMap = hm;
     }
     else if (userId && board.id === 'my-posts') {
         boardItems = posts
             .filter(p => p.authorId === userId && p.systemGenerated !== true)
-            .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+            .sort((a, b) => toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt))
             .map(p => p.id);
     }
     else if (userId && board.id === 'my-quests') {
@@ -338,6 +360,8 @@ router.get('/:id/items', async (req, res) => {
                 ...r,
                 authorId: r.authorid,
                 createdAt: r.createdat,
+                boardId: r.boardid,
+                timestamp: r.timestamp,
             }));
             const quests = questsRes.rows.map((r) => ({
                 ...r,
@@ -350,43 +374,15 @@ router.get('/:id/items', async (req, res) => {
                 boardItems = getQuestBoardRequests(posts);
             }
             else if (board.id === 'timeline-board') {
-                const userQuestIds = userId
-                    ? quests
-                        .filter(q => q.authorId === userId ||
-                        (q.collaborators || []).some(c => c.userId === userId) ||
-                        posts.some(p => p.questId === q.id && p.authorId === userId))
-                        .map(q => q.id)
-                    : [];
-                const userTaskIds = userId
-                    ? posts.filter(p => p.authorId === userId && p.type === 'task').map(p => p.id)
-                    : [];
-                const withMeta = posts
-                    .filter(p => p.visibility !== 'private')
-                    .map(p => {
-                    let weight = 0;
-                    let highlight = false;
-                    if (userId) {
-                        if (p.questId && userQuestIds.includes(p.questId)) {
-                            weight = p.type === 'task' ? 3 : 2;
-                            if (p.type === 'task')
-                                highlight = true;
-                        }
-                        else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
-                            (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
-                            weight = 1;
-                            highlight = true;
-                        }
-                    }
-                    return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
-                })
-                    .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
-                highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
-                boardItems = withMeta.map(it => it.id);
+                const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
+                boardItems = items;
+                highlightMap = hm;
             }
             else if (userId && board.id === 'my-posts') {
                 boardItems = posts
                     .filter(p => p.authorId === userId && p.systemGenerated !== true)
-                    .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+                    .sort((a, b) => toMs(b.timestamp || b.createdAt) -
+                    toMs(a.timestamp || a.createdAt))
                     .map(p => p.id);
             }
             else if (userId && board.id === 'my-quests') {
@@ -456,45 +452,15 @@ router.get('/:id/items', async (req, res) => {
         boardItems = getQuestBoardRequests(posts);
     }
     else if (board.id === 'timeline-board') {
-        const userQuestIds = userId
-            ? quests
-                .filter(q => q.authorId === userId ||
-                (q.collaborators || []).some(c => c.userId === userId) ||
-                posts.some(p => p.questId === q.id && p.authorId === userId))
-                .map(q => q.id)
-            : [];
-        const userTaskIds = userId
-            ? posts
-                .filter(p => p.authorId === userId && p.type === 'task')
-                .map(p => p.id)
-            : [];
-        const withMeta = posts
-            .filter(p => p.visibility !== 'private')
-            .map(p => {
-            let weight = 0;
-            let highlight = false;
-            if (userId) {
-                if (p.questId && userQuestIds.includes(p.questId)) {
-                    weight = p.type === 'task' ? 3 : 2;
-                    if (p.type === 'task')
-                        highlight = true;
-                }
-                else if (p.linkedItems?.some(li => (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
-                    (li.itemType === 'post' && userTaskIds.includes(li.itemId)))) {
-                    weight = 1;
-                    highlight = true;
-                }
-            }
-            return { id: p.id, timestamp: p.timestamp || '', weight, highlight };
-        })
-            .sort((a, b) => b.weight - a.weight || b.timestamp.localeCompare(a.timestamp));
-        highlightMap = Object.fromEntries(withMeta.map(it => [it.id, it.highlight]));
-        boardItems = withMeta.map(it => it.id);
+        const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
+        boardItems = items;
+        highlightMap = hm;
     }
     else if (userId && board.id === 'my-posts') {
         boardItems = posts
             .filter(p => p.authorId === userId && p.systemGenerated !== true)
-            .sort((a, b) => (b.timestamp || b.createdAt || '').localeCompare(a.timestamp || a.createdAt || ''))
+            .sort((a, b) => toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt))
             .map(p => p.id);
     }
     else if (userId && board.id === 'my-quests') {
