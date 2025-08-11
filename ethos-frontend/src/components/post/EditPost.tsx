@@ -147,33 +147,35 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
         </div>
       </FormSection>
 
-      <FormSection title="Linked Items">
-        <LinkControls
-          label="Item"
-          value={linkedItems}
-          onChange={(newLinks: LinkedItem[]) => setLinkedItems(newLinks)}
-          allowCreateNew={false}
-          itemTypes={['quest', 'post']}
-        />
-        {linkedItems.length > 0 && (
-          <ul className="list-disc pl-6 mt-2 text-sm text-accent">
-            {linkedItems.map((l, idx) => (
-              <li key={idx}>
-                {l.itemType}: {l.title || l.nodeId}
-                <button
-                  type="button"
-                  className="text-error ml-2 text-xs hover:underline"
-                  onClick={() =>
-                    setLinkedItems(linkedItems.filter((_, i) => i !== idx))
-                  }
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </FormSection>
+      {showLinkControls(type) && (
+        <FormSection title="Linked Items">
+          <LinkControls
+            label="Item"
+            value={linkedItems}
+            onChange={(newLinks: LinkedItem[]) => setLinkedItems(newLinks)}
+            allowCreateNew={false}
+            itemTypes={['quest', 'post']}
+          />
+          {linkedItems.length > 0 && (
+            <ul className="list-disc pl-6 mt-2 text-sm text-accent">
+              {linkedItems.map((l, idx) => (
+                <li key={idx}>
+                  {l.itemType}: {l.title || l.nodeId}
+                  <button
+                    type="button"
+                    className="text-error ml-2 text-xs hover:underline"
+                    onClick={() =>
+                      setLinkedItems(linkedItems.filter((_, i) => i !== idx))
+                    }
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </FormSection>
+      )}
 
       {repostedFrom && (
         <FormSection title="Reposted From">
@@ -196,3 +198,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 };
 
 export default EditPost;
+
+function showLinkControls(type: PostType): boolean {
+  return ['request', 'task', 'change', 'review'].includes(type);
+}
