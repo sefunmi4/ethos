@@ -47,7 +47,7 @@ const PostPage: React.FC = () => {
     };
   }, [replyBoard, post]);
 
-  const taskBoard = useMemo<BoardData | null>(() => {
+  const taskRepliesBoard = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
     const tasks =
       replyBoard.enrichedItems?.filter(
@@ -58,6 +58,20 @@ const PostPage: React.FC = () => {
       ...replyBoard,
       items: tasks.map(t => t.id),
       enrichedItems: tasks,
+    };
+  }, [replyBoard]);
+
+  const changeRepliesBoard = useMemo<BoardData | null>(() => {
+    if (!replyBoard) return null;
+    const changes =
+      replyBoard.enrichedItems?.filter(
+        (item): item is Post => 'type' in item && (item as Post).type === 'change'
+      ) || [];
+    if (!changes.length) return null;
+    return {
+      ...replyBoard,
+      items: changes.map(c => c.id),
+      enrichedItems: changes,
     };
   }, [replyBoard]);
 
@@ -181,10 +195,20 @@ const PostPage: React.FC = () => {
       </section>
 
       <section>
-        {post.tags?.includes('request') && taskBoard && (
+        {taskRepliesBoard && (
           <Board
-            boardId={`tasks-${id}`}
-            board={taskBoard}
+            boardId={`task-replies-${id}`}
+            board={taskRepliesBoard}
+            layout="grid"
+            editable={false}
+            compact={true}
+            user={user as User}
+          />
+        )}
+        {changeRepliesBoard && (
+          <Board
+            boardId={`change-replies-${id}`}
+            board={changeRepliesBoard}
             layout="grid"
             editable={false}
             compact={true}
