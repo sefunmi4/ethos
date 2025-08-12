@@ -35,12 +35,12 @@ afterAll(() => {
 const post: Post = {
   id: 'p1',
   authorId: 'u1',
-  type: 'request',
+  type: 'task',
   content: 'Help me',
   status: 'In Progress',
   visibility: 'public',
   timestamp: '2023-01-01T00:00:00Z',
-  tags: [],
+  tags: ['request'],
   collaborators: [],
   linkedItems: [],
 } as unknown as Post;

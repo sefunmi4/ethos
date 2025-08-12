@@ -27,12 +27,12 @@ describe('PostCard review rating', () => {
     const post: Post = {
       id: 'r1',
       authorId: 'u1',
-      type: 'review',
+      type: 'change',
       content: 'Great quest',
       rating: 4.5,
       visibility: 'public',
       timestamp: '',
-      tags: [],
+      tags: ['review'],
       collaborators: [],
       linkedItems: [],
     } as unknown as Post;

@@ -22,11 +22,11 @@ jest.mock('../src/api/post', () => ({
 const requestPost: EnrichedPost = {
   id: 'r1',
   authorId: 'u1',
-  type: 'request',
+  type: 'task',
   content: 'Need help',
   visibility: 'public',
   timestamp: '',
-  tags: [],
+  tags: ['request'],
   collaborators: [],
   linkedItems: [],
   author: { id: 'u1', username: 'u1' },

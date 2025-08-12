@@ -54,11 +54,11 @@ describe.skip('accept request button', () => {
   const post = {
     id: 'p1',
     authorId: 'u2',
-    type: 'request',
+    type: 'task',
     content: 'help me',
     visibility: 'public',
     timestamp: '',
-    tags: [],
+    tags: ['request'],
     collaborators: [],
     linkedItems: [],
   } as Post;

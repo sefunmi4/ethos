@@ -32,7 +32,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   const [newTitle, setNewTitle] = useState('');
   const [search, setSearch] = useState('');
   const [postTypeFilter, setPostTypeFilter] =
-    useState<'all' | PostType>('all');
+    useState<'all' | PostType | 'request' | 'review'>('all');
   const [sortBy, setSortBy] = useState<'label' | 'node'>('label');
 
   const linkTypes = [
@@ -142,7 +142,11 @@ const LinkControls: React.FC<LinkControlsProps> = ({
   };
 
   const filteredPosts = posts.filter(
-    (p) => postTypeFilter === 'all' || p.type === postTypeFilter
+    (p) =>
+      postTypeFilter === 'all' ||
+      p.type === postTypeFilter ||
+      (postTypeFilter === 'request' && p.tags?.includes('request')) ||
+      (postTypeFilter === 'review' && p.tags?.includes('review'))
   );
   type Option = { value: string; label: string; nodeId?: string; type?: string };
   const allOptions: Option[] = [
@@ -184,12 +188,12 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         <> 
           {itemTypes.includes('post') && (
             <div className="flex gap-1 mb-1 flex-wrap">
-              {['all', 'free_speech', 'request', 'task', 'change', 'review'].map((t) => (
+              {['all', 'free_speech', 'task', 'change', 'request', 'review'].map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() =>
-                    setPostTypeFilter(t as 'all' | PostType)
+                    setPostTypeFilter(t as 'all' | PostType | 'request' | 'review')
                   }
                   className={`text-xs px-2 py-0.5 rounded ${
                     postTypeFilter === t
