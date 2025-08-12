@@ -21,7 +21,6 @@ interface BoardSearchFilterProps {
 const STATUS_OPTIONS: option[] = [
   { value: '', label: 'Any Status' },
   { value: 'open', label: 'Open' },
-  { value: 'in_progress', label: 'In Progress' },
   { value: 'closed', label: 'Closed' },
 ];
 

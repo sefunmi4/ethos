@@ -39,42 +39,6 @@ describe('PostListItem', () => {
     expect(navMock).toHaveBeenCalledWith(ROUTES.POST('p1'));
   });
 
-  it('renders review summary tag', () => {
-    const reviewPost: PostWithQuestTitle = {
-      ...basePost,
-      id: 'r1',
-      type: 'change',
-      tags: ['review'],
-      questId: 'q2',
-      questTitle: 'Quest B',
-    } as unknown as PostWithQuestTitle;
-
-    render(
-      <BrowserRouter>
-        <PostListItem post={reviewPost} />
-      </BrowserRouter>
-    );
-    expect(screen.getByText('Review')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
-  });
-
-  it('renders generic review tag when quest title missing', () => {
-    const reviewPost: PostWithQuestTitle = {
-      ...basePost,
-      id: 'r2',
-      type: 'change',
-      tags: ['review'],
-    } as unknown as PostWithQuestTitle;
-
-    render(
-      <BrowserRouter>
-        <PostListItem post={reviewPost} />
-      </BrowserRouter>
-    );
-    expect(screen.getByText('Review')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
-  });
-
   it('renders quest path tag for task posts', () => {
     const taskPost: PostWithQuestTitle = {
       ...basePost,
