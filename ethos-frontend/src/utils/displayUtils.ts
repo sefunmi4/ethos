@@ -100,6 +100,20 @@ export interface PostWithQuestTitle extends Post {
   questTitle?: string;
 }
 
+const formatNodeId = (nodeId: string): string => {
+  let path = nodeId.trim();
+  if (path.startsWith('Q:')) {
+    path = path.split(':').slice(2).join(':');
+  }
+  const segments = path.split(':');
+  const last = segments[segments.length - 1] || '';
+  let typeLabel = '';
+  if (last.startsWith('T')) typeLabel = 'Task';
+  else if (last.startsWith('F')) typeLabel = 'File';
+  else if (last.startsWith('L')) typeLabel = 'Log';
+  return typeLabel ? `Q::${typeLabel}:${segments.join(':')}` : `Q:${segments.join(':')}`;
+};
+
 export const buildSummaryTags = (
   post: PostWithQuestTitle,
   questTitle?: string,
@@ -108,47 +122,43 @@ export const buildSummaryTags = (
   void questTitle;
   void questId;
   const tags: SummaryTagData[] = [];
-  const multipleSources = (post.linkedItems || []).length > 1;
 
   // Primary type tag linking to the post itself
   let primaryType: SummaryTagType = post.type;
-  let primaryLabel = toTitleCase(post.type);
+  let fallbackLabel = toTitleCase(post.type);
   if (post.type === 'free_speech') {
     primaryType = post.replyTo ? 'log' : 'free_speech';
-    primaryLabel = post.replyTo ? 'Log' : 'Free Speech';
+    fallbackLabel = post.replyTo ? 'Log' : 'Free Speech';
   }
-  tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
 
-  // Quest path / change tags for request and task posts
-  if (post.nodeId && !multipleSources) {
-    if (post.type === 'request') {
-      const stripped = post.nodeId.replace(/^Q:[^:]+:/, '');
-      const segments = stripped.split(':');
-      const taskId = segments[0];
-      const changeId = segments[1];
-      if (taskId) {
-        tags.push({ type: 'quest', label: `Q::Task:${taskId}` });
-      }
-      if (changeId) {
-        tags.push({ type: 'change', label: `Change:${changeId}` });
-      }
-    } else if (post.type === 'task') {
-      tags.push({
-        type: 'quest',
-        label: getQuestLinkLabel(post),
-      });
-    }
+  const nodeLabels: string[] = [];
+  if (post.linkedItems && post.linkedItems.length > 0) {
+    post.linkedItems.forEach((li) => {
+      if (li.nodeId) nodeLabels.push(formatNodeId(li.nodeId));
+    });
+  } else if (post.nodeId) {
+    nodeLabels.push(formatNodeId(post.nodeId));
   }
+
+  const detailLabel = nodeLabels.length > 0 ? nodeLabels.join(', ') : fallbackLabel;
+
+  const primaryTag: SummaryTagData = {
+    type: primaryType as SummaryTagType,
+    label: detailLabel,
+    detailLink: ROUTES.POST(post.id),
+  };
+
+  if (post.authorId) {
+    const user = post.author?.username || post.authorId;
+    primaryTag.username = user;
+    primaryTag.usernameLink = ROUTES.PUBLIC_PROFILE(post.authorId);
+  }
+
+  tags.push(primaryTag);
 
   // Status tag for task posts
   if (post.status && post.type === 'task') {
     tags.push({ type: 'status', label: post.status, detailLink: ROUTES.POST(post.id) });
-  }
-
-  // Separate user tag linking to profile
-  if (post.authorId) {
-    const user = post.author?.username || post.authorId;
-    tags.push({ type: 'type', label: `@${user}`, link: ROUTES.PUBLIC_PROFILE(post.authorId) });
   }
 
   // Include non-system tags
