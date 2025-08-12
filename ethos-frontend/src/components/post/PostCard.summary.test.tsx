@@ -52,4 +52,30 @@ describe('PostCard summary tags', () => {
     const typeLink = screen.getByRole('link', { name: 'Task' });
     expect(typeLink).toHaveAttribute('href', '/post/p1');
   });
+
+  it('orders stacked summary tags for change requests', () => {
+    const changeReq: Post = {
+      id: 'p2',
+      authorId: 'u1',
+      type: 'request' as any,
+      nodeId: 'Q:slug:T01:C00',
+      content: 'Change request',
+      visibility: 'public',
+      timestamp: '',
+      tags: [],
+      collaborators: [],
+      linkedItems: [],
+    } as unknown as Post;
+    const enriched = { ...changeReq, author: { id: 'u1', username: 'alice' } } as Post;
+    render(
+      <BrowserRouter>
+        <PostCard post={enriched} questTitle="Quest A" />
+      </BrowserRouter>
+    );
+    const requestTag = screen.getByText('Request');
+    const taskTag = screen.getByText('Q::Task:T01');
+    const changeTag = screen.getByText('Change:C00');
+    expect(requestTag.compareDocumentPosition(taskTag) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(taskTag.compareDocumentPosition(changeTag) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
