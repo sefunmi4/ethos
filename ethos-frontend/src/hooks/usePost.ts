@@ -29,7 +29,7 @@ export const usePost = () => {
 
   const enrichPosts = useCallback(async (posts: Post[]): Promise<EnrichedPost[]> => {
     try {
-      const enriched = await Promise.all(posts.map((p) => enrichPostWithData(p)));
+      const enriched = await Promise.all(posts.map((p) => enrichPostWithData(p.id)));
       return enriched;
     } catch (err) {
       console.error('[usePost] Failed to enrich posts:', err);

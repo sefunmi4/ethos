@@ -1,7 +1,7 @@
 // src/api/post.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import type { Post, Reaction } from '../types/postTypes';
+import type { Post, Reaction, EnrichedPost } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
 import type { Quest } from '../types/questTypes';
 
@@ -203,14 +203,29 @@ export const removeRepost = async (
 };
 
 /**
- * 🧪 (Utility) Enrich a post client-side
- * @param post - Raw post object
+ * 🧪 Request an enriched version of a post from the backend.
+ * Ensures the response conforms to `EnrichedPost` shape by
+ * normalizing optional arrays/objects.
+ *
+ * @param postId - ID of the post to enrich
  */
-export const enrichPostWithData = async (post: Post): Promise<Post> => {
+export const enrichPostWithData = async (
+  postId: string,
+): Promise<EnrichedPost> => {
+  const res = await axiosWithAuth.get(`${BASE_URL}/${postId}?enrich=true`);
+  const data = res.data || {};
+
   return {
-    ...post,
+    ...data,
+    tags: data.tags || [],
+    author: data.author || (data.authorId ? { id: data.authorId } : undefined),
+    collaborators: data.collaborators || [],
+    linkedItems: data.linkedItems || [],
+    reactions: data.reactions || {},
+    reactionCounts: data.reactionCounts || {},
+    followers: data.followers || [],
     enriched: true,
-  };
+  } as EnrichedPost;
 };
 
 /**
