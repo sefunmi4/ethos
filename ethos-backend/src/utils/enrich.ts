@@ -138,8 +138,8 @@ export const enrichPosts = (
     const u = userById.get(post.authorId);
 
     // Prefer DBUser.username; fall back to the stored authorId string
-    // (guest IDs often carry the guest's username).
-    const username = u?.username || 'guest';
+    // so that guests retain their unique identifier.
+    const username = u?.username || post.authorId;
 
     // If you want the full enriched user when available:
     const enrichedAuthor = u
