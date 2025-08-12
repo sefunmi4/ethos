@@ -1171,7 +1171,39 @@ router.get('/:id', authOptional, async (req: Request<{ id: string }>, res: Respo
         res.status(404).json({ error: 'Post not found' });
         return;
       }
-      res.json(row);
+      const post: DBPost = {
+        id: row.id,
+        authorId: row.authorid,
+        type: row.type,
+        content: row.content,
+        title: row.title,
+        visibility: row.visibility,
+        tags: Array.isArray(row.tags)
+          ? row.tags
+          : typeof row.tags === 'string'
+          ? row.tags
+              .replace(/[{}]/g, '')
+              .split(',')
+              .map((t: string) => t.replace(/"/g, '').trim())
+              .filter(Boolean)
+          : [],
+        boardId: row.boardid ?? undefined,
+        timestamp:
+          row.timestamp instanceof Date
+            ? row.timestamp.toISOString()
+            : row.timestamp,
+        createdAt:
+          row.createdat instanceof Date
+            ? row.createdat.toISOString()
+            : row.createdat,
+      };
+      const users = usersStore.read();
+      res.json(
+        enrichPost(post, {
+          users,
+          currentUserId: ((req as any).user?.id as string) || null,
+        })
+      );
       return;
     } catch (err) {
       console.error(err);
