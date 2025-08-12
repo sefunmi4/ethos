@@ -8,24 +8,19 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { fetchRepliesByPostId, updatePost, fetchPostsByQuestId } from '../../api/post';
-import { linkPostToQuest, fetchQuestById } from '../../api/quest';
+import { updatePost } from '../../api/post';
+import { fetchQuestById } from '../../api/quest';
 import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
-import CreatePost from './CreatePost';
-import { Spinner, Select, SummaryTag } from '../ui';
-import { STATUS_OPTIONS } from '../../constants/options';
+import { SummaryTag } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
-import LinkViewer from '../ui/LinkViewer';
-import LinkControls from '../controls/LinkControls';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowserInline from '../git/GitFileBrowserInline';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import TeamPanel from '../quest/TeamPanel';
-import NestedReply from './NestedReply';
 import { buildSummaryTags } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
 
@@ -87,46 +82,22 @@ const PostCard: React.FC<PostCardProps> = ({
   compact = false,
   questId,
   questTitle,
-  showStatusControl = true,
   replyOverride,
   headerOnly = false,
   depth = 0,
   className = '',
-  initialShowReplies = false,
-  showDetails = false,
   boardId,
   expanded,
 }) => {
   const [editMode, setEditMode] = useState(false);
-  const [replies, setReplies] = useState<Post[]>([]);
-  const [showReplies, setShowReplies] = useState(initialShowReplies);
-  const [repliesLoaded, setRepliesLoaded] = useState(false);
-  const [loadingReplies, setLoadingReplies] = useState(false);
-  const [replyError, setReplyError] = useState('');
   const [showFullDiff, setShowFullDiff] = useState(false);
-  const [showLinkEditor, setShowLinkEditor] = useState(false);
-  const [linkDraft, setLinkDraft] = useState(post.linkedItems || []);
-  const [initialReplies, setInitialReplies] = useState<number>(0);
-  const [parentId, setParentId] = useState('');
-  const [edgeType, setEdgeType] = useState<'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'>('sub_problem');
-  const [edgeLabel, setEdgeLabel] = useState('');
-  const [questPosts, setQuestPosts] = useState<Post[]>([]);
-  const [createType, setCreateType] = useState<'free_speech' | null>(null);
-  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
-  const [showBrowser, setShowBrowser] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
-  const [showReplyForm, setShowReplyForm] = useState(false);
-  const [linkExpanded, setLinkExpanded] = useState(false);
   const [internalExpandedView] = useState(post.type === 'task');
   const [activeTab, setActiveTab] = useState<'files' | 'options'>('files');
   const { nodes, edges, loadGraph } = useGraph();
 
   const navigate = useNavigate();
-  const {
-    selectedBoard,
-    updateBoardItem,
-    appendToBoard,
-  } = useBoardContext() || {};
+  const { selectedBoard } = useBoardContext() || {};
 
   const dispatchTaskUpdated = (p: Post) => {
     if (p.type === 'task') {
@@ -181,21 +152,7 @@ const PostCard: React.FC<PostCardProps> = ({
     [edges, subgraphIds]
   );
 
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value;
-    const optimistic = { ...post, status: newStatus };
-    if (ctxBoardId) updateBoardItem(ctxBoardId, optimistic);
-    onUpdate?.(optimistic);
-    dispatchTaskUpdated(optimistic);
-    try {
-      const updated = await updatePost(post.id, { status: newStatus });
-      if (ctxBoardId) updateBoardItem(ctxBoardId, updated);
-      onUpdate?.(updated);
-      dispatchTaskUpdated(updated);
-    } catch (err) {
-      console.error('[PostCard] Failed to update status:', err);
-    }
-  };
+
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
@@ -209,42 +166,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
-  useEffect(() => {
-    if (!post.replyTo) {
-      fetchRepliesByPostId(post.id)
-        .then((r) => setInitialReplies(r.length))
-        .catch(() => {});
-    }
-  }, [post.id, post.replyTo]);
-
-  useEffect(() => {
-    if (initialShowReplies && !repliesLoaded) {
-      setShowReplies(true);
-      setLoadingReplies(true);
-      setReplyError('');
-      fetchRepliesByPostId(post.id)
-        .then((res) => {
-          setReplies(res || []);
-          setRepliesLoaded(true);
-        })
-        .catch((err) => {
-          console.error(`[PostCard] Load replies failed:`, err);
-          setReplyError('Could not load replies.');
-        })
-        .finally(() => setLoadingReplies(false));
-    }
-  }, [initialShowReplies, post.id, repliesLoaded]);
-
-  useEffect(() => {
-    const qid = questId || post.questId;
-    if (showLinkEditor && qid) {
-      fetchPostsByQuestId(qid)
-        .then(setQuestPosts)
-        .catch((err) =>
-          console.error('[PostCard] Failed to fetch quest posts:', err)
-        );
-    }
-  }, [showLinkEditor, questId, post.questId]);
 
   useEffect(() => {
     const qid = questId || post.questId;
@@ -253,23 +174,6 @@ const PostCard: React.FC<PostCardProps> = ({
       .then((q) => setHeadPostId(q.headPostId))
       .catch(() => {});
   }, [questId, post.questId]);
-  const toggleReplies = async () => {
-    if (!repliesLoaded) {
-      setLoadingReplies(true);
-      setReplyError('');
-      try {
-        const res = await fetchRepliesByPostId(post.id);
-        setReplies(res || []);
-        setRepliesLoaded(true);
-      } catch (err) {
-        console.error(`[PostCard] Load replies failed:`, err);
-        setReplyError('Could not load replies.');
-      } finally {
-        setLoadingReplies(false);
-      }
-    }
-    setShowReplies(prev => !prev);
-  };
 
   const handleToggleTask = async (index: number, checked: boolean) => {
     const regex = /- \[[ xX]\]/g;
@@ -305,23 +209,7 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   };
 
-  const renderLinkSummary = () => {
-    if (
-      post.tags?.includes('request') ||
-      (!showDetails && (!post.linkedItems || post.linkedItems.length === 0))
-    ) {
-      return null;
-    }
-    return (
-      <LinkViewer
-        items={post.linkedItems || []}
-        post={post}
-        showReplyChain={showDetails}
-        open={linkExpanded}
-        onToggle={() => setLinkExpanded(o => !o)}
-      />
-    );
-  };
+
 
   const renderCommitDiff = () => {
     if (!post.gitDiff) return null;
@@ -425,7 +313,6 @@ const PostCard: React.FC<PostCardProps> = ({
               type="post"
               canEdit={canEdit}
               onEdit={() => setEditMode(true)}
-              onEditLinks={() => setShowLinkEditor(true)}
               onDelete={() => onDelete?.(post.id)}
               allowDelete={allowDelete}
               content={post.content}
@@ -481,18 +368,6 @@ const PostCard: React.FC<PostCardProps> = ({
             </React.Fragment>
           ))}
           {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
-          {!isQuestBoardRequest &&
-            canEdit &&
-            (post.type === 'task' || post.tags?.includes('request')) &&
-            showStatusControl && (
-            <div className="ml-1 w-28">
-              <Select
-                value={post.status || 'To Do'}
-                onChange={handleStatusChange}
-                options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
-              />
-            </div>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <ActionMenu
@@ -500,7 +375,6 @@ const PostCard: React.FC<PostCardProps> = ({
             type="post"
             canEdit={canEdit}
             onEdit={() => setEditMode(true)}
-            onEditLinks={() => setShowLinkEditor(true)}
             onDelete={() => onDelete?.(post.id)}
             allowDelete={allowDelete}
             content={post.content}
@@ -511,12 +385,6 @@ const PostCard: React.FC<PostCardProps> = ({
       {isQuestBoardRequest && timestamp && (
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {timestamp}
-        </div>
-      )}
-
-      {post.linkedNodeId && post.author?.username && !isQuestBoardRequest && (
-        <div className="text-xs text-secondary italic">
-          @{post.author.username} committed changes to <strong>{post.linkedNodeId}</strong> {timestamp}
         </div>
       )}
 
@@ -589,128 +457,9 @@ const PostCard: React.FC<PostCardProps> = ({
 
       {renderCommitDiff()}
 
-      <ReactionControls
-        post={post}
-        user={user}
-        onUpdate={onUpdate}
-        replyOverride={replyOverride}
-        boardId={ctxBoardId || undefined}
-        timestamp={!isQuestBoardRequest ? timestamp : undefined}
-        expanded={expandedView}
-        onReplyToggle={
-          post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
-        }
-      />
 
-      {renderLinkSummary()}
 
-      {showReplyForm && (
-        <div className="mt-2">
-          <CreatePost
-            replyTo={post}
-            onSave={(r) => {
-              onUpdate?.(r);
-              setShowReplyForm(false);
-            }}
-            onCancel={() => setShowReplyForm(false)}
-          />
-        </div>
-      )}
 
-      {( ['task','free_speech','change'].includes(post.type) || post.tags?.some(t => ['request','review'].includes(t)) ) && (
-        <div className="text-xs text-secondary space-y-1">
-          {showLinkEditor && (
-            <div className="mt-2">
-              <LinkControls
-                value={linkDraft}
-                onChange={setLinkDraft}
-                allowCreateNew={false}
-                itemTypes={['quest', 'post']}
-              />
-              {linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId) && (
-                <div className="mt-2 space-y-1">
-                  <label className="text-xs text-secondary">Parent Post</label>
-                  <select
-                    className="border rounded px-1 py-0.5 text-xs w-full"
-                    value={parentId}
-                    onChange={e => setParentId(e.target.value)}
-                  >
-                    <option value="">-- select parent --</option>
-                    {questPosts.map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.content.slice(0, 30)}
-                      </option>
-                    ))}
-                  </select>
-                  <label className="text-xs text-secondary">Edge Type</label>
-                  <select
-                    className="border rounded px-1 py-0.5 text-xs w-full"
-                    value={edgeType}
-                    onChange={e =>
-                      setEdgeType(
-                        e.target.value as 'sub_problem' | 'solution_branch' | 'folder_split' | 'abstract'
-                      )
-                    }
-                  >
-                    <option value="sub_problem">sub_problem</option>
-                    <option value="solution_branch">solution_branch</option>
-                    <option value="folder_split">folder_split</option>
-                    <option value="abstract">abstract</option>
-                  </select>
-                  <label className="text-xs text-secondary">Edge Label</label>
-                  <input
-                    type="text"
-                    className="border rounded px-1 py-0.5 text-xs w-full"
-                    value={edgeLabel}
-                    onChange={e => setEdgeLabel(e.target.value)}
-                  />
-                </div>
-              )}
-              <div className="flex gap-2 mt-2">
-                <button
-                  className="text-xs bg-indigo-600 text-white px-2 py-1 rounded"
-                  onClick={async () => {
-                    try {
-                      const updated = await updatePost(post.id, { linkedItems: linkDraft });
-                      if (linkDraft.some(l => l.linkType === 'task_edge') && (questId || post.questId)) {
-                        await linkPostToQuest(questId || post.questId!, {
-                          postId: post.id,
-                          parentId: parentId || undefined,
-                          edgeType,
-                          edgeLabel: edgeLabel || undefined,
-                          title: post.questNodeTitle || makeHeader(post.content),
-                        });
-                        loadGraph(questId || post.questId!);
-                      }
-                      setShowLinkEditor(false);
-                      onUpdate?.(updated);
-                      dispatchTaskUpdated(updated);
-                    } catch (err) {
-                      console.error('[PostCard] Failed to update links:', err);
-                    }
-                  }}
-                >
-                  Save
-                </button>
-                <button
-                  className="text-xs underline"
-                  onClick={() => {
-                    setLinkDraft(post.linkedItems || []);
-                    setShowLinkEditor(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-          {post.questId && post.nodeId && (
-            <div>🧭 Linked to Quest: {post.nodeId}</div>
-          )}
-        </div>
-      )}
-
-      {expandedView && post.type === 'task' && qid && (
         <div className="mt-4 flex flex-col md:flex-row gap-4" data-testid="task-expanded-view">
           <div className="md:w-1/2">
             <MapGraphLayout items={displayNodes} edges={displayEdges} />
@@ -739,118 +488,16 @@ const PostCard: React.FC<PostCardProps> = ({
             </div>
           </div>
         </div>
-      )}
 
-      {post.type === 'task' && post.linkedNodeId && post.questId && !expandedView && (
-        <>
-          <button
-            onClick={() => setShowBrowser(true)}
-            className="text-accent underline text-xs mt-1"
-          >
-            View {post.taskType === 'file' ? 'File' : post.taskType === 'folder' ? 'Folder' : 'Planner'}
-          </button>
-          {showBrowser && (
-            <div className="mt-2">
-              <GitFileBrowserInline
-                questId={post.questId as string}
-                onClose={() => setShowBrowser(false)}
-              />
-            </div>
-          )}
-        </>
-      )}
-
-      {createType && (
-        <div className="mt-2 space-y-1">
-          <CreatePost
-            initialType={createType}
-            questId={post.questId || undefined}
-            boardId={post.questId ? `log-${post.questId}` : undefined}
-            replyTo={post}
-            onSave={async (newPost) => {
-              if (post.questId) {
-                try {
-                  const np = newPost as Post;
-                  await linkPostToQuest(post.questId, {
-                    postId: np.id,
-                    parentId: post.id,
-                    title: np.questNodeTitle || makeHeader(np.content),
-                  });
-                  appendToBoard?.(`log-${post.questId}`, np);
-                  loadGraph(post.questId);
-                } catch (err) {
-                  console.error('[PostCard] Failed to link new post:', err);
-                }
-              }
-              setCreateType(null);
-            }}
-            onCancel={() => {
-              setCreateType(null);
-            }}
-          />
-        </div>
-      )}
-
-      {showSubtaskForm && (
-        <div className="mt-2">
-          <CreatePost
-            initialType="task"
-            questId={post.questId || undefined}
-            boardId={post.questId ? `map-${post.questId}` : undefined}
-            replyTo={post}
-            onSave={async (newPost) => {
-              if (post.questId) {
-                try {
-                  const np = newPost as Post;
-                  await linkPostToQuest(post.questId, {
-                    postId: np.id,
-                    parentId: post.id,
-                    title: np.questNodeTitle || makeHeader(np.content),
-                  });
-                  appendToBoard?.(`map-${post.questId}`, np);
-                  loadGraph(post.questId);
-                } catch (err) {
-                  console.error('[PostCard] Failed to link new subtask:', err);
-                }
-              }
-              setShowSubtaskForm(false);
-            }}
-            onCancel={() => setShowSubtaskForm(false)}
-          />
-        </div>
-      )}
-
-
-
-      {(initialReplies > 0 || replies.length > 0) && (
-        <button
-          onClick={toggleReplies}
-          className="text-accent underline text-xs"
-        >
-          {showReplies ? 'Hide Replies' : `\u{1F4AC} See Replies (${initialReplies || replies.length})`}
-        </button>
-      )}
-
-      {replies.length > 0 && showReplies && (
-        <div className="mt-2 space-y-2">
-          {loadingReplies && (
-            <div className="flex justify-center">
-              <Spinner />
-            </div>
-          )}
-          {replyError && <p className="text-xs text-error">{replyError}</p>}
-          {replies.map((r) => (
-            <NestedReply
-              key={r.id}
-              post={r}
-              user={user}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              depth={depth + 1}
-            />
-          ))}
-        </div>
-      )}
+      <ReactionControls
+        post={post}
+        user={user}
+        onUpdate={onUpdate}
+        replyOverride={replyOverride}
+        boardId={ctxBoardId || undefined}
+        timestamp={!isQuestBoardRequest ? timestamp : undefined}
+        expanded={expandedView}
+      />
     </div>
   );
 };

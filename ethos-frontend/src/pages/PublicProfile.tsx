@@ -9,7 +9,6 @@ import { usePost } from '../hooks/usePost';
 import Banner from '../components/ui/Banner';
 import Board from '../components/board/Board';
 import { Spinner } from '../components/ui';
-import ReviewForm from '../components/ReviewForm';
 
 import type { EnrichedQuest, Quest } from '../types/questTypes';
 import type { EnrichedPost, Post } from '../types/postTypes';
@@ -92,25 +91,6 @@ const PublicProfilePage: React.FC = () => {
     <main className="max-w-6xl mx-auto px-4 py-10 bg-soft dark:bg-soft-dark text-primary">
       <Banner user={profile} readOnly />
 
-      {/* 📘 Public Quests */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-primary">📘 Public Quests</h2>
-        {questBoard ? (
-          questBoard.enrichedItems?.length ? (
-            <Board
-              board={questBoard}
-              layout="graph" // for quest overview in graph/tree format
-              user={profile}
-              readOnly
-            />
-          ) : (
-            <div className="text-secondary text-center py-8">No public quests available.</div>
-          )
-        ) : (
-          <Spinner />
-        )}
-      </section>
-
       {/* 🧭 Public Posts */}
       <section className="mt-12">
         <h2 className="text-2xl font-semibold mb-4 text-primary">🧭 Public Posts</h2>
@@ -131,12 +111,6 @@ const PublicProfilePage: React.FC = () => {
         ) : (
           <Spinner />
         )}
-      </section>
-
-      {/* ⭐ Review Section */}
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4 text-primary">⭐ Leave a Review</h2>
-        <ReviewForm targetType="creator" modelId={profile.id} />
       </section>
     </main>
   );

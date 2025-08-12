@@ -195,6 +195,15 @@ const PostPage: React.FC = () => {
       </section>
 
       <section>
+        {post.type === 'task' && post.questId && (
+          <div className="grid md:grid-cols-2 gap-4">
+            <QuestNodeInspector questId={post.questId} node={post} user={user as User} showPost={false} />
+            <div className="space-y-4">
+              <GitFileBrowserInline questId={post.questId} />
+              <TeamPanel questId={post.questId} node={post} canEdit={!!user} />
+            </div>
+          </div>
+        )}
         {taskRepliesBoard && (
           <Board
             boardId={`task-replies-${id}`}
@@ -205,6 +214,13 @@ const PostPage: React.FC = () => {
             user={user as User}
           />
         )}
+
+        {post.type === 'change' && post.questId && (
+          <GitFileBrowserInline questId={post.questId} />
+        )}
+        {post.tags?.includes('review') && parentPost && (
+          <PostCard post={parentPost} />
+        )}
         {changeRepliesBoard && (
           <Board
             boardId={`change-replies-${id}`}
@@ -214,21 +230,6 @@ const PostPage: React.FC = () => {
             compact={true}
             user={user as User}
           />
-        )}
-        {post.type === 'task' && post.questId && (
-          <div className="grid md:grid-cols-2 gap-4">
-            <QuestNodeInspector questId={post.questId} node={post} user={user as User} showPost={false} />
-            <div className="space-y-4">
-              <GitFileBrowserInline questId={post.questId} />
-              <TeamPanel questId={post.questId} node={post} canEdit={!!user} />
-            </div>
-          </div>
-        )}
-        {post.type === 'change' && post.questId && (
-          <GitFileBrowserInline questId={post.questId} />
-        )}
-        {post.tags?.includes('review') && parentPost && (
-          <PostCard post={parentPost} />
         )}
       </section>
 
