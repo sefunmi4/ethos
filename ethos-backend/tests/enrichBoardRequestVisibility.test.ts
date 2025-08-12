@@ -17,6 +17,7 @@ describe('enrichBoard request visibility', () => {
         id: 'p1',
         authorId: 'u1',
         type: 'request',
+        subtype: 'task',
         content: '',
         visibility: 'PUBLIC' as any,
         timestamp: '',

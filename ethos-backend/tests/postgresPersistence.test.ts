@@ -50,7 +50,7 @@ describe('postgres persistence', () => {
   it('shows request posts on quest board after refresh', async () => {
     const postRes = await request(app)
       .post('/posts')
-      .send({ type: 'request', content: 'Need help', visibility: 'public' });
+      .send({ type: 'request', subtype: 'task', content: 'Need help', visibility: 'public' });
     expect(postRes.status).toBe(201);
     const postId = postRes.body.id;
 

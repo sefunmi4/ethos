@@ -450,7 +450,7 @@ describe('route handlers', () => {
     ]);
     postsStoreMock.read.mockReturnValue([
       {
-        id: 'r1', authorId: 'u2', type: 'request', content: '', visibility: 'public',
+        id: 'r1', authorId: 'u2', type: 'request', subtype: 'task', content: '', visibility: 'public',
         timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
       },
       {
@@ -473,7 +473,7 @@ describe('route handlers', () => {
     ]);
     postsStoreMock.read.mockReturnValue([
       {
-        id: 'r1', authorId: 'u1', type: 'request', content: '', visibility: 'public',
+        id: 'r1', authorId: 'u1', type: 'request', subtype: 'task', content: '', visibility: 'public',
         timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
       },
       {
@@ -497,7 +497,7 @@ describe('route handlers', () => {
     ]);
     postsStoreMock.read.mockReturnValue([
       {
-        id: 'r1', authorId: 'u1', type: 'request', content: '', visibility: 'public',
+        id: 'r1', authorId: 'u1', type: 'request', subtype: 'task', content: '', visibility: 'public',
         timestamp: '2024-01-02', boardId: '', tags: [], collaborators: [], linkedItems: []
       }
     ]);
