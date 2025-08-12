@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { Quest, TaskEdge } from '../../types/questTypes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import { Button, SummaryTag } from '../ui';
+import { Button, SummaryTag, MarkdownEditor, MarkdownRenderer } from '../ui';
 import { FaBell } from 'react-icons/fa';
 import { toTitleCase } from '../../utils/displayUtils';
 import { ROUTES } from '../../constants/routes';
@@ -12,7 +12,7 @@ import MapGraphLayout from '../layout/MapGraphLayout';
 import GraphLayout from '../layout/GraphLayout';
 import CreatePost from '../post/CreatePost';
 import { fetchQuestById, updateQuestById, updateQuestTaskGraph, followQuest, unfollowQuest } from '../../api/quest';
-import { fetchPostsByQuestId } from '../../api/post';
+import { fetchPostsByQuestId, updatePost } from '../../api/post';
 import LinkControls from '../controls/LinkControls';
 import ActionMenu from '../ui/ActionMenu';
 import TaskPreviewCard from '../post/TaskPreviewCard';
@@ -76,6 +76,8 @@ const QuestCard: React.FC<QuestCardProps> = ({
   const [joinRequested, setJoinRequested] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
   const [showFolderView, setShowFolderView] = useState(false);
+  const [editingPlanner, setEditingPlanner] = useState(false);
+  const [plannerDraft, setPlannerDraft] = useState('');
   const [following, setFollowing] = useState(
     !!user && (quest.followers || []).includes(user.id)
   );
@@ -272,6 +274,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
     return () => window.removeEventListener('taskUpdated', handler);
   }, [selectedNode, rootNode]);
 
+  useEffect(() => {
+    setPlannerDraft(selectedNode?.content || '');
+    setEditingPlanner(false);
+  }, [selectedNode?.id, selectedNode?.content]);
+
 
 
 
@@ -418,6 +425,20 @@ const QuestCard: React.FC<QuestCardProps> = ({
         console.error('[QuestCard] Failed to save folder graph', err);
       }
     };
+    const handlePlannerSave = async () => {
+      if (!selectedNode) return;
+      try {
+        const updated = await updatePost(selectedNode.id, { content: plannerDraft });
+        setSelectedNode(updated);
+        setLogs(prev => prev.map(p => (p.id === updated.id ? (updated as Post) : p)));
+        document.dispatchEvent(
+          new CustomEvent('taskUpdated', { detail: { task: updated }, bubbles: true })
+        );
+        setEditingPlanner(false);
+      } catch (err) {
+        console.error('[QuestCard] Failed to save planner', err);
+      }
+    };
     const checklistSection = (
       <div className="border border-secondary rounded">
         <div
@@ -492,6 +513,50 @@ const QuestCard: React.FC<QuestCardProps> = ({
       </div>
     );
 
+    const plannerSection = isPlanner && (
+      <div className="border border-secondary rounded">
+        <div className="flex justify-between items-center p-2 bg-soft">
+          <span className="font-semibold text-sm">Planner</span>
+          <button
+            onClick={() => setEditingPlanner((p) => !p)}
+            className="text-xs text-accent underline"
+          >
+            {editingPlanner ? 'Cancel' : 'Edit'}
+          </button>
+        </div>
+        <div className="p-2 space-y-2">
+          {editingPlanner ? (
+            <>
+              <MarkdownEditor
+                id={`planner-${selectedNode.id}`}
+                value={plannerDraft}
+                onChange={setPlannerDraft}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePlannerSave}
+                  className="bg-accent text-white text-xs px-2 py-1 rounded"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingPlanner(false);
+                    setPlannerDraft(selectedNode.content);
+                  }}
+                  className="text-xs underline"
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <MarkdownRenderer content={selectedNode.content} />
+          )}
+        </div>
+      </div>
+    );
+
     const fileSection = (
       <div className="space-y-2">
         {selectedNode.taskType === 'file' &&
@@ -511,6 +576,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
         {statusBoard}
         {checklistSection}
         {folderSection}
+        {plannerSection}
         {selectedNode.taskType !== 'abstract' && fileSection}
       </div>
     );
