@@ -58,6 +58,9 @@ export interface DBPost {
   /** Whether this request still needs help */
   needsHelp?: boolean;
 
+  /** Pointer to a generated request post */
+  requestId?: string;
+
   questId?: string | null;
   questNodeTitle?: string;
   nodeId?: string;

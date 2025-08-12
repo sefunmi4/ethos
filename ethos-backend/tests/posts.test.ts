@@ -124,14 +124,26 @@ describe('post routes', () => {
       visibility: 'public',
       timestamp: '',
     };
-    postsStoreMock.read.mockReturnValue([change]);
+    const task = {
+      id: 't1',
+      authorId: 'u1',
+      type: 'task',
+      content: '',
+      visibility: 'public',
+      timestamp: '',
+    };
+    postsStoreMock.read.mockReturnValue([change, task]);
     const res = await request(app)
       .post('/posts')
       .send({
         type: 'request',
+        subtype: 'change',
         content: 'req',
         visibility: 'public',
-        linkedItems: [{ itemId: 'c1', itemType: 'post' }],
+        linkedItems: [
+          { itemId: 'c1', itemType: 'post' },
+          { itemId: 't1', itemType: 'post' },
+        ],
       });
     expect(res.status).toBe(201);
   });
@@ -534,6 +546,7 @@ describe('post routes', () => {
     expect(store[2].replyTo).toBe(store[1].id);
     expect(store[1].boardId).toBe('quest-board');
     expect(store[2].boardId).toBe('quest-board');
+    expect(store[0].requestId).toBe(store[1].id);
   });
 
   it('POST /:id/request-help creates request post', async () => {
@@ -565,6 +578,7 @@ describe('post routes', () => {
     expect((store[1].linkedItems as any[])[0].itemId).toBe('p2');
     expect(store[0].helpRequest).toBe(true);
     expect(store[0].needsHelp).toBe(true);
+    expect(store[0].requestId).toBe(store[1].id);
     expect(store[1].boardId).toBe('quest-board');
   });
 
@@ -591,6 +605,7 @@ describe('post routes', () => {
       .post('/posts')
       .send({
         type: 'request',
+        subtype: 'task',
         boardId: 'quest-board',
         linkedItems: [{ itemId: 't1', itemType: 'post' }],
       });
@@ -705,9 +720,11 @@ describe('post routes', () => {
     postsStoreMock.write.mockClear();
     const res = await request(app)
       .post('/posts')
-      .send({ type: 'request', content: 'help', visibility: 'public' });
+      .send({ type: 'request', subtype: 'task', content: 'help', visibility: 'public' });
     expect(res.status).toBe(201);
     expect(res.body.tags).toContain('summary:request');
+    expect(res.body.tags).toContain('summary:task');
+    expect(res.body.tags).toContain('summary:user:u1');
   });
 
   it('adds task summary tag when request links to task', async () => {
@@ -725,6 +742,7 @@ describe('post routes', () => {
       .post('/posts')
       .send({
         type: 'request',
+        subtype: 'task',
         linkedItems: [{ itemId: 't1', itemType: 'post' }],
         content: 'help',
         visibility: 'public',
@@ -732,6 +750,7 @@ describe('post routes', () => {
     expect(res.status).toBe(201);
     expect(res.body.tags).toContain('summary:request');
     expect(res.body.tags).toContain('summary:task');
+    expect(res.body.tags).toContain('summary:user:u1');
   });
 
   it('accepting unlinked request creates task post', async () => {
