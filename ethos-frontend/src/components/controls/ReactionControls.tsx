@@ -10,6 +10,7 @@ import {
   FaReply,
   FaRetweet,
   FaHandsHelping,
+  FaClipboardCheck,
   FaCheckSquare,
   FaRegCheckSquare,
   FaUserPlus,
@@ -318,7 +319,17 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             onClick={handleRequestHelp}
             disabled={loading || !user}
           >
-            <FaHandsHelping /> {helpRequested ? 'Cancel Help' : 'Request Help'}
+            <FaHandsHelping /> {helpRequested ? 'Requested' : 'Request Help'}
+          </button>
+        )}
+
+        {!isQuestRequest && post.type === 'change' && (
+          <button
+            className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
+            onClick={handleRequestHelp}
+            disabled={loading || !user}
+          >
+            <FaClipboardCheck /> {helpRequested ? 'Requested' : 'Request Review'}
           </button>
         )}
 

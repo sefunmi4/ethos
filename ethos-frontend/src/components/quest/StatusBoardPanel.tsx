@@ -17,7 +17,6 @@ interface StatusBoardPanelProps {
 
 const statusIcons: Record<string, string> = {
   'To Do': '🟦',
-  'In Progress': '⏳',
   Blocked: '⛔',
   Done: '✅',
 };
