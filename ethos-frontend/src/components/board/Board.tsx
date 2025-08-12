@@ -25,7 +25,7 @@ import type {
   BoardLayout,
   BoardFilters,
 } from '../../types/boardTypes';
-import type { Post } from '../../types/postTypes';
+import type { Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 const EMPTY_FILTER: BoardFilters = {};
@@ -71,7 +71,7 @@ const Board: React.FC<BoardProps> = ({
   const [editMode, setEditMode] = useState(false);
   interface LocalFilter {
     itemType: string;
-    postType: string;
+    postType: PostType | 'request' | 'review' | '';
     linkType: string;
   }
 
@@ -83,12 +83,16 @@ const Board: React.FC<BoardProps> = ({
 
   const [localFilter, setLocalFilter] = useState<LocalFilter>({
     itemType,
-    postType,
+    postType: postType as PostType | 'request' | 'review' | '',
     linkType,
   });
 
   useEffect(() => {
-    setLocalFilter({ itemType, postType, linkType });
+    setLocalFilter({
+      itemType,
+      postType: postType as PostType | 'request' | 'review' | '',
+      linkType,
+    });
   }, [itemType, postType, linkType]);
 
   // Keep items state in sync with BoardContext updates
@@ -349,7 +353,10 @@ const Board: React.FC<BoardProps> = ({
               <Select
                 value={localFilter.postType}
                 onChange={(e) =>
-                  setLocalFilter((p) => ({ ...p, postType: e.target.value }))
+                  setLocalFilter((p) => ({
+                    ...p,
+                    postType: e.target.value as PostType | 'request' | 'review' | '',
+                  }))
                 }
                 options={[
                   { value: '', label: 'All Posts' },

@@ -163,7 +163,7 @@ export const getPostSummary = (
   const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
-  if (post.type === "review") {
+  if (post.secondaryType === "review") {
     const user = post.author?.username || post.authorId;
     if (title) parts.push(`(Review: ${title})`);
     parts.push(`(@${user})`);
@@ -173,7 +173,7 @@ export const getPostSummary = (
 
   if (title) parts.push(`(Quest: ${title})`);
 
-  if (post.type === "request") {
+  if (post.secondaryType === "request") {
     parts.push("(Request)");
     if (post.subtype === "task") {
       if (post.nodeId) parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)})`);

@@ -112,7 +112,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
-    const validation = validateLinks(type, autoLinkItems, !!replyTo, secondaryType);
+    const validation = validateLinks(type, autoLinkItems, !!replyTo);
     if (!validation.valid) {
       alert(validation.message);
       setIsSubmitting(false);
