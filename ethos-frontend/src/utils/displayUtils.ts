@@ -138,6 +138,58 @@ export const buildSummaryTags = (
     tags.push({ type: 'type', label: `@${user}`, link: ROUTES.PUBLIC_PROFILE(post.authorId) });
   }
 
+  // Include non-system tags
+  if (post.tags && post.tags.length > 0) {
+    const blockedPrefixes = ['summary:', 'pending:'];
+    const blockedTags = ['system'];
+    post.tags.forEach((rawTag) => {
+      const lower = rawTag.toLowerCase();
+      if (
+        blockedTags.includes(lower) ||
+        blockedPrefixes.some((prefix) => lower.startsWith(prefix))
+      ) {
+        return;
+      }
+
+      let tagType: SummaryTagType = 'category';
+      let label = rawTag;
+
+      switch (lower) {
+        case 'request':
+        case 'review':
+        case 'change':
+        case 'quest':
+        case 'task':
+        case 'log':
+        case 'free_speech':
+        case 'party_request':
+        case 'quest_task':
+        case 'solved':
+          tagType = lower as SummaryTagType;
+          label = toTitleCase(rawTag);
+          break;
+        default: {
+          if (lower.startsWith('meta:')) {
+            const meta = lower.split(':')[1];
+            if (meta === 'system') {
+              tagType = 'meta_system';
+              label = 'System';
+            } else if (meta === 'announcement') {
+              tagType = 'meta_announcement';
+              label = 'Announcement';
+            } else {
+              label = `#${rawTag}`;
+            }
+          } else {
+            label = `#${rawTag}`;
+          }
+        }
+      }
+
+      tags.push({ type: tagType, label });
+    });
+  }
+
   // Remove duplicate entries by label in case of redundant inputs
   return tags.filter((t, idx) => tags.findIndex(o => o.label === t.label && o.type === t.type) === idx);
 };
