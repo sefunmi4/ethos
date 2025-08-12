@@ -47,6 +47,9 @@ export interface Post {
   reactions?: ReactionSet;
   reactionCounts?: ReactionCountMap;
 
+  /** ID of the current user's repost, if any */
+  userRepostId?: string | null;
+
   /** Users following this post */
   followers?: string[];
 

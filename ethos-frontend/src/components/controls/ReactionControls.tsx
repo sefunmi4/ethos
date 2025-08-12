@@ -68,12 +68,22 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
   const [loading, setLoading] = useState(true);
-  const [userRepostId, setUserRepostId] = useState<string | null>(null);
+  const [userRepostId, setUserRepostId] = useState<string | null>(
+    post.userRepostId ?? null
+  );
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const [requestPostId, setRequestPostId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHelpRequested(post.helpRequest === true);
+  }, [post.helpRequest]);
+
+  useEffect(() => {
+    setUserRepostId(post.userRepostId ?? null);
+  }, [post.userRepostId]);
 
   const isAuthor = !!user && user.id === post.authorId;
   const isTeamMember = !!user && (post.collaborators || []).some(c => c.userId === user.id);
@@ -119,7 +129,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           like: userReactions.some((r) => r.type === 'like'),
           heart: userReactions.some((r) => r.type === 'heart'),
         });
-        setUserRepostId(userRepostRes?.id || null);
+        setUserRepostId(userRepostRes?.id || post.userRepostId || null);
       } catch (err) {
         console.error('[ReactionControls] Failed to fetch data:', err);
       } finally {
@@ -156,6 +166,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       try {
         await removeRepost(prevId);
         onUpdate?.({ id: prevId, removed: true });
+        onUpdate?.({ ...post, userRepostId: null } as Post);
       } catch (err) {
         // revert on error
         setCounts(prev => ({ ...prev, repost: prev.repost + 1 }));
@@ -172,6 +183,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         if (res?.id) {
           setUserRepostId(res.id);
           onUpdate?.(res);
+          onUpdate?.({ ...post, userRepostId: res.id } as Post);
         } else {
           throw new Error('No repost ID returned');
         }
@@ -269,6 +281,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
         {['free_speech', 'task', 'change'].includes(post.type) && (
           <button
+            aria-label="Repost"
             className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
             onClick={handleRepost}
             disabled={loading || repostLoading || !user}
