@@ -20,6 +20,7 @@ export default {
   testMatch: [
     '<rootDir>/src/api/quest.test.ts',
     '<rootDir>/src/components/controls/LinkControls.test.tsx',
+    '<rootDir>/src/components/controls/ReactionControls.repost.test.tsx',
     '<rootDir>/src/components/post/PostCard.requestHelp.test.tsx',
     '<rootDir>/src/components/post/PostListItem.test.tsx',
     '<rootDir>/tests/CreatePostReply.test.tsx',

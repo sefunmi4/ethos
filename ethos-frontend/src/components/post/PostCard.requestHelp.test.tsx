@@ -113,4 +113,25 @@ describe('PostCard request help', () => {
 
     expect(screen.queryByText(/Request Help/i)).toBeNull();
   });
+
+  it('keeps requested state after rerender', async () => {
+    const { rerender } = render(
+      <BrowserRouter>
+        <PostCard post={post} user={{ id: 'u1' } as User} />
+      </BrowserRouter>
+    );
+
+    const btn = await screen.findByText(/Request Help/i);
+    await act(async () => {
+      fireEvent.click(btn);
+    });
+    await screen.findByText(/Requested/i);
+
+    rerender(
+      <BrowserRouter>
+        <PostCard post={{ ...post, helpRequest: true }} user={{ id: 'u1' } as User} />
+      </BrowserRouter>
+    );
+    expect(screen.getByText(/Requested/i)).toBeInTheDocument();
+  });
 });
