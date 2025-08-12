@@ -133,8 +133,14 @@ export const enrichPosts = (
     const enrichedAuthor = author
       ? enrichUser(author, { currentUserId })
       : {
-          id: 'anon',
-          username: 'Anonymous',
+          // When a post's author cannot be found in the user store, we still
+          // want to surface whatever identifier the post carries. Many posts
+          // are created by guests with a randomly generated username stored in
+          // `authorId`. Previously these posts were enriched with a static
+          // "Anonymous" user which caused summary tags to display "Anonymous"
+          // instead of the guest's assigned name.
+          id: post.authorId,
+          username: post.authorId,
           bio: '',
           tags: [],
           links: {},
