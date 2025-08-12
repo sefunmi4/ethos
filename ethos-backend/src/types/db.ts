@@ -14,7 +14,8 @@ import type {
   ReactionSet,
   ReactionCountMap,
   ReviewTargetType,
-  ApprovalStatus
+  ApprovalStatus,
+  GitAccount
 } from './api';
 
 // types/db.ts
@@ -222,6 +223,8 @@ export interface DBUser {
    * Total experience points accumulated.
    */
   xp?: number;
+
+  gitAccounts?: GitAccount[];
 
   links?: Record<string, string>; // generic key-value links
   featuredPosts?: Array<{
