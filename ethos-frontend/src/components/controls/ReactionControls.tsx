@@ -11,11 +11,8 @@ import {
   FaRetweet,
   FaHandsHelping,
   FaClipboardCheck,
-  FaCheckSquare,
-  FaRegCheckSquare,
   FaUserPlus,
   FaUserCheck,
-  FaBell,
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import CreatePost from '../post/CreatePost';
@@ -31,10 +28,6 @@ import {
   removeHelpRequest,
   acceptRequest,
   unacceptRequest,
-  archivePost,
-  unarchivePost,
-  followPost,
-  unfollowPost,
 } from '../../api/post';
 import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
@@ -79,18 +72,18 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
-  const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
-  const [joining, setJoining] = useState(false);
-  const initialJoined = !!user && (
-    post.authorId === user.id ||
-    post.tags?.includes(`pending:${user.id}`) ||
-    (post.collaborators || []).some(c => c.userId === user.id)
+  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
+  const [requestPostId, setRequestPostId] = useState<string | null>(null);
+
+  const isAuthor = !!user && user.id === post.authorId;
+  const isTeamMember = !!user && (post.collaborators || []).some(c => c.userId === user.id);
+  const isAuthorOrTeam = isAuthor || isTeamMember;
+  const initialAccepted = !!user && (
+    isAuthorOrTeam || post.tags?.includes(`pending:${user.id}`)
   );
-  const [joined, setJoined] = useState(initialJoined);
-  const [following, setFollowing] = useState(
-    !!user && (post.followers || []).includes(user.id)
-  );
-  const [followerCount, setFollowerCount] = useState(post.followers?.length || 0);
+  const [accepted, setAccepted] = useState(initialAccepted);
+  const [accepting, setAccepting] = useState(false);
+
   const navigate = useNavigate();
   const { selectedBoard, appendToBoard, boards, removeItemFromBoard } =
     useBoardContext() || {};
@@ -99,12 +92,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
   const isPostHistory = ctxBoardId === 'my-posts';
   const isPostBoard = isPostHistory || ctxBoardType === 'post';
-  const isQuestRequest = ctxBoardId === 'quest-board' && post.tags?.includes('request');
-  const isRequestCard =
-    post.tags?.includes('request') && ctxBoardId === 'quest-board';
-  const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
-  const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
-  const [requestPostId, setRequestPostId] = useState<string | null>(null);
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
 
   useEffect(() => {
@@ -217,64 +204,22 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       }
     }
   };
-
-  const handleMarkComplete = async () => {
-    if (!user || user.id !== post.authorId) return;
-    try {
-      if (completed) {
-        await unarchivePost(post.id);
-        setCompleted(false);
-      } else {
-        await archivePost(post.id);
-        setCompleted(true);
-      }
-    } catch (err) {
-      console.error('[ReactionControls] Failed to toggle request completion:', err);
-    }
-  };
-
-  const handleJoin = async () => {
+  const handleAccept = async () => {
     if (!user) return;
-    const joinAndNavigate =
-      ctxBoardId === 'my-posts' && post.tags?.includes('request') && post.questId && roleTag;
-    if (joinAndNavigate) {
-      const isPrivate = post.visibility === 'private';
-      const type = isPrivate ? 'request' : 'free_speech';
-      navigate(
-        ROUTES.POST(post.id) + `?reply=1&initialType=${type}&intro=1`
-      );
-      return;
-    }
     try {
-      setJoining(true);
-      if (joined) {
+      setAccepting(true);
+      if (accepted && !isAuthorOrTeam) {
         await unacceptRequest(post.id);
-        setJoined(false);
+        setAccepted(false);
       } else {
-        await acceptRequest(post.id);
-        setJoined(true);
+        const res = await acceptRequest(post.id);
+        setAccepted(true);
+        onUpdate?.(res.post);
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to join request:', err);
+      console.error('[ReactionControls] Failed to toggle accept:', err);
     } finally {
-      setJoining(false);
-    }
-  };
-
-  const handleFollow = async () => {
-    if (!user) return;
-    try {
-      if (following) {
-        const res = await unfollowPost(post.id);
-        setFollowerCount(res.followers.length);
-        setFollowing(false);
-      } else {
-        const res = await followPost(post.id);
-        setFollowerCount(res.followers.length);
-        setFollowing(true);
-      }
-    } catch (err) {
-      console.error('[ReactionControls] Failed to toggle follow', err);
+      setAccepting(false);
     }
   };
 
@@ -291,16 +236,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.like ? <FaThumbsUp /> : <FaRegThumbsUp />} {counts.like || ''}
         </button>
 
-      <button
-        className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
-        onClick={() => handleToggleReaction('heart')}
-        disabled={loading || !user}
-      >
-        {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
-      </button>
+        <button
+          className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
+          onClick={() => handleToggleReaction('heart')}
+          disabled={loading || !user}
+        >
+          {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
+        </button>
 
-
-        {!isQuestRequest && post.type === 'free_speech' && (
+        {['free_speech', 'task', 'change'].includes(post.type) && (
           <button
             className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
             onClick={handleRepost}
@@ -310,68 +254,49 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {!isQuestRequest && post.type === 'task' && (
-          <button
-            className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
-            onClick={handleRequestHelp}
-            disabled={loading || !user}
-          >
-            <FaHandsHelping /> {helpRequested ? 'Requested' : 'Request Help'}
-          </button>
-        )}
-
-        {!isQuestRequest && post.type === 'change' && (
-          <button
-            className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
-            onClick={handleRequestHelp}
-            disabled={loading || !user}
-          >
-            <FaClipboardCheck /> {helpRequested ? 'Requested' : 'Request Review'}
-          </button>
-        )}
-
-        {isRequestCard && (
-          user?.id === post.authorId ? (
+        {(post.type === 'task' || post.type === 'change') && (
+          isAuthorOrTeam ? (
             <button
-              className={clsx('flex items-center gap-1', completed && 'text-green-600')}
-              onClick={handleMarkComplete}
-              disabled={!user}
+              className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
+              onClick={handleRequestHelp}
+              disabled={loading || !user}
             >
-              {completed ? <FaCheckSquare /> : <FaRegCheckSquare />} Complete
+              {post.type === 'task' ? <FaHandsHelping /> : <FaClipboardCheck />}{' '}
+              {post.type === 'change'
+                ? helpRequested
+                  ? 'Review Requested'
+                  : 'Request Review'
+                : helpRequested
+                  ? 'Requested'
+                  : 'Request Help'}
             </button>
-          ) : !joined ? (
-            <button
-              className="flex items-center gap-1"
-              onClick={handleJoin}
-              disabled={joining || !user}
-            >
-              {joining ? '...' : (
-                <>
-                  <FaUserPlus />{' '}
-                  {post.questId && roleTag ? 'Join' : 'Accept'}
-                </>
-              )}
-            </button>
-          ) : (
-            <span className="flex items-center gap-1">
-              <FaUserCheck /> Joined
-            </span>
-          )
+          ) : helpRequested ? (
+            accepted ? (
+              <span className="flex items-center gap-1">
+                <FaUserCheck /> Accepted
+              </span>
+            ) : (
+              <button
+                className="flex items-center gap-1"
+                onClick={handleAccept}
+                disabled={accepting || !user}
+              >
+                {accepting ? '...' : (
+                  <>
+                    <FaUserPlus />{' '}
+                    {post.type === 'change'
+                      ? 'Accept Change'
+                      : post.questId
+                        ? 'Accept Quest'
+                        : 'Accept Task'}
+                  </>
+                )}
+              </button>
+            )
+          ) : null
         )}
 
-        {(post.type === 'task' || post.tags?.includes('request')) && !isRequestCard && !joined && (
-          <button className="flex items-center gap-1" onClick={handleFollow} disabled={!user}>
-            <FaBell /> {following ? 'Following' : 'Follow'} {followerCount}
-          </button>
-        )}
-
-        {joined && !isRequestCard && (
-          <span className="flex items-center gap-1">
-            <FaUserCheck /> Joined
-          </span>
-        )}
-
-        {post.type !== 'task' && !isRequestCard && (
+        {post.type !== 'task' && (
           <button
             className={clsx(
               'flex items-center gap-1',
