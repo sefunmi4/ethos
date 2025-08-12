@@ -14,10 +14,12 @@ import FileEditorPanel from './FileEditorPanel';
 import GitDiffViewer from '../git/GitDiffViewer';
 import { useGitDiff } from '../../hooks/useGit';
 import { updateQuestTaskGraph } from '../../api/quest';
+import { updatePost } from '../../api/post';
 import { ROUTES } from '../../constants/routes';
 import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
+import { MarkdownEditor, MarkdownRenderer } from '../ui';
 
 interface TaskCardProps {
   task: Post;
@@ -33,6 +35,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
   const [showFolderForm, setShowFolderForm] = useState(false);
   const [showFolderView, setShowFolderView] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
+  const [editingPlanner, setEditingPlanner] = useState(false);
+  const [plannerDraft, setPlannerDraft] = useState(task.content);
   const navigate = useNavigate();
   const isHeadNode = task.nodeId?.endsWith('T00');
   const isRootSelected = selected.nodeId?.endsWith('T00');
@@ -51,6 +55,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
       loadGraph(questId);
     }
   }, [questId, loadGraph]);
+
+  useEffect(() => {
+    setPlannerDraft(selected.content);
+    setEditingPlanner(false);
+  }, [selected.id, selected.content]);
 
   useEffect(() => {
     if (!isHeadNode) return;
@@ -78,6 +87,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
       await loadGraph(questId);
     } catch (err) {
       console.error('[TaskCard] Failed to save task graph', err);
+    }
+  };
+
+  const handlePlannerSave = async () => {
+    try {
+      const updated = await updatePost(selected.id, { content: plannerDraft });
+      setSelected(updated);
+      onUpdate?.(updated);
+      document.dispatchEvent(
+        new CustomEvent('taskUpdated', { detail: { task: updated }, bubbles: true })
+      );
+      setEditingPlanner(false);
+    } catch (err) {
+      console.error('[TaskCard] Failed to save planner', err);
     }
   };
 
@@ -245,6 +268,49 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+            {selected.planner && (
+              <div className="border border-secondary rounded">
+                <div className="flex justify-between items-center p-2 bg-soft">
+                  <span className="font-semibold text-sm">Planner</span>
+                  <button
+                    onClick={() => setEditingPlanner((p) => !p)}
+                    className="text-xs text-accent underline"
+                  >
+                    {editingPlanner ? 'Cancel' : 'Edit'}
+                  </button>
+                </div>
+                <div className="p-2 space-y-2">
+                  {editingPlanner ? (
+                    <>
+                      <MarkdownEditor
+                        id={`planner-${selected.id}`}
+                        value={plannerDraft}
+                        onChange={setPlannerDraft}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handlePlannerSave}
+                          className="bg-accent text-white text-xs px-2 py-1 rounded"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditingPlanner(false);
+                            setPlannerDraft(selected.content);
+                          }}
+                          className="text-xs underline"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <MarkdownRenderer content={selected.content} />
+                  )}
+                </div>
               </div>
             )}
             {taskType !== 'abstract' && (
