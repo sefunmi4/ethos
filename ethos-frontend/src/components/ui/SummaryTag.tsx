@@ -21,18 +21,11 @@ import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
 export type SummaryTagType =
   | 'quest'
   | 'task'
-  | 'log'
   | 'review'
-  | 'category'
-  | 'status'
-  | 'free_speech'
   | 'type'
+  | 'free_speech'
   | 'request'
   | 'change'
-  | 'party_request'
-  | 'quest_task'
-  | 'meta_system'
-  | 'meta_announcement'
   | 'solved';
 
 export interface SummaryTagData {
@@ -52,18 +45,11 @@ export interface SummaryTagData {
 const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> = {
   quest: FaBookOpen,
   task: FaTasks,
-  log: FaStickyNote,
   review: FaStar,
-  category: FaStickyNote,
-  status: FaStickyNote,
   free_speech: FaCommentAlt,
   type: FaUser,
   request: FaHandsHelping,
   change: FaExchangeAlt,
-  party_request: FaUsers,
-  quest_task: FaUserCheck,
-  meta_system: FaCog,
-  meta_announcement: FaBullhorn,
   solved: FaCheckCircle,
 };
 

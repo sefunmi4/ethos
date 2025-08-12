@@ -8,7 +8,7 @@ import {
   FaRegHeart,
   FaReply,
   FaRetweet,
-  FaRegRetweet,
+  FaRegShareSquare,
   FaHandsHelping,
   FaClipboardCheck,
   FaUserPlus,
@@ -17,7 +17,6 @@ import {
 
 import { useBoardContext } from '../../contexts/BoardContext';
 import { ROUTES } from '../../constants/routes';
-import CreatePost from '../post/CreatePost';
 import TaskCard from '../quest/TaskCard';
 
 import {
@@ -362,7 +361,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             onClick={handleRepost}
             disabled={loading || repostLoading || !user}
           >
-            {userRepostId ? <FaRetweet /> : <FaRegRetweet />} {counts.repost || ''}
+            {userRepostId ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
           </button>
         )}
 
@@ -375,10 +374,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               disabled={loading || !user}
               aria-label={post.type === 'change' ? 'Request Review' : 'Request Help'}
             >
-              {post.type === 'task'||post.type === 'change' ? <FaHandsHelping /> : <FaClipboardCheck />}
+              {post.type === 'task' ? <FaHandsHelping /> : <FaClipboardCheck />}
               {post.type === 'change'
-                ? (helpRequested ? 'Requested' : 'Requested')
-                : (helpRequested ? 'Requested' : 'Request Help')}
+                ? (helpRequested ? 'Requested' : 'Review')
+                : (helpRequested ? 'Requested' : 'Request')}
             </button>
           ) : helpRequested ? (
             accepted ? (
@@ -437,22 +436,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       {expanded && post.type === 'task' && post.questId && (
         <div className="mt-3">
           <TaskCard task={post} questId={post.questId} user={user} onUpdate={onUpdate} />
-        </div>
-      )}
-
-      {/* Inline composer (only shown when not redirecting) */}
-      {showReplyPanel && !replyOverride && !isTimelineBoard && !isPostBoard && (
-        <div className="mt-3">
-          <CreatePost
-            parentId={post.id}
-            initialType={replyInitialType}
-            onCreated={created => {
-              // Optionally push to boards or bubble up
-              onUpdate?.(created);
-              setShowReplyPanel(false);
-              onReplyToggle?.(false);
-            }}
-          />
         </div>
       )}
     </>
