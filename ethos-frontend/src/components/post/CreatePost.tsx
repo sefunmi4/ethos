@@ -45,10 +45,13 @@ const CreatePost: React.FC<CreatePostProps> = ({
   initialContent,
 }) => {
   const restrictedReply = !!replyTo;
+  const replyToType = replyTo?.type;
 
   const [type, setType] = useState<PostType>(
     restrictedReply
-      ? 'free_speech'
+      ? replyToType === 'change'
+        ? 'change'
+        : 'free_speech'
       : initialType === 'request'
       ? 'task'
       : initialType === 'review'
@@ -71,7 +74,11 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
   const allowedPostTypes: PostType[] = restrictedReply
-    ? ['free_speech']
+    ? replyToType === 'task'
+      ? ['free_speech', 'task', 'change']
+      : replyToType === 'change'
+      ? ['change']
+      : ['free_speech']
     : boardId === 'quest-board'
     ? ['task', 'change']
     : boardType === 'quest'

@@ -157,6 +157,24 @@ router.post(
     const quest = questId ? quests.find((q: DBQuest) => q.id === questId) : null;
     const parent = replyTo ? posts.find((p: DBPost) => p.id === replyTo) : null;
 
+    if (parent) {
+      if (
+        parent.type === 'task' &&
+        !['free_speech', 'task', 'change'].includes(type)
+      ) {
+        res.status(400).json({
+          error: 'Tasks only accept free_speech, task, or change replies',
+        });
+        return;
+      }
+      if (parent.type === 'change' && type !== 'change') {
+        res
+          .status(400)
+          .json({ error: 'Changes only accept change replies' });
+        return;
+      }
+    }
+
     if (type === 'task') {
       if (parent && parent.type === 'change') {
         res
@@ -396,6 +414,23 @@ router.patch(
       const parent = post.replyTo
         ? posts.find((p) => p.id === post.replyTo) || null
         : null;
+      if (parent) {
+        if (
+          parent.type === 'task' &&
+          !['free_speech', 'task', 'change'].includes(post.type)
+        ) {
+          res.status(400).json({
+            error: 'Tasks only accept free_speech, task, or change replies',
+          });
+          return;
+        }
+        if (parent.type === 'change' && post.type !== 'change') {
+          res
+            .status(400)
+            .json({ error: 'Changes only accept change replies' });
+          return;
+        }
+      }
       const otherPosts = posts.filter((p) => p.id !== post.id);
       post.nodeId = quest
         ? generateNodeId({

@@ -73,6 +73,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   );
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
+  const [replyInitialType, setReplyInitialType] = useState<'free_speech' | 'task' | 'change'>('free_speech');
   const [repostLoading, setRepostLoading] = useState(false);
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const [requestPostId, setRequestPostId] = useState<string | null>(null);
@@ -301,7 +302,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               {post.type === 'change'
                 ? helpRequested
                   ? 'Review Requested'
-                  : 'Request Review'
+                  : 'Review'
                 : helpRequested
                   ? 'Requested'
                   : 'Request Help'}
@@ -332,13 +333,42 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           ) : null
         )}
 
-        {(post.type !== 'task' || isAuthorOrTeam) && (
+        {post.type === 'change' ? (
           <button
             className={clsx(
               'flex items-center gap-1',
               showReplyPanel && 'text-green-600'
             )}
             onClick={() => {
+              setReplyInitialType('change');
+              if (replyOverride) {
+                replyOverride.onClick();
+              } else if (
+                post.tags?.includes('request') ||
+                isTimelineBoard ||
+                isPostBoard
+              ) {
+                navigate(ROUTES.POST(post.id) + '?reply=1');
+              } else {
+                setShowReplyPanel(prev => {
+                  const next = !prev;
+                  onReplyToggle?.(next);
+                  return next;
+                });
+              }
+            }}
+          >
+            <FaReply />{' '}
+            {showReplyPanel ? 'Cancel' : 'Update'}
+          </button>
+        ) : (
+          <button
+            className={clsx(
+              'flex items-center gap-1',
+              showReplyPanel && 'text-green-600'
+            )}
+            onClick={() => {
+              setReplyInitialType('free_speech');
               if (replyOverride) {
                 replyOverride.onClick();
               } else if (
@@ -375,6 +405,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         <div className="mt-3">
           <CreatePost
             replyTo={post}
+            initialType={replyInitialType}
             onSave={(newReply) => {
               onUpdate?.(newReply as Post);
               setShowReplyPanel(false);

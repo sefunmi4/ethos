@@ -59,7 +59,7 @@ describe('post routes', () => {
     expect(res.status).toBe(201);
   });
 
-  it('change requests must reply to a task', async () => {
+  it('disallows change requests replying to tasks', async () => {
     const task = { id: 't1', authorId: 'u1', type: 'task', content: '', visibility: 'public', timestamp: '' };
     postsStoreMock.read.mockReturnValue([task]);
     let res = await request(app)
@@ -69,7 +69,7 @@ describe('post routes', () => {
     res = await request(app)
       .post('/posts')
       .send({ type: 'request', subtype: 'change', content: 'req', replyTo: 't1' });
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(400);
   });
 
   it('reviews must reply to a request', async () => {
@@ -88,5 +88,31 @@ describe('post routes', () => {
       .post('/posts')
       .send({ type: 'task', replyTo: 'c1' });
     expect(res.status).toBe(400);
+  });
+
+  it('restricts replies to task posts', async () => {
+    const task = { id: 't1', authorId: 'u1', type: 'task', content: '', visibility: 'public', timestamp: '' };
+    postsStoreMock.read.mockReturnValue([task]);
+    let res = await request(app)
+      .post('/posts')
+      .send({ type: 'request', replyTo: 't1', subtype: 'task' });
+    expect(res.status).toBe(400);
+    res = await request(app)
+      .post('/posts')
+      .send({ type: 'review', replyTo: 't1' });
+    expect(res.status).toBe(400);
+  });
+
+  it('restricts replies to change posts', async () => {
+    const change = { id: 'c1', authorId: 'u1', type: 'change', content: '', visibility: 'public', timestamp: '' };
+    postsStoreMock.read.mockReturnValue([change]);
+    let res = await request(app)
+      .post('/posts')
+      .send({ type: 'free_speech', replyTo: 'c1' });
+    expect(res.status).toBe(400);
+    res = await request(app)
+      .post('/posts')
+      .send({ type: 'change', replyTo: 'c1' });
+    expect(res.status).toBe(201);
   });
 });
