@@ -40,7 +40,7 @@ const Board: React.FC<BoardProps> = ({
   readOnly = false,
   compact = false,
   showCreate = true,
-  hideControls = false,
+  hideControls = true,
   filter = EMPTY_FILTER,
   onScrollEnd,
   loading: loadingMore = false,

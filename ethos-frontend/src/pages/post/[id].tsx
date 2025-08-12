@@ -218,7 +218,6 @@ const PostPage: React.FC = () => {
             loading={loadingMore}
             editable={false}
             compact={true}
-            initialExpanded={true}
             user={user as User}
           />
         ) : (

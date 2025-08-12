@@ -561,12 +561,6 @@ const PostCard: React.FC<PostCardProps> = ({
                       onToggleTask={handleToggleTask}
                     />
                   </div>
-                  <button
-                    onClick={() => navigate(ROUTES.POST(post.id))}
-                    className="text-accent underline text-xs ml-1"
-                  >
-                    See more
-                  </button>
                 </>
               ) : (
                 <div className={compact ? 'clamp-3' : ''}>
@@ -586,12 +580,6 @@ const PostCard: React.FC<PostCardProps> = ({
                 onToggleTask={handleToggleTask}
               />
             </div>
-            <button
-              onClick={() => navigate(ROUTES.POST(post.id))}
-              className="text-accent underline text-xs ml-1"
-            >
-              See more
-            </button>
           </>
         ) : (
           <div className={compact ? 'clamp-3' : ''}>
@@ -784,39 +772,6 @@ const PostCard: React.FC<PostCardProps> = ({
         </>
       )}
 
-      {post.type === 'task' && (
-        <div className="relative mt-1">
-          <button
-            className="text-accent underline text-xs"
-            onClick={() => setShowAddMenu((p) => !p)}
-          >
-            + Add Item
-          </button>
-          {showAddMenu && (
-            <div className="absolute z-10 mt-1 bg-surface border border-secondary rounded shadow text-xs">
-              <button
-                onClick={() => {
-                  setCreateType('free_speech');
-                  setShowAddMenu(false);
-                }}
-                className="block w-full text-left px-2 py-1 hover:bg-background"
-              >
-                Comment
-              </button>
-              <button
-                onClick={() => {
-                  setShowSubtaskForm(true);
-                  setShowAddMenu(false);
-                }}
-                className="block w-full text-left px-2 py-1 hover:bg-background"
-              >
-                Subtask
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
       {createType && (
         <div className="mt-2 space-y-1">
           <CreatePost
@@ -886,17 +841,6 @@ const PostCard: React.FC<PostCardProps> = ({
         >
           {showReplies ? 'Hide Replies' : `\u{1F4AC} See Replies (${initialReplies || replies.length})`}
         </button>
-      )}
-
-      {!isLong && !compact && (
-        <div>
-          <button
-            onClick={() => navigate(ROUTES.POST(post.id))}
-            className="text-accent underline text-xs"
-          >
-            See more
-          </button>
-        </div>
       )}
 
       {replies.length > 0 && showReplies && (
