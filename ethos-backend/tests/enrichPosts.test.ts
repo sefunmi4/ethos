@@ -13,6 +13,6 @@ describe('enrichPosts author fallback', () => {
     }];
     const result = enrichPosts(posts, [], []);
     expect(result[0].author).toBeDefined();
-    expect(result[0].author?.username).toBe('guest-123');
+    expect(result[0].author?.username).toBe('guest');
   });
 });

@@ -81,10 +81,9 @@ const getTimelineBoardItems = (
           if (p.type === 'task') highlight = true;
         } else if (
           p.linkedItems?.some(
-            li =>
-              (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
-              (li.itemType === 'post' && userTaskIds.includes(li.itemId))
-          )
+            li => li.itemType === 'quest' && userQuestIds.includes(li.itemId)
+          ) ||
+          (p.replyTo && userTaskIds.includes(p.replyTo))
         ) {
           weight = 1;
           highlight = true;

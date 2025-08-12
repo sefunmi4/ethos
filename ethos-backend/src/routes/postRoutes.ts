@@ -71,13 +71,6 @@ router.get(
 
       const userPostIds = new Set(authored.map(p => p.id));
 
-      // Posts linking to any post by the user
-      const linked = posts.filter(p =>
-        (p.linkedItems || []).some(
-          li => li.itemType === 'post' && userPostIds.has(li.itemId)
-        )
-      );
-
       // Posts replying to any post by the user
       const replies = posts.filter(p => p.replyTo && userPostIds.has(p.replyTo));
 
@@ -92,7 +85,6 @@ router.get(
       filtered = [
         ...authored,
         ...questPosts,
-        ...linked,
         ...replies,
         ...questActivity,
       ];
@@ -165,48 +157,23 @@ router.post(
     const quest = questId ? quests.find((q: DBQuest) => q.id === questId) : null;
     const parent = replyTo ? posts.find((p: DBPost) => p.id === replyTo) : null;
 
-    // Validate links based on post type
-    const linkedPosts: DBPost[] = linkedItems
-      .filter((li: LinkedItem) => li.itemType === 'post')
-      .map((li: LinkedItem) => posts.find((p: DBPost) => p.id === li.itemId))
-      .filter((p: DBPost | undefined): p is DBPost => !!p);
+    // Filter out any post-to-post links
+    const filteredLinkedItems = (linkedItems || []).filter(
+      (li: LinkedItem) => li.itemType !== 'post'
+    );
 
-    if (type === 'free_speech') {
-      if (linkedPosts.length > 0) {
-        res.status(400).json({ error: 'Free speech posts cannot link to other posts' });
-        return;
-      }
-    } else if (type === 'task') {
-      if (!linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'request')) {
+    if (type === 'task') {
+      if (parent && parent.type === 'change') {
         res
           .status(400)
-          .json({ error: 'Tasks can only link to tasks or requests' });
+          .json({ error: 'Tasks cannot reply to changes' });
         return;
       }
     } else if (type === 'change') {
-      const parentIsValid =
-        parent && ['task', 'request', 'change'].includes(parent.type);
-
-      if (
-        linkedPosts.length === 0 &&
-        !parentIsValid
-      ) {
+      if (!parent || !['task', 'request', 'change'].includes(parent.type)) {
         res
           .status(400)
-          .json({
-            error:
-              'Changes must link to a task or request, or reply to an existing change',
-          });
-        return;
-      }
-
-      if (
-        linkedPosts.length > 0 &&
-        !linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'request')
-      ) {
-        res
-          .status(400)
-          .json({ error: 'Changes must link to a task or request' });
+          .json({ error: 'Changes must reply to a task, request, or change' });
         return;
       }
     } else if (type === 'request') {
@@ -216,23 +183,17 @@ router.post(
           .json({ error: 'Request posts must specify subtype "task" or "change"' });
         return;
       }
-      if (!linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'change')) {
+      if (subtype === 'change' && (!parent || parent.type !== 'task')) {
         res
           .status(400)
-          .json({ error: 'Requests can only link to tasks or changes' });
-        return;
-      }
-      if (subtype === 'change' && !linkedPosts.some(p => p.type === 'task')) {
-        res
-          .status(400)
-          .json({ error: 'Change requests must link to a task' });
+          .json({ error: 'Change requests must reply to a task' });
         return;
       }
     } else if (type === 'review') {
-      if (!linkedPosts.every((p: DBPost) => p.type === 'request')) {
+      if (!parent || parent.type !== 'request') {
         res
           .status(400)
-          .json({ error: 'Reviews can only link to requests' });
+          .json({ error: 'Reviews must reply to a request' });
         return;
       }
     }
@@ -264,7 +225,7 @@ router.post(
       collaborators,
       replyTo,
       repostedFrom: null,
-      linkedItems,
+      linkedItems: filteredLinkedItems,
       linkedNodeId,
       questId,
       ...(type === 'task' ? { taskType } : {}),
@@ -529,7 +490,7 @@ router.post(
       replyTo: null,
       timestamp: new Date().toISOString(),
       repostedFrom: original.id,
-      linkedItems: [...(original.linkedItems || [])],
+      linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
 
       // 🧹 Clear non-transferable or enriched fields
       enriched: false,
@@ -684,11 +645,9 @@ router.post(
         `summary:user:${req.user?.username || req.user?.id}`,
       ],
       collaborators: [],
-      replyTo: null,
+      replyTo: task.id,
       repostedFrom: null,
-      linkedItems: [
-        { itemId: task.id, itemType: 'post', linkType: 'reference' },
-      ],
+      linkedItems: [],
       questId: task.questId || null,
       helpRequest: true,
       needsHelp: true,
@@ -723,9 +682,7 @@ router.post(
       collaborators: [role],
       replyTo: requestPost.id,
       repostedFrom: null,
-      linkedItems: [
-        { itemId: task.id, itemType: 'post', linkType: 'reference' },
-      ],
+      linkedItems: [],
       questId: task.questId || null,
       helpRequest: true,
       needsHelp: true,
@@ -776,11 +733,9 @@ router.post(
         `summary:user:${req.user?.username || req.user?.id}`,
       ],
       collaborators: [],
-      replyTo: null,
+      replyTo: original.id,
       repostedFrom: null,
-      linkedItems: [
-        { itemId: original.id, itemType: 'post', linkType: 'reference' },
-      ],
+      linkedItems: [],
       questId: original.questId || null,
       helpRequest: true,
       needsHelp: true,
@@ -821,9 +776,7 @@ router.delete(
         p.type === 'request' &&
         p.authorId === req.user!.id &&
         p.helpRequest === true &&
-        p.linkedItems?.some(
-          li => li.itemId === post.id && li.itemType === 'post' && li.linkType === 'reference'
-        )
+        p.replyTo === post.id
       ) {
         removedIds.push(p.id);
         posts.splice(i, 1);
@@ -891,16 +844,10 @@ router.post(
       post.questNodeTitle = makeQuestNodeTitle(post.content);
     }
 
-    // Determine if the request links to a task or change
-    const linkedPosts = (post.linkedItems || [])
-      .filter(li => li.itemType === 'post')
-      .map(li => posts.find(p => p.id === li.itemId))
-      .filter((p): p is DBPost => !!p);
-    const linkedTask = linkedPosts.find(p => p.type === 'task');
-    const linkedChange = linkedPosts.find(p => p.type === 'change');
+    const parent = post.replyTo ? posts.find(p => p.id === post.replyTo) : null;
 
     let created: DBPost | null = null;
-    if (linkedChange) {
+    if (parent && parent.type === 'change') {
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -909,12 +856,9 @@ router.post(
         content: '',
         visibility: 'public',
         timestamp: new Date().toISOString(),
-        replyTo: post.id,
-        linkedItems: [
-          { itemId: post.id, itemType: 'post', linkType: 'reference' },
-        ],
+        replyTo: parent.id,
       } as DBPost;
-    } else if (linkedTask) {
+    } else if (parent && parent.type === 'task') {
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -923,10 +867,7 @@ router.post(
         content: '',
         visibility: 'public',
         timestamp: new Date().toISOString(),
-        replyTo: linkedTask.id,
-        linkedItems: [
-          { itemId: linkedTask.id, itemType: 'post', linkType: 'reference' },
-        ],
+        replyTo: parent.id,
       } as DBPost;
     } else {
       created = {
@@ -1204,9 +1145,7 @@ router.delete(
 //
 router.get('/:id/linked', (req: Request<{ id: string }>, res: Response) => {
   const posts = postsStore.read();
-  const linked = posts.filter((p) =>
-    p.linkedItems?.some((item) => item.itemId === req.params.id)
-  );
+  const linked = posts.filter((p) => p.replyTo === req.params.id);
   const users = usersStore.read();
   res.json({ posts: linked.map((p) => enrichPost(p, { users })) });
 });
