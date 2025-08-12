@@ -95,7 +95,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   );
   const [followerCount, setFollowerCount] = useState(post.followers?.length || 0);
   const navigate = useNavigate();
-  const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
+  const { selectedBoard, appendToBoard, boards, removeItemFromBoard } =
+    useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
   const ctxBoardType = ctxBoardId ? boards?.[ctxBoardId]?.boardType : undefined;
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
@@ -106,6 +107,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     post.tags?.includes('request') && ctxBoardId === 'quest-board';
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
+  const [requestPostId, setRequestPostId] = useState<string | null>(null);
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
 
   useEffect(() => {
@@ -196,17 +198,22 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         subRequests.forEach(sr => {
           appendToBoard?.('quest-board', sr as unknown as BoardItem);
           appendToBoard?.('timeline-board', sr as unknown as BoardItem);
-          onUpdate?.(sr);
         });
         setHelpRequested(true);
-        onUpdate?.(reqPost);
+        setRequestPostId(reqPost.id);
+        onUpdate?.({ ...post, helpRequest: true, needsHelp: true } as Post);
       } catch (err) {
         console.error('[ReactionControls] Failed to request help:', err);
       }
     } else {
       try {
         await removeHelpRequest(post.id);
+        if (requestPostId) {
+          removeItemFromBoard?.('quest-board', requestPostId);
+          removeItemFromBoard?.('timeline-board', requestPostId);
+        }
         setHelpRequested(false);
+        setRequestPostId(null);
         onUpdate?.({ ...post, helpRequest: false, needsHelp: false } as Post);
       } catch (err) {
         console.error('[ReactionControls] Failed to cancel help request:', err);

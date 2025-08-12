@@ -34,9 +34,14 @@ jest.mock('../../api/post', () => ({
 }));
 
 const appendMock = jest.fn();
+const removeMock = jest.fn();
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
-  useBoardContext: () => ({ appendToBoard: appendMock, selectedBoard: null }),
+  useBoardContext: () => ({
+    appendToBoard: appendMock,
+    removeItemFromBoard: removeMock,
+    selectedBoard: null,
+  }),
 }));
 
 jest.mock('react-router-dom', () => {
@@ -78,8 +83,16 @@ describe('PostCard request help', () => {
     await waitFor(() =>
       expect(requestHelp).toHaveBeenCalledWith('t1', 'task')
     );
-    expect(appendMock).toHaveBeenCalled();
-    expect(screen.getByText(/Requested/i)).toBeInTheDocument();
+    expect(appendMock).toHaveBeenNthCalledWith(
+      1,
+      'quest-board',
+      expect.objectContaining({ id: 'r1' })
+    );
+    expect(appendMock).toHaveBeenNthCalledWith(
+      2,
+      'timeline-board',
+      expect.objectContaining({ id: 'r1' })
+    );
 
     await act(async () => {
       fireEvent.click(screen.getByText(/Requested/i));
@@ -87,6 +100,8 @@ describe('PostCard request help', () => {
     await waitFor(() =>
       expect(removeHelpRequest).toHaveBeenCalledWith('t1')
     );
+    expect(removeMock).toHaveBeenNthCalledWith(1, 'quest-board', 'r1');
+    expect(removeMock).toHaveBeenNthCalledWith(2, 'timeline-board', 'r1');
   });
 
   it('does not show checkbox for free speech posts', () => {
