@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { usersStore } from '../models/stores';
+import { hashPassword } from '../utils/passwordUtils';
 import { pool, usePg } from '../db';
 import {
   getQuestRepoMeta,
@@ -22,6 +24,47 @@ import {
 import type { AuthenticatedRequest } from '../types/express';
 
 const router = express.Router();
+
+
+
+//
+// ✅ POST /api/git/account
+//
+router.post(
+  '/account',
+  authMiddleware,
+  async (
+    req: AuthenticatedRequest<{}, any, { provider: 'github' | 'gitlab'; username: string; token: string }>,
+    res: Response
+  ): Promise<void> => {
+    const { provider, username, token } = req.body;
+    if (!provider || !username || !token) {
+      res.status(400).json({ error: 'Missing provider, username or token' });
+      return;
+    }
+    try {
+      const users = usersStore.read();
+      const user = users.find(u => u.id === req.user?.id);
+      if (!user) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+      const tokenHash = await hashPassword(token);
+      const account = { provider, username, tokenHash, linkedRepoIds: [] };
+      user.gitAccounts = [
+        ...(user.gitAccounts || []).filter(
+          a => a.provider !== provider || a.username !== username
+        ),
+        account,
+      ];
+      usersStore.write(users);
+      res.json({ gitAccounts: user.gitAccounts });
+    } catch (err) {
+      error('[GIT ACCOUNT ERROR]', err);
+      res.status(500).json({ error: 'Failed to save git account' });
+    }
+  }
+);
 
 
 //
