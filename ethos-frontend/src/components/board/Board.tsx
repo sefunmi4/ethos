@@ -25,7 +25,7 @@ import type {
   BoardLayout,
   BoardFilters,
 } from '../../types/boardTypes';
-import type { Post, PostType } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 const EMPTY_FILTER: BoardFilters = {};

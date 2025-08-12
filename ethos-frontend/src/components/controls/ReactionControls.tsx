@@ -37,7 +37,7 @@ import {
   followPost,
   unfollowPost,
 } from '../../api/post';
-import type { Post, ReactionType, ReactionCountMap, Reaction, PostType } from '../../types/postTypes';
+import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
 

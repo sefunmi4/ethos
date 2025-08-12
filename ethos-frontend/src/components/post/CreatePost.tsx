@@ -384,7 +384,6 @@ function validateLinks(
   type: PostType,
   items: LinkedItem[],
   hasParent: boolean = false,
-  _secondaryType?: string,
 ): {
   valid: boolean;
   message?: string;
