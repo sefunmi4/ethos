@@ -284,10 +284,13 @@ export const enrichBoard = (
     .filter((item) => {
       if ('type' in item) {
         const p = item as DBPost;
-        return p.type !== 'request' ||
-          p.visibility === 'public' ||
-          p.visibility === 'request_board' ||
-          p.needsHelp === true;
+        const visibility = (p.visibility || '').toLowerCase();
+        return (
+          p.type !== 'request' ||
+          visibility === 'public' ||
+          visibility === 'request_board' ||
+          p.needsHelp === true
+        );
       }
       const q = item as DBQuest;
       if (q.displayOnBoard === false) return false;
@@ -318,10 +321,13 @@ export const enrichBoard = (
     .filter((item) => {
       if ('type' in item) {
         const p = item as EnrichedPost;
-        return p.type !== 'request' ||
-          p.visibility === 'public' ||
-          p.visibility === 'request_board' ||
-          p.needsHelp === true;
+        const visibility = (p.visibility || '').toLowerCase();
+        return (
+          p.type !== 'request' ||
+          visibility === 'public' ||
+          visibility === 'request_board' ||
+          p.needsHelp === true
+        );
       }
       const q = item as EnrichedQuest;
       if (q.displayOnBoard === false) return false;
