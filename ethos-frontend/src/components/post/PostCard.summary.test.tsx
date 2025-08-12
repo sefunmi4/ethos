@@ -45,7 +45,7 @@ describe('PostCard summary tags', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('Task')).toBeInTheDocument();
-    expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
+    expect(screen.getByText('Q:T1')).toBeInTheDocument();
     expect(screen.getByText('In Progress')).toBeInTheDocument();
     const userLink = screen.getByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -426,17 +426,6 @@ const PostCard: React.FC<PostCardProps> = ({
             {post.type === 'review' && post.rating && renderStars(post.rating)}
           </div>
           <div className="flex items-center gap-2">
-            {post.type === 'task' && (
-              <button
-                className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-                onClick={() =>
-                  onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
-                }
-              >
-                {expandedView ? <FaCompress /> : <FaExpand />}{' '}
-                {expandedView ? 'Collapse View' : 'Expand View'}
-              </button>
-            )}
             <ActionMenu
               id={post.id}
               type="post"
@@ -515,17 +504,6 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {post.type === 'task' && (
-            <button
-              className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
-              onClick={() =>
-                onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
-              }
-            >
-              {expandedView ? <FaCompress /> : <FaExpand />}{' '}
-              {expandedView ? 'Collapse View' : 'Expand View'}
-            </button>
-          )}
           <ActionMenu
             id={post.id}
             type="post"
