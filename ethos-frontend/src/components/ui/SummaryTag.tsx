@@ -94,6 +94,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
         <Link to={detailLink} className="underline text-inherit">
           {label}
         </Link>{' '}
+        <FaUser className="w-3 h-3 flex-shrink-0" />{' '}
         <Link to={usernameLink} className="text-inherit">@{username}</Link>
       </span>
     );
