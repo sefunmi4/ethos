@@ -77,8 +77,12 @@ const BoardPage: React.FC = () => {
         setQuest(null);
       }
       const tagSet = new Set<string>();
+      const internalPrefixes = ['summary:', 'pending:', 'system', 'archived'];
       (boardData.enrichedItems || []).forEach((it: unknown) => {
-        ((it as { tags?: string[] }).tags || []).forEach((t: string) => tagSet.add(t));
+        ((it as { tags?: string[] }).tags || []).forEach((t: string) => {
+          if (internalPrefixes.some((p) => t.startsWith(p))) return;
+          tagSet.add(t);
+        });
       });
       setAvailableTags(Array.from(tagSet));
     }
