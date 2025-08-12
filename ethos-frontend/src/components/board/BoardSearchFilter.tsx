@@ -42,6 +42,7 @@ const SORT_OPTIONS: option[] = [
   { value: 'trending', label: 'Trending' },
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DEFAULT_FILTERS: FilterState = {
   search: '',
   tags: [],

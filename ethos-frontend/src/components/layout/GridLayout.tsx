@@ -131,7 +131,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       indexRef.current = next;
       return next;
     });
-  }, []);
+  }, [scrollToIndex]);
   const handleNext = useCallback(() => {
     setIndex(i => {
       const next = Math.min(items.length - 1, i + 1);
@@ -139,7 +139,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       indexRef.current = next;
       return next;
     });
-  }, [items.length]);
+  }, [items.length, scrollToIndex]);
 
 
   /** Context for board updates is needed in several layouts. Call it here so

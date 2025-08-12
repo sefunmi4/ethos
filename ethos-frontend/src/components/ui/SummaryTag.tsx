@@ -8,11 +8,7 @@ import {
   FaCommentAlt,
   FaUser,
   FaHandsHelping,
-  FaUserCheck,
-  FaCog,
-  FaBullhorn,
   FaCheckCircle,
-  FaUsers,
   FaExchangeAlt
 } from 'react-icons/fa';
 import clsx from 'clsx';
