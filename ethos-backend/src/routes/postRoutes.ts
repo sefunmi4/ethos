@@ -157,11 +157,6 @@ router.post(
     const quest = questId ? quests.find((q: DBQuest) => q.id === questId) : null;
     const parent = replyTo ? posts.find((p: DBPost) => p.id === replyTo) : null;
 
-    // Filter out any post-to-post links
-    const filteredLinkedItems = (linkedItems || []).filter(
-      (li: LinkedItem) => li.itemType !== 'post'
-    );
-
     if (type === 'task') {
       if (parent && parent.type === 'change') {
         res
@@ -170,10 +165,17 @@ router.post(
         return;
       }
     } else if (type === 'change') {
-      if (!parent || !['task', 'request', 'change'].includes(parent.type)) {
+      const hasParent =
+        parent && ['task', 'request', 'change'].includes(parent.type);
+      const hasTaskLink = (linkedItems || []).some(
+        (li: LinkedItem) => li.itemType === 'post'
+      );
+      if (!hasParent && !hasTaskLink) {
         res
           .status(400)
-          .json({ error: 'Changes must reply to a task, request, or change' });
+          .json({
+            error: 'Changes must reply to or link a task, request, or change',
+          });
         return;
       }
     } else if (type === 'request') {
@@ -225,7 +227,7 @@ router.post(
       collaborators,
       replyTo,
       repostedFrom: null,
-      linkedItems: filteredLinkedItems,
+      linkedItems,
       linkedNodeId,
       questId,
       ...(type === 'task' ? { taskType } : {}),

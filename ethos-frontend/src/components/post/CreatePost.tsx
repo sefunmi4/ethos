@@ -396,7 +396,10 @@ function validateLinks(
     case 'change':
       return hasParent || items.some(i => i.itemType === 'post')
         ? { valid: true }
-        : { valid: false, message: 'Please link a task or request before submitting.' };
+        : {
+            valid: false,
+            message: 'Please link a task before submitting.',
+          };
     default:
       return { valid: true };
   }
