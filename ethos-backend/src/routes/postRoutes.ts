@@ -145,6 +145,7 @@ router.post(
       helpRequest = false,
       needsHelp = undefined,
       rating,
+      subtype,
     } = req.body;
 
     const allowedTypes: PostType[] = [
@@ -209,10 +210,22 @@ router.post(
         return;
       }
     } else if (type === 'request') {
+      if (!subtype || !['task', 'change'].includes(subtype)) {
+        res
+          .status(400)
+          .json({ error: 'Request posts must specify subtype "task" or "change"' });
+        return;
+      }
       if (!linkedPosts.every((p: DBPost) => p.type === 'task' || p.type === 'change')) {
         res
           .status(400)
           .json({ error: 'Requests can only link to tasks or changes' });
+        return;
+      }
+      if (subtype === 'change' && !linkedPosts.some(p => p.type === 'task')) {
+        res
+          .status(400)
+          .json({ error: 'Change requests must link to a task' });
         return;
       }
     } else if (type === 'review') {
@@ -255,6 +268,7 @@ router.post(
       linkedNodeId,
       questId,
       ...(type === 'task' ? { taskType } : {}),
+      ...(subtype ? { subtype } : {}),
       ...(type === 'review' && rating ? { rating: Math.min(5, Math.max(0, Number(rating))) } : {}),
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
@@ -264,16 +278,12 @@ router.post(
     };
 
     if (type === 'request') {
-      const summaryTags = new Set([...(newPost.tags || []), 'summary:request']);
-      const linkedPosts = linkedItems
-        ?.filter((li: LinkedItem) => li.itemType === 'post')
-        .map((li: LinkedItem) => posts.find((p: DBPost) => p.id === li.itemId))
-        .filter((p: DBPost | undefined): p is DBPost => !!p);
-      if (linkedPosts?.some((p: DBPost) => p.type === 'task')) {
-        summaryTags.add('summary:task');
-      } else if (linkedPosts?.some((p: DBPost) => p.type === 'change')) {
-        summaryTags.add('summary:change');
-      }
+      const summaryTags = new Set([
+        ...(newPost.tags || []),
+        'summary:request',
+        `summary:${subtype}`,
+        `summary:user:${req.user?.username || req.user?.id}`,
+      ]);
       newPost.tags = Array.from(summaryTags);
     }
 
@@ -661,7 +671,11 @@ router.post(
       timestamp: new Date().toISOString(),
       subtype: 'task',
       nodeId: task.nodeId,
-      tags: [],
+      tags: [
+        'summary:request',
+        'summary:task',
+        `summary:user:${req.user?.username || req.user?.id}`,
+      ],
       collaborators: [],
       replyTo: null,
       repostedFrom: null,
@@ -676,6 +690,7 @@ router.post(
 
     task.helpRequest = true;
     task.needsHelp = true;
+    task.requestId = requestPost.id;
 
     const quests = questsStore.read();
     const quest = task.questId ? quests.find(q => q.id === task.questId) : null;
@@ -693,7 +708,11 @@ router.post(
       timestamp: new Date().toISOString(),
       subtype: 'task',
       nodeId: task.nodeId,
-      tags: [],
+      tags: [
+        'summary:request',
+        'summary:task',
+        `summary:user:${req.user?.username || req.user?.id}`,
+      ],
       collaborators: [role],
       replyTo: requestPost.id,
       repostedFrom: null,
@@ -729,6 +748,11 @@ router.post(
       res.status(404).json({ error: 'Post not found' });
       return;
     }
+    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
+    if (subtype === 'change' && original.type !== 'task') {
+      res.status(400).json({ error: 'Change requests must originate from a task' });
+      return;
+    }
 
     const requestPost: DBPost = {
       id: uuidv4(),
@@ -737,9 +761,13 @@ router.post(
       content: original.content,
       visibility: original.visibility,
       timestamp: new Date().toISOString(),
-      subtype: original.type === 'task' ? original.type : undefined,
+      subtype,
       nodeId: original.type === 'task' ? original.nodeId : undefined,
-      tags: [],
+      tags: [
+        'summary:request',
+        `summary:${subtype}`,
+        `summary:user:${req.user?.username || req.user?.id}`,
+      ],
       collaborators: [],
       replyTo: null,
       repostedFrom: null,
@@ -751,9 +779,9 @@ router.post(
       needsHelp: true,
       boardId: 'quest-board',
     };
-
     original.helpRequest = true;
     original.needsHelp = true;
+    original.requestId = requestPost.id;
 
     posts.push(requestPost);
     postsStore.write(posts);
@@ -797,6 +825,7 @@ router.delete(
 
     post.helpRequest = false;
     post.needsHelp = false;
+    post.requestId = undefined;
     postsStore.write(posts);
 
     res.json({ success: true, removedIds });
