@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
-import { POST_TYPES, STATUS_OPTIONS, SECONDARY_POST_TYPES } from '../../constants/options';
+import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
@@ -47,9 +46,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
 }) => {
   const restrictedReply = !!replyTo;
 
-  const [secondaryType, setSecondaryType] = useState<'' | 'request' | 'review'>(
-    initialType === 'request' ? 'request' : initialType === 'review' ? 'review' : ''
-  );
   const [type, setType] = useState<PostType>(
     restrictedReply
       ? 'free_speech'
@@ -59,17 +55,15 @@ const CreatePost: React.FC<CreatePostProps> = ({
       ? 'change'
       : initialType
   );
-  const [status, setStatus] = useState<string>(
-    secondaryType === 'request' ? 'In Progress' : 'To Do'
-  );
+  const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>(initialContent || '');
   const [details, setDetails] = useState<string>('');
   const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [helpRequest, setHelpRequest] = useState(boardId === 'quest-board' || secondaryType === 'request');
-  const [rating, setRating] = useState(0);
+  
+  
 
 const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
@@ -86,9 +80,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     ? ['free_speech', 'task', 'change']
     : POST_TYPES.map((p) => p.value as PostType);
 
-  if (secondaryType) {
-    allowedPostTypes = ['task', 'change'];
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,12 +91,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     const questIdFromBoard = boardQuestMatch
       ? boardQuestMatch[1]
       : questId || replyTo?.questId || null;
-
-    if (secondaryType === 'review' && rating === 0) {
-      alert('Please provide a rating.');
-      setIsSubmitting(false);
-      return;
-    }
 
     const autoLinkItems = [...linkedItems];
     if (questIdFromBoard && !autoLinkItems.some((l) => l.itemId === questIdFromBoard)) {
@@ -121,16 +106,12 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
       const payload: Partial<Post> = {
         type,
-        secondaryType: secondaryType || undefined,
         title: type === 'task' ? content : title || undefined,
         content,
         ...(type === 'task' && details ? { details } : {}),
         visibility: 'public',
         linkedItems: autoLinkItems,
-        helpRequest: secondaryType === 'request' || helpRequest || undefined,
-        ...(type === 'task' || secondaryType === 'request'
-          ? { status }
-          : {}),
+        ...(type === 'task' ? { status } : {}),
         ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
         ...(targetBoard ? { boardId: targetBoard } : {}),
         ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
@@ -147,7 +128,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             }
           : {}),
         ...(requiresQuestRoles(type) && { collaborators }),
-        ...(secondaryType === 'review' && rating ? { rating } : {}),
       };
 
     try {
@@ -197,35 +177,13 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           onChange={(e) => {
             const val = e.target.value as PostType;
             setType(val);
-            if (val === 'task') setStatus(secondaryType === 'request' ? 'In Progress' : 'To Do');
-            if (val === 'free_speech') setSecondaryType('');
+            if (val === 'task') setStatus('To Do');
           }}
           options={allowedPostTypes.map((t) => {
             const opt = POST_TYPES.find((o) => o.value === t)!;
             return { value: opt.value, label: opt.label };
           })}
         />
-
-        {type !== 'free_speech' && (
-          <>
-            <Label htmlFor="secondary-type">Tag</Label>
-            <Select
-              id="secondary-type"
-              value={secondaryType}
-              onChange={(e) => {
-                const val = e.target.value as '' | 'request' | 'review';
-                setSecondaryType(val);
-                if (val === 'request') {
-                  setStatus('In Progress');
-                  setHelpRequest(true);
-                } else if (secondaryType === 'request') {
-                  setHelpRequest(boardId === 'quest-board');
-                }
-              }}
-              options={[{ value: '', label: 'None' }, ...SECONDARY_POST_TYPES]}
-            />
-          </>
-        )}
 
         {type === 'task' && (
           <>
@@ -248,31 +206,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
               onChange={(e) => setTitle(e.target.value)}
               required={type !== 'free_speech'}
             />
-            {secondaryType === 'review' && (
-              <div className="mt-2">
-                <Label>Rating</Label>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5].map((n) => {
-                    const full = rating >= n;
-                    const half = !full && rating >= n - 0.5;
-                    return (
-                      <button
-                        type="button"
-                        key={n}
-                        onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const isHalf = e.clientX - rect.left < rect.width / 2;
-                          setRating(isHalf ? n - 0.5 : n);
-                        }}
-                        className="text-xl focus:outline-none text-yellow-400"
-                      >
-                        {full ? <FaStar /> : half ? <FaStarHalfAlt /> : <FaRegStar />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </>
         )}
 
@@ -312,17 +245,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           </>
         )}
 
-        {(boardId || selectedBoard) === 'quest-board' && (
-          <label className="inline-flex items-center mt-2 space-x-2">
-            <input
-              type="checkbox"
-              checked={helpRequest}
-              onChange={(e) => setHelpRequest(e.target.checked)}
-              className="form-checkbox"
-            />
-            <span>Ask for help</span>
-          </label>
-        )}
       </FormSection>
 
       {showLinkControls(type) && !replyTo && (

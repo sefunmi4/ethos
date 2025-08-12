@@ -13,11 +13,11 @@ jest.mock('../../api/post', () => ({
       request: {
         id: 'r1',
         authorId: 'u1',
-        type: 'task',
-        content: 'Task',
+        type: 'change',
+        content: 'Change',
         visibility: 'public',
         timestamp: '',
-        tags: ['request'],
+        tags: ['review'],
         collaborators: [],
         linkedItems: [],
       },
@@ -48,12 +48,12 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-describe('PostCard request help', () => {
+describe('PostCard request review', () => {
   const post: Post = {
-    id: 't1',
+    id: 'c1',
     authorId: 'u1',
-    type: 'task',
-    content: 'Task',
+    type: 'change',
+    content: 'Change',
     visibility: 'public',
     timestamp: '',
     tags: [],
@@ -61,22 +61,21 @@ describe('PostCard request help', () => {
     linkedItems: [],
   } as unknown as Post;
 
-
-  it('calls endpoint and appends to board', async () => {
+  it('toggles review request', async () => {
     render(
       <BrowserRouter>
         <PostCard post={post} user={{ id: 'u1' } as User} />
       </BrowserRouter>
     );
 
-    const btn = await screen.findByText(/Request Help/i);
+    const btn = await screen.findByText(/Request Review/i);
     await waitFor(() => expect(btn).not.toBeDisabled());
     await act(async () => {
       fireEvent.click(btn);
     });
 
     await waitFor(() =>
-      expect(requestHelp).toHaveBeenCalledWith('t1', 'task')
+      expect(requestHelp).toHaveBeenCalledWith('c1', 'change')
     );
     expect(appendMock).toHaveBeenCalled();
     expect(screen.getByText(/Requested/i)).toBeInTheDocument();
@@ -85,17 +84,7 @@ describe('PostCard request help', () => {
       fireEvent.click(screen.getByText(/Requested/i));
     });
     await waitFor(() =>
-      expect(removeHelpRequest).toHaveBeenCalledWith('t1')
+      expect(removeHelpRequest).toHaveBeenCalledWith('c1')
     );
-  });
-
-  it('does not show checkbox for free speech posts', () => {
-    render(
-      <BrowserRouter>
-        <PostCard post={{ ...post, type: 'free_speech' }} />
-      </BrowserRouter>
-    );
-
-    expect(screen.queryByText(/Request Help/i)).toBeNull();
   });
 });
