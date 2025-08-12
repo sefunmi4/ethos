@@ -105,8 +105,9 @@ export const buildSummaryTags = (
   questTitle?: string,
   questId?: string,
 ): SummaryTagData[] => {
+  void questTitle;
+  void questId;
   const tags: SummaryTagData[] = [];
-  const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
   // Primary type tag linking to the post itself
@@ -118,20 +119,11 @@ export const buildSummaryTags = (
   }
   tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
 
-  if (post.tags?.includes('request')) {
-    tags.push({ type: 'request', label: 'Request' });
-  }
-
-  if (post.tags?.includes('review')) {
-    tags.push({ type: 'review', label: 'Review' });
-  }
-
-  // Quest association tag
-  if (!multipleSources && title) {
+  // Quest path tag for task posts
+  if (post.type === 'task' && post.nodeId && !multipleSources) {
     tags.push({
       type: 'quest',
-      label: `Quest: ${title}`,
-      link: questId || post.questId ? ROUTES.QUEST(questId || post.questId!) : undefined,
+      label: getQuestLinkLabel(post),
     });
   }
 

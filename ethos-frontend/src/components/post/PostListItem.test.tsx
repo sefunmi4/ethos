@@ -39,22 +39,6 @@ describe('PostListItem', () => {
     expect(navMock).toHaveBeenCalledWith(ROUTES.POST('p1'));
   });
 
-  it('renders quest tag when quest info is provided', () => {
-    const questPost: PostWithQuestTitle = {
-      ...basePost,
-      questId: 'q1',
-      questTitle: 'Quest A',
-    } as unknown as PostWithQuestTitle;
-
-    render(
-      <BrowserRouter>
-        <PostListItem post={questPost} />
-      </BrowserRouter>
-    );
-
-    expect(screen.getByText('Quest: Quest A')).toBeInTheDocument();
-  });
-
   it('renders review summary tag', () => {
     const reviewPost: PostWithQuestTitle = {
       ...basePost,
@@ -71,7 +55,6 @@ describe('PostListItem', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('Review')).toBeInTheDocument();
-    expect(screen.getByText('Quest: Quest B')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
   });
 
@@ -90,5 +73,23 @@ describe('PostListItem', () => {
     );
     expect(screen.getByText('Review')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
+  });
+
+  it('renders quest path tag for task posts', () => {
+    const taskPost: PostWithQuestTitle = {
+      ...basePost,
+      id: 't1',
+      type: 'task',
+      nodeId: 'Q:foo:T00',
+      questId: 'q1',
+    } as unknown as PostWithQuestTitle;
+
+    render(
+      <BrowserRouter>
+        <PostListItem post={taskPost} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getAllByText('Q:T00').length).toBeGreaterThan(0);
   });
 });

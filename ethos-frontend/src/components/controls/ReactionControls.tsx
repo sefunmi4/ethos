@@ -10,8 +10,6 @@ import {
   FaReply,
   FaRetweet,
   FaHandsHelping,
-  FaExpand,
-  FaCompress,
   FaCheckSquare,
   FaRegCheckSquare,
   FaUserPlus,
@@ -83,7 +81,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [repostLoading, setRepostLoading] = useState(false);
-  const [internalExpanded, setInternalExpanded] = useState(post.type === 'task');
   const [completed, setCompleted] = useState(post.tags?.includes('archived') ?? false);
   const [joining, setJoining] = useState(false);
   const initialJoined = !!user && (
@@ -108,7 +105,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     post.tags?.includes('request') && ctxBoardId === 'quest-board';
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
-  const expanded = expandedProp !== undefined ? expandedProp : internalExpanded;
+  const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -358,14 +355,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             <FaUserCheck /> Joined
           </span>
         )}
-
-        {post.type === 'task' &&
-          !onToggleExpand && (
-            <button className="flex items-center gap-1" onClick={() => setInternalExpanded(prev => !prev)}>
-              {expanded ? <FaCompress /> : <FaExpand />}{' '}
-              {expanded ? 'Collapse View' : 'Expand View'}
-            </button>
-          )}
 
         {post.type !== 'task' && !isRequestCard && (
           <button

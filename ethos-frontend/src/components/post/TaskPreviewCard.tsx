@@ -124,6 +124,7 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
   let taskTag: SummaryTagData | undefined = summaryTags.find(
     t => t.type === 'task',
   );
+  const questTag = summaryTags.find(t => t.type === 'quest');
   if (taskTag) {
     taskTag = {
       ...taskTag,
@@ -144,9 +145,10 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
     };
   }
 
-  const tagNode = !hideSummaryTag && taskTag ? (
+  const tagNode = !hideSummaryTag && (taskTag || questTag) ? (
     <div className="flex flex-wrap gap-1">
-      <SummaryTag {...taskTag} />
+      {taskTag && <SummaryTag {...taskTag} />}
+      {questTag && <SummaryTag {...questTag} />}
     </div>
   ) : null;
 
