@@ -119,12 +119,25 @@ export const buildSummaryTags = (
   }
   tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
 
-  // Quest path tag for task posts
-  if (post.type === 'task' && post.nodeId && !multipleSources) {
-    tags.push({
-      type: 'quest',
-      label: getQuestLinkLabel(post),
-    });
+  // Quest path / change tags for request and task posts
+  if (post.nodeId && !multipleSources) {
+    if (post.type === 'request') {
+      const stripped = post.nodeId.replace(/^Q:[^:]+:/, '');
+      const segments = stripped.split(':');
+      const taskId = segments[0];
+      const changeId = segments[1];
+      if (taskId) {
+        tags.push({ type: 'quest', label: `Q::Task:${taskId}` });
+      }
+      if (changeId) {
+        tags.push({ type: 'change', label: `Change:${changeId}` });
+      }
+    } else if (post.type === 'task') {
+      tags.push({
+        type: 'quest',
+        label: getQuestLinkLabel(post),
+      });
+    }
   }
 
   // Status tag for task posts
