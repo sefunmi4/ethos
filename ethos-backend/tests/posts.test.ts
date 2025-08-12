@@ -39,6 +39,15 @@ describe('post routes', () => {
     expect(res.body.content).toBe('hello');
   });
 
+  it('assigns nodeId T00 to tasks without quest or parent', async () => {
+    postsStoreMock.read.mockReturnValue([]);
+    const res = await request(app)
+      .post('/posts')
+      .send({ type: 'task', content: 'root task' });
+    expect(res.status).toBe(201);
+    expect(res.body.nodeId).toBe('T00');
+  });
+
   it('rejects linking free speech posts', async () => {
     postsStoreMock.read.mockReturnValue([
       { id: 't1', authorId: 'u1', type: 'task', content: '', visibility: 'public', timestamp: '' },

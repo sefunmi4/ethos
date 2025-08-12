@@ -273,7 +273,12 @@ router.post(
       status: finalStatus,
       helpRequest: type === 'request' || helpRequest,
       needsHelp: type === 'request' ? needsHelp ?? true : undefined,
-      nodeId: quest ? generateNodeId({ quest, posts, postType: type, parentPost: parent }) : undefined,
+      nodeId:
+        quest
+          ? generateNodeId({ quest, posts, postType: type, parentPost: parent })
+          : type === 'task' && !replyTo
+            ? 'T00'
+            : undefined,
       boardId: effectiveBoardId,
     };
 
@@ -436,7 +441,9 @@ router.patch(
             postType: post.type,
             parentPost: parent,
           })
-        : undefined;
+        : post.type === 'task' && !post.replyTo
+          ? 'T00'
+          : undefined;
     }
 
     postsStore.write(posts);
