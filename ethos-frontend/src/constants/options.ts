@@ -26,9 +26,12 @@ export const BOARD_TYPE_OPTIONS: { value: BoardType; label: string }[] = [
 
 export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
-  { value: 'request', label: 'Request' },
   { value: 'task', label: 'Task' },
   { value: 'change', label: 'Change' },
+];
+
+export const SECONDARY_POST_TYPES = [
+  { value: 'request', label: 'Request' },
   { value: 'review', label: 'Review' },
 ];
 

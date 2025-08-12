@@ -73,7 +73,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   // ✅ Render Post types
   if ('type' in contribution) {
     const post = contribution as Post;
-    if (post.type === 'request' && boardId === 'quest-board') {
+    if (post.tags?.includes('request') && boardId === 'quest-board') {
       return <RequestCard post={post as EnrichedPost} onUpdate={onEdit ? (p) => onEdit(p.id) : undefined} />;
     }
     return (

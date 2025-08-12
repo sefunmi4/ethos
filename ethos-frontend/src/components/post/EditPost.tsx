@@ -200,5 +200,5 @@ const EditPost: React.FC<EditPostProps> = ({ post, onCancel, onUpdated }) => {
 export default EditPost;
 
 function showLinkControls(type: PostType): boolean {
-  return ['request', 'task', 'change', 'review'].includes(type);
+  return ['task', 'change'].includes(type);
 }

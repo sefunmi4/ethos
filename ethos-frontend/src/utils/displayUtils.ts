@@ -6,11 +6,11 @@ import type { SummaryTagType } from "../components/ui/SummaryTag";
 export const toTitleCase = (str: string): string =>
   str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
 
-export const POST_TYPE_LABELS: Record<PostType, string> = {
+export const POST_TYPE_LABELS: Record<PostType | 'request' | 'review', string> = {
   free_speech: "Free Speech",
-  request: "Request",
   task: "Task",
   change: "Change",
+  request: "Request",
   review: "Review",
 };
 
@@ -115,10 +115,16 @@ export const buildSummaryTags = (
   if (post.type === 'free_speech') {
     primaryType = post.replyTo ? 'log' : 'free_speech';
     primaryLabel = post.replyTo ? 'Log' : 'Free Speech';
-  } else if (post.type === 'request') {
-    primaryLabel = post.subtype ? `${toTitleCase(post.subtype)} Request` : 'Request';
   }
   tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
+
+  if (post.tags?.includes('request')) {
+    tags.push({ type: 'request', label: 'Request' });
+  }
+
+  if (post.tags?.includes('review')) {
+    tags.push({ type: 'review', label: 'Review' });
+  }
 
   // Quest association tag
   if (!multipleSources && title) {

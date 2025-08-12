@@ -68,7 +68,7 @@ const PostPage: React.FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (post?.type === 'review' && post.replyTo) {
+    if (post?.tags?.includes('review') && post.replyTo) {
       fetchPostById(post.replyTo)
         .then(setParentPost)
         .catch(() => setParentPost(null));
@@ -181,7 +181,7 @@ const PostPage: React.FC = () => {
       </section>
 
       <section>
-        {post.type === 'request' && taskBoard && (
+        {post.tags?.includes('request') && taskBoard && (
           <Board
             boardId={`tasks-${id}`}
             board={taskBoard}
@@ -203,7 +203,7 @@ const PostPage: React.FC = () => {
         {post.type === 'change' && post.questId && (
           <GitFileBrowserInline questId={post.questId} />
         )}
-        {post.type === 'review' && parentPost && (
+        {post.tags?.includes('review') && parentPost && (
           <PostCard post={parentPost} />
         )}
       </section>

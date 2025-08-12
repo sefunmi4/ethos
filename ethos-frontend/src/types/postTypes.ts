@@ -13,6 +13,8 @@ export interface Post {
   };
 
   type: PostType;
+  /** Optional secondary classification such as request or review */
+  secondaryType?: 'request' | 'review';
   subtype?: string;
   /** Short header for the post */
   title?: string;
@@ -186,10 +188,8 @@ export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | str
  */
 export type PostType =
   | 'free_speech'
-  | 'request'
   | 'task'
-  | 'change'
-  | 'review';
+  | 'change';
   
 /**
  * Supported tags for labeling and filtering posts.
@@ -207,6 +207,7 @@ export type PostTag =
   | 'quest'
   | 'task'
   | 'issue'
+  | 'request'
   | 'review'
   | string;
 

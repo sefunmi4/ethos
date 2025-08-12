@@ -455,8 +455,8 @@ const Board: React.FC<BoardProps> = ({
               onCancel={() => setShowCreateForm(false)}
               boardId={board.id}
               initialType={
-                (localFilter.postType ||
-                  (board.id === 'quest-board' ? 'request' : 'free_speech')) as PostType
+                localFilter.postType ||
+                (board.id === 'quest-board' ? 'request' : 'free_speech')
               }
             />
           )}

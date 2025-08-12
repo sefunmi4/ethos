@@ -13,11 +13,11 @@ jest.mock('../../api/post', () => ({
       request: {
         id: 'r1',
         authorId: 'u1',
-        type: 'request',
+        type: 'task',
         content: 'Task',
         visibility: 'public',
         timestamp: '',
-        tags: [],
+        tags: ['request'],
         collaborators: [],
         linkedItems: [],
       },

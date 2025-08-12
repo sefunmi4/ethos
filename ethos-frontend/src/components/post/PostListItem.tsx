@@ -49,7 +49,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
             {summaryTags.map((tag, idx) => (
               <SummaryTag key={idx} {...tag} />
             ))}
-            {post.type === 'review' && post.rating && renderStars(post.rating)}
+            {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
           </div>
         </div>
         {timestamp && (
