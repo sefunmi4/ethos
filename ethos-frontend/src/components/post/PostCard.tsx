@@ -148,7 +148,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const ctxBoardId = boardId || selectedBoard;
 
   const isQuestBoardRequest =
-    post.type === 'request' && ctxBoardId === 'quest-board';
+    post.tags?.includes('request') && ctxBoardId === 'quest-board';
 
   const widthClass =
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
@@ -313,7 +313,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const renderLinkSummary = () => {
     if (
-      post.type === 'request' ||
+      post.tags?.includes('request') ||
       (!showDetails && (!post.linkedItems || post.linkedItems.length === 0))
     ) {
       return null;
@@ -423,7 +423,7 @@ const PostCard: React.FC<PostCardProps> = ({
                 />
               </React.Fragment>
             ))}
-            {post.type === 'review' && post.rating && renderStars(post.rating)}
+            {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
           </div>
           <div className="flex items-center gap-2">
             <ActionMenu
@@ -489,10 +489,10 @@ const PostCard: React.FC<PostCardProps> = ({
               />
             </React.Fragment>
           ))}
-          {post.type === 'review' && post.rating && renderStars(post.rating)}
+          {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
           {!isQuestBoardRequest &&
             canEdit &&
-            ['task', 'request'].includes(post.type) &&
+            (post.type === 'task' || post.tags?.includes('request')) &&
             showStatusControl && (
             <div className="ml-1 w-28">
               <Select
@@ -641,7 +641,7 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {['request','task','free_speech','change','review'].includes(post.type) && (
+      {( ['task','free_speech','change'].includes(post.type) || post.tags?.some(t => ['request','review'].includes(t)) ) && (
         <div className="text-xs text-secondary space-y-1">
           {showLinkEditor && (
             <div className="mt-2">

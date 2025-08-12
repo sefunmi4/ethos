@@ -34,7 +34,7 @@ const BoardTypePage: React.FC = () => {
           }
         } else if (boardType === 'requests') {
           const posts = await fetchAllPosts();
-          setItems(posts.filter(p => p.type === 'request' || p.helpRequest));
+          setItems(posts.filter(p => p.tags?.includes('request') || p.helpRequest));
         } else {
           setItems([]);
         }

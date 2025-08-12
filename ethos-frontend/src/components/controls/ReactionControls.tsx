@@ -35,7 +35,7 @@ import {
   followPost,
   unfollowPost,
 } from '../../api/post';
-import type { Post, ReactionType, ReactionCountMap, Reaction, PostType } from '../../types/postTypes';
+import type { Post, ReactionType, ReactionCountMap, Reaction } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import type { BoardItem } from '../../contexts/BoardContextTypes';
 
@@ -100,9 +100,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
   const isPostHistory = ctxBoardId === 'my-posts';
   const isPostBoard = isPostHistory || ctxBoardType === 'post';
-  const isQuestRequest = ctxBoardId === 'quest-board' && post.type === 'request';
+  const isQuestRequest = ctxBoardId === 'quest-board' && post.tags?.includes('request');
   const isRequestCard =
-    post.type === 'request' && ctxBoardId === 'quest-board';
+    post.tags?.includes('request') && ctxBoardId === 'quest-board';
   const roleTag = post.tags?.find(t => t.toLowerCase().startsWith('role:'));
   const [helpRequested, setHelpRequested] = useState(post.helpRequest === true);
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
@@ -231,10 +231,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const handleJoin = async () => {
     if (!user) return;
     const joinAndNavigate =
-      ctxBoardId === 'my-posts' && post.type === 'request' && post.questId && roleTag;
+      ctxBoardId === 'my-posts' && post.tags?.includes('request') && post.questId && roleTag;
     if (joinAndNavigate) {
       const isPrivate = post.visibility === 'private';
-      const type: PostType = isPrivate ? 'request' : 'free_speech';
+      const type = isPrivate ? 'request' : 'free_speech';
       navigate(
         ROUTES.POST(post.id) + `?reply=1&initialType=${type}&intro=1`
       );
@@ -344,7 +344,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           )
         )}
 
-        {['task', 'request'].includes(post.type) && !isRequestCard && !joined && (
+        {(post.type === 'task' || post.tags?.includes('request')) && !isRequestCard && !joined && (
           <button className="flex items-center gap-1" onClick={handleFollow} disabled={!user}>
             <FaBell /> {following ? 'Following' : 'Follow'} {followerCount}
           </button>
@@ -366,7 +366,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
               if (replyOverride) {
                 replyOverride.onClick();
               } else if (
-                post.type === 'request' ||
+                post.tags?.includes('request') ||
                 isTimelineBoard ||
                 isPostBoard
               ) {

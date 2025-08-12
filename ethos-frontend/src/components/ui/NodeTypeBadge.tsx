@@ -48,7 +48,7 @@ const NODE_STYLES: Record<NodeVisualType, NodeStyle> = {
 };
 
 export function getNodeVisualType(post: Post): NodeVisualType {
-  if (post.type === 'request') {
+  if (post.tags?.includes('request')) {
     return post.needsHelp === false ? 'request-accepted' : 'request-open';
   }
   if (post.type === 'task') return 'task';

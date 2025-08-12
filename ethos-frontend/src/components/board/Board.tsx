@@ -71,7 +71,7 @@ const Board: React.FC<BoardProps> = ({
   const [editMode, setEditMode] = useState(false);
   interface LocalFilter {
     itemType: string;
-    postType: string;
+    postType: PostType | 'request' | 'review' | '';
     linkType: string;
   }
 
@@ -83,12 +83,16 @@ const Board: React.FC<BoardProps> = ({
 
   const [localFilter, setLocalFilter] = useState<LocalFilter>({
     itemType,
-    postType,
+    postType: postType as PostType | 'request' | 'review' | '',
     linkType,
   });
 
   useEffect(() => {
-    setLocalFilter({ itemType, postType, linkType });
+    setLocalFilter({
+      itemType,
+      postType: postType as PostType | 'request' | 'review' | '',
+      linkType,
+    });
   }, [itemType, postType, linkType]);
 
   // Keep items state in sync with BoardContext updates
@@ -349,7 +353,10 @@ const Board: React.FC<BoardProps> = ({
               <Select
                 value={localFilter.postType}
                 onChange={(e) =>
-                  setLocalFilter((p) => ({ ...p, postType: e.target.value }))
+                  setLocalFilter((p) => ({
+                    ...p,
+                    postType: e.target.value as PostType | 'request' | 'review' | '',
+                  }))
                 }
                 options={[
                   { value: '', label: 'All Posts' },
@@ -455,8 +462,8 @@ const Board: React.FC<BoardProps> = ({
               onCancel={() => setShowCreateForm(false)}
               boardId={board.id}
               initialType={
-                (localFilter.postType ||
-                  (board.id === 'quest-board' ? 'request' : 'free_speech')) as PostType
+                localFilter.postType ||
+                (board.id === 'quest-board' ? 'request' : 'free_speech')
               }
             />
           )}

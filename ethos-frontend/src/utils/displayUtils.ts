@@ -6,11 +6,11 @@ import type { SummaryTagType } from "../components/ui/SummaryTag";
 export const toTitleCase = (str: string): string =>
   str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
 
-export const POST_TYPE_LABELS: Record<PostType, string> = {
+export const POST_TYPE_LABELS: Record<PostType | 'request' | 'review', string> = {
   free_speech: "Free Speech",
-  request: "Request",
   task: "Task",
   change: "Change",
+  request: "Request",
   review: "Review",
 };
 
@@ -116,8 +116,6 @@ export const buildSummaryTags = (
   if (post.type === 'free_speech') {
     primaryType = post.replyTo ? 'log' : 'free_speech';
     primaryLabel = post.replyTo ? 'Log' : 'Free Speech';
-  } else if (post.type === 'request') {
-    primaryLabel = post.subtype ? `${toTitleCase(post.subtype)} Request` : 'Request';
   }
   tags.push({ type: primaryType as SummaryTagType, label: primaryLabel, detailLink: ROUTES.POST(post.id) });
 
@@ -157,7 +155,7 @@ export const getPostSummary = (
   const title = questTitle || post.questTitle;
   const multipleSources = (post.linkedItems || []).length > 1;
 
-  if (post.type === "review") {
+  if (post.secondaryType === "review") {
     const user = post.author?.username || post.authorId;
     if (title) parts.push(`(Review: ${title})`);
     parts.push(`(@${user})`);
@@ -167,7 +165,7 @@ export const getPostSummary = (
 
   if (title) parts.push(`(Quest: ${title})`);
 
-  if (post.type === "request") {
+  if (post.secondaryType === "request") {
     parts.push("(Request)");
     if (post.subtype === "task") {
       if (post.nodeId) parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)})`);

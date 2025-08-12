@@ -7,11 +7,11 @@ const quest = { id: 'q1', headPostId: 'hp1' } as unknown as Quest;
 const requestPost = {
   id: 'p1',
   authorId: 'u1',
-  type: 'request',
+  type: 'task',
   content: 'need help',
   visibility: 'public',
   timestamp: '',
-  tags: [],
+  tags: ['request'],
   collaborators: [],
   linkedItems: [],
   questId: 'q1',

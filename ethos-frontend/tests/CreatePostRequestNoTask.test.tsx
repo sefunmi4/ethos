@@ -41,8 +41,7 @@ describe('CreatePost request without task', () => {
         <CreatePost onCancel={() => {}} initialType="request" />
       </BrowserRouter>
     );
-    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Need help' } });
-    fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Assist me' } });
+    fireEvent.change(screen.getByLabelText('Task Title'), { target: { value: 'Need help' } });
     fireEvent.click(screen.getByText('Create Post'));
     await waitFor(() => expect(addPost).toHaveBeenCalled());
     expect(window.alert).not.toHaveBeenCalled();

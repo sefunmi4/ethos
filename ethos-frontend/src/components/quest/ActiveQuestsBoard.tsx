@@ -34,7 +34,7 @@ const ActiveQuestsBoard: React.FC = () => {
           if (!involved) continue;
 
           questPosts.forEach(p => {
-            if ((p.type === 'free_speech' && p.replyTo) || p.type === 'change' || p.type === 'review' || p.authorId === user.id) {
+            if ((p.type === 'free_speech' && p.replyTo) || p.type === 'change' || p.tags?.includes('review') || p.authorId === user.id) {
               postsMap.set(p.id, p);
             }
           });

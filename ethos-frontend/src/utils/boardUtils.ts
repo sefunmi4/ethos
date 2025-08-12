@@ -71,7 +71,7 @@ export const getRenderableBoardItems = (
     if (!('headPostId' in item)) {
       const post = item as Post;
       // Allow request posts to always render even if a linked quest is present
-      if (post.type !== 'request') {
+      if (!post.tags?.includes('request')) {
         const questId = post.questId;
         const linkedQuest = post.linkedItems?.find(
           (l: LinkedItem) => l.itemType === 'quest' && questIds.has(l.itemId)

@@ -43,7 +43,8 @@ describe('PostListItem', () => {
     const reviewPost: PostWithQuestTitle = {
       ...basePost,
       id: 'r1',
-      type: 'review',
+      type: 'change',
+      tags: ['review'],
       questId: 'q2',
       questTitle: 'Quest B',
     } as unknown as PostWithQuestTitle;
@@ -61,7 +62,8 @@ describe('PostListItem', () => {
     const reviewPost: PostWithQuestTitle = {
       ...basePost,
       id: 'r2',
-      type: 'review',
+      type: 'change',
+      tags: ['review'],
     } as unknown as PostWithQuestTitle;
 
     render(
