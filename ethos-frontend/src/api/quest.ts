@@ -2,7 +2,6 @@ import { axiosWithAuth } from '../utils/authUtils';
 import type { Quest, TaskEdge, EnrichedQuest } from '../types/questTypes';
 import type { Project } from '../types/projectTypes';
 import type { Post } from '../types/postTypes';
-import { fetchPostById, fetchPostsByQuestId } from './post';
 
 const BASE_URL = '/quests';
 
@@ -182,49 +181,11 @@ export const moderateQuest = async (
 };
 
 /**
- * Enrich a quest with its posts, graph, and stats  
- * @function enrichQuestWithData  
- * @param quest The quest to enrich
+ * Enrich a quest by delegating to the backend enrichment endpoint.
+ * Prefer calling {@link fetchQuestById} directly where possible.
  */
 export const enrichQuestWithData = async (quest: Quest): Promise<EnrichedQuest> => {
-  const [allPosts, mapData] = await Promise.all([
-    fetchPostsByQuestId(quest.id),
-    fetchQuestMapData(quest.id),
-  ]);
-
-  const logs = allPosts.filter(p => p.type === 'free_speech' && p.replyTo);
-  const tasks = allPosts.filter(p => p.type === 'task');
-  const discussion = allPosts.filter(
-    p => p.type === 'free_speech' && !p.replyTo
-  );
-
-  const completedTasks = tasks.filter(t => t.status === 'Done').length;
-  const taskCount = tasks.length;
-
-  const headPost = await fetchPostById(quest.headPostId);
-
-  const linkedPostsResolved = (
-    await Promise.all(
-      quest.linkedPosts.map(async link =>
-        link.itemType === 'post' ? await fetchPostById(link.itemId) : null
-      )
-    )
-  ).filter(Boolean) as Post[];
-
-  return {
-    ...quest,
-    headPost,
-    linkedPostsResolved,
-    logs,
-    tasks,
-    discussion,
-    taskGraph: mapData.edges,
-    completedTasks,
-    taskCount,
-    percentComplete: taskCount > 0 ? Math.floor((completedTasks / taskCount) * 100) : 0,
-    isFeatured: false,
-    isNew: false,
-  };
+  return fetchQuestById(quest.id);
 };
 
 export const followQuest = async (id: string): Promise<{ followers: string[] }> => {

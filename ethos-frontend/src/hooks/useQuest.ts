@@ -6,7 +6,6 @@ import type { GitCommit, GitFile } from '../types/gitTypes';
 import {
   fetchQuestById,
   fetchAllQuests as fetchQuests,
-  enrichQuestWithData,
   fetchQuestsByBoardId,
 } from '../api/quest';
 
@@ -79,7 +78,7 @@ export const useQuest = (questId?: string) => {
         const enriched = await Promise.all(
           items
             .filter(isQuest)
-            .map((q) => enrichQuestWithData(q))
+            .map((q) => fetchQuestById(q.id))
         );
         return enriched;
       } catch (err) {
