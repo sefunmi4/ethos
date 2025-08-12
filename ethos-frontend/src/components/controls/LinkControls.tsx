@@ -148,35 +148,77 @@ const LinkControls: React.FC<LinkControlsProps> = ({
       (postTypeFilter === 'request' && p.tags?.includes('request')) ||
       (postTypeFilter === 'review' && p.tags?.includes('review'))
   );
-  type Option = { value: string; label: string; nodeId?: string; type?: string };
-  const allOptions: Option[] = [
-    ...(itemTypes.includes('quest')
-      ? quests.map((q) => ({
-          value: `quest:${q.id}`,
-          label: `🧭 Quest: ${toTitleCase(q.title)}`,
-          nodeId: q.title,
-          type: 'quest',
-        }))
-      : []),
-    ...(itemTypes.includes('post')
-      ? filteredPosts.map((p) => ({
-          value: `post:${p.id}`,
-          label: `${p.content.slice(0, 30)} - ${p.nodeId || p.type}`,
-          nodeId: p.nodeId,
-          type: p.type,
-        }))
-      : []),
-  ];
+  type Option = {
+    value: string;
+    label: string;
+    nodeId?: string;
+    type?: string;
+    disabled?: boolean;
+  };
+  const allOptions: Option[] = [];
+
+  if (itemTypes.includes('quest')) {
+    quests.forEach((q) => {
+      allOptions.push({
+        value: `quest:${q.id}`,
+        label: `🧭 Quest: ${toTitleCase(q.title)}`,
+        nodeId: q.title,
+        type: 'quest',
+      });
+    });
+  }
+
+  if (itemTypes.includes('post')) {
+    const grouped: Record<string, Post[]> = {};
+    filteredPosts.forEach((p) => {
+      const key = p.questId || 'other';
+      grouped[key] = grouped[key] || [];
+      grouped[key].push(p);
+    });
+    Object.entries(grouped).forEach(([qid, list]) => {
+      const headerLabel =
+        qid === 'other'
+          ? 'Other Posts'
+          : `Quest: ${toTitleCase(
+              quests.find((q) => q.id === qid)?.title || ''
+            )}`;
+      allOptions.push({
+        value: `header:${qid}`,
+        label: headerLabel,
+        disabled: true,
+      });
+      list
+        .sort((a, b) =>
+          sortBy === 'node'
+            ? (a.nodeId || '').localeCompare(b.nodeId || '')
+            : a.content.localeCompare(b.content)
+        )
+        .forEach((p) => {
+          const path = (p.nodeId || '').replace(/^Q:[^:]+:/, '');
+          const depth = path ? path.split(':').length - 1 : 0;
+          const indent = '  '.repeat(depth);
+          const truncated = p.content.slice(0, 30);
+          const label = path
+            ? `${indent}${path} - ${truncated}`
+            : `${indent}${truncated}`;
+          allOptions.push({
+            value: `post:${p.id}`,
+            label,
+            nodeId: p.nodeId,
+            type: p.type,
+          });
+        });
+    });
+  }
+
   const filtered = allOptions.filter(
     (o) =>
       o.label.toLowerCase().includes(search.toLowerCase()) ||
       (o.nodeId || '').toLowerCase().includes(search.toLowerCase()) ||
       o.value.includes(search)
   );
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === 'node') return (a.nodeId || '').localeCompare(b.nodeId || '');
-    return a.label.localeCompare(b.label);
-  });
+
+  const sorted = filtered; // grouping preserves order; additional sorting not applied
 
   return (
     <div className="space-y-2">
@@ -229,7 +271,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
             onChange={handleLinkSelect}
             options={[
               { value: '', label: `-- Select ${label} --`, disabled: true },
-              ...sorted,
+              ...sorted.map(({ value, label, disabled }) => ({ value, label, disabled })),
             ]}
           />
 
