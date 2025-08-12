@@ -127,31 +127,24 @@ export const enrichPosts = (
   quests: DBQuest[] = questsStore.read(),
   currentUserId: string | null = null
 ): EnrichedPost[] => {
+  // Build lookup maps once
+  const userById = new Map(users.map((u) => [u.id, u]));
+  const questTitleById = new Map(quests.map((q) => [q.id, q.title]));
+
   const enriched = posts.map((post) => {
     const normalized = normalizePost(post);
-    const author = users.find((u) => u.id === post.authorId);
-    const enrichedAuthor = author
-      ? enrichUser(author, { currentUserId })
-      : {
-          // When a post's author cannot be found in the user store, we still
-          // want to surface whatever identifier the post carries. Many posts
-          // are created by guests with a randomly generated username stored in
-          // `authorId`. Previously these posts were enriched with a static
-          // "Anonymous" user which caused summary tags to display "Anonymous"
-          // instead of the guest's assigned name.
-          id: post.authorId,
-          username: post.authorId,
-          bio: '',
-          tags: [],
-          links: {},
-          experienceTimeline: [],
-          email: '',
-          role: 'user',
-          profileUrl: '#',
-          rank: 'guest',
-          level: 0,
-          xp: {},
-        };
+
+    // Single lookup for the author
+    const u = userById.get(post.authorId);
+
+    // Prefer DBUser.username; fall back to the stored authorId string
+    // (guest IDs often carry the guest's username).
+    const username = u?.username || 'guest';
+
+    // If you want the full enriched user when available:
+    const enrichedAuthor = u
+      ? enrichUser(u, { currentUserId })
+      : { id: post.authorId, username };
 
     return {
       ...normalized,
@@ -160,7 +153,7 @@ export const enrichPosts = (
         username: enrichedAuthor.username,
       },
       questTitle: normalized.questId
-        ? quests.find((q) => q.id === normalized.questId)?.title
+        ? questTitleById.get(normalized.questId)
         : undefined,
       enriched: true,
     };
