@@ -70,7 +70,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  let allowedPostTypes: PostType[] = restrictedReply
+  const allowedPostTypes: PostType[] = restrictedReply
     ? ['free_speech']
     : boardId === 'quest-board'
     ? ['task', 'change']

@@ -77,8 +77,6 @@ interface PostCardProps {
   boardId?: string;
   /** Controlled expanded state */
   expanded?: boolean;
-  /** Callback when expand toggled */
-  onToggleExpand?: () => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -98,7 +96,6 @@ const PostCard: React.FC<PostCardProps> = ({
   showDetails = false,
   boardId,
   expanded,
-  onToggleExpand,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [replies, setReplies] = useState<Post[]>([]);
@@ -115,15 +112,12 @@ const PostCard: React.FC<PostCardProps> = ({
   const [edgeLabel, setEdgeLabel] = useState('');
   const [questPosts, setQuestPosts] = useState<Post[]>([]);
   const [createType, setCreateType] = useState<'free_speech' | null>(null);
-  const [showAddMenu, setShowAddMenu] = useState(false);
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [linkExpanded, setLinkExpanded] = useState(false);
-  const [internalExpandedView, setInternalExpandedView] = useState(
-    post.type === 'task'
-  );
+  const [internalExpandedView] = useState(post.type === 'task');
   const [activeTab, setActiveTab] = useState<'files' | 'options'>('files');
   const { nodes, edges, loadGraph } = useGraph();
 
@@ -157,7 +151,7 @@ const PostCard: React.FC<PostCardProps> = ({
         ? 'w-72'
         : 'max-w-prose';
 
-  const expandedView = expanded !== undefined ? expanded : internalExpandedView;
+  const expandedView = expanded ?? internalExpandedView;
 
   const qid = questId || post.questId;
 
@@ -460,9 +454,6 @@ const PostCard: React.FC<PostCardProps> = ({
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
           expanded={expandedView}
-          onToggleExpand={() =>
-            onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
-          }
         />
       </div>
     );
@@ -606,9 +597,6 @@ const PostCard: React.FC<PostCardProps> = ({
         boardId={ctxBoardId || undefined}
         timestamp={!isQuestBoardRequest ? timestamp : undefined}
         expanded={expandedView}
-        onToggleExpand={() =>
-          onToggleExpand ? onToggleExpand() : setInternalExpandedView(prev => !prev)
-        }
         onReplyToggle={
           post.linkedItems && post.linkedItems.length > 0 ? setShowReplyForm : undefined
         }

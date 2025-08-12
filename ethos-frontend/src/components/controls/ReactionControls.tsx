@@ -59,8 +59,6 @@ interface ReactionControlsProps {
   timestamp?: string;
   /** Controlled expand state */
   expanded?: boolean;
-  /** Toggle expand state when controlled */
-  onToggleExpand?: () => void;
 }
 
 const ReactionControls: React.FC<ReactionControlsProps> = ({
@@ -73,7 +71,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   onReplyToggle,
   timestamp,
   expanded: expandedProp,
-  onToggleExpand,
 }) => {
   const [reactions, setReactions] = useState({ like: false, heart: false });
   const [counts, setCounts] = useState({ like: 0, heart: 0, repost: 0 });
