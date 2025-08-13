@@ -150,11 +150,10 @@ export const buildSummaryTags = (
 
   tags.push(primaryTag);
 
-  if (post.authorId) {
-    const user = post.author?.username || post.authorId;
+  if (post.authorId && post.author?.username) {
     tags.push({
       type: 'type',
-      label: `@${user}`,
+      label: `@${post.author.username}`,
       link: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   }
