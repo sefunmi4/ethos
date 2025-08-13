@@ -54,6 +54,6 @@ describe('PostListItem', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getAllByText('Q:T00').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Q::Task:T00').length).toBeGreaterThan(0);
   });
 });
