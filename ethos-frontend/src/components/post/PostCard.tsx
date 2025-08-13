@@ -19,6 +19,7 @@ import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
+import { useGraph } from '../../hooks/useGraph';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
