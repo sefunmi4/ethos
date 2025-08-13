@@ -464,40 +464,6 @@ const PostCard: React.FC<PostCardProps> = ({
         )}
       </div>
 
-      {renderCommitDiff()}
-
-
-
-
-        <div className="mt-4 flex flex-col md:flex-row gap-4" data-testid="task-expanded-view">
-          <div className="md:w-1/2">
-            <MapGraphLayout items={displayNodes} edges={displayEdges} />
-          </div>
-          <div className="md:w-1/2">
-            <div className="flex border-b text-sm">
-              <button
-                className={clsx('px-2 py-1', activeTab === 'files' && 'border-b-2 border-accent')}
-                onClick={() => setActiveTab('files')}
-              >
-                Files
-              </button>
-              <button
-                className={clsx('px-2 py-1', activeTab === 'options' && 'border-b-2 border-accent')}
-                onClick={() => setActiveTab('options')}
-              >
-                Options
-              </button>
-            </div>
-            <div className="mt-2">
-              {activeTab === 'files' && qid && <GitFileBrowserInline questId={qid} />}
-              {activeTab === 'options' && qid && (
-                <TeamPanel questId={qid} node={post} canEdit={canEdit} />
-              )}
-              {!qid && <div className="text-sm text-secondary">No quest linked.</div>}
-            </div>
-          </div>
-        </div>
-
       <ReactionControls
         post={post}
         user={user}
