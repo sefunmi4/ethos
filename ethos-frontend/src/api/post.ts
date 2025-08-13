@@ -262,14 +262,27 @@ export const requestHelp = async (
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
-      // Fallback for older backends that expose the legacy
-      // `/posts/tasks/:id/request-help` endpoint instead of the
-      // generic `/posts/:id/request-help` route.
-      const res = await axiosWithAuth.post(
-        `/posts/tasks/${postId}/request-help`,
-        payload
-      );
-      return res.data;
+      try {
+        // Fallback for older backends that expose the legacy
+        // `/posts/tasks/:id/request-help` endpoint instead of the
+        // generic `/posts/:id/request-help` route.
+        const res = await axiosWithAuth.post(
+          `/posts/tasks/${postId}/request-help`,
+          payload
+        );
+        return res.data;
+      } catch (err2) {
+        if (axios.isAxiosError(err2) && err2.response?.status === 404) {
+          // Final fallback for very old backends where the task request-help
+          // route lives directly under `/tasks/:id`.
+          const res = await axiosWithAuth.post(
+            `/tasks/${postId}/request-help`,
+            payload
+          );
+          return res.data;
+        }
+        throw err2;
+      }
     }
     throw err;
   }
@@ -287,10 +300,19 @@ export const removeHelpRequest = async (
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
-      // Fallback for legacy backends which expect the request-help
-      // routes to live under `/posts/tasks/:id`.
-      const res = await axiosWithAuth.delete(`/posts/tasks/${postId}/request-help`);
-      return res.data;
+      try {
+        // Fallback for legacy backends which expect the request-help
+        // routes to live under `/posts/tasks/:id`.
+        const res = await axiosWithAuth.delete(`/posts/tasks/${postId}/request-help`);
+        return res.data;
+      } catch (err2) {
+        if (axios.isAxiosError(err2) && err2.response?.status === 404) {
+          // Final fallback for very old backends where the route lives under `/tasks/:id`.
+          const res = await axiosWithAuth.delete(`/tasks/${postId}/request-help`);
+          return res.data;
+        }
+        throw err2;
+      }
     }
     throw err;
   }
