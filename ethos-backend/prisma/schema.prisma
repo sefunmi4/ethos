@@ -136,3 +136,14 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
   @@map("notifications")
 }
+
+model Reaction {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  type      String
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId, type])
+  @@map("reactions")
+}
