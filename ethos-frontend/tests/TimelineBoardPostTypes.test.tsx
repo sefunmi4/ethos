@@ -24,6 +24,12 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
+const mockUseAuth = jest.fn(() => ({ user: { id: 'u1' } }));
+jest.mock('../src/contexts/AuthContext', () => ({
+  __esModule: true,
+  useAuth: () => mockUseAuth(),
+}));
+
 import CreatePost from '../src/components/post/CreatePost';
 
 describe('Timeline board post types', () => {

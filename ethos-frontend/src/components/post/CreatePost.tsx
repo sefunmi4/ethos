@@ -5,6 +5,7 @@ import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui
 import CollaberatorControls from '../controls/CollaberatorControls';
 import LinkControls from '../controls/LinkControls';
 import { useBoardContext } from '../../contexts/BoardContext';
+import { useAuth } from '../../contexts/AuthContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
 import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
@@ -46,10 +47,16 @@ const CreatePost: React.FC<CreatePostProps> = ({
 }) => {
   const restrictedReply = !!replyTo;
   const replyToType = replyTo?.type;
+  const { user } = useAuth();
+  const currentUserId = user?.id;
+  const isParticipant = replyTo
+    ? replyTo.authorId === currentUserId ||
+      (replyTo.collaborators || []).some((c) => c.userId === currentUserId)
+    : false;
 
   const [type, setType] = useState<PostType>(
     restrictedReply
-      ? replyToType === 'change'
+      ? replyToType === 'change' && isParticipant
         ? 'change'
         : 'free_speech'
       : initialType === 'request'
@@ -75,9 +82,13 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
   const allowedPostTypes: PostType[] = restrictedReply
     ? replyToType === 'task'
-      ? ['free_speech', 'task', 'change']
+      ? isParticipant
+        ? ['free_speech', 'task', 'change']
+        : ['free_speech']
       : replyToType === 'change'
-      ? ['change']
+      ? isParticipant
+        ? ['free_speech', 'change']
+        : ['free_speech']
       : ['free_speech']
     : boardId === 'quest-board'
     ? ['task', 'change']

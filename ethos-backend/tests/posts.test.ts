@@ -3,9 +3,11 @@ import express from 'express';
 
 import postRoutes from '../src/routes/postRoutes';
 
+export let authUserId = 'u1';
 jest.mock('../src/middleware/authMiddleware', () => ({
-  authMiddleware: (_req: any, _res: any, next: any) => {
-    _req.user = { id: 'u1', username: 'user' };
+  authMiddleware: (req: any, _res: any, next: any) => {
+    const { authUserId } = require('./posts.test');
+    req.user = { id: authUserId, username: 'user' };
     next();
   },
 }));
@@ -27,6 +29,9 @@ app.use(express.json());
 app.use('/posts', postRoutes);
 
 describe('post routes', () => {
+  beforeEach(() => {
+    authUserId = 'u1';
+  });
   it('POST /posts creates a post', async () => {
     const res = await request(app)
       .post('/posts')
@@ -109,10 +114,23 @@ describe('post routes', () => {
     let res = await request(app)
       .post('/posts')
       .send({ type: 'free_speech', replyTo: 'c1' });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(201);
     res = await request(app)
       .post('/posts')
       .send({ type: 'change', replyTo: 'c1' });
+    expect(res.status).toBe(201);
+  });
+
+  it('limits non-participants replying to tasks', async () => {
+    const task = { id: 't1', authorId: 'u2', type: 'task', content: '', visibility: 'public', timestamp: '', collaborators: [] };
+    postsStoreMock.read.mockReturnValue([task]);
+    let res = await request(app)
+      .post('/posts')
+      .send({ type: 'change', replyTo: 't1' });
+    expect(res.status).toBe(400);
+    res = await request(app)
+      .post('/posts')
+      .send({ type: 'free_speech', replyTo: 't1' });
     expect(res.status).toBe(201);
   });
 });
