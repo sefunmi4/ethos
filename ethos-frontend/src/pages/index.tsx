@@ -1,28 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useBoardContext } from '../contexts/BoardContext';
 import RecentActivityBoard from '../components/feed/RecentActivityBoard';
-import { Link } from 'react-router-dom';
-import { ROUTES } from '../constants/routes';
-import { BOARD_PREVIEW_LIMIT } from '../constants/pagination';
 import { Spinner } from '../components/ui';
-import { getRenderableBoardItems } from '../utils/boardUtils';
 import QuestBoard from '../components/quest/QuestBoard';
 
 
 const HomePage: React.FC = () => {
   const { loading: authLoading } = useAuth();
-  const { boards } = useBoardContext();
 
-  const timelineBoard = boards['timeline-board'];
-
-
-  const timelineItems = useMemo(
-    () => getRenderableBoardItems(timelineBoard?.enrichedItems || []),
-    [timelineBoard?.enrichedItems]
-  );
-
-  const showTimelineSeeAll = timelineItems.length >= BOARD_PREVIEW_LIMIT;
 
   if (authLoading) {
     return (
@@ -45,17 +30,7 @@ const HomePage: React.FC = () => {
 
       <QuestBoard />
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
-        <RecentActivityBoard />
-        {showTimelineSeeAll && (
-          <div className="text-right">
-            <Link to={ROUTES.BOARD('timeline-board')} className="text-blue-600 underline text-sm">
-              → See all
-            </Link>
-          </div>
-        )}
-      </section>
+      <RecentActivityBoard />
 
     </main>
   );

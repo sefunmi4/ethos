@@ -16,6 +16,7 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
     <Board
       boardId={boardId}
       layout="list"
+      title="⏳ Recent Activity"
       user={user as unknown as User}
       compact
       hideControls
