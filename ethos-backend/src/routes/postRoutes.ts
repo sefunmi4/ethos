@@ -720,80 +720,19 @@ router.post(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
-    const task = posts.find((p) => p.id === req.params.id && p.type === 'task');
+    const task = posts.find(p => p.id === req.params.id && p.type === 'task');
     if (!task) {
       res.status(404).json({ error: 'Task not found' });
       return;
     }
 
-    const requestPost: DBPost = {
-      id: uuidv4(),
-      authorId: req.user!.id,
-      type: 'request',
-      content: task.content,
-      visibility: task.visibility,
-      timestamp: new Date().toISOString(),
-      subtype: 'task',
-      nodeId: task.nodeId,
-      tags: [
-        'request',
-        'summary:request',
-        'summary:task',
-        `summary:user:${req.user?.username || req.user?.id}`,
-      ],
-      collaborators: [],
-      replyTo: task.id,
-      repostedFrom: null,
-      linkedItems: [],
-      questId: task.questId || null,
-      helpRequest: true,
-      needsHelp: true,
-      boardId: 'quest-board',
-    };
-
     task.helpRequest = true;
     task.needsHelp = true;
-    task.requestId = requestPost.id;
-
-    const quests = questsStore.read();
-    const quest = task.questId ? quests.find(q => q.id === task.questId) : null;
-    const openRoles = [
-      ...(task.collaborators || []),
-      ...(quest?.collaborators || [])
-    ].filter(c => !c.userId);
-
-    const subRequests: DBPost[] = openRoles.map(role => ({
-      id: uuidv4(),
-      authorId: req.user!.id,
-      type: 'request',
-      content: `Role needed: ${(role.roles || []).join(', ')}`,
-      visibility: task.visibility,
-      timestamp: new Date().toISOString(),
-      subtype: 'task',
-      nodeId: task.nodeId,
-      tags: [
-        'request',
-        'summary:request',
-        'summary:task',
-        `summary:user:${req.user?.username || req.user?.id}`,
-      ],
-      collaborators: [role],
-      replyTo: requestPost.id,
-      repostedFrom: null,
-      linkedItems: [],
-      questId: task.questId || null,
-      helpRequest: true,
-      needsHelp: true,
-      boardId: 'quest-board',
-    }));
-
-    posts.push(requestPost, ...subRequests);
+    task.tags = Array.from(new Set([...(task.tags || []), 'request']));
     postsStore.write(posts);
+
     const users = usersStore.read();
-    res.status(201).json({
-      request: enrichPost(requestPost, { users }),
-      subRequests: subRequests.map(p => enrichPost(p, { users })),
-    });
+    res.status(200).json({ post: enrichPost(task, { users }) });
   }
 );
 
@@ -805,52 +744,25 @@ router.post(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
-    const original = posts.find((p) => p.id === req.params.id);
-    if (!original) {
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
-    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
-    if (subtype === 'change' && original.type !== 'task') {
+    const subtype = req.body?.subtype || (post.type === 'task' ? 'task' : 'change');
+    if (subtype === 'change' && post.type !== 'task') {
       res.status(400).json({ error: 'Change requests must originate from a task' });
       return;
     }
 
-    const requestPost: DBPost = {
-      id: uuidv4(),
-      authorId: req.user!.id,
-      type: 'request',
-      content: original.content,
-      visibility: original.visibility,
-      timestamp: new Date().toISOString(),
-      subtype,
-      nodeId: original.type === 'task' ? original.nodeId : undefined,
-      tags: [
-        subtype === 'change' ? 'review' : 'request',
-        'summary:request',
-        `summary:${subtype}`,
-        `summary:user:${req.user?.username || req.user?.id}`,
-      ],
-      collaborators: [],
-      replyTo: original.id,
-      repostedFrom: null,
-      linkedItems: [],
-      questId: original.questId || null,
-      helpRequest: true,
-      needsHelp: true,
-      boardId: 'quest-board',
-    };
-    original.helpRequest = true;
-    original.needsHelp = true;
-    original.requestId = requestPost.id;
-
-    posts.push(requestPost);
+    const tag = subtype === 'change' ? 'review' : 'request';
+    post.helpRequest = true;
+    post.needsHelp = true;
+    post.tags = Array.from(new Set([...(post.tags || []), tag]));
     postsStore.write(posts);
+
     const users = usersStore.read();
-    res.status(201).json({
-      request: enrichPost(requestPost, { users }),
-      subRequests: [],
-    });
+    res.status(200).json({ post: enrichPost(post, { users }) });
   }
 );
 
@@ -868,26 +780,14 @@ router.delete(
       return;
     }
 
-    const removedIds: string[] = [];
-    for (let i = posts.length - 1; i >= 0; i--) {
-      const p = posts[i];
-      if (
-        p.type === 'request' &&
-        p.authorId === req.user!.id &&
-        p.helpRequest === true &&
-        p.replyTo === post.id
-      ) {
-        removedIds.push(p.id);
-        posts.splice(i, 1);
-      }
-    }
-
+    const tag = post.type === 'change' ? 'review' : 'request';
     post.helpRequest = false;
     post.needsHelp = false;
-    post.requestId = undefined;
+    post.tags = (post.tags || []).filter(t => t !== tag);
     postsStore.write(posts);
 
-    res.json({ success: true, removedIds });
+    const users = usersStore.read();
+    res.json({ post: enrichPost(post, { users }) });
   }
 );
 

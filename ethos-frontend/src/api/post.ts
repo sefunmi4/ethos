@@ -241,8 +241,7 @@ export const solvePost = async (postId: string): Promise<{ success: boolean }> =
  * 🤝 Request help for any post
  */
 export interface RequestHelpResult {
-  request: Post;
-  subRequests: Post[];
+  post: Post;
 }
 
 export const requestHelp = async (
@@ -262,7 +261,7 @@ export const requestHelp = async (
  */
 export const removeHelpRequest = async (
   postId: string
-): Promise<{ success: boolean }> => {
+): Promise<{ post: Post }> => {
   // Cancel help requests using the unified posts route.
   const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/request-help`);
   return res.data;
