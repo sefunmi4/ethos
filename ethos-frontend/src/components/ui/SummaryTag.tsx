@@ -22,7 +22,14 @@ export type SummaryTagType =
   | 'free_speech'
   | 'request'
   | 'change'
-  | 'solved';
+  | 'solved'
+  | 'log'
+  | 'category'
+  | 'status'
+  | 'party_request'
+  | 'quest_task'
+  | 'meta_system'
+  | 'meta_announcement';
 
 export interface SummaryTagData {
   type: SummaryTagType;
@@ -38,7 +45,7 @@ export interface SummaryTagData {
   truncate?: boolean;
 }
 
-const icons: Record<SummaryTagType, React.ComponentType<{className?: string}>> = {
+const icons: Partial<Record<SummaryTagType, React.ComponentType<{className?: string}>>> = {
   quest: FaBookOpen,
   task: FaTasks,
   review: FaStar,
@@ -78,7 +85,7 @@ const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
   detailLink,
   truncate = true,
 }) => {
-  const Icon = icons[type] || FaStickyNote;
+  const Icon = icons[type] ?? FaStickyNote;
   const colorClass = colors[type] || colors.type;
 
   const baseClass = truncate ? TAG_TRUNCATED : TAG_BASE;
