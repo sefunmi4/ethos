@@ -21,6 +21,12 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
+const mockUseAuth = jest.fn(() => ({ user: { id: 'u1' } }));
+jest.mock('../src/contexts/AuthContext', () => ({
+  __esModule: true,
+  useAuth: () => mockUseAuth(),
+}));
+
 // Avoid LinkControls side effects
 jest.mock('../src/components/controls/LinkControls', () => ({
   __esModule: true,

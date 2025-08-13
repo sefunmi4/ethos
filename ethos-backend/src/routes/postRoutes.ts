@@ -158,6 +158,20 @@ router.post(
     const parent = replyTo ? posts.find((p: DBPost) => p.id === replyTo) : null;
 
     if (parent) {
+      const userId = req.user?.id;
+      const isParticipant =
+        parent.authorId === userId ||
+        (parent.collaborators || []).some(c => c.userId === userId);
+
+      if (['task', 'change'].includes(parent.type)) {
+        if (!isParticipant && type !== 'free_speech') {
+          res.status(400).json({
+            error: 'Only free_speech replies allowed for non-participants',
+          });
+          return;
+        }
+      }
+
       if (
         parent.type === 'task' &&
         !['free_speech', 'task', 'change'].includes(type)
@@ -167,10 +181,13 @@ router.post(
         });
         return;
       }
-      if (parent.type === 'change' && type !== 'change') {
+      if (
+        parent.type === 'change' &&
+        !['free_speech', 'change'].includes(type)
+      ) {
         res
           .status(400)
-          .json({ error: 'Changes only accept change replies' });
+          .json({ error: 'Changes only accept change or free_speech replies' });
         return;
       }
     }
