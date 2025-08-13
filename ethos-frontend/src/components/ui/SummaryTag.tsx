@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
+import type { SummaryTagData } from '../../utils/displayUtils';
 
 export type SummaryTagType =
   | 'quest'
@@ -31,19 +32,7 @@ export type SummaryTagType =
   | 'meta_system'
   | 'meta_announcement';
 
-export interface SummaryTagData {
-  type: SummaryTagType;
-  label: string;
-  link?: string;
-  /** Optional username displayed after the label */
-  username?: string;
-  /** Link for the username, typically the user profile */
-  usernameLink?: string;
-  /** Separate link for the label itself (e.g. post detail page) */
-  detailLink?: string;
-  /** Whether the text should be truncated with ellipsis */
-  truncate?: boolean;
-}
+export type SummaryTagProps = SummaryTagData & { className?: string };
 
 const icons: Partial<Record<SummaryTagType, React.ComponentType<{className?: string}>>> = {
   quest: FaBookOpen,
@@ -74,8 +63,7 @@ const colors: Record<SummaryTagType, string> = {
   solved: 'bg-lime-100 text-lime-800 dark:bg-lime-800 dark:text-lime-200',
 };
 
-
-const SummaryTag: React.FC<SummaryTagData & { className?: string }> = ({
+const SummaryTag: React.FC<SummaryTagProps> = ({
   type,
   label,
   link,
