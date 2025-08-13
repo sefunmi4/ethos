@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -88,7 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
-  const [internalExpandedView] = useState(post.type === 'task');
+  const [internalExpandedView, setInternalExpandedView] = useState(post.type === 'task');
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -152,7 +152,8 @@ const PostCard: React.FC<PostCardProps> = ({
       active = false;
     };
   }, [post, questTitle, questId]);
-  const isLong = content.length > PREVIEW_LIMIT;
+  const isLong =
+    (post.type === 'task' ? post.details || '' : content).length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
   const handleCancelRequest = useCallback(async () => {
@@ -184,6 +185,15 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
       </div>
       <div className="flex items-center gap-2">
+        {isLong && (
+          <button
+            onClick={() => setInternalExpandedView(v => !v)}
+            aria-label={expandedView ? 'Collapse view' : 'Expand view'}
+            className="p-1 hover:text-accent"
+          >
+            {expandedView ? <FaCompress /> : <FaExpand />}
+          </button>
+        )}
         <ActionMenu
           id={post.id}
           type="post"
@@ -318,34 +328,25 @@ const PostCard: React.FC<PostCardProps> = ({
               {post.content}
             </div>
             {post.details && (
-              isLong ? (
-                <>
-                  <div className={compact ? 'clamp-3' : ''}>
-                    <MarkdownRenderer
-                      content={post.details.slice(0, PREVIEW_LIMIT) + '…'}
-                      onToggleTask={handleToggleTask}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className={compact ? 'clamp-3' : ''}>
-                  <MarkdownRenderer
-                    content={post.details}
-                    onToggleTask={handleToggleTask}
-                  />
-                </div>
-              )
+              <div className={compact ? 'clamp-3' : ''}>
+                <MarkdownRenderer
+                  content={
+                    isLong && !expandedView
+                      ? post.details.slice(0, PREVIEW_LIMIT) + '…'
+                      : post.details
+                  }
+                  onToggleTask={handleToggleTask}
+                />
+              </div>
             )}
           </>
-        ) : isLong ? (
-          <>
-            <div className={compact ? 'clamp-3' : ''}>
-              <MarkdownRenderer
-                content={content.slice(0, PREVIEW_LIMIT) + '…'}
-                onToggleTask={handleToggleTask}
-              />
-            </div>
-          </>
+        ) : isLong && !expandedView ? (
+          <div className={compact ? 'clamp-3' : ''}>
+            <MarkdownRenderer
+              content={content.slice(0, PREVIEW_LIMIT) + '…'}
+              onToggleTask={handleToggleTask}
+            />
+          </div>
         ) : (
           <div className={compact ? 'clamp-3' : ''}>
             <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
