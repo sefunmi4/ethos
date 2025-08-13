@@ -82,4 +82,34 @@ describe('PostCard summary tags', () => {
     const nodeLink = await screen.findByRole('link', { name: 'Q::Task:T01:C00' });
     expect(nodeLink).toHaveAttribute('href', '/post/p2');
   });
+
+  it('renders task, change, and username tags for change posts', async () => {
+    const changePost: Post = {
+      id: 'c1',
+      authorId: 'u1',
+      type: 'change',
+      nodeId: 'Q:slug:T01:C00',
+      content: 'A change',
+      visibility: 'public',
+      timestamp: '',
+      tags: [],
+      collaborators: [],
+      linkedItems: [],
+      replyTo: 't1',
+    } as unknown as Post;
+    const enriched = { ...changePost, author: { id: 'u1', username: 'alice' } } as Post;
+    render(
+      <BrowserRouter>
+        <PostCard post={enriched} questTitle="Quest A" />
+      </BrowserRouter>
+    );
+    expect(await screen.findByText('Q::Task:T01')).toBeInTheDocument();
+    expect(await screen.findByText('Q::Task:T01:C00')).toBeInTheDocument();
+    const userLink = await screen.findByRole('link', { name: '@alice' });
+    expect(userLink).toHaveAttribute('href', '/user/u1');
+    const taskLink = await screen.findByRole('link', { name: 'Q::Task:T01' });
+    expect(taskLink).toHaveAttribute('href', '/post/t1');
+    const changeLink = await screen.findByRole('link', { name: 'Q::Task:T01:C00' });
+    expect(changeLink).toHaveAttribute('href', '/post/c1');
+  });
 });

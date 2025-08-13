@@ -139,6 +139,32 @@ export const buildSummaryTags = async (
   void questId;
   const tags: SummaryTagData[] = [];
 
+  if (post.type === 'change') {
+    if (post.nodeId) {
+      const parts = post.nodeId.split(':');
+      const changeLabel = formatNodeId(post.nodeId);
+      parts.pop();
+      const taskNode = parts.join(':');
+      if (taskNode) {
+        tags.push({
+          type: 'task',
+          label: formatNodeId(taskNode),
+          detailLink: post.replyTo ? ROUTES.POST(post.replyTo) : undefined,
+        });
+      }
+      tags.push({ type: 'change', label: changeLabel, detailLink: ROUTES.POST(post.id) });
+    }
+    if (post.authorId) {
+      const username = await getUsernameFromId(post.authorId);
+      tags.push({
+        type: 'type',
+        label: `@${username}`,
+        link: ROUTES.PUBLIC_PROFILE(post.authorId),
+      });
+    }
+    return tags;
+  }
+
   // Primary type tag linking to the post itself
   let primaryType: SummaryTagType = post.type;
   let fallbackLabel = toTitleCase(post.type);

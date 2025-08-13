@@ -88,6 +88,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [editMode, setEditMode] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [internalExpandedView] = useState(post.type === 'task');
+  const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
   const { selectedBoard } = useBoardContext() || {};
@@ -116,6 +117,14 @@ const PostCard: React.FC<PostCardProps> = ({
         : 'max-w-prose';
 
   const expandedView = expanded ?? internalExpandedView;
+
+  const qid = questId || post.questId;
+
+  useEffect(() => {
+    if (expandedView && qid) {
+      loadGraph(qid);
+    }
+  }, [expandedView, qid, loadGraph]);
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
