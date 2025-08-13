@@ -153,11 +153,13 @@ export const removePost = async (id: string): Promise<{ success: boolean }> => {
 export const updateReaction = async (
   postId: string,
   type: 'like' | 'heart' | 'repost' | 'request' | 'review',
-  add: boolean
+  add: boolean,
+  state?: string
 ): Promise<{ success: boolean }> => {
   const method = add ? 'post' : 'delete';
   const url = `${BASE_URL}/${postId}/reactions/${type}`;
-  const res = await axiosWithAuth[method](url);
+  const data = add && state ? { state } : undefined;
+  const res = await axiosWithAuth[method](url, data);
   return res.data;
 };
 

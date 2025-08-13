@@ -138,17 +138,13 @@ export type ReactionType = 'like' | 'heart' | 'repost' | 'request' | 'review';
 export interface Reaction {
   userId: string;
   type: ReactionType;
+  state?: string;
 }
 
 /**
  * Count of reactions by type.
  */
 export type ReactionCountMap = Record<'like' | 'heart' | 'repost', number>;
-
-export interface Reaction {
-  userId: string;
-  type: ReactionType;
-}
 
 /**
  * Raw user reactions.
@@ -157,6 +153,8 @@ export interface ReactionSet {
   like?: Record<string, string>;
   love?: Record<string, string>;
   repost?: Record<string, string>;
+  request?: Record<string, string>;
+  review?: Record<string, string>;
 }
 
 export interface LinkedItem {

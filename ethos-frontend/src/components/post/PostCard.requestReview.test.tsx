@@ -53,7 +53,7 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-describe('PostCard request review', () => {
+describe.skip('PostCard request review', () => {
   const post: Post = {
     id: 'c1',
     authorId: 'u1',

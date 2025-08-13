@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import {
@@ -11,26 +11,14 @@ import {
   FaRegShareSquare,
   FaHandsHelping,
   FaClipboardCheck,
-  FaUserPlus,
-  FaUserCheck,
 } from 'react-icons/fa';
 
 import { useBoardContext } from '../../contexts/BoardContext';
 import { ROUTES } from '../../constants/routes';
 import TaskCard from '../quest/TaskCard';
 
-import {
-  updateReaction,
-  addRepost,
-  removeRepost,
-  fetchReactions,
-  fetchRepostCount,
-  fetchUserRepost,
-  requestHelp,
-  acceptRequest,
-  unacceptRequest,
-} from '../../api/post';
-
+import { updateReaction, fetchReactions } from '../../api/post';
+        
 import type {
   Post,
   ReactionType,
@@ -40,6 +28,9 @@ import type {
 import type { User } from '../../types/userTypes';
 
 type ReplyType = 'free_speech' | 'task' | 'change';
+
+type ReviewState = 'review' | 'pending' | 'reviewed';
+type RequestState = 'request' | 'pending' | 'complete';
 
 interface ReactionControlsProps {
   post: Post;
@@ -75,14 +66,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   timestamp,
   expanded: expandedProp,
 }) => {
-  // ---------- Derived user/role state ----------
-  const isAuthorOrTeam = useMemo(() => {
-    const userId = user?.id;
-    const author = !!userId && userId === post.authorId;
-    const team = !!userId && (post.collaborators ?? []).some(c => c.userId === userId);
-    return author || team;
-  }, [user?.id, post.authorId, post.collaborators]);
-
   // ---------- UI / local state ----------
   const [reactions, setReactions] = useState<{ like: boolean; heart: boolean; repost: boolean }>({
     like: false,
@@ -91,28 +74,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   });
   const [counts, setCounts] = useState<ReactionCountMap>(INITIAL_COUNTS);
   const [loading, setLoading] = useState(true);
-
-  const [userRepostId, setUserRepostId] = useState<string | null>(post.userRepostId ?? null);
-  const [repostLoading, setRepostLoading] = useState(false);
+  const [reviewState, setReviewState] = useState<ReviewState>('review');
+  const [requestState, setRequestState] = useState<RequestState>('request');
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
   const [, setReplyInitialType] = useState<ReplyType>('free_speech');
-
-  const [helpRequested, setHelpRequested] = useState<boolean>(post.helpRequest === true);
-
-  const tagsKey = (post.tags ?? []).join('|');
-  const userId = user?.id;
-  const initialAccepted = useMemo(
-    () => !!userId && (isAuthorOrTeam || tagsKey.includes(`pending:${userId}`)),
-    [userId, isAuthorOrTeam, tagsKey]
-  );
-  const [accepted, setAccepted] = useState<boolean>(initialAccepted);
-  const [accepting, setAccepting] = useState(false);
-
-  // Sync initial help/repost state only when switching posts
-  useEffect(() => setHelpRequested(post.helpRequest === true), [post.id, post.helpRequest]);
-  useEffect(() => setUserRepostId(post.userRepostId ?? null), [post.id, post.userRepostId]);
-  useEffect(() => setAccepted(initialAccepted), [initialAccepted]);
 
   const navigate = useNavigate();
 
@@ -133,30 +99,25 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       if (!post?.id) return;
       setLoading(true);
       try {
-        const [allReactions, repostCountRes, userRepostRes] = await Promise.all([
-          fetchReactions(post.id),
-          fetchRepostCount(post.id),
-          user?.id ? fetchUserRepost(post.id) : Promise.resolve(null),
-        ]);
-
+        const allReactions = await fetchReactions(post.id);
         if (cancelled) return;
 
-        const userReactions = (allReactions as Reaction[]).filter(r => r.userId === user?.id);
         const countMap: ReactionCountMap = { like: 0, heart: 0, repost: 0 };
-
         (allReactions as Reaction[]).forEach(({ type }) => {
-          if (type === 'like' || type === 'heart') countMap[type] += 1;
+          if (type === 'like' || type === 'heart' || type === 'repost') countMap[type] += 1;
         });
-        countMap.repost = repostCountRes?.count ?? 0;
-
         setCounts(countMap);
-        const repostActive = !!(userRepostRes?.id || post.userRepostId);
+
+        const userReactions = (allReactions as Reaction[]).filter(r => r.userId === user?.id);
         setReactions({
           like: userReactions.some(r => r.type === 'like'),
           heart: userReactions.some(r => r.type === 'heart'),
-          repost: repostActive,
+          repost: userReactions.some(r => r.type === 'repost'),
         });
-        setUserRepostId(userRepostRes?.id || post.userRepostId || null);
+        const review = userReactions.find(r => r.type === 'review');
+        const request = userReactions.find(r => r.type === 'request');
+        setReviewState((review?.state as ReviewState) || 'review');
+        setRequestState((request?.state as RequestState) || 'request');
       } catch (err) {
         console.error('[ReactionControls] Failed to fetch data:', err);
       } finally {
@@ -168,13 +129,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [post.id, post.userRepostId, user?.id]);
+  }, [post.id, user?.id]);
 
   // ---------- Helpers ----------
   const safeBump = (n: number, delta: number) => Math.max(0, n + delta);
 
   const handleToggleReaction = useCallback(
-    async (type: Extract<ReactionType, 'like' | 'heart'>) => {
+    async (type: Extract<ReactionType, 'like' | 'heart' | 'repost'>) => {
       if (!user?.id) return;
 
       const isActivating = !reactions[type];
@@ -193,103 +154,50 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     [post.id, reactions, user?.id]
   );
 
-  const handleRepost = useCallback(async () => {
-    if (!user?.id || repostLoading) return;
-    setRepostLoading(true);
-
-    const wasReposted = reactions.repost;
-
-    if (wasReposted) {
-      // optimistic remove
-      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
-      const prevId = userRepostId!;
-      setUserRepostId(null);
-      setReactions(prev => ({ ...prev, repost: false }));
-      try {
-        await removeRepost(prevId);
-        onUpdate?.({ id: prevId, removed: true });
-        onUpdate?.({ ...post, userRepostId: null } as Post);
-      } catch (err) {
-        // revert
-        console.error('[ReactionControls] Failed to toggle repost:', err);
-        setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
-        setUserRepostId(prevId);
-        setReactions(prev => ({ ...prev, repost: true }));
-      } finally {
-        setRepostLoading(false);
-      }
-      return;
-    }
-
-    // optimistic add
-    setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
-    setReactions(prev => ({ ...prev, repost: true }));
+  const cycleReview = useCallback(async () => {
+    if (!user?.id) return;
+    const prev = reviewState;
+    const next: ReviewState =
+      reviewState === 'review'
+        ? 'pending'
+        : reviewState === 'pending'
+        ? 'reviewed'
+        : 'review';
+    setReviewState(next);
     try {
-      const res = await addRepost(post);
-      if (res?.id) {
-        setUserRepostId(res.id);
-        onUpdate?.(res);
-        onUpdate?.({ ...post, userRepostId: res.id } as Post);
+      if (next === 'review') {
+        await updateReaction(post.id, 'review', false);
       } else {
-        throw new Error('No repost ID returned');
+        await updateReaction(post.id, 'review', true, next);
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to toggle repost:', err);
-      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
-      setUserRepostId(null);
-      setReactions(prev => ({ ...prev, repost: false }));
-    } finally {
-      setRepostLoading(false);
+      console.error('[ReactionControls] Failed to toggle review:', err);
+      setReviewState(prev);
     }
-  }, [onUpdate, post, reactions.repost, repostLoading, user?.id, userRepostId]);
+  }, [post.id, reviewState, user?.id]);
 
-  const [helpLoading, setHelpLoading] = useState(false);
+  const cycleRequest = useCallback(async () => {
+    if (!user?.id) return;
+    const prev = requestState;
+    const next: RequestState =
+      requestState === 'request'
+        ? 'pending'
+        : requestState === 'pending'
+        ? 'complete'
+        : 'request';
+    setRequestState(next);
 
-  const handleRequestHelp = useCallback(async () => {
-    if (!user?.id || helpLoading || helpRequested) return;
-
-    setHelpLoading(true);
-    setHelpRequested(true);
-    setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
-    setReactions(prev => ({ ...prev, repost: true }));
     try {
-      const { post: repost } = await requestHelp(post.id, post.type);
-      setUserRepostId(repost.id);
-      onUpdate?.(repost);
-      onUpdate?.({
-        ...post,
-        userRepostId: repost.id,
-        helpRequest: true,
-        tags: [...(post.tags || []), post.type === 'change' ? 'review' : 'request'],
-      } as Post);
-    } catch (err) {
-      console.error('[ReactionControls] Failed to request help:', err);
-      setHelpRequested(false);
-      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
-      setReactions(prev => ({ ...prev, repost: false }));
-    } finally {
-      setHelpLoading(false);
-    }
-  }, [helpLoading, helpRequested, onUpdate, post, user?.id]);
-
-  const handleAccept = useCallback(async () => {
-    if (!user) return;
-    setAccepting(true);
-    try {
-      if (accepted && !isAuthorOrTeam) {
-        await unacceptRequest(post.id);
-        setAccepted(false);
+      if (next === 'request') {
+        await updateReaction(post.id, 'request', false);
       } else {
-        const res = await acceptRequest(post.id);
-        setAccepted(true);
-        if (res?.post) onUpdate?.(res.post);
+        await updateReaction(post.id, 'request', true, next);
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to toggle accept:', err);
-    } finally {
-      setAccepting(false);
+      console.error('[ReactionControls] Failed to toggle request:', err);
+      setRequestState(prev);
     }
-  }, [accepted, isAuthorOrTeam, onUpdate, post.id, user]);
+  }, [post.id, requestState, user?.id]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {
@@ -338,57 +246,50 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
         </button>
 
-        {/* Repost (only for certain post types) */}
+        {/* Repost */}
         {['free_speech', 'task', 'change'].includes(post.type) && (
           <button
             aria-label="Repost"
             className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}
-            onClick={handleRepost}
-            disabled={loading || repostLoading || !user}
+            onClick={() => handleToggleReaction('repost')}
+            disabled={loading || !user}
           >
             {reactions.repost ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
           </button>
         )}
 
-        {/* Help / Review / Accept */}
-        {(post.type === 'task' || post.type === 'change') && (
-          isAuthorOrTeam ? (
-            <button
-              className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
-              onClick={handleRequestHelp}
-              disabled={loading || helpLoading || !user || helpRequested}
-              aria-label={post.type === 'change' ? 'Request Review' : 'Request Help'}
-            >
-              {post.type === 'task' ? <FaHandsHelping /> : <FaClipboardCheck />}
-              {post.type === 'change'
-                ? (helpRequested ? 'In Review' : 'Review')
-                : (helpRequested ? 'Requested' : 'Request')}
-            </button>
-          ) : helpRequested ? (
-            accepted ? (
-              <span className="flex items-center gap-1">
-                <FaUserCheck /> Accepted
-              </span>
-            ) : (
-              <button
-                className="flex items-center gap-1"
-                onClick={handleAccept}
-                disabled={accepting || !user}
-                aria-label="Accept Request"
-              >
-                {accepting ? '...' : (
-                  <>
-                    <FaUserPlus />
-                    {post.type === 'change'
-                      ? 'Accept Change'
-                      : post.questId
-                        ? 'Accept Quest'
-                        : 'Accept Task'}
-                  </>
-                )}
-              </button>
-            )
-          ) : null
+        {/* Review status for changes */}
+        {post.type === 'change' && (
+          <button
+            className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
+            onClick={cycleReview}
+            disabled={loading || !user}
+            aria-label="Review Status"
+          >
+            <FaClipboardCheck />
+            {reviewState === 'review'
+              ? 'Review'
+              : reviewState === 'pending'
+              ? 'Pending'
+              : 'Reviewed'}
+          </button>
+        )}
+
+        {/* Request status for tasks */}
+        {post.type === 'task' && (
+          <button
+            className={clsx('flex items-center gap-1', requestState !== 'request' && 'text-indigo-600')}
+            onClick={cycleRequest}
+            disabled={loading || !user}
+            aria-label="Request Status"
+          >
+            <FaHandsHelping />
+            {requestState === 'request'
+              ? 'Request'
+              : requestState === 'pending'
+              ? 'Pending'
+              : 'Complete'}
+          </button>
         )}
 
         {/* Reply / Update */}

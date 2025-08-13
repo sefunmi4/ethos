@@ -665,14 +665,18 @@ router.post(
   ): Promise<void> => {
     const { id, type } = req.params;
     const userId = req.user!.id;
+    const state = req.body?.state as string | undefined;
 
     if (usePg) {
       try {
         await pool.query(
-          `INSERT INTO reactions (id, postid, userid, type)
-           VALUES ($1, $2, $3, $4)
-           ON CONFLICT (postid, userid, type) DO NOTHING`,
-          [uuidv4(), id, userId, type]
+          'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type LIKE $3',
+          [id, userId, `${type}%`]
+        );
+        const storedType = state ? `${type}:${state}` : type;
+        await pool.query(
+          'INSERT INTO reactions (id, postid, userid, type) VALUES ($1, $2, $3, $4)',
+          [uuidv4(), id, userId, storedType]
         );
         res.json({ success: true });
         return;
@@ -684,12 +688,10 @@ router.post(
     }
 
     const reactions = reactionsStore.read();
-    const key = `${id}_${userId}_${type}`;
-
-    if (!reactions.includes(key)) {
-      reactions.push(key);
-      reactionsStore.write(reactions);
-    }
+    const prefix = `${id}_${userId}_${type}`;
+    const filtered = reactions.filter(r => !r.startsWith(prefix));
+    filtered.push(state ? `${prefix}_${state}` : prefix);
+    reactionsStore.write(filtered);
 
     res.json({ success: true });
   }
@@ -711,8 +713,8 @@ router.delete(
     if (usePg) {
       try {
         await pool.query(
-          'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
-          [id, userId, type]
+          'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type LIKE $3',
+          [id, userId, `${type}%`]
         );
         res.json({ success: true });
         return;
@@ -724,12 +726,9 @@ router.delete(
     }
 
     const reactions = reactionsStore.read();
-    const index = reactions.indexOf(`${id}_${userId}_${type}`);
-
-    if (index !== -1) {
-      reactions.splice(index, 1);
-      reactionsStore.write(reactions);
-    }
+    const prefix = `${id}_${userId}_${type}`;
+    const filtered = reactions.filter(r => !r.startsWith(prefix));
+    reactionsStore.write(filtered);
 
     res.json({ success: true });
   }
@@ -749,7 +748,11 @@ router.get(
           'SELECT userid AS "userId", type FROM reactions WHERE postid = $1',
           [id]
         );
-        res.json(result.rows);
+        const rows = result.rows.map((r) => {
+          const [base, state] = r.type.split(':');
+          return state ? { userId: r.userId, type: base, state } : { userId: r.userId, type: base };
+        });
+        res.json(rows);
         return;
       } catch (err) {
         console.error(err);
@@ -762,8 +765,9 @@ router.get(
     const postReactions = reactions
       .filter((r) => r.startsWith(`${id}_`))
       .map((r) => {
-        const [, userId, type] = r.split('_');
-        return { userId, type };
+        const parts = r.split('_');
+        const [, userId, type, state] = parts;
+        return state ? { userId, type, state } : { userId, type };
       });
 
     res.json(postReactions);
