@@ -92,7 +92,7 @@ export const useQuest = (questId?: string) => {
   const getAllEnrichedQuests = useCallback(async (): Promise<EnrichedQuest[]> => {
     const all = await fetchQuests();
     return enrichQuests(all);
-  }, [fetchAllQuests, enrichQuests]);
+  }, [enrichQuests]);
 
   /**
    * Git Integration Methods

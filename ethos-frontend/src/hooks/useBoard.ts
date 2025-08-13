@@ -64,7 +64,7 @@ export const useBoard = (
         setIsLoading(false);
       }
     },
-    [arg, pageSize]
+    [arg, pageSize, user?.id]
   );
 
   const refresh = useCallback(async () => {
@@ -128,7 +128,7 @@ export const useBoard = (
     if (boardId && !board) {
       loadBoard(boardId, 1, pageSize);
     }
-  }, [boardId, pageSize]);
+  }, [boardId, board, loadBoard, pageSize]);
 
   // Keep local board state in sync with context
   useEffect(() => {
@@ -137,7 +137,7 @@ export const useBoard = (
     if (ctxBoard && ctxBoard !== board) {
       setBoard(ctxBoard);
     }
-  }, [boards, boardId]);
+  }, [boards, boardId, board]);
 
   return {
     board,

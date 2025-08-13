@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from '../src/components/post/PostCard';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/post', () => ({
   __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
@@ -16,7 +15,6 @@ jest.mock('../src/api/post', () => ({
   removeRepost: jest.fn(() => Promise.resolve()),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/quest', () => ({
   __esModule: true,
   linkPostToQuest: jest.fn(() => Promise.resolve({})),
@@ -27,7 +25,6 @@ jest.mock('../src/hooks/useGraph', () => ({
   useGraph: () => ({ loadGraph: jest.fn() }),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({

@@ -2,19 +2,16 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/post', () => ({
   __esModule: true,
   addPost: jest.fn(() => Promise.resolve({ id: 'p1' })),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/board', () => ({
   __esModule: true,
   updateBoard: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({
@@ -25,7 +22,6 @@ jest.mock('../src/contexts/BoardContext', () => ({
 }));
 
 // Avoid LinkControls side effects
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/components/controls/LinkControls', () => ({
   __esModule: true,
   default: () => <div />,

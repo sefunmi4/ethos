@@ -56,7 +56,7 @@ const BoardTypePage: React.FC = () => {
     });
     obs.observe(node);
     return () => obs.disconnect();
-  }, [loader.current]);
+  }, []);
 
   const visible = items.slice(0, page * PAGE_SIZE);
 

@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import { fetchNotifications, markNotificationRead } from '../api/notifications';
 import type { Notification } from '../types/notificationTypes';
 import { useAuth } from './AuthContext';
@@ -16,7 +23,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const shownRef = useRef<Set<string>>(new Set());
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!user) return;
     try {
       const notes = await fetchNotifications();
@@ -24,11 +31,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (err) {
       console.warn('[NotificationContext] Failed to load notifications', err);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     load();
-  }, [user]);
+  }, [load]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || Notification.permission !== 'granted') return;
@@ -56,6 +63,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useNotifications = (): NotificationContextValue => {
   const ctx = useContext(NotificationContext);
   if (!ctx) throw new Error('useNotifications must be inside NotificationProvider');

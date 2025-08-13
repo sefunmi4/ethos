@@ -2,20 +2,17 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/post', () => ({
   __esModule: true,
   addPost: jest.fn(() => Promise.resolve({ id: 'p1' })),
   fetchAllPosts: jest.fn(() => Promise.resolve([])),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/api/board', () => ({
   __esModule: true,
   updateBoard: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('../src/contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({

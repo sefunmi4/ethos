@@ -44,6 +44,11 @@ jest.mock('../../contexts/BoardContext', () => ({
   }),
 }));
 
+jest.mock('../layout/MapGraphLayout', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock('react-router-dom', () => {
   const actual = jest.requireActual('react-router-dom');
   return {
@@ -74,7 +79,7 @@ describe('PostCard request help', () => {
       </BrowserRouter>
     );
 
-    const btn = await screen.findByText(/Request Help/i);
+    const btn = await screen.findByLabelText(/Request Help/i);
     await waitFor(() => expect(btn).not.toBeDisabled());
     await act(async () => {
       fireEvent.click(btn);
@@ -121,7 +126,7 @@ describe('PostCard request help', () => {
       </BrowserRouter>
     );
 
-    const btn = await screen.findByText(/Request Help/i);
+    const btn = await screen.findByLabelText(/Request Help/i);
     await act(async () => {
       fireEvent.click(btn);
     });
