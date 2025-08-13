@@ -77,11 +77,20 @@ describe('PostCard request review', () => {
     await waitFor(() =>
       expect(requestHelp).toHaveBeenCalledWith('c1', 'change')
     );
-    expect(appendMock).toHaveBeenCalled();
-    expect(screen.getByText(/Requested/i)).toBeInTheDocument();
+    expect(appendMock).toHaveBeenNthCalledWith(
+      1,
+      'quest-board',
+      expect.objectContaining({ id: 'r1' })
+    );
+    expect(appendMock).toHaveBeenNthCalledWith(
+      2,
+      'timeline-board',
+      expect.objectContaining({ id: 'r1' })
+    );
+    expect(screen.getByText(/In Review/i)).toBeInTheDocument();
 
     await act(async () => {
-      fireEvent.click(screen.getByText(/Requested/i));
+      fireEvent.click(screen.getByText(/In Review/i));
     });
     await waitFor(() =>
       expect(removeHelpRequest).toHaveBeenCalledWith('c1')
