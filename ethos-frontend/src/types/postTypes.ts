@@ -134,7 +134,7 @@ export interface RepostMeta {
 /**
  * Supported reaction types.
  */
-export type ReactionType = 'like' | 'heart' | 'repost';
+export type ReactionType = 'like' | 'heart' | 'repost' | 'request' | 'review';
 
 /** Individual reaction returned from the API */
 export interface Reaction {
@@ -145,7 +145,7 @@ export interface Reaction {
 /**
  * Count of reactions by type.
  */
-export type ReactionCountMap = Record<ReactionType, number>;
+export type ReactionCountMap = Record<'like' | 'heart' | 'repost', number>;
 
 export interface Reaction {
   userId: string;

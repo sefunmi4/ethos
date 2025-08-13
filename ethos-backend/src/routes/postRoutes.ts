@@ -545,6 +545,26 @@ router.post(
 
     posts.push(repost);
     postsStore.write(posts);
+
+    if (usePg) {
+      try {
+        pool.query(
+          `INSERT INTO reactions (id, postid, userid, type)
+           VALUES ($1, $2, $3, 'repost')
+           ON CONFLICT (postid, userid, type) DO NOTHING`,
+          [uuidv4(), req.params.id, req.user!.id]
+        ).catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const reactions = reactionsStore.read();
+      const key = `${req.params.id}_${req.user!.id}_repost`;
+      if (!reactions.includes(key)) {
+        reactions.push(key);
+        reactionsStore.write(reactions);
+      }
+    }
     res.status(201).json(enrichPost(repost, { users }));
   }
 );
@@ -566,6 +586,27 @@ router.delete(
     }
     const [removed] = posts.splice(index, 1);
     postsStore.write(posts);
+
+    if (usePg) {
+      try {
+        pool
+          .query(
+            'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
+            [req.params.id, req.user!.id, 'repost']
+          )
+          .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const reactions = reactionsStore.read();
+      const key = `${req.params.id}_${req.user!.id}_repost`;
+      const idx = reactions.indexOf(key);
+      if (idx !== -1) {
+        reactions.splice(idx, 1);
+        reactionsStore.write(reactions);
+      }
+    }
     res.json({ success: true, id: removed.id });
   }
 );
@@ -731,6 +772,28 @@ router.post(
     task.tags = Array.from(new Set([...(task.tags || []), 'request']));
     postsStore.write(posts);
 
+    if (usePg) {
+      try {
+        pool
+          .query(
+            `INSERT INTO reactions (id, postid, userid, type)
+             VALUES ($1, $2, $3, 'request')
+             ON CONFLICT (postid, userid, type) DO NOTHING`,
+            [uuidv4(), req.params.id, req.user!.id]
+          )
+          .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const reactions = reactionsStore.read();
+      const key = `${req.params.id}_${req.user!.id}_request`;
+      if (!reactions.includes(key)) {
+        reactions.push(key);
+        reactionsStore.write(reactions);
+      }
+    }
+
     const users = usersStore.read();
     res.status(200).json({ post: enrichPost(task, { users }) });
   }
@@ -761,6 +824,28 @@ router.post(
     post.tags = Array.from(new Set([...(post.tags || []), tag]));
     postsStore.write(posts);
 
+    if (usePg) {
+      try {
+        pool
+          .query(
+            `INSERT INTO reactions (id, postid, userid, type)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (postid, userid, type) DO NOTHING`,
+            [uuidv4(), req.params.id, req.user!.id, tag]
+          )
+          .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const reactions = reactionsStore.read();
+      const key = `${req.params.id}_${req.user!.id}_${tag}`;
+      if (!reactions.includes(key)) {
+        reactions.push(key);
+        reactionsStore.write(reactions);
+      }
+    }
+
     const users = usersStore.read();
     res.status(200).json({ post: enrichPost(post, { users }) });
   }
@@ -785,6 +870,27 @@ router.delete(
     post.needsHelp = false;
     post.tags = (post.tags || []).filter(t => t !== tag);
     postsStore.write(posts);
+
+    if (usePg) {
+      try {
+        pool
+          .query(
+            'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
+            [req.params.id, req.user!.id, tag]
+          )
+          .catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const reactions = reactionsStore.read();
+      const key = `${req.params.id}_${req.user!.id}_${tag}`;
+      const idx = reactions.indexOf(key);
+      if (idx !== -1) {
+        reactions.splice(idx, 1);
+        reactionsStore.write(reactions);
+      }
+    }
 
     const users = usersStore.read();
     res.json({ post: enrichPost(post, { users }) });
