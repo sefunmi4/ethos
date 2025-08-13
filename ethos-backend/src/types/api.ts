@@ -12,7 +12,7 @@ export type UserRole = 'user' | 'admin' | 'moderator';
 /**
  * Supported reaction types.
  */
-export type ReactionType = 'like' | 'heart' | 'repost';
+export type ReactionType = 'like' | 'heart' | 'repost' | 'request' | 'review';
 
 export type ApprovalStatus = 'approved' | 'flagged' | 'banned';
 
@@ -21,7 +21,7 @@ export type AppItem = Post | Quest | Board | RenderableItem;
 /**
  * Count of reactions by type.
  */
-export type ReactionCountMap = Record<ReactionType, number>;
+export type ReactionCountMap = Record<'like' | 'heart' | 'repost', number>;
 
 //
 // 🧭 BOARD

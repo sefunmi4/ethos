@@ -18,13 +18,13 @@ const quest: Quest = {
 };
 
 describe('Timeline quest formatting', () => {
-  it('renders quest using PostCard formatting on timeline board', () => {
+  it('renders quest using QuestCard formatting on timeline board', () => {
     render(
       <BrowserRouter>
         <ContributionCard contribution={quest} boardId="timeline-board" />
       </BrowserRouter>
     );
-    expect(screen.getByText('Quest: Timeline Quest')).toBeInTheDocument();
-    expect(screen.getByText('Expand View')).toBeInTheDocument();
+    expect(screen.getByText('Timeline Quest')).toBeInTheDocument();
+    expect(screen.getByText('Quest')).toBeInTheDocument();
   });
 });

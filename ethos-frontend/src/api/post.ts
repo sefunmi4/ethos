@@ -147,7 +147,7 @@ export const removePost = async (id: string): Promise<{ success: boolean }> => {
  */
 export const updateReaction = async (
   postId: string,
-  type: 'like' | 'heart',
+  type: 'like' | 'heart' | 'repost' | 'request' | 'review',
   add: boolean
 ): Promise<{ success: boolean }> => {
   const method = add ? 'post' : 'delete';

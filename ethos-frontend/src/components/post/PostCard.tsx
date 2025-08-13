@@ -10,7 +10,6 @@ import type { User } from '../../types/userTypes';
 
 import { updatePost } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
-import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
