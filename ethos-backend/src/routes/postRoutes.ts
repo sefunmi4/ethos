@@ -822,13 +822,40 @@ router.post(
 router.post(
   '/:id/request-help',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const posts = postsStore.read();
-    const original = posts.find(p => p.id === req.params.id);
+    let original = posts.find(p => p.id === req.params.id);
+
+    // Fallback to PostgreSQL if the post isn't in the JSON store
+    if (!original && usePg) {
+      try {
+        const { rows } = await pool.query(
+          'SELECT * FROM posts WHERE id = $1',
+          [req.params.id]
+        );
+        if (rows.length > 0) {
+          original = {
+            id: rows[0].id,
+            authorId: rows[0].authorid,
+            type: rows[0].type,
+            content: rows[0].content,
+            visibility: rows[0].visibility,
+            tags: rows[0].tags || [],
+            timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+          } as DBPost;
+          posts.push(original);
+          postsStore.write(posts);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     if (!original) {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
+
     const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
     if (subtype === 'change' && original.type !== 'task') {
       res.status(400).json({ error: 'Change requests must originate from a task' });
@@ -838,26 +865,51 @@ router.post(
     const tag = subtype === 'change' ? 'review' : 'request';
     const users = usersStore.read();
 
-    const repost: DBPost = {
+    const timestamp = new Date().toISOString();
+    let repost: DBPost = {
       id: uuidv4(),
       authorId: req.user!.id,
-      type: original.type,
+      type: 'request',
+      subtype,
       content: original.content,
       visibility: original.visibility,
       questId: original.questId || null,
       tags: Array.from(new Set([...(original.tags || []), tag])),
       collaborators: [],
       replyTo: null,
-      timestamp: new Date().toISOString(),
+      timestamp,
       repostedFrom: original.id,
       linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
     } as DBPost;
+
+    // Add summary tags for easier filtering
+    const summaryTags = new Set([
+      ...(repost.tags || []),
+      `summary:${tag}`,
+      `summary:${subtype}`,
+      `summary:user:${req.user?.username || req.user?.id}`,
+    ]);
+    repost.tags = Array.from(summaryTags);
 
     posts.push(repost);
     postsStore.write(posts);
 
     if (usePg) {
       try {
+        await pool.query(
+          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          [
+            repost.id,
+            repost.authorId,
+            'request',
+            repost.content,
+            original.title || '',
+            repost.visibility,
+            repost.tags,
+            'quest-board',
+            timestamp,
+          ]
+        );
         pool
           .query(
             `INSERT INTO reactions (id, postid, userid, type)
@@ -868,6 +920,8 @@ router.post(
           .catch((err) => console.error(err));
       } catch (err) {
         console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
       }
     } else {
       const reactions = reactionsStore.read();
@@ -888,9 +942,34 @@ router.post(
 router.delete(
   '/:id/request-help',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const posts = postsStore.read();
-    const original = posts.find(p => p.id === req.params.id);
+    let original = posts.find(p => p.id === req.params.id);
+
+    if (!original && usePg) {
+      try {
+        const { rows } = await pool.query(
+          'SELECT * FROM posts WHERE id = $1',
+          [req.params.id]
+        );
+        if (rows.length > 0) {
+          original = {
+            id: rows[0].id,
+            authorId: rows[0].authorid,
+            type: rows[0].type,
+            content: rows[0].content,
+            visibility: rows[0].visibility,
+            tags: rows[0].tags || [],
+            timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+          } as DBPost;
+          posts.push(original);
+          postsStore.write(posts);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     if (!original) {
       res.status(404).json({ error: 'Post not found' });
       return;
@@ -914,6 +993,7 @@ router.delete(
 
     if (usePg) {
       try {
+        await pool.query('DELETE FROM posts WHERE id = $1', [removed.id]);
         pool
           .query(
             'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
