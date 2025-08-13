@@ -72,11 +72,12 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
         );
 
         let enriched = Object.values(questMap);
+        const rootTasks = boardData.tasks.filter(t => t.nodeId?.endsWith('T00'));
         if (onlyMine) {
           enriched = enriched.filter(q => q.authorId === user?.id);
-          setTasks(boardData.tasks.filter(t => t.authorId === user?.id));
+          setTasks(rootTasks.filter(t => t.authorId === user?.id));
         } else {
-          setTasks(boardData.tasks);
+          setTasks(rootTasks);
         }
         setQuests(enriched);
       } catch (err) {

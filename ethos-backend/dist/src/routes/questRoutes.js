@@ -62,21 +62,9 @@ router.get('/active', authOptional_1.default, (req, res) => {
     }));
     if (includeTasks) {
         const taskPosts = posts.filter((p) => p.type === 'task');
-        const rootTasks = active.flatMap((q) => {
-            const edges = q.taskGraph || [];
-            return taskPosts
-                .filter((p) => p.questId === q.id)
-                .filter((p) => {
-                const hasChild = edges.some((e) => e.from === p.id);
-                const hasParent = edges.some((e) => e.to === p.id);
-                if (!hasChild || hasParent)
-                    return false;
-                if (userId) {
-                    return p.authorId !== userId;
-                }
-                return true;
-            });
-        });
+        const rootTasks = active.flatMap((q) => taskPosts
+            .filter((p) => p.questId === q.id && p.nodeId?.endsWith('T00'))
+            .filter((p) => (userId ? p.authorId !== userId : true)));
         res.json({ quests: active, tasks: rootTasks });
         return;
     }
