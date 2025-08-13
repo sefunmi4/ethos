@@ -118,6 +118,14 @@ async function initializeDatabase() {
       read BOOLEAN,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS reactions (
+      id UUID PRIMARY KEY,
+      postid TEXT,
+      userid TEXT,
+      type TEXT,
+      createdat TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(postid, userid, type)
+    );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;

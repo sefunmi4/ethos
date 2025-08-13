@@ -53,8 +53,6 @@ router.get('/recent', authOptional_1.default, (req, res) => {
             .map(q => q.id);
         const questPosts = posts.filter(p => p.questId && relatedQuestIds.includes(p.questId));
         const userPostIds = new Set(authored.map(p => p.id));
-        // Posts linking to any post by the user
-        const linked = posts.filter(p => (p.linkedItems || []).some(li => li.itemType === 'post' && userPostIds.has(li.itemId)));
         // Posts replying to any post by the user
         const replies = posts.filter(p => p.replyTo && userPostIds.has(p.replyTo));
         // Posts in quests that contain any user-authored post
@@ -63,7 +61,6 @@ router.get('/recent', authOptional_1.default, (req, res) => {
         filtered = [
             ...authored,
             ...questPosts,
-            ...linked,
             ...replies,
             ...questActivity,
         ];
@@ -88,7 +85,7 @@ router.get('/recent', authOptional_1.default, (req, res) => {
 // ✅ POST create a new post
 //
 router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
-    const { type = 'free_speech', title = '', content = '', details = '', visibility = 'public', tags = [], questId = null, replyTo = null, linkedItems = [], linkedNodeId, collaborators = [], status, boardId, taskType = 'abstract', helpRequest = false, needsHelp = undefined, rating, } = req.body;
+    const { type = 'free_speech', title = '', content = '', details = '', visibility = 'public', tags = [], questId = null, replyTo = null, linkedItems = [], linkedNodeId, collaborators = [], status, boardId, taskType = 'abstract', helpRequest = false, needsHelp = undefined, rating, subtype, } = req.body;
     const allowedTypes = [
         'free_speech',
         'request',
@@ -102,26 +99,62 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
     }
     const posts = stores_1.postsStore.read();
     const quests = stores_1.questsStore.read();
-    const quest = questId ? quests.find(q => q.id === questId) : null;
-    const parent = replyTo ? posts.find(p => p.id === replyTo) : null;
-    // Validate required links based on post type
-    if (type === 'change') {
-        const target = linkedItems
-            .filter((li) => li.itemType === 'post')
-            .map((li) => posts.find(p => p.id === li.itemId))
-            .find((p) => p && (p.type === 'task' || p.type === 'request'));
-        if (!target) {
-            res.status(400).json({ error: 'Changes must link to a task or request' });
+    const quest = questId ? quests.find((q) => q.id === questId) : null;
+    const parent = replyTo ? posts.find((p) => p.id === replyTo) : null;
+    if (parent) {
+        if (parent.type === 'task' &&
+            !['free_speech', 'task', 'change'].includes(type)) {
+            res.status(400).json({
+                error: 'Tasks only accept free_speech, task, or change replies',
+            });
+            return;
+        }
+        if (parent.type === 'change' && type !== 'change') {
+            res
+                .status(400)
+                .json({ error: 'Changes only accept change replies' });
+            return;
+        }
+    }
+    if (type === 'task') {
+        if (parent && parent.type === 'change') {
+            res
+                .status(400)
+                .json({ error: 'Tasks cannot reply to changes' });
+            return;
+        }
+    }
+    else if (type === 'change') {
+        const hasParent = parent && ['task', 'request', 'change'].includes(parent.type);
+        const hasTaskLink = (linkedItems || []).some((li) => li.itemType === 'post');
+        if (!hasParent && !hasTaskLink) {
+            res
+                .status(400)
+                .json({
+                error: 'Changes must reply to or link a task, request, or change',
+            });
+            return;
+        }
+    }
+    else if (type === 'request') {
+        if (!subtype || !['task', 'change'].includes(subtype)) {
+            res
+                .status(400)
+                .json({ error: 'Request posts must specify subtype "task" or "change"' });
+            return;
+        }
+        if (subtype === 'change' && (!parent || parent.type !== 'task')) {
+            res
+                .status(400)
+                .json({ error: 'Change requests must reply to a task' });
             return;
         }
     }
     else if (type === 'review') {
-        const target = linkedItems
-            .filter((li) => li.itemType === 'post')
-            .map((li) => posts.find(p => p.id === li.itemId))
-            .find((p) => p && p.type === 'change');
-        if (!target) {
-            res.status(400).json({ error: 'Reviews must link to a change' });
+        if (!parent || parent.type !== 'request') {
+            res
+                .status(400)
+                .json({ error: 'Reviews must reply to a request' });
             return;
         }
     }
@@ -152,25 +185,25 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
         linkedNodeId,
         questId,
         ...(type === 'task' ? { taskType } : {}),
+        ...(subtype ? { subtype } : {}),
         ...(type === 'review' && rating ? { rating: Math.min(5, Math.max(0, Number(rating))) } : {}),
         status: finalStatus,
         helpRequest: type === 'request' || helpRequest,
         needsHelp: type === 'request' ? needsHelp ?? true : undefined,
-        nodeId: quest ? (0, nodeIdUtils_1.generateNodeId)({ quest, posts, postType: type, parentPost: parent }) : undefined,
+        nodeId: quest
+            ? (0, nodeIdUtils_1.generateNodeId)({ quest, posts, postType: type, parentPost: parent })
+            : type === 'task' && !replyTo
+                ? 'T00'
+                : undefined,
         boardId: effectiveBoardId,
     };
     if (type === 'request') {
-        const summaryTags = new Set([...(newPost.tags || []), 'summary:request']);
-        const linkedPosts = linkedItems
-            ?.filter((li) => li.itemType === 'post')
-            .map((li) => posts.find((p) => p.id === li.itemId))
-            .filter((p) => !!p);
-        if (linkedPosts?.some((p) => p.type === 'task')) {
-            summaryTags.add('summary:task');
-        }
-        else if (linkedPosts?.some((p) => p.type === 'change')) {
-            summaryTags.add('summary:change');
-        }
+        const summaryTags = new Set([
+            ...(newPost.tags || []),
+            'summary:request',
+            `summary:${subtype}`,
+            `summary:user:${req.user?.username || req.user?.id}`,
+        ]);
         newPost.tags = Array.from(summaryTags);
     }
     if (questId && (!newPost.questNodeTitle || newPost.questNodeTitle.trim() === '')) {
@@ -290,6 +323,21 @@ router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
         const parent = post.replyTo
             ? posts.find((p) => p.id === post.replyTo) || null
             : null;
+        if (parent) {
+            if (parent.type === 'task' &&
+                !['free_speech', 'task', 'change'].includes(post.type)) {
+                res.status(400).json({
+                    error: 'Tasks only accept free_speech, task, or change replies',
+                });
+                return;
+            }
+            if (parent.type === 'change' && post.type !== 'change') {
+                res
+                    .status(400)
+                    .json({ error: 'Changes only accept change replies' });
+                return;
+            }
+        }
         const otherPosts = posts.filter((p) => p.id !== post.id);
         post.nodeId = quest
             ? (0, nodeIdUtils_1.generateNodeId)({
@@ -298,7 +346,9 @@ router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
                 postType: post.type,
                 parentPost: parent,
             })
-            : undefined;
+            : post.type === 'task' && !post.replyTo
+                ? 'T00'
+                : undefined;
     }
     stores_1.postsStore.write(posts);
     const users = stores_1.usersStore.read();
@@ -375,7 +425,7 @@ router.post('/:id/repost', authMiddleware_1.authMiddleware, (req, res) => {
         replyTo: null,
         timestamp: new Date().toISOString(),
         repostedFrom: original.id,
-        linkedItems: [...(original.linkedItems || [])],
+        linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
         // 🧹 Clear non-transferable or enriched fields
         enriched: false,
         systemGenerated: false,
@@ -427,9 +477,23 @@ router.get('/:id/reposts/count', (_req, res) => {
 //
 // ✅ POST /api/posts/:id/reactions/:type – Toggle reaction (like/heart)
 //
-router.post('/:id/reactions/:type', authMiddleware_1.authMiddleware, (req, res) => {
+router.post('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (req, res) => {
     const { id, type } = req.params;
     const userId = req.user.id;
+    if (db_1.usePg) {
+        try {
+            await db_1.pool.query(`INSERT INTO reactions (id, postid, userid, type)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (postid, userid, type) DO NOTHING`, [(0, uuid_1.v4)(), id, userId, type]);
+            res.json({ success: true });
+            return;
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+        }
+    }
     const reactions = stores_1.reactionsStore.read();
     const key = `${id}_${userId}_${type}`;
     if (!reactions.includes(key)) {
@@ -441,9 +505,21 @@ router.post('/:id/reactions/:type', authMiddleware_1.authMiddleware, (req, res) 
 //
 // ✅ DELETE /api/posts/:id/reactions/:type – Remove reaction
 //
-router.delete('/:id/reactions/:type', authMiddleware_1.authMiddleware, (req, res) => {
+router.delete('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (req, res) => {
     const { id, type } = req.params;
     const userId = req.user.id;
+    if (db_1.usePg) {
+        try {
+            await db_1.pool.query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3', [id, userId, type]);
+            res.json({ success: true });
+            return;
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+        }
+    }
     const reactions = stores_1.reactionsStore.read();
     const index = reactions.indexOf(`${id}_${userId}_${type}`);
     if (index !== -1) {
@@ -455,8 +531,20 @@ router.delete('/:id/reactions/:type', authMiddleware_1.authMiddleware, (req, res
 //
 // ✅ GET /api/posts/:id/reactions – Get all reactions on a post
 //
-router.get('/:id/reactions', (req, res) => {
+router.get('/:id/reactions', async (req, res) => {
     const { id } = req.params;
+    if (db_1.usePg) {
+        try {
+            const result = await db_1.pool.query('SELECT userid AS "userId", type FROM reactions WHERE postid = $1', [id]);
+            res.json(result.rows);
+            return;
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+        }
+    }
     const reactions = stores_1.reactionsStore.read();
     const postReactions = reactions
         .filter((r) => r.startsWith(`${id}_`))
@@ -485,13 +573,16 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
         timestamp: new Date().toISOString(),
         subtype: 'task',
         nodeId: task.nodeId,
-        tags: [],
-        collaborators: [],
-        replyTo: null,
-        repostedFrom: null,
-        linkedItems: [
-            { itemId: task.id, itemType: 'post', linkType: 'reference' },
+        tags: [
+            'request',
+            'summary:request',
+            'summary:task',
+            `summary:user:${req.user?.username || req.user?.id}`,
         ],
+        collaborators: [],
+        replyTo: task.id,
+        repostedFrom: null,
+        linkedItems: [],
         questId: task.questId || null,
         helpRequest: true,
         needsHelp: true,
@@ -499,6 +590,7 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
     };
     task.helpRequest = true;
     task.needsHelp = true;
+    task.requestId = requestPost.id;
     const quests = stores_1.questsStore.read();
     const quest = task.questId ? quests.find(q => q.id === task.questId) : null;
     const openRoles = [
@@ -514,13 +606,16 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
         timestamp: new Date().toISOString(),
         subtype: 'task',
         nodeId: task.nodeId,
-        tags: [],
+        tags: [
+            'request',
+            'summary:request',
+            'summary:task',
+            `summary:user:${req.user?.username || req.user?.id}`,
+        ],
         collaborators: [role],
         replyTo: requestPost.id,
         repostedFrom: null,
-        linkedItems: [
-            { itemId: task.id, itemType: 'post', linkType: 'reference' },
-        ],
+        linkedItems: [],
         questId: task.questId || null,
         helpRequest: true,
         needsHelp: true,
@@ -544,6 +639,11 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => 
         res.status(404).json({ error: 'Post not found' });
         return;
     }
+    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
+    if (subtype === 'change' && original.type !== 'task') {
+        res.status(400).json({ error: 'Change requests must originate from a task' });
+        return;
+    }
     const requestPost = {
         id: (0, uuid_1.v4)(),
         authorId: req.user.id,
@@ -551,15 +651,18 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => 
         content: original.content,
         visibility: original.visibility,
         timestamp: new Date().toISOString(),
-        subtype: original.type === 'task' ? original.type : undefined,
+        subtype,
         nodeId: original.type === 'task' ? original.nodeId : undefined,
-        tags: [],
-        collaborators: [],
-        replyTo: null,
-        repostedFrom: null,
-        linkedItems: [
-            { itemId: original.id, itemType: 'post', linkType: 'reference' },
+        tags: [
+            subtype === 'change' ? 'review' : 'request',
+            'summary:request',
+            `summary:${subtype}`,
+            `summary:user:${req.user?.username || req.user?.id}`,
         ],
+        collaborators: [],
+        replyTo: original.id,
+        repostedFrom: null,
+        linkedItems: [],
         questId: original.questId || null,
         helpRequest: true,
         needsHelp: true,
@@ -567,6 +670,7 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => 
     };
     original.helpRequest = true;
     original.needsHelp = true;
+    original.requestId = requestPost.id;
     posts.push(requestPost);
     stores_1.postsStore.write(posts);
     const users = stores_1.usersStore.read();
@@ -591,13 +695,14 @@ router.delete('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) =
         if (p.type === 'request' &&
             p.authorId === req.user.id &&
             p.helpRequest === true &&
-            p.linkedItems?.some(li => li.itemId === post.id && li.itemType === 'post' && li.linkType === 'reference')) {
+            p.replyTo === post.id) {
             removedIds.push(p.id);
             posts.splice(i, 1);
         }
     }
     post.helpRequest = false;
     post.needsHelp = false;
+    post.requestId = undefined;
     stores_1.postsStore.write(posts);
     res.json({ success: true, removedIds });
 });
@@ -646,15 +751,9 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
         post.questId = quest.id;
         post.questNodeTitle = makeQuestNodeTitle(post.content);
     }
-    // Determine if the request links to a task or change
-    const linkedPosts = (post.linkedItems || [])
-        .filter(li => li.itemType === 'post')
-        .map(li => posts.find(p => p.id === li.itemId))
-        .filter((p) => !!p);
-    const linkedTask = linkedPosts.find(p => p.type === 'task');
-    const linkedChange = linkedPosts.find(p => p.type === 'change');
+    const parent = post.replyTo ? posts.find(p => p.id === post.replyTo) : null;
     let created = null;
-    if (linkedChange) {
+    if (parent && parent.type === 'change') {
         created = {
             id: (0, uuid_1.v4)(),
             authorId: userId,
@@ -663,13 +762,10 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
             content: '',
             visibility: 'public',
             timestamp: new Date().toISOString(),
-            replyTo: linkedChange.id,
-            linkedItems: [
-                { itemId: linkedChange.id, itemType: 'post', linkType: 'reference' },
-            ],
+            replyTo: parent.id,
         };
     }
-    else if (linkedTask) {
+    else if (parent && parent.type === 'task') {
         created = {
             id: (0, uuid_1.v4)(),
             authorId: userId,
@@ -678,10 +774,7 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
             content: '',
             visibility: 'public',
             timestamp: new Date().toISOString(),
-            replyTo: linkedTask.id,
-            linkedItems: [
-                { itemId: linkedTask.id, itemType: 'post', linkType: 'reference' },
-            ],
+            replyTo: parent.id,
         };
     }
     else {
@@ -901,7 +994,7 @@ router.delete('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
 //
 router.get('/:id/linked', (req, res) => {
     const posts = stores_1.postsStore.read();
-    const linked = posts.filter((p) => p.linkedItems?.some((item) => item.itemId === req.params.id));
+    const linked = posts.filter((p) => p.replyTo === req.params.id);
     const users = stores_1.usersStore.read();
     res.json({ posts: linked.map((p) => (0, enrich_1.enrichPost)(p, { users })) });
 });
@@ -925,7 +1018,35 @@ router.get('/:id', authOptional_1.default, async (req, res) => {
                 res.status(404).json({ error: 'Post not found' });
                 return;
             }
-            res.json(row);
+            const post = {
+                id: row.id,
+                authorId: row.authorid,
+                type: row.type,
+                content: row.content,
+                title: row.title,
+                visibility: row.visibility,
+                tags: Array.isArray(row.tags)
+                    ? row.tags
+                    : typeof row.tags === 'string'
+                        ? row.tags
+                            .replace(/[{}]/g, '')
+                            .split(',')
+                            .map((t) => t.replace(/"/g, '').trim())
+                            .filter(Boolean)
+                        : [],
+                boardId: row.boardid ?? undefined,
+                timestamp: row.timestamp instanceof Date
+                    ? row.timestamp.toISOString()
+                    : row.timestamp,
+                createdAt: row.createdat instanceof Date
+                    ? row.createdat.toISOString()
+                    : row.createdat,
+            };
+            const users = stores_1.usersStore.read();
+            res.json((0, enrich_1.enrichPost)(post, {
+                users,
+                currentUserId: req.user?.id || null,
+            }));
             return;
         }
         catch (err) {

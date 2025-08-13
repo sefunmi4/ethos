@@ -6,6 +6,13 @@ jest.mock('../src/db', () => ({
   usePg: true,
 }));
 
+jest.mock('../src/middleware/authMiddleware', () => ({
+  authMiddleware: (_req: any, _res: any, next: any) => {
+    _req.user = { id: 'u1' };
+    next();
+  },
+}));
+
 jest.mock('../src/models/stores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
@@ -45,6 +52,37 @@ describe('Postgres routes', () => {
     expect(res.status).toBe(200);
     expect(res.body.enriched).toBe(true);
     expect(res.body.tags).toEqual(['alpha', 'beta']);
+  });
+
+  it('POST and DELETE /posts/:id/reactions/:type modify reactions', async () => {
+    (pool.query as jest.Mock).mockResolvedValueOnce({ rows: [] });
+    const resAdd = await request(app).post('/posts/p1/reactions/like');
+    expect(resAdd.status).toBe(200);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO reactions'),
+      expect.any(Array)
+    );
+
+    (pool.query as jest.Mock).mockResolvedValueOnce({ rows: [] });
+    const resDel = await request(app).delete('/posts/p1/reactions/like');
+    expect(resDel.status).toBe(200);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('DELETE FROM reactions'),
+      ['p1', 'u1', 'like']
+    );
+  });
+
+  it('GET /posts/:id/reactions retrieves reactions', async () => {
+    (pool.query as jest.Mock).mockResolvedValueOnce({
+      rows: [{ userId: 'u1', type: 'like' }],
+    });
+    const res = await request(app).get('/posts/p1/reactions');
+    expect(res.status).toBe(200);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('SELECT userid AS "userId", type FROM reactions'),
+      ['p1']
+    );
+    expect(res.body).toEqual([{ userId: 'u1', type: 'like' }]);
   });
 });
 

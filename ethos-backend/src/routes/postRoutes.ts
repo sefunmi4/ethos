@@ -601,9 +601,30 @@ router.get('/:id/reposts/count', (_req: Request<{ id: string }>, res: Response) 
 router.post(
   '/:id/reactions/:type',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => {
+  async (
+    req: AuthenticatedRequest<{ id: string; type: string }>,
+    res: Response
+  ): Promise<void> => {
     const { id, type } = req.params;
     const userId = req.user!.id;
+
+    if (usePg) {
+      try {
+        await pool.query(
+          `INSERT INTO reactions (id, postid, userid, type)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (postid, userid, type) DO NOTHING`,
+          [uuidv4(), id, userId, type]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const reactions = reactionsStore.read();
     const key = `${id}_${userId}_${type}`;
 
@@ -622,9 +643,28 @@ router.post(
 router.delete(
   '/:id/reactions/:type',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string; type: string }>, res: Response): void => {
+  async (
+    req: AuthenticatedRequest<{ id: string; type: string }>,
+    res: Response
+  ): Promise<void> => {
     const { id, type } = req.params;
     const userId = req.user!.id;
+
+    if (usePg) {
+      try {
+        await pool.query(
+          'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
+          [id, userId, type]
+        );
+        res.json({ success: true });
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
     const reactions = reactionsStore.read();
     const index = reactions.indexOf(`${id}_${userId}_${type}`);
 
@@ -640,18 +680,37 @@ router.delete(
 //
 // ✅ GET /api/posts/:id/reactions – Get all reactions on a post
 //
-router.get('/:id/reactions', (req: Request<{ id: string }>, res: Response) => {
-  const { id } = req.params;
-  const reactions = reactionsStore.read();
-  const postReactions = reactions
-    .filter((r) => r.startsWith(`${id}_`))
-    .map((r) => {
-      const [, userId, type] = r.split('_');
-      return { userId, type };
-    });
+router.get(
+  '/:id/reactions',
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const { id } = req.params;
 
-  res.json(postReactions);
-});
+    if (usePg) {
+      try {
+        const result = await pool.query(
+          'SELECT userid AS "userId", type FROM reactions WHERE postid = $1',
+          [id]
+        );
+        res.json(result.rows);
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    }
+
+    const reactions = reactionsStore.read();
+    const postReactions = reactions
+      .filter((r) => r.startsWith(`${id}_`))
+      .map((r) => {
+        const [, userId, type] = r.split('_');
+        return { userId, type };
+      });
+
+    res.json(postReactions);
+  }
+);
 
 //
 // ✅ POST /api/tasks/:id/request-help – Create a help request from a task
