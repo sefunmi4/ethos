@@ -7,6 +7,7 @@ import PostTypeFilter from '../board/PostTypeFilter';
 import { ROUTES } from '../../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../../constants/pagination';
 import { getRenderableBoardItems } from '../../utils/boardUtils';
+import type { User } from '../../types/userTypes';
 
 const QuestBoard: React.FC = () => {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ const QuestBoard: React.FC = () => {
         layout="grid"
         gridLayout="horizontal"
         compact
-        user={user}
+        user={user as unknown as User}
         hideControls
         filter={postType ? { postType } : {}}
       />
