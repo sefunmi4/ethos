@@ -261,8 +261,7 @@ export const requestHelp = async (
  * ❌ Cancel a help request for a post
  */
 export const removeHelpRequest = async (
-  postId: string,
-  _type?: string
+  postId: string
 ): Promise<{ success: boolean }> => {
   // Cancel help requests using the unified posts route.
   const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/request-help`);

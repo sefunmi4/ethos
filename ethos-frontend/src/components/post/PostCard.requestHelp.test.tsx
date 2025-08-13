@@ -102,9 +102,7 @@ describe('PostCard request help', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/Requested/i));
     });
-    await waitFor(() =>
-      expect(removeHelpRequest).toHaveBeenCalledWith('t1', 'task')
-    );
+    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('t1'));
     expect(removeMock).toHaveBeenNthCalledWith(1, 'quest-board', 'r1');
     expect(removeMock).toHaveBeenNthCalledWith(2, 'timeline-board', 'r1');
   });
