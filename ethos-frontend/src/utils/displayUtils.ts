@@ -140,10 +140,12 @@ export const buildSummaryTags = async (
   const tags: SummaryTagData[] = [];
 
   if (post.type === 'file') {
+    // Always include a leading File tag
+    tags.push({ type: 'file', label: 'File', detailLink: ROUTES.POST(post.id) });
+
+    // If nodeId is present, show the parent task folder
     if (post.nodeId) {
       const parts = post.nodeId.split(':');
-      const fileLabel = formatNodeId(post.nodeId);
-      tags.push({ type: 'file', label: fileLabel, detailLink: ROUTES.POST(post.id) });
       parts.pop();
       const taskNode = parts.join(':');
       if (taskNode) {
@@ -154,6 +156,8 @@ export const buildSummaryTags = async (
         });
       }
     }
+
+    // Append author tag last
     if (post.authorId) {
       const username = await getUsernameFromId(post.authorId);
       tags.push({
