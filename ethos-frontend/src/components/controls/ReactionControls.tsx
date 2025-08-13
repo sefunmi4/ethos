@@ -136,7 +136,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const handleToggleReaction = useCallback(
     async (type: Extract<ReactionType, 'like' | 'heart' | 'repost'>) => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        navigate(ROUTES.LOGIN);
+        return;
+      }
 
       const isActivating = !reactions[type];
       setReactions(prev => ({ ...prev, [type]: isActivating }));
@@ -151,11 +154,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         setCounts(prev => ({ ...prev, [type]: safeBump(prev[type], isActivating ? -1 : 1) }));
       }
     },
-    [post.id, reactions, user?.id]
+    [post.id, reactions, user?.id, navigate]
   );
 
   const cycleReview = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
     const prev = reviewState;
     const next: ReviewState =
       reviewState === 'review'
@@ -174,10 +180,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       console.error('[ReactionControls] Failed to toggle review:', err);
       setReviewState(prev);
     }
-  }, [post.id, reviewState, user?.id]);
+  }, [post.id, reviewState, user?.id, navigate]);
 
   const cycleRequest = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
     const prev = requestState;
     const next: RequestState =
       requestState === 'request'
@@ -197,10 +206,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       console.error('[ReactionControls] Failed to toggle request:', err);
       setRequestState(prev);
     }
-  }, [post.id, requestState, user?.id]);
+  }, [post.id, requestState, user?.id, navigate]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {
+      if (!user?.id) {
+        navigate(ROUTES.LOGIN);
+        return;
+      }
       setReplyInitialType(nextType);
       if (replyOverride) {
         replyOverride.onClick();
@@ -219,7 +232,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         return next;
       });
     },
-    [isPostBoard, isTimelineBoard, navigate, onReplyToggle, post.id, post.tags, replyOverride]
+    [
+      isPostBoard,
+      isTimelineBoard,
+      navigate,
+      onReplyToggle,
+      post.id,
+      post.tags,
+      replyOverride,
+      user?.id,
+    ]
   );
 
   // ---------- Render ----------
@@ -230,7 +252,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         <button
           className={clsx('flex items-center gap-1', reactions.like && 'text-blue-600')}
           onClick={() => handleToggleReaction('like')}
-          disabled={loading || !user}
+          disabled={loading}
           aria-label="Like"
         >
           {reactions.like ? <FaThumbsUp /> : <FaRegThumbsUp />} {counts.like || ''}
@@ -240,7 +262,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         <button
           className={clsx('flex items-center gap-1', reactions.heart && 'text-red-500')}
           onClick={() => handleToggleReaction('heart')}
-          disabled={loading || !user}
+          disabled={loading}
           aria-label="Heart"
         >
           {reactions.heart ? <FaHeart /> : <FaRegHeart />} {counts.heart || ''}
@@ -252,7 +274,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             aria-label="Repost"
             className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}
             onClick={() => handleToggleReaction('repost')}
-            disabled={loading || !user}
+            disabled={loading}
           >
             {reactions.repost ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
           </button>
@@ -263,7 +285,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button
             className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
             onClick={cycleReview}
-            disabled={loading || !user}
+            disabled={loading}
             aria-label="Review Status"
           >
             <FaClipboardCheck />
@@ -280,7 +302,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           <button
             className={clsx('flex items-center gap-1', requestState !== 'request' && 'text-indigo-600')}
             onClick={cycleRequest}
-            disabled={loading || !user}
+            disabled={loading}
             aria-label="Request Status"
           >
             <FaHandsHelping />
