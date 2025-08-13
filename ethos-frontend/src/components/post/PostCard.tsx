@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { updatePost } from '../../api/post';
+import { updatePost, removeHelpRequest } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag } from '../ui';
@@ -155,6 +155,20 @@ const PostCard: React.FC<PostCardProps> = ({
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 
+  const handleCancelRequest = useCallback(async () => {
+    try {
+      await removeHelpRequest(post.id, post.type);
+      onUpdate?.({
+        ...post,
+        userRepostId: null,
+        helpRequest: false,
+        tags: (post.tags || []).filter(t => t !== (post.type === 'change' ? 'review' : 'request')),
+      } as Post);
+    } catch (err) {
+      console.error('[PostCard] Failed to cancel help request:', err);
+    }
+  }, [onUpdate, post]);
+
   const renderHeader = () => (
     <div className="flex justify-between text-sm text-secondary">
       <div className="flex flex-wrap items-center gap-2">
@@ -163,6 +177,7 @@ const PostCard: React.FC<PostCardProps> = ({
             <SummaryTag
               {...tag}
               className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
+              onClick={['request', 'review'].includes(tag.type) ? handleCancelRequest : undefined}
             />
           </React.Fragment>
         ))}

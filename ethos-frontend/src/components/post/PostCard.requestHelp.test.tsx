@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
@@ -76,12 +77,23 @@ describe('PostCard request help', () => {
   } as unknown as Post;
 
 
-  it('calls endpoint to request help', async () => {
-    render(
-      <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' } as User} />
-      </BrowserRouter>
-    );
+  it('calls endpoint to request help and cancel via tag', async () => {
+    const Wrapper: React.FC = () => {
+      const [p, setP] = useState(post);
+      return (
+        <BrowserRouter>
+          <PostCard
+            post={p}
+            user={{ id: 'u1' } as User}
+            onUpdate={u => {
+              if ('id' in u && (u as Post).id === p.id) setP(u as Post);
+            }}
+          />
+        </BrowserRouter>
+      );
+    };
+
+    render(<Wrapper />);
 
     const btn = await screen.findByLabelText(/Request Help/i);
     await waitFor(() => expect(btn).not.toBeDisabled());
@@ -89,11 +101,12 @@ describe('PostCard request help', () => {
       fireEvent.click(btn);
     });
 
-    await waitFor(() =>
-      expect(requestHelp).toHaveBeenCalledWith('t1', 'task')
-    );
+    await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('t1', 'task'));
+    expect(screen.getByText(/Requested/i)).toBeDisabled();
+
+    const tag = await screen.findByText('Request');
     await act(async () => {
-      fireEvent.click(screen.getByText(/Requested/i));
+      fireEvent.click(tag);
     });
     await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('t1', 'task'));
   });

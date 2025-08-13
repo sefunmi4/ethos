@@ -27,7 +27,6 @@ import {
   fetchRepostCount,
   fetchUserRepost,
   requestHelp,
-  removeHelpRequest,
   acceptRequest,
   unacceptRequest,
 } from '../../api/post';
@@ -247,56 +246,31 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [helpLoading, setHelpLoading] = useState(false);
 
   const handleRequestHelp = useCallback(async () => {
-    if (!user?.id || helpLoading) return;
+    if (!user?.id || helpLoading || helpRequested) return;
 
     setHelpLoading(true);
-
-    if (!helpRequested) {
-      setHelpRequested(true);
-      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
-      setReactions(prev => ({ ...prev, repost: true }));
-      try {
-        const { post: repost } = await requestHelp(post.id, post.type);
-        setUserRepostId(repost.id);
-        onUpdate?.(repost);
-        onUpdate?.({ ...post, userRepostId: repost.id, helpRequest: true } as Post);
-      } catch (err) {
-        console.error('[ReactionControls] Failed to request help:', err);
-        setHelpRequested(false);
-        setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
-        setReactions(prev => ({ ...prev, repost: false }));
-      } finally {
-        setHelpLoading(false);
-      }
-      return;
-    }
-
-    const prevId = userRepostId;
-    setHelpRequested(false);
-    setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
-    setReactions(prev => ({ ...prev, repost: false }));
-    setUserRepostId(null);
+    setHelpRequested(true);
+    setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
+    setReactions(prev => ({ ...prev, repost: true }));
     try {
-      await removeHelpRequest(post.id, post.type);
-      if (prevId) onUpdate?.({ id: prevId, removed: true });
-      onUpdate?.({ ...post, userRepostId: null, helpRequest: false } as Post);
+      const { post: repost } = await requestHelp(post.id, post.type);
+      setUserRepostId(repost.id);
+      onUpdate?.(repost);
+      onUpdate?.({
+        ...post,
+        userRepostId: repost.id,
+        helpRequest: true,
+        tags: [...(post.tags || []), post.type === 'change' ? 'review' : 'request'],
+      } as Post);
     } catch (err) {
-      console.error('[ReactionControls] Failed to cancel help request:', err);
-      setHelpRequested(true);
-      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
-      setReactions(prev => ({ ...prev, repost: true }));
-      setUserRepostId(prevId);
+      console.error('[ReactionControls] Failed to request help:', err);
+      setHelpRequested(false);
+      setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
+      setReactions(prev => ({ ...prev, repost: false }));
     } finally {
       setHelpLoading(false);
     }
-  }, [
-    helpRequested,
-    helpLoading,
-    onUpdate,
-    post,
-    user?.id,
-    userRepostId,
-  ]);
+  }, [helpLoading, helpRequested, onUpdate, post, user?.id]);
 
   const handleAccept = useCallback(async () => {
     if (!user) return;
@@ -382,7 +356,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             <button
               className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
               onClick={handleRequestHelp}
-              disabled={loading || !user}
+              disabled={loading || helpLoading || !user || helpRequested}
               aria-label={post.type === 'change' ? 'Request Review' : 'Request Help'}
             >
               {post.type === 'task' ? <FaHandsHelping /> : <FaClipboardCheck />}
