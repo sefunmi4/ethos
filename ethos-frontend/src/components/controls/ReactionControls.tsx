@@ -83,9 +83,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isAuthorOrTeam = isAuthor || isTeamMember;
 
   // ---------- UI / local state ----------
-  const [reactions, setReactions] = useState<{ like: boolean; heart: boolean }>({
+  const [reactions, setReactions] = useState<{ like: boolean; heart: boolean; repost: boolean }>({
     like: false,
     heart: false,
+    repost: false,
   });
   const [counts, setCounts] = useState<ReactionCountMap>(INITIAL_COUNTS);
   const [loading, setLoading] = useState(true);
@@ -152,9 +153,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         countMap.repost = repostCountRes?.count ?? 0;
 
         setCounts(countMap);
+        const repostActive = !!(userRepostRes?.id || post.userRepostId);
         setReactions({
           like: userReactions.some(r => r.type === 'like'),
           heart: userReactions.some(r => r.type === 'heart'),
+          repost: repostActive,
         });
         setUserRepostId(userRepostRes?.id || post.userRepostId || null);
       } catch (err) {
@@ -197,13 +200,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     if (!user?.id || repostLoading) return;
     setRepostLoading(true);
 
-    const wasReposted = !!userRepostId;
+    const wasReposted = reactions.repost;
 
     if (wasReposted) {
       // optimistic remove
       setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
       const prevId = userRepostId!;
       setUserRepostId(null);
+      setReactions(prev => ({ ...prev, repost: false }));
       try {
         await removeRepost(prevId);
         onUpdate?.({ id: prevId, removed: true });
@@ -213,6 +217,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         console.error('[ReactionControls] Failed to toggle repost:', err);
         setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
         setUserRepostId(prevId);
+        setReactions(prev => ({ ...prev, repost: true }));
       } finally {
         setRepostLoading(false);
       }
@@ -221,6 +226,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
     // optimistic add
     setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, +1) }));
+    setReactions(prev => ({ ...prev, repost: true }));
     try {
       const res = await addRepost(post);
       if (res?.id) {
@@ -234,10 +240,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       console.error('[ReactionControls] Failed to toggle repost:', err);
       setCounts(prev => ({ ...prev, repost: safeBump(prev.repost, -1) }));
       setUserRepostId(null);
+      setReactions(prev => ({ ...prev, repost: false }));
     } finally {
       setRepostLoading(false);
     }
-  }, [onUpdate, post, repostLoading, user?.id, userRepostId]);
+  }, [onUpdate, post, reactions.repost, repostLoading, user?.id, userRepostId]);
 
   const handleRequestHelp = useCallback(async () => {
     if (!user?.id) return;
@@ -255,7 +262,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           appendToBoard?.('timeline-board', sr as unknown as BoardItem);
         });
         setRequestPostId(reqPost.id);
-        onUpdate?.({ ...post, helpRequest: true, needsHelp: true } as Post);
+        const tag = post.type === 'change' ? 'review' : 'request';
+        onUpdate?.({
+          ...post,
+          helpRequest: true,
+          needsHelp: true,
+          tags: Array.from(new Set([...(post.tags || []), tag])),
+        } as Post);
       } catch (err) {
         console.error('[ReactionControls] Failed to request help:', err);
         setHelpRequested(false); // revert
@@ -272,7 +285,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         removeItemFromBoard?.('timeline-board', requestPostId);
       }
       setRequestPostId(null);
-      onUpdate?.({ ...post, helpRequest: false, needsHelp: false } as Post);
+      const tag = post.type === 'change' ? 'review' : 'request';
+      onUpdate?.({
+        ...post,
+        helpRequest: false,
+        needsHelp: false,
+        tags: (post.tags || []).filter(t => t !== tag),
+      } as Post);
     } catch (err) {
       console.error('[ReactionControls] Failed to cancel help request:', err);
       setHelpRequested(true); // revert
@@ -357,11 +376,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         {['free_speech', 'task', 'change'].includes(post.type) && (
           <button
             aria-label="Repost"
-            className={clsx('flex items-center gap-1', userRepostId && 'text-indigo-600')}
+            className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}
             onClick={handleRepost}
             disabled={loading || repostLoading || !user}
           >
-            {userRepostId ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
+            {reactions.repost ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
           </button>
         )}
 
