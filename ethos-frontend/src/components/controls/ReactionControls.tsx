@@ -8,7 +8,6 @@ import {
   FaRegHeart,
   FaReply,
   FaRetweet,
-  FaRegShareSquare,
   FaHandsHelping,
   FaClipboardCheck,
 } from 'react-icons/fa';
