@@ -376,7 +376,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             >
               {post.type === 'task' ? <FaHandsHelping /> : <FaClipboardCheck />}
               {post.type === 'change'
-                ? (helpRequested ? 'Requested' : 'Review')
+                ? (helpRequested ? 'In Review' : 'Review')
                 : (helpRequested ? 'Requested' : 'Request')}
             </button>
           ) : helpRequested ? (
