@@ -37,15 +37,13 @@ const PostPage: React.FC = () => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [parentPost, setParentPost] = useState<Post | null>(null);
 
-  const boardWithPost = useMemo<BoardData | null>(() => {
-    if (!replyBoard || !post) return null;
+  const threadBoard = useMemo<BoardData | null>(() => {
+    if (!replyBoard) return null;
     return {
       ...replyBoard,
       title: replyBoard.title || 'Thread',
-      items: [post.id, ...(replyBoard.items || [])],
-      enrichedItems: [post, ...(replyBoard.enrichedItems ?? [])],
     };
-  }, [replyBoard, post]);
+  }, [replyBoard]);
 
   const taskRepliesBoard = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
@@ -234,10 +232,10 @@ const PostPage: React.FC = () => {
       </section>
 
       <section>
-        {boardWithPost ? (
+        {threadBoard ? (
           <Board
             boardId={`thread-${id}`}
-            board={boardWithPost}
+            board={threadBoard}
             layout="grid"
             onScrollEnd={loadMoreReplies}
             loading={loadingMore}

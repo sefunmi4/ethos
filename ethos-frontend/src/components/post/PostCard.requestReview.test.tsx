@@ -39,8 +39,6 @@ jest.mock('../../api/auth', () => ({
   fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
 }));
 
-const appendMock = jest.fn();
-
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({ appendToBoard: jest.fn(), selectedBoard: null }),
