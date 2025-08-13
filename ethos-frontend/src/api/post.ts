@@ -262,8 +262,11 @@ export const requestHelp = async (
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
+      // Fallback for older backends that expose the legacy
+      // `/tasks/:id/request-help` endpoint instead of the
+      // generic `/posts/:id/request-help` route.
       const res = await axiosWithAuth.post(
-        `/posts/tasks/${postId}/request-help`,
+        `/tasks/${postId}/request-help`,
         payload
       );
       return res.data;
@@ -284,7 +287,9 @@ export const removeHelpRequest = async (
     return res.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
-      const res = await axiosWithAuth.delete(`/posts/tasks/${postId}/request-help`);
+      // Fallback for legacy backends which expect the request-help
+      // routes to live under `/tasks/:id`.
+      const res = await axiosWithAuth.delete(`/tasks/${postId}/request-help`);
       return res.data;
     }
     throw err;
