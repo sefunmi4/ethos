@@ -106,11 +106,11 @@ const formatNodeId = (nodeId: string): string => {
     path = path.split(':').slice(2).join(':');
   }
   const segments = path.split(':');
-  const last = segments[segments.length - 1] || '';
+  const typeSeg = segments.find((s) => s.startsWith('T') || s.startsWith('F') || s.startsWith('L')) || '';
   let typeLabel = '';
-  if (last.startsWith('T')) typeLabel = 'Task';
-  else if (last.startsWith('F')) typeLabel = 'File';
-  else if (last.startsWith('L')) typeLabel = 'Log';
+  if (typeSeg.startsWith('T')) typeLabel = 'Task';
+  else if (typeSeg.startsWith('F')) typeLabel = 'File';
+  else if (typeSeg.startsWith('L')) typeLabel = 'Log';
   return typeLabel ? `Q::${typeLabel}:${segments.join(':')}` : `Q:${segments.join(':')}`;
 };
 
@@ -148,13 +148,16 @@ export const buildSummaryTags = (
     detailLink: ROUTES.POST(post.id),
   };
 
+  tags.push(primaryTag);
+
   if (post.authorId) {
     const user = post.author?.username || post.authorId;
-    primaryTag.username = user;
-    primaryTag.usernameLink = ROUTES.PUBLIC_PROFILE(post.authorId);
+    tags.push({
+      type: 'type',
+      label: `@${user}`,
+      link: ROUTES.PUBLIC_PROFILE(post.authorId),
+    });
   }
-
-  tags.push(primaryTag);
 
   // Status tag for task posts
   if (post.status && post.type === 'task') {
