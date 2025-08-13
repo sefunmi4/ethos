@@ -67,7 +67,7 @@ export type PostType =
   | 'free_speech'
   | 'request'
   | 'task'
-  | 'change'
+  | 'file'
   | 'review';
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';

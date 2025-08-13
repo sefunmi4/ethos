@@ -32,7 +32,7 @@ describe('PostCard review rating', () => {
     const post: Post = {
       id: 'r1',
       authorId: 'u1',
-      type: 'change',
+      type: 'file',
       content: 'Great quest',
       rating: 4.5,
       visibility: 'public',

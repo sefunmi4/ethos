@@ -56,13 +56,13 @@ const CreatePost: React.FC<CreatePostProps> = ({
 
   const [type, setType] = useState<PostType>(
     restrictedReply
-      ? replyToType === 'change' && isParticipant
-        ? 'change'
+      ? replyToType === 'file' && isParticipant
+        ? 'file'
         : 'free_speech'
       : initialType === 'request'
       ? 'task'
       : initialType === 'review'
-      ? 'change'
+      ? 'file'
       : initialType
   );
   const [status, setStatus] = useState<string>('To Do');
@@ -83,19 +83,19 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const allowedPostTypes: PostType[] = restrictedReply
     ? replyToType === 'task'
       ? isParticipant
-        ? ['free_speech', 'task', 'change']
+        ? ['free_speech', 'task', 'file']
         : ['free_speech']
-      : replyToType === 'change'
+      : replyToType === 'file'
       ? isParticipant
-        ? ['free_speech', 'change']
+        ? ['free_speech', 'file']
         : ['free_speech']
       : ['free_speech']
     : boardId === 'quest-board'
-    ? ['task', 'change']
+    ? ['task', 'file']
     : boardType === 'quest'
     ? ['task', 'free_speech']
     : boardType === 'post'
-    ? ['free_speech', 'task', 'change']
+    ? ['free_speech', 'task', 'file']
     : POST_TYPES.map((p) => p.value as PostType);
 
 
@@ -317,7 +317,7 @@ function requiresQuestRoles(type: PostType): boolean {
 }
 
 function showLinkControls(type: PostType): boolean {
-  return ['task', 'change'].includes(type);
+  return ['task', 'file'].includes(type);
 }
 
 function validateLinks(
@@ -333,7 +333,7 @@ function validateLinks(
       return items.some(i => i.itemType === 'post')
         ? { valid: false, message: 'Free speech posts cannot have links.' }
         : { valid: true };
-    case 'change':
+    case 'file':
       return hasParent || items.some(i => i.itemType === 'post')
         ? { valid: true }
         : {

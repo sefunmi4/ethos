@@ -25,7 +25,7 @@ export const toTitleCase = (str: string): string =>
 export const POST_TYPE_LABELS: Record<PostType | 'request' | 'review', string> = {
   free_speech: "Free Speech",
   task: "Task",
-  change: "Change",
+  file: "File",
   request: "Request",
   review: "Review",
 };
@@ -122,7 +122,7 @@ const formatNodeId = (nodeId: string): string => {
     path = path.split(':').slice(2).join(':');
   }
   const segments = path.split(':');
-  const typeSeg = segments.find((s) => s.startsWith('T') || s.startsWith('F') || s.startsWith('L')) || '';
+  const typeSeg = [...segments].reverse().find((s) => s.startsWith('T') || s.startsWith('F') || s.startsWith('L')) || '';
   let typeLabel = '';
   if (typeSeg.startsWith('T')) typeLabel = 'Task';
   else if (typeSeg.startsWith('F')) typeLabel = 'File';
@@ -139,10 +139,11 @@ export const buildSummaryTags = async (
   void questId;
   const tags: SummaryTagData[] = [];
 
-  if (post.type === 'change') {
+  if (post.type === 'file') {
     if (post.nodeId) {
       const parts = post.nodeId.split(':');
-      const changeLabel = formatNodeId(post.nodeId);
+      const fileLabel = formatNodeId(post.nodeId);
+      tags.push({ type: 'file', label: fileLabel, detailLink: ROUTES.POST(post.id) });
       parts.pop();
       const taskNode = parts.join(':');
       if (taskNode) {
@@ -152,7 +153,6 @@ export const buildSummaryTags = async (
           detailLink: post.replyTo ? ROUTES.POST(post.replyTo) : undefined,
         });
       }
-      tags.push({ type: 'change', label: changeLabel, detailLink: ROUTES.POST(post.id) });
     }
     if (post.authorId) {
       const username = await getUsernameFromId(post.authorId);
@@ -225,7 +225,7 @@ export const buildSummaryTags = async (
       switch (lower) {
         case 'request':
         case 'review':
-        case 'change':
+        case 'file':
         case 'quest':
         case 'task':
         case 'log':
@@ -308,12 +308,12 @@ export const getPostSummary = (
   } else if (post.type === "task" && post.nodeId) {
     const user = post.author?.username || post.authorId;
     parts.push(`(Task - ${getQuestLinkLabel(post, title ?? '', false)} @${user})`);
-  } else if (post.type === "change") {
+  } else if (post.type === "file") {
     const user = post.author?.username || post.authorId;
     if (post.nodeId && !multipleSources) {
-      parts.push(`(Change - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')} @${user})`);
+      parts.push(`(File - Q::${post.nodeId.replace(/^Q:[^:]+:/, '')} @${user})`);
     } else {
-      parts.push(`(Change @${user})`);
+      parts.push(`(File @${user})`);
     }
   } else if (post.type) {
     parts.push(`(${post.type.charAt(0).toUpperCase() + post.type.slice(1)})`);

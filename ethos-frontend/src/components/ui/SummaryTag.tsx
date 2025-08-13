@@ -9,7 +9,7 @@ import {
   FaUser,
   FaHandsHelping,
   FaCheckCircle,
-  FaExchangeAlt
+  FaFile
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
@@ -22,7 +22,7 @@ export type SummaryTagType =
   | 'type'
   | 'free_speech'
   | 'request'
-  | 'change'
+  | 'file'
   | 'solved'
   | 'log'
   | 'category'
@@ -41,7 +41,7 @@ const icons: Partial<Record<SummaryTagType, React.ComponentType<{className?: str
   free_speech: FaCommentAlt,
   type: FaUser,
   request: FaHandsHelping,
-  change: FaExchangeAlt,
+  file: FaFile,
   solved: FaCheckCircle,
 };
 
@@ -55,7 +55,7 @@ const colors: Record<SummaryTagType, string> = {
   free_speech: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
   type: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
   request: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200',
-  change: 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200',
+  file: 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200',
   party_request: 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-200',
   quest_task: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-200',
   meta_system: 'bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-200',

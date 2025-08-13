@@ -49,12 +49,12 @@ describe.skip('CreatePost view filtering', () => {
     expect(getOptions()).toEqual(['Free Speech']);
   });
 
-  it('allows change and free speech posts in file-change view', () => {
+  it('allows file and free speech posts in file-change view', () => {
     render(
       <BrowserRouter>
         <CreatePost onCancel={() => {}} currentView="file-change" />
       </BrowserRouter>
     );
-    expect(getOptions()).toEqual(['Change', 'Free Speech']);
+    expect(getOptions()).toEqual(['File', 'Free Speech']);
   });
 });

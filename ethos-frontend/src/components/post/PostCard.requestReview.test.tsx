@@ -11,10 +11,10 @@ jest.mock('../../api/post', () => ({
   requestHelp: jest.fn(() =>
     Promise.resolve({
       post: {
-        id: 'c1',
+        id: 'f1',
         authorId: 'u1',
-        type: 'change',
-        content: 'Change',
+        type: 'file',
+        content: 'File',
         visibility: 'public',
         timestamp: '',
         tags: ['review'],
@@ -55,10 +55,10 @@ jest.mock('react-router-dom', () => {
 
 describe.skip('PostCard request review', () => {
   const post: Post = {
-    id: 'c1',
+    id: 'f1',
     authorId: 'u1',
-    type: 'change',
-    content: 'Change',
+    type: 'file',
+    content: 'File',
     visibility: 'public',
     timestamp: '',
     tags: [],
@@ -80,13 +80,13 @@ describe.skip('PostCard request review', () => {
     });
 
     await waitFor(() =>
-      expect(requestHelp).toHaveBeenCalledWith('c1', 'change')
+      expect(requestHelp).toHaveBeenCalledWith('f1', 'file')
     );
     expect(screen.getByText(/In Review/i)).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getByText(/In Review/i));
     });
-    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('c1', 'change'));
+    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('f1', 'file'));
   });
 });
