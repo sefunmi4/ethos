@@ -677,6 +677,7 @@ router.post(
       subtype: 'task',
       nodeId: task.nodeId,
       tags: [
+        'request',
         'summary:request',
         'summary:task',
         `summary:user:${req.user?.username || req.user?.id}`,
@@ -712,6 +713,7 @@ router.post(
       subtype: 'task',
       nodeId: task.nodeId,
       tags: [
+        'request',
         'summary:request',
         'summary:task',
         `summary:user:${req.user?.username || req.user?.id}`,
@@ -765,6 +767,7 @@ router.post(
       subtype,
       nodeId: original.type === 'task' ? original.nodeId : undefined,
       tags: [
+        subtype === 'change' ? 'review' : 'request',
         'summary:request',
         `summary:${subtype}`,
         `summary:user:${req.user?.username || req.user?.id}`,
