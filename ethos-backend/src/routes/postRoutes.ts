@@ -834,7 +834,6 @@ router.post(
       timestamp: new Date().toISOString(),
       repostedFrom: original.id,
       linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
-      secondaryType: tag as 'request' | 'review',
     } as DBPost;
 
     posts.push(repost);
@@ -883,7 +882,10 @@ router.delete(
     const tag = req.body?.subtype === 'change' ? 'review' : 'request';
 
     const index = posts.findIndex(
-      p => p.repostedFrom === req.params.id && p.authorId === req.user!.id && p.secondaryType === tag
+      p =>
+        p.repostedFrom === req.params.id &&
+        p.authorId === req.user!.id &&
+        (p.tags || []).includes(tag)
     );
     if (index === -1) {
       res.status(404).json({ error: 'Request repost not found' });
