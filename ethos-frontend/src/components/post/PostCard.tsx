@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ import type { User } from '../../types/userTypes';
 
 import { updatePost } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
-import { useGraph } from '../../hooks/useGraph';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
@@ -18,9 +17,6 @@ import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
-import GitFileBrowserInline from '../git/GitFileBrowserInline';
-import MapGraphLayout from '../layout/MapGraphLayout';
-import TeamPanel from '../quest/TeamPanel';
 import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
 
@@ -90,11 +86,8 @@ const PostCard: React.FC<PostCardProps> = ({
   expanded,
 }) => {
   const [editMode, setEditMode] = useState(false);
-  const [showFullDiff, setShowFullDiff] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
   const [internalExpandedView] = useState(post.type === 'task');
-  const [activeTab, setActiveTab] = useState<'files' | 'options'>('files');
-  const { nodes, edges, loadGraph } = useGraph();
 
   const navigate = useNavigate();
   const { selectedBoard } = useBoardContext() || {};
@@ -123,36 +116,6 @@ const PostCard: React.FC<PostCardProps> = ({
         : 'max-w-prose';
 
   const expandedView = expanded ?? internalExpandedView;
-
-  const qid = questId || post.questId;
-
-  useEffect(() => {
-    if (expandedView && qid) {
-      loadGraph(qid);
-    }
-  }, [expandedView, qid, loadGraph]);
-
-  const subgraphIds = useMemo(() => {
-    const ids = new Set<string>();
-    const gather = (id: string) => {
-      if (ids.has(id)) return;
-      ids.add(id);
-      edges.filter((e) => e.from === id).forEach((e) => gather(e.to));
-    };
-    gather(post.id);
-    return ids;
-  }, [post.id, edges]);
-
-  const displayNodes = useMemo(
-    () => nodes.filter((n) => subgraphIds.has(n.id)),
-    [nodes, subgraphIds]
-  );
-  const displayEdges = useMemo(
-    () => edges.filter((e) => subgraphIds.has(e.from) && subgraphIds.has(e.to)),
-    [edges, subgraphIds]
-  );
-
-
 
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
@@ -218,66 +181,6 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   };
 
-
-
-  const renderCommitDiff = () => {
-    if (!post.gitDiff) return null;
-
-    const lines = post.gitDiff.split('\n');
-    let visibleLines = lines;
-    if (!showFullDiff) {
-      visibleLines = [];
-      let buffer: string[] = [];
-      let inChangeBlock = false;
-
-      lines.forEach((line) => {
-        if (line.startsWith('+') || line.startsWith('-')) {
-          if (!inChangeBlock) {
-            if (buffer.length) visibleLines.push('...');
-            inChangeBlock = true;
-          }
-          visibleLines.push(line);
-        } else {
-          if (inChangeBlock) buffer = [];
-          else buffer.push(line);
-        }
-      });
-    }
-
-    return (
-      <div className="text-sm bg-background rounded p-2 font-mono border border-secondary">
-        {post.commitSummary && (
-          <div className="mb-1 text-primary italic">{post.commitSummary}</div>
-        )}
-        {!showFullDiff && (
-          <div className="mb-2">
-            <button onClick={() => setShowFullDiff(true)} className="text-accent text-xs underline">
-              View full diff
-            </button>
-          </div>
-        )}
-        <pre className="overflow-x-auto whitespace-pre-wrap">
-          {visibleLines.map((line, idx) => (
-            <div key={idx} className={
-              line.startsWith('+') ? 'text-success' :
-              line.startsWith('-') ? 'text-error' : 'text-primary'}>
-              {line}
-            </div>
-          ))}
-        </pre>
-        {!showFullDiff && (
-          <div className="mt-1">
-            <button
-              onClick={() => navigate(ROUTES.POST(post.id))}
-              className="text-accent text-xs underline"
-            >
-              View full file with replies
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
 
   if (editMode) {
     return (
