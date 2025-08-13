@@ -8,6 +8,11 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
 }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({}),
@@ -23,7 +28,7 @@ jest.mock('react-router-dom', () => {
 });
 
 describe('PostCard review rating', () => {
-  it('renders rating stars for review posts', () => {
+  it('renders rating stars for review posts', async () => {
     const post: Post = {
       id: 'r1',
       authorId: 'u1',
@@ -43,6 +48,6 @@ describe('PostCard review rating', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByLabelText('Rating: 4.5')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Rating: 4.5')).toBeInTheDocument();
   });
 });

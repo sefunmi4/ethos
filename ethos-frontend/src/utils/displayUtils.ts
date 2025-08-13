@@ -2,6 +2,22 @@ import type { Post, PostType } from "../types/postTypes";
 import type { Quest } from "../types/questTypes";
 import { ROUTES } from "../constants/routes";
 import type { SummaryTagType } from "../components/ui/SummaryTag";
+import { fetchUserById } from "../api/auth";
+
+const usernameCache = new Map<string, string>();
+
+const getUsernameFromId = async (userId: string): Promise<string> => {
+  if (usernameCache.has(userId)) return usernameCache.get(userId)!;
+  try {
+    const user = await fetchUserById(userId);
+    const name = user.username || user.id;
+    usernameCache.set(userId, name);
+    return name;
+  } catch {
+    usernameCache.set(userId, userId);
+    return userId;
+  }
+};
 
 export const toTitleCase = (str: string): string =>
   str.replace(/\b([a-z])/g, (c) => c.toUpperCase());
@@ -114,11 +130,11 @@ const formatNodeId = (nodeId: string): string => {
   return typeLabel ? `Q::${typeLabel}:${segments.join(':')}` : `Q:${segments.join(':')}`;
 };
 
-export const buildSummaryTags = (
+export const buildSummaryTags = async (
   post: PostWithQuestTitle,
   questTitle?: string,
   questId?: string,
-): SummaryTagData[] => {
+): Promise<SummaryTagData[]> => {
   void questTitle;
   void questId;
   const tags: SummaryTagData[] = [];
@@ -150,10 +166,11 @@ export const buildSummaryTags = (
 
   tags.push(primaryTag);
 
-  if (post.authorId && post.author?.username) {
+  if (post.authorId) {
+    const username = await getUsernameFromId(post.authorId);
     tags.push({
       type: 'type',
-      label: `@${post.author.username}`,
+      label: `@${username}`,
       link: ROUTES.PUBLIC_PROFILE(post.authorId),
     });
   }

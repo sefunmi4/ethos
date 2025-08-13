@@ -8,6 +8,11 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
 }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({})
@@ -37,22 +42,22 @@ const post: Post = {
 } as unknown as Post;
 
 describe('PostCard summary tags', () => {
-  it('renders node id, status, and username tags', () => {
+  it('renders node id, status, and username tags', async () => {
     const enriched = { ...post, author: { id: 'u1', username: 'alice' } } as Post;
     render(
       <BrowserRouter>
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(screen.getByText('Q::Task:T1')).toBeInTheDocument();
-    expect(screen.getByText('In Progress')).toBeInTheDocument();
-    const userLink = screen.getByRole('link', { name: '@alice' });
+    expect(await screen.findByText('Q::Task:T1')).toBeInTheDocument();
+    expect(await screen.findByText('In Progress')).toBeInTheDocument();
+    const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
-    const nodeLink = screen.getByRole('link', { name: 'Q::Task:T1' });
+    const nodeLink = await screen.findByRole('link', { name: 'Q::Task:T1' });
     expect(nodeLink).toHaveAttribute('href', '/post/p1');
   });
 
-  it('renders node id and username for change requests', () => {
+  it('renders node id and username for change requests', async () => {
     const changeReq: Post = {
       id: 'p2',
       authorId: 'u1',
@@ -71,10 +76,10 @@ describe('PostCard summary tags', () => {
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(screen.getByText('Q::Task:T01:C00')).toBeInTheDocument();
-    const userLink = screen.getByRole('link', { name: '@alice' });
+    expect(await screen.findByText('Q::Task:T01:C00')).toBeInTheDocument();
+    const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
-    const nodeLink = screen.getByRole('link', { name: 'Q::Task:T01:C00' });
+    const nodeLink = await screen.findByRole('link', { name: 'Q::Task:T01:C00' });
     expect(nodeLink).toHaveAttribute('href', '/post/p2');
   });
 });

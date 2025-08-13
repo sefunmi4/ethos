@@ -21,7 +21,7 @@ import ActionMenu from '../ui/ActionMenu';
 import GitFileBrowserInline from '../git/GitFileBrowserInline';
 import MapGraphLayout from '../layout/MapGraphLayout';
 import TeamPanel from '../quest/TeamPanel';
-import { buildSummaryTags } from '../../utils/displayUtils';
+import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import { TAG_BASE } from '../../constants/styles';
 
 const PREVIEW_LIMIT = 240;
@@ -162,7 +162,16 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const content = post.renderedContent || post.content;
   const titleText = post.title || makeHeader(post.content);
-  const summaryTags = buildSummaryTags(post, questTitle, questId);
+  const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
+  useEffect(() => {
+    let active = true;
+    buildSummaryTags(post, questTitle, questId).then(tags => {
+      if (active) setSummaryTags(tags);
+    });
+    return () => {
+      active = false;
+    };
+  }, [post, questTitle, questId]);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
 

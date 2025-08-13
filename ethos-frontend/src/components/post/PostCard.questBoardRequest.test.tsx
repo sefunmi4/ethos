@@ -10,6 +10,11 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
 }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({ selectedBoard: 'quest-board' }),
@@ -45,16 +50,15 @@ const post: Post = {
   linkedItems: [],
 } as unknown as Post;
 
-it('hides status controls and shows only request tag', () => {
+it('hides status controls and shows only request tag', async () => {
   render(
     <BrowserRouter>
       <PostCard post={post} user={{ id: 'u1' } as User} />
     </BrowserRouter>
   );
-
-  expect(screen.getByText('Request')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: '@u1' })).toBeInTheDocument();
+  expect(await screen.findByText('Request')).toBeInTheDocument();
+  expect(await screen.findByRole('link', { name: '@alice' })).toBeInTheDocument();
   expect(screen.queryByText('In Progress')).toBeNull();
   expect(screen.queryByRole('combobox')).toBeNull();
-  expect(screen.getByText('1 day ago')).toBeInTheDocument();
+  expect(await screen.findByText('1 day ago')).toBeInTheDocument();
 });

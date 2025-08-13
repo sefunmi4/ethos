@@ -6,7 +6,7 @@ import { useGraph } from '../../hooks/useGraph';
 import QuestNodeInspector from './QuestNodeInspector';
 import TaskPreviewCard from '../post/TaskPreviewCard';
 import SummaryTag from '../ui/SummaryTag';
-import { buildSummaryTags } from '../../utils/displayUtils';
+import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import StatusBoardPanel from './StatusBoardPanel';
 import QuickTaskForm from '../post/QuickTaskForm';
 import SubtaskChecklist from './SubtaskChecklist';
@@ -122,9 +122,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, questId, user, onUpdate }) =>
 
   const parentEdge = edges.find((e) => e.to === selected.id);
   const parentNode = parentEdge ? nodes.find((n) => n.id === parentEdge.from) : undefined;
-  const parentTag = !isRootSelected && parentNode
-    ? buildSummaryTags(parentNode).find((t) => t.type === 'task')
-    : undefined;
+  const [parentTag, setParentTag] = useState<SummaryTagData | undefined>(undefined);
+  useEffect(() => {
+    if (!isRootSelected && parentNode) {
+      let active = true;
+      buildSummaryTags(parentNode).then(tags => {
+        if (active) setParentTag(tags.find(t => t.type === 'task'));
+      });
+      return () => {
+        active = false;
+      };
+    }
+    setParentTag(undefined);
+    return undefined;
+  }, [isRootSelected, parentNode]);
 
   const taskType = selected.taskType || 'abstract';
   const status = selected.status;

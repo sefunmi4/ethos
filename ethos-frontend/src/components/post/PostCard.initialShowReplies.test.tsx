@@ -9,6 +9,11 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
 }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({})

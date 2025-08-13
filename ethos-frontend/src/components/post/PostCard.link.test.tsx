@@ -17,6 +17,11 @@ jest.mock('../../api/post', () => ({
   )
 }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 jest.mock('../../api/quest', () => ({
   __esModule: true,
   linkPostToQuest: jest.fn(() => Promise.resolve({}))
