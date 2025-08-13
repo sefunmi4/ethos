@@ -249,11 +249,13 @@ export const requestHelp = async (
   postId: string,
   type?: string
 ): Promise<RequestHelpResult> => {
-  const url =
-    type === 'task'
-      ? `/posts/tasks/${postId}/request-help`
-      : `/posts/${postId}/request-help`;
-  const res = await axiosWithAuth.post(url);
+  // Use the general request-help endpoint for all post types.
+  // Some backend versions may not expose the older `/posts/tasks/:id/request-help`
+  // route, so always call `/posts/:id/request-help` and include the subtype when
+  // relevant. This keeps the frontend compatible with both task and change posts
+  // regardless of backend implementation details.
+  const payload = type ? { subtype: type } : undefined;
+  const res = await axiosWithAuth.post(`/posts/${postId}/request-help`, payload);
   return res.data;
 };
 
