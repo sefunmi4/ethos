@@ -7,6 +7,7 @@ import { ROUTES } from '../constants/routes';
 import { BOARD_PREVIEW_LIMIT } from '../constants/pagination';
 import { Spinner } from '../components/ui';
 import { getRenderableBoardItems } from '../utils/boardUtils';
+import QuestBoard from '../components/quest/QuestBoard';
 
 
 const HomePage: React.FC = () => {
@@ -42,9 +43,7 @@ const HomePage: React.FC = () => {
         </p>
       </header>
 
-      {/* <section className="space-y-4">
-    quest board
-      </section> */}
+      <QuestBoard />
 
       <section>
         <h2 className="text-xl font-semibold mb-2">⏳ Recent Activity</h2>
