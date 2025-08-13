@@ -103,16 +103,16 @@ describe('PostCard summary tags', () => {
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
+    expect(await screen.findByText('File')).toBeInTheDocument();
     expect(await screen.findByText('Q::Task:T01')).toBeInTheDocument();
-    expect(await screen.findByText('Q::File:T01:F00')).toBeInTheDocument();
     const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
     const taskLink = await screen.findByRole('link', { name: 'Q::Task:T01' });
     expect(taskLink).toHaveAttribute('href', '/post/t1');
-    const fileLink = await screen.findByRole('link', { name: 'Q::File:T01:F00' });
+    const fileLink = await screen.findByRole('link', { name: 'File' });
     expect(fileLink).toHaveAttribute('href', '/post/f1');
     const tags = await screen.findAllByTestId('summary-tag');
     expect(tags).toHaveLength(3);
-    expect(tags[0].textContent).toContain('Q::File:T01:F00');
+    expect(tags[0].textContent).toContain('File');
   });
 });
