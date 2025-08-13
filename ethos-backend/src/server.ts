@@ -102,6 +102,18 @@ app.use(requestLogger);
 app.use('/api/auth', authRoutes);     // 🔐 Authentication (login, register, session)
 app.use('/api/git', gitRoutes);       // 🔁 Git sync, commits, diffs
 app.use('/api/posts', postRoutes);    // 📝 Posts, reactions, replies
+// Legacy task request-help routes for backward compatibility
+app.post('/api/tasks/:id/request-help', (req: Request, res: Response, next: NextFunction) => {
+  // Delegate to the existing postRoutes handler
+  req.url = `/tasks/${req.params.id}/request-help`;
+  postRoutes(req, res, next);
+});
+
+app.delete('/api/tasks/:id/request-help', (req: Request, res: Response, next: NextFunction) => {
+  // Delegate to the generic cancel handler in postRoutes
+  req.url = `/${req.params.id}/request-help`;
+  postRoutes(req, res, next);
+});
 app.use('/api/quests', questRoutes);  // 📦 Quests, task maps
 app.use('/api/projects', projectRoutes); // 🗂 Projects
 app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
