@@ -254,7 +254,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
             onClick={() => handleToggleReaction('repost')}
             disabled={loading || !user}
           >
-            {reactions.repost ? <FaRetweet /> : <FaRegShareSquare />} {counts.repost || ''}
+            {reactions.repost ? <FaRetweet /> : <FaRetweet />} {counts.repost || ''}
           </button>
         )}
 
@@ -293,15 +293,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         )}
 
         {/* Reply / Update */}
-        {post.type === 'change' ? (
-          <button
-            className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-            onClick={() => goToReplyPageOrToggle('change')}
-            aria-label="Update"
-          >
-            <FaReply /> {showReplyPanel ? 'Cancel' : 'Update'}
-          </button>
-        ) : (
+        {post.type === 'free_speech' && (
           <button
             className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
             onClick={() => goToReplyPageOrToggle('free_speech')}
