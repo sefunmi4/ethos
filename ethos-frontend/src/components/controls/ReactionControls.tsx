@@ -108,8 +108,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [accepted, setAccepted] = useState<boolean>(initialAccepted);
   const [accepting, setAccepting] = useState(false);
 
-  useEffect(() => setHelpRequested(post.helpRequest === true), [post.helpRequest]);
-  useEffect(() => setUserRepostId(post.userRepostId ?? null), [post.userRepostId]);
+  // Sync initial help/repost state only when switching posts
+  useEffect(() => setHelpRequested(post.helpRequest === true), [post.id]);
+  useEffect(() => setUserRepostId(post.userRepostId ?? null), [post.id]);
   useEffect(() => setAccepted(initialAccepted), [initialAccepted]);
 
   const navigate = useNavigate();
@@ -171,7 +172,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [post.id, post.userRepostId, user?.id]);
+  }, [post.id, user?.id]);
 
   // ---------- Helpers ----------
   const safeBump = (n: number, delta: number) => Math.max(0, n + delta);
