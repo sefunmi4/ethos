@@ -7,6 +7,11 @@ import type { Quest } from '../types/questTypes';
 
 const BASE_URL = '/posts';
 
+const buildQuery = (params: URLSearchParams): string => {
+  const query = params.toString();
+  return query ? `?${query}` : '';
+};
+
 /**
  * 🔍 Fetch a single post by ID
  * @param id - Post ID
@@ -31,7 +36,7 @@ export const fetchRecentPosts = async (
   const params = new URLSearchParams();
   if (userId) params.set('userId', userId);
   params.set('hops', hops.toString());
-  const url = `${BASE_URL}/recent${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `${BASE_URL}/recent${buildQuery(params)}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
@@ -70,7 +75,7 @@ export const fetchReplyBoard = async (
   if (options.page) params.set('page', options.page.toString());
   if (options.limit) params.set('limit', options.limit.toString());
 
-  const url = `/boards/thread/${postId}${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `/boards/thread/${postId}${buildQuery(params)}`;
   const res = await axiosWithAuth.get(url);
   return res.data;
 };
@@ -105,7 +110,7 @@ export const fetchPostsByBoardId = async (
   params.set('enrich', 'true');
   if (userId) params.set('userId', userId);
   const res = await axiosWithAuth.get(
-    `/boards/${boardId}/items?${params.toString()}`
+    `/boards/${boardId}/items${buildQuery(params)}`
   );
   return (res.data || []).filter((item: Post | Record<string, unknown>) => 'content' in item) as Post[];
 };

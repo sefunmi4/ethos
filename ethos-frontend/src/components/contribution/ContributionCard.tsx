@@ -1,6 +1,7 @@
 // src/components/contribution/ContributionCard.tsx
 
 import React from 'react';
+
 import PostCard from '../post/PostCard';
 import QuestCard from '../quest/QuestCard';
 import RequestCard from '../request/RequestCard';
@@ -12,6 +13,37 @@ import type { BoardData } from '../../types/boardTypes';
 import type { User } from '../../types/userTypes';
 
 type Contribution = Post | EnrichedQuest | BoardData;
+
+// Convert a quest into a post-like structure so it can be rendered in a PostCard
+const questToPostLike = (quest: EnrichedQuest): Post => {
+  const headPost = quest.headPost as Post | undefined;
+  if (headPost) {
+    return {
+      ...headPost,
+      author:
+        headPost.author ||
+        (quest.author
+          ? { id: quest.author.id, username: quest.author.username }
+          : undefined),
+    };
+  }
+  return {
+    id: quest.headPostId,
+    // represent quests as tasks for timeline/post history displays
+    type: 'task',
+    authorId: quest.authorId,
+    author: quest.author
+      ? { id: quest.author.id, username: quest.author.username }
+      : undefined,
+    content: quest.title,
+    visibility: 'public',
+    timestamp: quest.createdAt || '',
+    tags: [],
+    collaborators: [],
+    linkedItems: [],
+    questId: quest.id,
+  } as Post;
+};
 
 interface ContributionCardProps {
   contribution: Contribution;
@@ -51,7 +83,6 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   if (!contribution) return null;
 
   const { id } = contribution;
-
   if (!id) {
     console.warn('[ContributionCard] Missing `id` on contribution:', contribution);
     return null;
@@ -90,39 +121,10 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   if ('headPostId' in contribution) {
     const quest = contribution as EnrichedQuest;
 
-    // Display quests on post history board like regular posts for consistency
     if (boardId === 'my-posts') {
-      const headPost = quest.headPost as Post | undefined;
-      const enrichedHeadPost = headPost
-        ? {
-            ...headPost,
-            author:
-              headPost.author ||
-              (quest.author
-                ? { id: quest.author.id, username: quest.author.username }
-                : undefined),
-          }
-        : undefined;
-      const postLike = enrichedHeadPost ?? ({
-        id: quest.headPostId,
-        // represent quests as tasks for timeline/post history displays
-        type: 'task',
-        authorId: quest.authorId,
-        author: quest.author
-          ? { id: quest.author.id, username: quest.author.username }
-          : undefined,
-        content: quest.title,
-        visibility: 'public',
-        timestamp: quest.createdAt || '',
-        tags: [],
-        collaborators: [],
-        linkedItems: [],
-        questId: quest.id,
-      } as Post);
-
       return (
         <PostCard
-          post={postLike}
+          post={questToPostLike(quest)}
           questId={quest.id}
           questTitle={quest.title}
           {...sharedProps}

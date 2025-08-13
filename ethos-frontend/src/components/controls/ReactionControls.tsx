@@ -77,9 +77,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   expanded: expandedProp,
 }) => {
   // ---------- Derived user/role state ----------
-  const isAuthor = !!user && user.id === post.authorId;
-  const isTeamMember = !!user && (post.collaborators ?? []).some(c => c.userId === user.id);
-  const isAuthorOrTeam = isAuthor || isTeamMember;
+  const isAuthorOrTeam = useMemo(() => {
+    const userId = user?.id;
+    const author = !!userId && userId === post.authorId;
+    const team = !!userId && (post.collaborators ?? []).some(c => c.userId === userId);
+    return author || team;
+  }, [user?.id, post.authorId, post.collaborators]);
 
   // ---------- UI / local state ----------
   const [reactions, setReactions] = useState<{ like: boolean; heart: boolean; repost: boolean }>({
@@ -98,10 +101,11 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
 
   const [helpRequested, setHelpRequested] = useState<boolean>(post.helpRequest === true);
 
+  const tagsKey = (post.tags ?? []).join('|');
+  const userId = user?.id;
   const initialAccepted = useMemo(
-    () => !!user && (isAuthorOrTeam || post.tags?.includes(`pending:${user.id}`)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user?.id, isAuthorOrTeam, (post.tags ?? []).join('|')]
+    () => !!userId && (isAuthorOrTeam || tagsKey.includes(`pending:${userId}`)),
+    [userId, isAuthorOrTeam, tagsKey]
   );
   const [accepted, setAccepted] = useState<boolean>(initialAccepted);
   const [accepting, setAccepting] = useState(false);
@@ -114,10 +118,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const navigate = useNavigate();
 
   // ---------- Board context ----------
-  const boardCtx = useBoardContext();
-  const selectedBoard = boardCtx?.selectedBoard;
-  const boards = boardCtx?.boards;
-
+  const { selectedBoard, boards } = useBoardContext() || {};
   const ctxBoardId = boardId || selectedBoard;
   const ctxBoardType = ctxBoardId ? boards?.[ctxBoardId]?.boardType : undefined;
   const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
