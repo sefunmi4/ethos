@@ -57,7 +57,7 @@ describe('PostCard summary tags', () => {
     const changeReq: Post = {
       id: 'p2',
       authorId: 'u1',
-      type: 'request' as any,
+      type: 'request' as unknown as Post['type'],
       nodeId: 'Q:slug:T01:C00',
       content: 'Change request',
       visibility: 'public',

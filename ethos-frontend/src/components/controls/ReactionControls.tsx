@@ -94,7 +94,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [repostLoading, setRepostLoading] = useState(false);
 
   const [showReplyPanel, setShowReplyPanel] = useState(false);
-  const [replyInitialType, setReplyInitialType] = useState<ReplyType>('free_speech');
+  const [, setReplyInitialType] = useState<ReplyType>('free_speech');
 
   const [helpRequested, setHelpRequested] = useState<boolean>(post.helpRequest === true);
   const [requestPostId, setRequestPostId] = useState<string | null>(null);
@@ -190,7 +190,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         setCounts(prev => ({ ...prev, [type]: safeBump(prev[type], isActivating ? -1 : 1) }));
       }
     },
-    [post.id, reactions.like, reactions.heart, user?.id]
+    [post.id, reactions, user?.id]
   );
 
   const handleRepost = useCallback(async () => {

@@ -89,7 +89,7 @@ const ActiveQuestBoard: React.FC<ActiveQuestBoardProps> = ({ onlyMine }) => {
     };
 
     load();
-  }, [user]);
+  }, [user, onlyMine]);
 
   const scrollToIndex = (i: number) => {
     const el = containerRef.current;

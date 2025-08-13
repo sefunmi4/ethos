@@ -47,6 +47,7 @@ const NODE_STYLES: Record<NodeVisualType, NodeStyle> = {
   },
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function getNodeVisualType(post: Post): NodeVisualType {
   if (post.tags?.includes('request')) {
     return post.needsHelp === false ? 'request-accepted' : 'request-open';
@@ -56,6 +57,7 @@ export function getNodeVisualType(post: Post): NodeVisualType {
   return 'task';
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function getNodeStyle(post: Post): NodeStyle {
   return NODE_STYLES[getNodeVisualType(post)];
 }

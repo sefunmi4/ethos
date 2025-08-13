@@ -52,7 +52,7 @@ const PublicProfilePage: React.FC = () => {
     };
 
     fetchProfileData();
-  }, [userId]);
+  }, [userId, loadPublicBoards, enrichQuests, enrichPosts]);
 
   // 🔁 Real-time board updates (via WebSocket)
   useSocketListener('board:update', (updatedBoard: BoardData) => {

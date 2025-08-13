@@ -206,6 +206,7 @@ export const BoardProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBoardContext = (): BoardContextType => {
   const context = useContext(BoardContext);
   if (!context) {
@@ -214,6 +215,7 @@ export const useBoardContext = (): BoardContextType => {
   return context;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBoardContextEnhanced = () => {
   const context = useBoardContext();
 

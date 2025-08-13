@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TAG_BASE } from '../constants/styles';
 import { fetchReviews } from '../api/review';
 import type { Review, ReviewTargetType } from '../types/reviewTypes';
@@ -21,7 +21,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
   const [editing, setEditing] = useState<Review | null>(null);
   const { user } = useAuth();
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchReviews({ type, questId, postId, sort });
@@ -31,11 +31,11 @@ const ReviewList: React.FC<ReviewListProps> = ({ type, questId, postId, classNam
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, questId, postId, sort]);
 
   useEffect(() => {
     load();
-  }, [type, questId, postId, sort]);
+  }, [load]);
 
   const renderStars = (count: number) => (
     <span className="text-yellow-500 flex">
