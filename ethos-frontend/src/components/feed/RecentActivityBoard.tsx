@@ -1,21 +1,6 @@
-// Graph-based activity feed based on post linkage and user involvement
-//
-// Logic:
-// - Fetch posts where:
-//   - post.authorId === user.id
-//   - post.questId is in a quest the user is involved in
-//   - post.linksTo[] includes any post by user
-//
-// Future (optional):
-// - Support 2-hop or 3-hop feed expansion using graph traversal
-// - Weighted scoring by freshness - hopCost
-//
-// Display:
-// - Feed-style layout
-// - Sort by most recent post timestamp (or last reply)
-// - Add filters for type (log, request, reply)
+// Graph-based activity feed (simplified)
 
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import { useAuth } from '../../contexts/AuthContext';
 import type { User } from '../../types/userTypes';
@@ -25,11 +10,6 @@ import { fetchBoard } from '../../api/board';
 import { Spinner } from '../ui';
 import Board from '../board/Board';
 
-/**
- * RecentActivityBoard renders a board showing the latest activity for the
- * homepage. It loads data using the `useBoard` hook and listens for
- * `board:update` events via websockets to stay up to date.
- */
 interface RecentActivityBoardProps {
   boardId?: string;
 }
@@ -37,14 +17,17 @@ interface RecentActivityBoardProps {
 const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'timeline-board' }) => {
   const { user } = useAuth();
   const { board, setBoard } = useBoard(boardId);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
 
-  // Load additional pages when the board scrolls to the end
+  const [{ page, loading, hasMore }, setState] = useState({
+    page: 1,
+    loading: false,
+    hasMore: true,
+  });
+
   const loadMore = useCallback(async () => {
     if (!boardId || loading || !hasMore) return;
-    setLoading(true);
+
+    setState(s => ({ ...s, loading: true }));
     try {
       const nextPage = page + 1;
       const more = await fetchBoard(boardId, {
@@ -53,12 +36,13 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
         enrich: true,
         userId: user?.id,
       });
-      if (more.items?.length) {
+
+      if (more?.items?.length) {
         setBoard(prev =>
           prev
             ? {
                 ...prev,
-                items: [...prev.items, ...more.items],
+                items: [...(prev.items || []), ...more.items],
                 enrichedItems: [
                   ...(prev.enrichedItems || []),
                   ...(more.enrichedItems || []),
@@ -66,36 +50,26 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
               }
             : more
         );
-        setPage(nextPage);
+        setState({ page: nextPage, loading: false, hasMore: true });
       } else {
-        setHasMore(false);
+        setState(s => ({ ...s, loading: false, hasMore: false }));
       }
     } catch (err) {
-      console.warn('[RecentActivityBoard] Pagination error:', err);
-    } finally {
-      setLoading(false);
+      console.error('[RecentActivityBoard] Pagination error:', err);
+      setState(s => ({ ...s, loading: false }));
     }
   }, [boardId, page, loading, hasMore, user?.id, setBoard]);
 
   // Refresh the board when a websocket update is received
-  useSocketListener('board:update', payload => {
-    if (!boardId || payload.id !== boardId) return;
-    fetchBoard(boardId, { enrich: true, userId: user?.id }).then(setBoard);
-  });
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const handler = () => {
-      if (el.scrollHeight - el.scrollTop <= el.clientHeight + 150) {
-        loadMore();
-      }
-    };
-    el.addEventListener('scroll', handler);
-    return () => el.removeEventListener('scroll', handler);
-  }, [loadMore]);
+  useSocketListener(
+    'board:update',
+    payload => {
+      if (payload?.id !== boardId) return;
+      fetchBoard(boardId, { enrich: true, userId: user?.id })
+        .then(setBoard)
+        .catch(err => console.error('[RecentActivityBoard] Refresh error:', err));
+    }
+  );
 
   if (!board) return <Spinner />;
 
@@ -106,10 +80,10 @@ const RecentActivityBoard: React.FC<RecentActivityBoardProps> = ({ boardId = 'ti
       layout="list"
       compact
       hideControls
-      onScrollEnd={loadMore}
-      loading={loading}
-      user={user as unknown as User}
       headerOnly
+      user={user as unknown as User}
+      loading={loading}
+      onScrollEnd={loadMore}
     />
   );
 };
