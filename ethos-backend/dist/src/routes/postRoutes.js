@@ -480,11 +480,12 @@ router.get('/:id/reposts/count', (_req, res) => {
 router.post('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (req, res) => {
     const { id, type } = req.params;
     const userId = req.user.id;
+    const state = req.body?.state;
     if (db_1.usePg) {
         try {
-            await db_1.pool.query(`INSERT INTO reactions (id, postid, userid, type)
-           VALUES ($1, $2, $3, $4)
-           ON CONFLICT (postid, userid, type) DO NOTHING`, [(0, uuid_1.v4)(), id, userId, type]);
+            await db_1.pool.query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type LIKE $3', [id, userId, `${type}%`]);
+            const storedType = state ? `${type}:${state}` : type;
+            await db_1.pool.query('INSERT INTO reactions (id, postid, userid, type) VALUES ($1, $2, $3, $4)', [(0, uuid_1.v4)(), id, userId, storedType]);
             res.json({ success: true });
             return;
         }
@@ -495,11 +496,10 @@ router.post('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (req,
         }
     }
     const reactions = stores_1.reactionsStore.read();
-    const key = `${id}_${userId}_${type}`;
-    if (!reactions.includes(key)) {
-        reactions.push(key);
-        stores_1.reactionsStore.write(reactions);
-    }
+    const prefix = `${id}_${userId}_${type}`;
+    const filtered = reactions.filter(r => !r.startsWith(prefix));
+    filtered.push(state ? `${prefix}_${state}` : prefix);
+    stores_1.reactionsStore.write(filtered);
     res.json({ success: true });
 });
 //
@@ -510,7 +510,7 @@ router.delete('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (re
     const userId = req.user.id;
     if (db_1.usePg) {
         try {
-            await db_1.pool.query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3', [id, userId, type]);
+            await db_1.pool.query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type LIKE $3', [id, userId, `${type}%`]);
             res.json({ success: true });
             return;
         }
@@ -521,11 +521,9 @@ router.delete('/:id/reactions/:type', authMiddleware_1.authMiddleware, async (re
         }
     }
     const reactions = stores_1.reactionsStore.read();
-    const index = reactions.indexOf(`${id}_${userId}_${type}`);
-    if (index !== -1) {
-        reactions.splice(index, 1);
-        stores_1.reactionsStore.write(reactions);
-    }
+    const prefix = `${id}_${userId}_${type}`;
+    const filtered = reactions.filter(r => !r.startsWith(prefix));
+    stores_1.reactionsStore.write(filtered);
     res.json({ success: true });
 });
 //
@@ -536,7 +534,11 @@ router.get('/:id/reactions', async (req, res) => {
     if (db_1.usePg) {
         try {
             const result = await db_1.pool.query('SELECT userid AS "userId", type FROM reactions WHERE postid = $1', [id]);
-            res.json(result.rows);
+            const rows = result.rows.map((r) => {
+                const [base, state] = r.type.split(':');
+                return state ? { userId: r.userId, type: base, state } : { userId: r.userId, type: base };
+            });
+            res.json(rows);
             return;
         }
         catch (err) {
@@ -549,8 +551,9 @@ router.get('/:id/reactions', async (req, res) => {
     const postReactions = reactions
         .filter((r) => r.startsWith(`${id}_`))
         .map((r) => {
-        const [, userId, type] = r.split('_');
-        return { userId, type };
+        const parts = r.split('_');
+        const [, userId, type, state] = parts;
+        return state ? { userId, type, state } : { userId, type };
     });
     res.json(postReactions);
 });

@@ -68,7 +68,7 @@ describe('Postgres routes', () => {
     expect(resDel.status).toBe(200);
     expect(pool.query).toHaveBeenCalledWith(
       expect.stringContaining('DELETE FROM reactions'),
-      ['p1', 'u1', 'like']
+      ['p1', 'u1', 'like%']
     );
   });
 

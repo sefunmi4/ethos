@@ -23,6 +23,12 @@ export type AppItem = Post | Quest | Board | RenderableItem;
  */
 export type ReactionCountMap = Record<'like' | 'heart' | 'repost', number>;
 
+export interface Reaction {
+  userId: string;
+  type: ReactionType;
+  state?: string;
+}
+
 //
 // 🧭 BOARD
 //
@@ -153,6 +159,8 @@ export interface ReactionSet {
   like?: Record<string, string>;
   love?: Record<string, string>;
   repost?: Record<string, string>;
+  request?: Record<string, string>;
+  review?: Record<string, string>;
 }
 
 /**
