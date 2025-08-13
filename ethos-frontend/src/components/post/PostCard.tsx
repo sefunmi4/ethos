@@ -118,6 +118,13 @@ const PostCard: React.FC<PostCardProps> = ({
         : 'max-w-prose';
 
   const expandedView = expanded ?? internalExpandedView;
+  const cardClasses = clsx(
+    'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary',
+    widthClass,
+    depth === 0 ? 'mx-auto' : '',
+    post.highlight && 'border-accent bg-infoBackground',
+    className,
+  );
 
   const qid = questId || post.questId;
 
@@ -147,6 +154,34 @@ const PostCard: React.FC<PostCardProps> = ({
   }, [post, questTitle, questId]);
   const isLong = content.length > PREVIEW_LIMIT;
   const allowDelete = !headPostId || post.id !== headPostId;
+
+  const renderHeader = () => (
+    <div className="flex justify-between text-sm text-secondary">
+      <div className="flex flex-wrap items-center gap-2">
+        {summaryTags.map((tag, idx) => (
+          <React.Fragment key={idx}>
+            <SummaryTag
+              {...tag}
+              className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
+            />
+          </React.Fragment>
+        ))}
+        {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
+      </div>
+      <div className="flex items-center gap-2">
+        <ActionMenu
+          id={post.id}
+          type="post"
+          canEdit={canEdit}
+          onEdit={() => setEditMode(true)}
+          onDelete={() => onDelete?.(post.id)}
+          allowDelete={allowDelete}
+          content={post.content}
+          permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+        />
+      </div>
+    </div>
+  );
 
 
   useEffect(() => {
@@ -207,46 +242,13 @@ const PostCard: React.FC<PostCardProps> = ({
 
   if (headerOnly) {
     return (
-      <div
-        id={post.id}
-        className={clsx(
-          'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary',
-          widthClass,
-          depth === 0 ? 'mx-auto' : '',
-          post.highlight && 'border-accent bg-infoBackground',
-          className
+      <div id={post.id} className={cardClasses}>
+        {renderHeader()}
+        {isQuestBoardRequest && timestamp && (
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {timestamp}
+          </div>
         )}
-      >
-        <div className="flex justify-between text-sm text-secondary">
-          <div className="flex flex-wrap items-center gap-2">
-            {summaryTags.map((tag, idx) => (
-              <React.Fragment key={idx}>
-                <SummaryTag
-                  {...tag}
-                  className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
-                />
-              </React.Fragment>
-            ))}
-            {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
-          </div>
-          <div className="flex items-center gap-2">
-            <ActionMenu
-              id={post.id}
-              type="post"
-              canEdit={canEdit}
-              onEdit={() => setEditMode(true)}
-              onDelete={() => onDelete?.(post.id)}
-              allowDelete={allowDelete}
-              content={post.content}
-              permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
-            />
-          </div>
-        </div>
-          {isQuestBoardRequest && timestamp && (
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {timestamp}
-            </div>
-          )}
         {titleText && (
           <h3
             className="font-semibold text-lg mt-1 cursor-pointer truncate"
@@ -269,41 +271,8 @@ const PostCard: React.FC<PostCardProps> = ({
   }
 
   return (
-    <div
-      id={post.id}
-      className={clsx(
-        'relative border border-secondary rounded bg-surface shadow-sm p-4 space-y-3 text-primary',
-        widthClass,
-        depth === 0 ? 'mx-auto' : '',
-        post.highlight && 'border-accent bg-infoBackground',
-        className
-      )}
-    >
-      <div className="flex justify-between text-sm text-secondary">
-        <div className="flex flex-wrap items-center gap-2">
-          {summaryTags.map((tag, idx) => (
-            <React.Fragment key={idx}>
-              <SummaryTag
-                {...tag}
-                className={tag.type === 'quest' ? 'truncate max-w-[8rem]' : undefined}
-              />
-            </React.Fragment>
-          ))}
-          {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
-        </div>
-        <div className="flex items-center gap-2">
-          <ActionMenu
-            id={post.id}
-            type="post"
-            canEdit={canEdit}
-            onEdit={() => setEditMode(true)}
-            onDelete={() => onDelete?.(post.id)}
-            allowDelete={allowDelete}
-            content={post.content}
-            permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
-          />
-        </div>
-      </div>
+    <div id={post.id} className={cardClasses}>
+      {renderHeader()}
       {isQuestBoardRequest && timestamp && (
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           {timestamp}
