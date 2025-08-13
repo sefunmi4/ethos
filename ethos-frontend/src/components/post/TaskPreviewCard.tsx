@@ -4,7 +4,6 @@ import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
 import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
-import type { SummaryTagData } from '../ui/SummaryTag';
 import { ROUTES } from '../../constants/routes';
 import { updatePost } from '../../api/post';
 import { createRepoFolder } from '../../api/git';
