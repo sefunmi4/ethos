@@ -32,7 +32,7 @@ export type SummaryTagType =
   | 'meta_system'
   | 'meta_announcement';
 
-export type SummaryTagProps = SummaryTagData & { className?: string };
+export type SummaryTagProps = SummaryTagData & { className?: string; onClick?: () => void };
 
 const icons: Partial<Record<SummaryTagType, React.ComponentType<{className?: string}>>> = {
   quest: FaBookOpen,
@@ -72,6 +72,7 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
   usernameLink,
   detailLink,
   truncate = true,
+  onClick,
 }) => {
   const Icon = icons[type] ?? FaStickyNote;
   const colorClass = colors[type] || colors.type;
@@ -119,6 +120,19 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
       >
         {content}
       </Link>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        data-testid="summary-tag"
+        onClick={onClick}
+        className={clsx(baseClass, colorClass, className)}
+      >
+        {content}
+      </button>
     );
   }
 
