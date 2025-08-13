@@ -10,6 +10,7 @@ import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 import { getDisplayTitle } from '../../utils/displayUtils';
 import { getNodeStyle } from '../ui/NodeTypeBadge';
+import { Spinner } from '../ui';
 
 interface MapGraphLayoutProps {
   items: Post[];
@@ -27,6 +28,8 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   items,
   edges = [],
   onNodeClick,
+  onScrollEnd,
+  loadingMore = false,
 }) => {
   const fgRef =
     useRef<
@@ -117,6 +120,11 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         onNodeClick={handleNodeClick}
         onNodeDragEnd={handleNodeDragEnd}
       />
+      {loadingMore && (
+        <div className="flex justify-center py-4">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 };
