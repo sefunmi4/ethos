@@ -25,7 +25,7 @@ jest.mock('../../api/post', () => ({
       },
     })
   ),
-  removeHelpRequest: jest.fn(() => Promise.resolve({ post: { id: 'c1' } })),
+  removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
   updateReaction: jest.fn(() => Promise.resolve()),
   addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
   removeRepost: jest.fn(() => Promise.resolve()),
@@ -87,6 +87,6 @@ describe('PostCard request review', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/In Review/i));
     });
-    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('c1'));
+    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('c1', 'change'));
   });
 });

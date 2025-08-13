@@ -13,8 +13,6 @@ export interface Post {
   };
 
   type: PostType;
-  /** Optional secondary classification such as request or review */
-  secondaryType?: 'request' | 'review';
   subtype?: string;
   /** Short header for the post */
   title?: string;

@@ -25,7 +25,7 @@ jest.mock('../../api/post', () => ({
       },
     })
   ),
-  removeHelpRequest: jest.fn(() => Promise.resolve({ post: { id: 't1' } })),
+  removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
   updateReaction: jest.fn(() => Promise.resolve()),
   addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
   removeRepost: jest.fn(() => Promise.resolve()),
@@ -95,7 +95,7 @@ describe('PostCard request help', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/Requested/i));
     });
-    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('t1'));
+    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('t1', 'task'));
   });
 
   it('does not show checkbox for free speech posts', () => {

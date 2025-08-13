@@ -824,21 +824,36 @@ router.post(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
-    const post = posts.find(p => p.id === req.params.id);
-    if (!post) {
+    const original = posts.find(p => p.id === req.params.id);
+    if (!original) {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
-    const subtype = req.body?.subtype || (post.type === 'task' ? 'task' : 'change');
-    if (subtype === 'change' && post.type !== 'task') {
+    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
+    if (subtype === 'change' && original.type !== 'task') {
       res.status(400).json({ error: 'Change requests must originate from a task' });
       return;
     }
 
     const tag = subtype === 'change' ? 'review' : 'request';
-    post.helpRequest = true;
-    post.needsHelp = true;
-    post.tags = Array.from(new Set([...(post.tags || []), tag]));
+    const users = usersStore.read();
+
+    const repost: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: original.type,
+      content: original.content,
+      visibility: original.visibility,
+      questId: original.questId || null,
+      tags: Array.from(new Set([...(original.tags || []), tag])),
+      collaborators: [],
+      replyTo: null,
+      timestamp: new Date().toISOString(),
+      repostedFrom: original.id,
+      linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
+    } as DBPost;
+
+    posts.push(repost);
     postsStore.write(posts);
 
     if (usePg) {
@@ -863,8 +878,7 @@ router.post(
       }
     }
 
-    const users = usersStore.read();
-    res.status(200).json({ post: enrichPost(post, { users }) });
+    res.status(201).json({ post: enrichPost(repost, { users }) });
   }
 );
 
@@ -876,16 +890,26 @@ router.delete(
   authMiddleware,
   (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
     const posts = postsStore.read();
-    const post = posts.find(p => p.id === req.params.id);
-    if (!post) {
+    const original = posts.find(p => p.id === req.params.id);
+    if (!original) {
       res.status(404).json({ error: 'Post not found' });
       return;
     }
 
-    const tag = post.type === 'change' ? 'review' : 'request';
-    post.helpRequest = false;
-    post.needsHelp = false;
-    post.tags = (post.tags || []).filter(t => t !== tag);
+    const tag = req.body?.subtype === 'change' ? 'review' : 'request';
+
+    const index = posts.findIndex(
+      p =>
+        p.repostedFrom === req.params.id &&
+        p.authorId === req.user!.id &&
+        (p.tags || []).includes(tag)
+    );
+    if (index === -1) {
+      res.status(404).json({ error: 'Request repost not found' });
+      return;
+    }
+
+    const [removed] = posts.splice(index, 1);
     postsStore.write(posts);
 
     if (usePg) {
@@ -909,8 +933,7 @@ router.delete(
       }
     }
 
-    const users = usersStore.read();
-    res.json({ post: enrichPost(post, { users }) });
+    res.json({ success: true, id: removed.id });
   }
 );
 

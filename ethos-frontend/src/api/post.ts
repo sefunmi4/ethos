@@ -248,9 +248,6 @@ export const requestHelp = async (
   postId: string,
   type?: string
 ): Promise<RequestHelpResult> => {
-  // Always use the unified posts route for help requests.
-  // Older task-specific routes have been deprecated in favor
-  // of `/posts/:id/request-help`.
   const payload = type ? { subtype: type } : undefined;
   const res = await axiosWithAuth.post(`${BASE_URL}/${postId}/request-help`, payload);
   return res.data;
@@ -260,10 +257,11 @@ export const requestHelp = async (
  * ❌ Cancel a help request for a post
  */
 export const removeHelpRequest = async (
-  postId: string
-): Promise<{ post: Post }> => {
-  // Cancel help requests using the unified posts route.
-  const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/request-help`);
+  postId: string,
+  type?: string
+): Promise<{ success: boolean }> => {
+  const config = type ? { data: { subtype: type } } : undefined;
+  const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/request-help`, config);
   return res.data;
 };
 
