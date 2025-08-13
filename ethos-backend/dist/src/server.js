@@ -88,6 +88,17 @@ app.use(logger_1.requestLogger);
 app.use('/api/auth', authRoutes_1.default); // 🔐 Authentication (login, register, session)
 app.use('/api/git', gitRoutes_1.default); // 🔁 Git sync, commits, diffs
 app.use('/api/posts', postRoutes_1.default); // 📝 Posts, reactions, replies
+// Legacy task request-help routes for backward compatibility
+app.post('/api/tasks/:id/request-help', (req, res, next) => {
+    // Delegate to the existing postRoutes handler
+    req.url = `/tasks/${req.params.id}/request-help`;
+    (0, postRoutes_1.default)(req, res, next);
+});
+app.delete('/api/tasks/:id/request-help', (req, res, next) => {
+    // Delegate to the generic cancel handler in postRoutes
+    req.url = `/${req.params.id}/request-help`;
+    (0, postRoutes_1.default)(req, res, next);
+});
 app.use('/api/quests', questRoutes_1.default); // 📦 Quests, task maps
 app.use('/api/projects', projectRoutes_1.default); // 🗂 Projects
 app.use('/api/boards', boardRoutes_1.default); // 🧭 Boards and view layouts
