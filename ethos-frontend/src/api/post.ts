@@ -1,6 +1,7 @@
 // src/api/post.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
+import axios from 'axios';
 import type { Post, Reaction, EnrichedPost } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
 import type { Quest } from '../types/questTypes';
@@ -251,22 +252,43 @@ export const requestHelp = async (
 ): Promise<RequestHelpResult> => {
   // Use the general request-help endpoint for all post types.
   // Some backend versions may not expose the older `/posts/tasks/:id/request-help`
-  // route, so always call `/posts/:id/request-help` and include the subtype when
-  // relevant. This keeps the frontend compatible with both task and change posts
-  // regardless of backend implementation details.
+  // route, so try the generic route first and fall back to the task-specific
+  // endpoint if the backend does not recognize it. This keeps the frontend
+  // compatible with both implementations.
   const payload = type ? { subtype: type } : undefined;
-  const res = await axiosWithAuth.post(`/posts/${postId}/request-help`, payload);
-  return res.data;
+
+  try {
+    const res = await axiosWithAuth.post(`/posts/${postId}/request-help`, payload);
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
+      const res = await axiosWithAuth.post(
+        `/posts/tasks/${postId}/request-help`,
+        payload
+      );
+      return res.data;
+    }
+    throw err;
+  }
 };
 
 /**
  * ❌ Cancel a help request for a post
  */
 export const removeHelpRequest = async (
-  postId: string
+  postId: string,
+  type?: string
 ): Promise<{ success: boolean }> => {
-  const res = await axiosWithAuth.delete(`/posts/${postId}/request-help`);
-  return res.data;
+  try {
+    const res = await axiosWithAuth.delete(`/posts/${postId}/request-help`);
+    return res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
+      const res = await axiosWithAuth.delete(`/posts/tasks/${postId}/request-help`);
+      return res.data;
+    }
+    throw err;
+  }
 };
 
 /**

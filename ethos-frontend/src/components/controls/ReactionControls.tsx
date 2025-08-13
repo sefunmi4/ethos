@@ -279,7 +279,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     // Cancel help request
     setHelpRequested(false); // optimistic
     try {
-      await removeHelpRequest(post.id);
+      await removeHelpRequest(post.id, post.type);
       if (requestPostId) {
         removeItemFromBoard?.('quest-board', requestPostId);
         removeItemFromBoard?.('timeline-board', requestPostId);

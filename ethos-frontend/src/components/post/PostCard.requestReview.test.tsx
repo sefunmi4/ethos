@@ -93,7 +93,7 @@ describe('PostCard request review', () => {
       fireEvent.click(screen.getByText(/In Review/i));
     });
     await waitFor(() =>
-      expect(removeHelpRequest).toHaveBeenCalledWith('c1')
+      expect(removeHelpRequest).toHaveBeenCalledWith('c1', 'change')
     );
   });
 });
