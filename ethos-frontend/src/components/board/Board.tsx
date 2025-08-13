@@ -51,13 +51,16 @@ const isItemRelatedToQuest = (item: BoardItem, qid: string) =>
 const LAYOUT_COMPONENTS: Partial<
   Record<BoardLayout, React.ComponentType<Record<string, unknown>>>
 > = {
-  grid: GridLayout,
-  list: ListLayout,
-  horizontal: GridLayout,
-  kanban: GridLayout,
-  graph: GraphLayout,
-  'graph-condensed': GraphLayout,
-  'map-graph': MapGraphLayout,
+  grid: GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  list: ListLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  horizontal:
+    GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  kanban: GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  graph: GraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  'graph-condensed':
+    GraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  'map-graph':
+    MapGraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
 };
 
 const Board: React.FC<BoardProps> = ({
@@ -261,17 +264,18 @@ const Board: React.FC<BoardProps> = ({
     return renderableItems.every((item) => isItemRelatedToQuest(item, qid));
   }, [singleQuest, renderableItems]);
 
-  const graphItems = useMemo(() => {
-    if (!singleQuest) return renderableItems;
-    const qid = singleQuest.id;
-    return renderableItems.filter((item) => isItemRelatedToQuest(item, qid));
-  }, [renderableItems, singleQuest]);
+  const graphItems = useMemo<Post[]>(() => {
+    const base = singleQuest
+      ? renderableItems.filter((item) =>
+          isItemRelatedToQuest(item, singleQuest.id)
+        )
+      : renderableItems;
+    return base.filter((item): item is Post => 'type' in item);
+  }, [singleQuest, renderableItems]);
 
   const mapGraphItems = useMemo(
     () =>
-      graphItems.filter(
-        (item): item is Post => 'type' in item && (item as Post).type === 'task'
-      ),
+      graphItems.filter((item) => (item as Post).type === 'task'),
     [graphItems]
   );
 
@@ -302,10 +306,16 @@ const Board: React.FC<BoardProps> = ({
     if (typeof forcedEditable === 'boolean') return forcedEditable;
     return board?.id ? canEditBoard(board.id) : false;
   }, [readOnly, forcedEditable, board?.id, canEditBoard]);
+  const layoutItems = useMemo<Post[]>(() => {
+    if (resolvedStructure === 'map-graph') return mapGraphItems;
+    if (resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed')
+      return graphItems;
+    return renderableItems.filter((it): it is Post => 'type' in it);
+  }, [resolvedStructure, mapGraphItems, graphItems, renderableItems]);
 
-
-  const LayoutComponent =
-    LAYOUT_COMPONENTS[resolvedStructure] ?? GridLayout;
+  const LayoutComponent = (
+    LAYOUT_COMPONENTS[resolvedStructure] ?? GridLayout
+  ) as React.ComponentType<Record<string, unknown>>;
 
   if (loading) {
     return <Spinner />;
@@ -482,14 +492,7 @@ const Board: React.FC<BoardProps> = ({
         </div>
       ) : hasItems ? (
         <LayoutComponent
-          items={
-            resolvedStructure === 'map-graph'
-              ? mapGraphItems
-              : resolvedStructure === 'graph' ||
-                resolvedStructure === 'graph-condensed'
-              ? (graphItems as BoardItem[])
-              : (renderableItems as BoardItem[])
-          }
+          items={layoutItems}
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}
