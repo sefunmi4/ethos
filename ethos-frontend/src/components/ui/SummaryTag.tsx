@@ -80,7 +80,7 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
 
   if (username && usernameLink && detailLink) {
     return (
-      <span className={clsx(baseClass, colorClass, className)}>
+      <span data-testid="summary-tag" className={clsx(baseClass, colorClass, className)}>
         <Icon className="w-3 h-3 flex-shrink-0" />
         <Link to={detailLink} className="underline text-inherit">
           {label}
@@ -100,7 +100,11 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
 
   if (link) {
     return (
-      <Link to={link} className={clsx(baseClass, colorClass, className)}>
+      <Link
+        to={link}
+        data-testid="summary-tag"
+        className={clsx(baseClass, colorClass, className)}
+      >
         {content}
       </Link>
     );
@@ -108,13 +112,21 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
 
   if (detailLink) {
     return (
-      <Link to={detailLink} className={clsx(baseClass, colorClass, className)}>
+      <Link
+        to={detailLink}
+        data-testid="summary-tag"
+        className={clsx(baseClass, colorClass, className)}
+      >
         {content}
       </Link>
     );
   }
 
-  return <span className={clsx(baseClass, colorClass, className)}>{content}</span>;
+  return (
+    <span data-testid="summary-tag" className={clsx(baseClass, colorClass, className)}>
+      {content}
+    </span>
+  );
 };
 
 export default SummaryTag;

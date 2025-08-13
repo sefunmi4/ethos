@@ -111,5 +111,7 @@ describe('PostCard summary tags', () => {
     expect(taskLink).toHaveAttribute('href', '/post/t1');
     const changeLink = await screen.findByRole('link', { name: 'Q::Task:T01:C00' });
     expect(changeLink).toHaveAttribute('href', '/post/c1');
+    const tags = await screen.findAllByTestId('summary-tag');
+    expect(tags).toHaveLength(3);
   });
 });
