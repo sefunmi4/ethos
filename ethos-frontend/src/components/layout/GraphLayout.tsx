@@ -5,6 +5,7 @@ import React, {
   useLayoutEffect,
   useCallback,
 } from "react";
+import { useScrollEnd } from "../../hooks/useScrollEnd";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { useGitDiff } from "../../hooks/useGit";
 import { Spinner } from "../ui";
@@ -73,7 +74,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   loadingMore = false,
   boardId,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useScrollEnd<HTMLDivElement>(onScrollEnd, 100);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [paths, setPaths] = useState<{ key: string; d: string; type?: string }[]>([]);
 
@@ -131,7 +132,7 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
       }
     });
     setPaths(newPaths);
-  }, [edgeList]);
+  }, [edgeList, containerRef]);
 
   const debouncedComputePaths = useRef<() => void>(() => {});
 
@@ -193,18 +194,12 @@ const GraphLayout: React.FC<GraphLayoutProps> = ({
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-
     const handleScroll = () => {
       debouncedComputePaths.current();
-      if (!onScrollEnd) return;
-      const { scrollTop, scrollHeight, clientHeight } = el;
-      if (scrollTop + clientHeight >= scrollHeight - 100) {
-        onScrollEnd();
-      }
     };
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-  }, [onScrollEnd]);
+  }, [containerRef, debouncedComputePaths]);
 
   const handleNodeClick = (n: Post) => {
     setSelectedNode(n);

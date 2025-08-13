@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
+import { useScrollEnd } from '../../hooks/useScrollEnd';
 import ForceGraph2D, {
   type ForceGraphMethods,
   type NodeObject,
@@ -35,7 +36,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         >
       | undefined
     >(undefined);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useScrollEnd<HTMLDivElement>(onScrollEnd);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
   useEffect(() => {
