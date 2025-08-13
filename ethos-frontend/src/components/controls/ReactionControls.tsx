@@ -18,7 +18,7 @@ import { ROUTES } from '../../constants/routes';
 import TaskCard from '../quest/TaskCard';
 
 import { updateReaction, fetchReactions } from '../../api/post';
-
+        
 import type {
   Post,
   ReactionType,
@@ -186,6 +186,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         ? 'complete'
         : 'request';
     setRequestState(next);
+
     try {
       if (next === 'request') {
         await updateReaction(post.id, 'request', false);
