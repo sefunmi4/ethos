@@ -1,7 +1,6 @@
 // src/api/post.ts
 
 import { axiosWithAuth } from '../utils/authUtils';
-import axios from 'axios';
 import type { Post, Reaction, EnrichedPost } from '../types/postTypes';
 import type { BoardData } from '../types/boardTypes';
 import type { Quest } from '../types/questTypes';
@@ -250,72 +249,23 @@ export const requestHelp = async (
   postId: string,
   type?: string
 ): Promise<RequestHelpResult> => {
-  // Use the general request-help endpoint for all post types.
-  // Some backend versions may not expose the older `/posts/tasks/:id/request-help`
-  // route, so try the generic route first and fall back to the task-specific
-  // endpoint if the backend does not recognize it. This keeps the frontend
-  // compatible with both implementations.
+  // Always use the unified posts route for help requests.
+  // Older task-specific routes have been deprecated in favor
+  // of `/posts/:id/request-help`.
   const payload = type ? { subtype: type } : undefined;
-
-  try {
-    const res = await axiosWithAuth.post(`/posts/${postId}/request-help`, payload);
-    return res.data;
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
-      try {
-        // Fallback for older backends that expose the legacy
-        // `/posts/tasks/:id/request-help` endpoint instead of the
-        // generic `/posts/:id/request-help` route.
-        const res = await axiosWithAuth.post(
-          `/posts/tasks/${postId}/request-help`,
-          payload
-        );
-        return res.data;
-      } catch (err2) {
-        if (axios.isAxiosError(err2) && err2.response?.status === 404) {
-          // Final fallback for very old backends where the task request-help
-          // route lives directly under `/tasks/:id`.
-          const res = await axiosWithAuth.post(
-            `/tasks/${postId}/request-help`,
-            payload
-          );
-          return res.data;
-        }
-        throw err2;
-      }
-    }
-    throw err;
-  }
+  const res = await axiosWithAuth.post(`${BASE_URL}/${postId}/request-help`, payload);
+  return res.data;
 };
 
 /**
  * ❌ Cancel a help request for a post
  */
 export const removeHelpRequest = async (
-  postId: string,
-  type?: string
+  postId: string
 ): Promise<{ success: boolean }> => {
-  try {
-    const res = await axiosWithAuth.delete(`/posts/${postId}/request-help`);
-    return res.data;
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status === 404 && type === 'task') {
-      try {
-        // Fallback for legacy backends which expect the request-help
-        // routes to live under `/posts/tasks/:id`.
-        const res = await axiosWithAuth.delete(`/posts/tasks/${postId}/request-help`);
-        return res.data;
-      } catch (err2) {
-        if (axios.isAxiosError(err2) && err2.response?.status === 404) {
-          // Final fallback for very old backends where the route lives under `/tasks/:id`.
-          const res = await axiosWithAuth.delete(`/tasks/${postId}/request-help`);
-          return res.data;
-        }
-        throw err2;
-      }
-    }
-    throw err;
-  }
+  // Cancel help requests using the unified posts route.
+  const res = await axiosWithAuth.delete(`${BASE_URL}/${postId}/request-help`);
+  return res.data;
 };
 
 /**

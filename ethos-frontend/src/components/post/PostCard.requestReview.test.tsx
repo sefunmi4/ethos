@@ -92,8 +92,6 @@ describe('PostCard request review', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/In Review/i));
     });
-    await waitFor(() =>
-      expect(removeHelpRequest).toHaveBeenCalledWith('c1', 'change')
-    );
+    await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('c1'));
   });
 });
