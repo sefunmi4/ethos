@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
+import { useScrollEnd } from '../../hooks/useScrollEnd';
 import ContributionCard from '../contribution/ContributionCard';
 import { Spinner } from '../ui';
 import type { Post } from '../../types/postTypes';
@@ -38,19 +39,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   expandedId,
   onExpand,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el || !onScrollEnd) return;
-    const handle = () => {
-      if (el.scrollHeight - el.scrollTop <= el.clientHeight + 150) {
-        onScrollEnd();
-      }
-    };
-    el.addEventListener('scroll', handle);
-    return () => el.removeEventListener('scroll', handle);
-  }, [onScrollEnd]);
+  const containerRef = useScrollEnd<HTMLDivElement>(onScrollEnd);
 
   if (!items || items.length === 0) {
     return (

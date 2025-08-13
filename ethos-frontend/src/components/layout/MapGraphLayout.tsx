@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
+import { useScrollEnd } from '../../hooks/useScrollEnd';
 import ForceGraph2D, {
   type ForceGraphMethods,
   type NodeObject,
@@ -9,6 +10,7 @@ import type { User } from '../../types/userTypes';
 import type { TaskEdge } from '../../types/questTypes';
 import { getDisplayTitle } from '../../utils/displayUtils';
 import { getNodeStyle } from '../ui/NodeTypeBadge';
+import { Spinner } from '../ui';
 
 interface MapGraphLayoutProps {
   items: Post[];
@@ -26,6 +28,8 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
   items,
   edges = [],
   onNodeClick,
+  onScrollEnd,
+  loadingMore = false,
 }) => {
   const fgRef =
     useRef<
@@ -35,7 +39,7 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         >
       | undefined
     >(undefined);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useScrollEnd<HTMLDivElement>(onScrollEnd);
   const [edgeList, setEdgeList] = useState<TaskEdge[]>(edges);
 
   useEffect(() => {
@@ -116,6 +120,11 @@ const MapGraphLayout: React.FC<MapGraphLayoutProps> = ({
         onNodeClick={handleNodeClick}
         onNodeDragEnd={handleNodeDragEnd}
       />
+      {loadingMore && (
+        <div className="flex justify-center py-4">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 };
