@@ -39,7 +39,6 @@ import type {
   Reaction,
 } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
-import type { BoardItem } from '../../contexts/BoardContextTypes';
 
 type ReplyType = 'free_speech' | 'task' | 'change';
 
@@ -98,7 +97,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [, setReplyInitialType] = useState<ReplyType>('free_speech');
 
   const [helpRequested, setHelpRequested] = useState<boolean>(post.helpRequest === true);
-  const [requestPostId, setRequestPostId] = useState<string | null>(null);
 
   const initialAccepted = useMemo(
     () => !!user && (isAuthorOrTeam || post.tags?.includes(`pending:${user.id}`)),
@@ -118,8 +116,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   // ---------- Board context ----------
   const boardCtx = useBoardContext();
   const selectedBoard = boardCtx?.selectedBoard;
-  const appendToBoard = boardCtx?.appendToBoard;
-  const removeItemFromBoard = boardCtx?.removeItemFromBoard;
   const boards = boardCtx?.boards;
 
   const ctxBoardId = boardId || selectedBoard;
@@ -254,22 +250,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     if (!helpRequested) {
       setHelpRequested(true); // optimistic
       try {
-        const { request: reqPost, subRequests } = await requestHelp(post.id, post.type);
-        // Fan-out to boards
-        appendToBoard?.('quest-board', reqPost as unknown as BoardItem);
-        appendToBoard?.('timeline-board', reqPost as unknown as BoardItem);
-        (subRequests ?? []).forEach(sr => {
-          appendToBoard?.('quest-board', sr as unknown as BoardItem);
-          appendToBoard?.('timeline-board', sr as unknown as BoardItem);
-        });
-        setRequestPostId(reqPost.id);
-        const tag = post.type === 'change' ? 'review' : 'request';
-        onUpdate?.({
-          ...post,
-          helpRequest: true,
-          needsHelp: true,
-          tags: Array.from(new Set([...(post.tags || []), tag])),
-        } as Post);
+        const { post: updated } = await requestHelp(post.id, post.type);
+        onUpdate?.(updated);
       } catch (err) {
         console.error('[ReactionControls] Failed to request help:', err);
         setHelpRequested(false); // revert
@@ -280,29 +262,15 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     // Cancel help request
     setHelpRequested(false); // optimistic
     try {
-      await removeHelpRequest(post.id);
-      if (requestPostId) {
-        removeItemFromBoard?.('quest-board', requestPostId);
-        removeItemFromBoard?.('timeline-board', requestPostId);
-      }
-      setRequestPostId(null);
-      const tag = post.type === 'change' ? 'review' : 'request';
-      onUpdate?.({
-        ...post,
-        helpRequest: false,
-        needsHelp: false,
-        tags: (post.tags || []).filter(t => t !== tag),
-      } as Post);
+      const { post: updated } = await removeHelpRequest(post.id);
+      onUpdate?.(updated);
     } catch (err) {
       console.error('[ReactionControls] Failed to cancel help request:', err);
       setHelpRequested(true); // revert
     }
   }, [
-    appendToBoard,
     onUpdate,
     post,
-    removeItemFromBoard,
-    requestPostId,
     user?.id,
     helpRequested,
   ]);

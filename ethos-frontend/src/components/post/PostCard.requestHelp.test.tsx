@@ -10,8 +10,8 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   requestHelp: jest.fn(() =>
     Promise.resolve({
-      request: {
-        id: 'r1',
+      post: {
+        id: 't1',
         authorId: 'u1',
         type: 'task',
         content: 'Task',
@@ -20,11 +20,12 @@ jest.mock('../../api/post', () => ({
         tags: ['request'],
         collaborators: [],
         linkedItems: [],
+        helpRequest: true,
+        needsHelp: true,
       },
-      subRequests: [],
     })
   ),
-  removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
+  removeHelpRequest: jest.fn(() => Promise.resolve({ post: { id: 't1' } })),
   updateReaction: jest.fn(() => Promise.resolve()),
   addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
   removeRepost: jest.fn(() => Promise.resolve()),
@@ -33,13 +34,11 @@ jest.mock('../../api/post', () => ({
   fetchUserRepost: jest.fn(() => Promise.resolve(null)),
 }));
 
-const appendMock = jest.fn();
-const removeMock = jest.fn();
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
   useBoardContext: () => ({
-    appendToBoard: appendMock,
-    removeItemFromBoard: removeMock,
+    appendToBoard: jest.fn(),
+    removeItemFromBoard: jest.fn(),
     selectedBoard: null,
   }),
 }));
@@ -72,7 +71,7 @@ describe('PostCard request help', () => {
   } as unknown as Post;
 
 
-  it('calls endpoint and appends to board', async () => {
+  it('calls endpoint to request help', async () => {
     render(
       <BrowserRouter>
         <PostCard post={post} user={{ id: 'u1' } as User} />
@@ -88,23 +87,10 @@ describe('PostCard request help', () => {
     await waitFor(() =>
       expect(requestHelp).toHaveBeenCalledWith('t1', 'task')
     );
-    expect(appendMock).toHaveBeenNthCalledWith(
-      1,
-      'quest-board',
-      expect.objectContaining({ id: 'r1' })
-    );
-    expect(appendMock).toHaveBeenNthCalledWith(
-      2,
-      'timeline-board',
-      expect.objectContaining({ id: 'r1' })
-    );
-
     await act(async () => {
       fireEvent.click(screen.getByText(/Requested/i));
     });
     await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('t1'));
-    expect(removeMock).toHaveBeenNthCalledWith(1, 'quest-board', 'r1');
-    expect(removeMock).toHaveBeenNthCalledWith(2, 'timeline-board', 'r1');
   });
 
   it('does not show checkbox for free speech posts', () => {

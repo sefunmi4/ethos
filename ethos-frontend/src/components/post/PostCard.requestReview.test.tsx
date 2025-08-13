@@ -10,8 +10,8 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   requestHelp: jest.fn(() =>
     Promise.resolve({
-      request: {
-        id: 'r1',
+      post: {
+        id: 'c1',
         authorId: 'u1',
         type: 'change',
         content: 'Change',
@@ -20,11 +20,12 @@ jest.mock('../../api/post', () => ({
         tags: ['review'],
         collaborators: [],
         linkedItems: [],
+        helpRequest: true,
+        needsHelp: true,
       },
-      subRequests: [],
     })
   ),
-  removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
+  removeHelpRequest: jest.fn(() => Promise.resolve({ post: { id: 'c1' } })),
   updateReaction: jest.fn(() => Promise.resolve()),
   addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
   removeRepost: jest.fn(() => Promise.resolve()),
@@ -33,10 +34,9 @@ jest.mock('../../api/post', () => ({
   fetchUserRepost: jest.fn(() => Promise.resolve(null)),
 }));
 
-const appendMock = jest.fn();
 jest.mock('../../contexts/BoardContext', () => ({
   __esModule: true,
-  useBoardContext: () => ({ appendToBoard: appendMock, selectedBoard: null }),
+  useBoardContext: () => ({ appendToBoard: jest.fn(), selectedBoard: null }),
 }));
 
 jest.mock('react-router-dom', () => {
@@ -76,16 +76,6 @@ describe('PostCard request review', () => {
 
     await waitFor(() =>
       expect(requestHelp).toHaveBeenCalledWith('c1', 'change')
-    );
-    expect(appendMock).toHaveBeenNthCalledWith(
-      1,
-      'quest-board',
-      expect.objectContaining({ id: 'r1' })
-    );
-    expect(appendMock).toHaveBeenNthCalledWith(
-      2,
-      'timeline-board',
-      expect.objectContaining({ id: 'r1' })
     );
     expect(screen.getByText(/In Review/i)).toBeInTheDocument();
 
