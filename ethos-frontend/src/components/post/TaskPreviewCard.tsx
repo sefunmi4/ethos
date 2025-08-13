@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Select, StatusBadge, SummaryTag } from '../ui';
 import { STATUS_OPTIONS, TASK_TYPE_OPTIONS } from '../../constants/options';
 import type { Post, QuestTaskStatus } from '../../types/postTypes';
-import { buildSummaryTags } from '../../utils/displayUtils';
+import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import type { SummaryTagData } from '../ui/SummaryTag';
 import { ROUTES } from '../../constants/routes';
 import { updatePost } from '../../api/post';
@@ -120,7 +120,16 @@ const TaskPreviewCard: React.FC<TaskPreviewCardProps> = ({
     }
   };
 
-  const summaryTags = buildSummaryTags(post);
+  const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
+  useEffect(() => {
+    let active = true;
+    buildSummaryTags(post).then(tags => {
+      if (active) setSummaryTags(tags);
+    });
+    return () => {
+      active = false;
+    };
+  }, [post]);
   let taskTag: SummaryTagData | undefined = summaryTags.find(
     t => t.type === 'task',
   );

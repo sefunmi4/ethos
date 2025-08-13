@@ -8,6 +8,11 @@ jest.mock('../git/GitFileBrowserInline', () => () => <div>File Browser</div>);
 jest.mock('../quest/TeamPanel', () => () => <div>Team Panel</div>);
 jest.mock('../../hooks/useGraph', () => ({ useGraph: () => ({ nodes: [], edges: [], loadGraph: jest.fn() }) }));
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 const task: Post = {
   id: 't1',
   authorId: 'u1',
@@ -22,9 +27,9 @@ const task: Post = {
   questId: 'q1',
 };
 
-test('shows map and file browser in expanded view', () => {
+test('shows map and file browser in expanded view', async () => {
   render(<PostCard post={task} expanded />);
-  expect(screen.getByTestId('map')).toBeInTheDocument();
-  expect(screen.getByText('File Browser')).toBeInTheDocument();
-  expect(screen.getByText('Options')).toBeInTheDocument();
+  expect(await screen.findByTestId('map')).toBeInTheDocument();
+  expect(await screen.findByText('File Browser')).toBeInTheDocument();
+  expect(await screen.findByText('Options')).toBeInTheDocument();
 });

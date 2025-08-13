@@ -15,6 +15,11 @@ jest.mock('react-router-dom', () => {
   };
 });
 
+jest.mock('../../api/auth', () => ({
+  __esModule: true,
+  fetchUserById: jest.fn((id) => Promise.resolve({ id, username: 'alice' })),
+}));
+
 const basePost: PostWithQuestTitle = {
   id: 'p1',
   authorId: 'u1',
@@ -28,18 +33,19 @@ const basePost: PostWithQuestTitle = {
 } as unknown as PostWithQuestTitle;
 
 describe('PostListItem', () => {
-  it('navigates to post page on click', () => {
+  it('navigates to post page on click', async () => {
     render(
       <BrowserRouter>
         <PostListItem post={basePost} />
       </BrowserRouter>
     );
 
+    await screen.findByText(/hello world/i);
     fireEvent.click(screen.getByText(/hello world/i));
     expect(navMock).toHaveBeenCalledWith(ROUTES.POST('p1'));
   });
 
-  it('renders quest path tag for task posts', () => {
+  it('renders quest path tag for task posts', async () => {
     const taskPost: PostWithQuestTitle = {
       ...basePost,
       id: 't1',
@@ -53,7 +59,6 @@ describe('PostListItem', () => {
         <PostListItem post={taskPost} />
       </BrowserRouter>
     );
-
-    expect(screen.getAllByText('Q::Task:T00').length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Q::Task:T00')).length).toBeGreaterThan(0);
   });
 });

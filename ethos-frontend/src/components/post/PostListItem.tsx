@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { formatDistanceToNow } from 'date-fns';
 import type { PostWithQuestTitle } from '../../utils/displayUtils';
-import { getDisplayTitle, buildSummaryTags } from '../../utils/displayUtils';
+import { getDisplayTitle, buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import SummaryTag from '../ui/SummaryTag';
@@ -32,7 +32,16 @@ const PostListItem: React.FC<PostListItemProps> = ({ post }) => {
     ? formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })
     : '';
   const header = getDisplayTitle(post, post.questTitle);
-  const summaryTags = buildSummaryTags(post);
+  const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
+  useEffect(() => {
+    let active = true;
+    buildSummaryTags(post).then(tags => {
+      if (active) setSummaryTags(tags);
+    });
+    return () => {
+      active = false;
+    };
+  }, [post]);
 
   return (
     <div
