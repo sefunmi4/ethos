@@ -73,7 +73,7 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   // ✅ Render Post types
   if ('type' in contribution) {
     const post = contribution as Post;
-    if (post.tags?.includes('request') && boardId === 'quest-board') {
+    if (post.tags?.includes('request')) {
       return <RequestCard post={post as EnrichedPost} onUpdate={onEdit ? (p) => onEdit(p.id) : undefined} />;
     }
     return (
@@ -90,8 +90,8 @@ const ContributionCard: React.FC<ContributionCardProps> = ({
   if ('headPostId' in contribution) {
     const quest = contribution as EnrichedQuest;
 
-    // Display quests on timeline and post history boards like regular posts for consistency
-    if (boardId === 'timeline-board' || boardId === 'my-posts') {
+    // Display quests on post history board like regular posts for consistency
+    if (boardId === 'my-posts') {
       const headPost = quest.headPost as Post | undefined;
       const enrichedHeadPost = headPost
         ? {
