@@ -13,19 +13,19 @@ describe('requestHelp API', () => {
 
   it('calls the posts request-help route with subtype', async () => {
     const mockPost = axiosWithAuth.post as unknown as jest.Mock;
-    mockPost.mockResolvedValueOnce({ data: { request: { id: 'r1' }, subRequests: [] } });
+    mockPost.mockResolvedValueOnce({ data: { post: { id: 'p1' } } });
 
     const res = await requestHelp('p1', 'task');
-    expect(res.request.id).toBe('r1');
+    expect(res.post.id).toBe('p1');
     expect(mockPost).toHaveBeenCalledWith('/posts/p1/request-help', { subtype: 'task' });
   });
 
   it('calls posts route when removing help request', async () => {
     const mockDelete = axiosWithAuth.delete as unknown as jest.Mock;
-    mockDelete.mockResolvedValueOnce({ data: { success: true } });
+    mockDelete.mockResolvedValueOnce({ data: { post: { id: 'p1' } } });
 
     const res = await removeHelpRequest('p1');
-    expect(res.success).toBe(true);
+    expect(res.post.id).toBe('p1');
     expect(mockDelete).toHaveBeenCalledWith('/posts/p1/request-help');
   });
 });
