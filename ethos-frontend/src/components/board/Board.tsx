@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { fetchBoard, fetchBoardItems } from '../../api/board';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useSocketListener } from '../../hooks/useSocket';
@@ -29,6 +29,39 @@ import type { Post, PostType } from '../../types/postTypes';
 import type { Quest } from '../../types/questTypes';
 
 const EMPTY_FILTER: BoardFilters = {};
+
+interface LocalFilter {
+  itemType: string;
+  postType: PostType | 'request' | 'review' | '';
+  linkType: string;
+}
+
+const resolveTitle = (item: BoardItem): string =>
+  'headPostId' in item || 'content' in item
+    ? getDisplayTitle(item as Quest | Post) ?? ''
+    : item.title ?? '';
+
+const isItemRelatedToQuest = (item: BoardItem, qid: string) =>
+  'headPostId' in item ||
+  (item as Post).questId === qid ||
+  (item as Post).linkedItems?.some(
+    (l) => l.itemType === 'quest' && l.itemId === qid
+  );
+
+const LAYOUT_COMPONENTS: Partial<
+  Record<BoardLayout, React.ComponentType<Record<string, unknown>>>
+> = {
+  grid: GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  list: ListLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  horizontal:
+    GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  kanban: GridLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  graph: GraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  'graph-condensed':
+    GraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
+  'map-graph':
+    MapGraphLayout as unknown as React.ComponentType<Record<string, unknown>>,
+};
 
 const Board: React.FC<BoardProps> = ({
   boardId,
@@ -69,11 +102,6 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  interface LocalFilter {
-    itemType: string;
-    postType: PostType | 'request' | 'review' | '';
-    linkType: string;
-  }
 
   const {
     itemType = '',
@@ -96,107 +124,95 @@ const Board: React.FC<BoardProps> = ({
   }, [itemType, postType, linkType]);
 
   // Keep items state in sync with BoardContext updates
-  const boardItemsKey = board?.id ? (boards[board.id]?.enrichedItems as BoardItem[] | undefined) : undefined;
   useEffect(() => {
     if (!board?.id) return;
-    setItems(boardItemsKey || []);
-  }, [board?.id, boardItemsKey]);
+    setItems((boards[board.id]?.enrichedItems as BoardItem[]) || []);
+  }, [board?.id, boards]);
 
   const userId = user?.id;
+
+  const refreshBoard = useCallback(
+    async (id: string) => {
+      const [boardData, boardItems] = await Promise.all([
+        fetchBoard(id, { enrich: true, userId }),
+        fetchBoardItems(id, { enrich: true, userId }),
+      ]);
+      setBoard(boardData);
+      setItems(boardItems as BoardItem[]);
+    },
+    [userId]
+  );
+
   useEffect(() => {
-    const loadBoard = async () => {
-      if (!boardId) {
-        console.warn('No boardId provided. Skipping board load.');
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const boardData = await fetchBoard(boardId, {
-          enrich: true,
-          userId: user?.id,
-        });
-        const boardItems = await fetchBoardItems(boardId, {
-          enrich: true,
-          userId: user?.id,
-        });
-
-        setSelectedBoard(boardId);
-
-        setBoard(boardData);
-        setItems(boardItems as BoardItem[]);
-      } catch (error) {
-        console.error('Error loading board:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (boardProp) {
       setSelectedBoard(boardProp.id);
       setBoard(boardProp);
       setItems((boardProp.enrichedItems || []) as BoardItem[]);
       setLoading(false);
-    } else {
-      if (boardId) setSelectedBoard(boardId); // set early to avoid flicker
-      loadBoard();
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [boardId, boardProp, setSelectedBoard, userId]);
+
+    if (!boardId) {
+      console.warn('No boardId provided. Skipping board load.');
+      setLoading(false);
+      return;
+    }
+
+    setSelectedBoard(boardId); // set early to avoid flicker
+    setLoading(true);
+    refreshBoard(boardId)
+      .catch((error) => {
+        console.error('Error loading board:', error);
+      })
+      .finally(() => setLoading(false));
+  }, [boardId, boardProp, refreshBoard, setSelectedBoard]);
 
   useSocketListener('board:update', (data) => {
     const payload = data as BoardData;
-    if (!board?.id || payload.id !== board.id) return;
-
-    fetchBoard(board.id, { enrich: true, userId: user?.id }).then(setBoard);
-    fetchBoardItems(board.id, { enrich: true, userId: user?.id }).then((items) =>
-      setItems(items as BoardItem[])
-    );
+    if (board?.id && payload.id === board.id) {
+      refreshBoard(board.id);
+    }
   });
 
+  const effectiveFilter = useMemo(
+    () => ({ ...filter, ...localFilter }),
+    [filter, localFilter]
+  );
+
   const filteredItems = useMemo(() => {
-    const effective = { ...filter, ...localFilter };
     let result = [...items];
+    const { itemType: iType, postType: pType, linkType: lType } = effectiveFilter;
 
-    if (effective.itemType) {
+    if (iType) {
       result = result.filter((item) =>
-        effective.itemType === 'quest'
-          ? 'headPostId' in item
-          : 'content' in item
+        iType === 'quest' ? 'headPostId' in item : 'content' in item
       );
     }
 
-    if (effective.postType) {
-      result = result.filter((item) =>
-        'type' in item && (item as Post).type === effective.postType
+    if (pType) {
+      result = result.filter(
+        (item) => 'type' in item && (item as Post).type === pType
       );
     }
 
-    if (effective.linkType) {
+    if (lType) {
       result = result.filter(
         (item) =>
           'linkedItems' in item &&
-          (item as Post).linkedItems?.some((l) => l.linkType === effective.linkType)
+          (item as Post).linkedItems?.some((l) => l.linkType === lType)
       );
     }
 
-    const resolveTitle = (item: BoardItem): string =>
-      'headPostId' in item || 'content' in item
-        ? getDisplayTitle(item as Quest | Post) ?? ''
-        : item.title ?? '';
-
     return result
-      .filter((item: BoardItem) => {
-        const title = resolveTitle(item);
-        return title.toLowerCase().includes(filterText.toLowerCase());
-      })
+      .filter((item: BoardItem) =>
+        resolveTitle(item).toLowerCase().includes(filterText.toLowerCase())
+      )
       .sort((a, b) => {
         const aVal = sortKey === 'createdAt' ? a.createdAt ?? '' : resolveTitle(a);
         const bVal = sortKey === 'createdAt' ? b.createdAt ?? '' : resolveTitle(b);
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
-  }, [items, filter, localFilter, filterText, sortKey, sortOrder]);
+  }, [items, effectiveFilter, filterText, sortKey, sortOrder]);
 
   const renderableItems = useMemo(
     () => getRenderableBoardItems(filteredItems),
@@ -242,30 +258,24 @@ const Board: React.FC<BoardProps> = ({
   );
   const singleQuest = questItems.length === 1 ? (questItems[0] as Quest) : null;
 
-  const isItemRelatedToQuest = (item: BoardItem, qid: string) =>
-    'headPostId' in item ||
-    (item as Post).questId === qid ||
-    (item as Post).linkedItems?.some(
-      (l) => l.itemType === 'quest' && l.itemId === qid
-    );
-
   const graphEligible = useMemo(() => {
     if (!singleQuest) return false;
     const qid = singleQuest.id;
     return renderableItems.every((item) => isItemRelatedToQuest(item, qid));
   }, [singleQuest, renderableItems]);
 
-  const graphItems = useMemo(() => {
-    if (!singleQuest) return renderableItems;
-    const qid = singleQuest.id;
-    return renderableItems.filter((item) => isItemRelatedToQuest(item, qid));
-  }, [renderableItems, singleQuest]);
+  const graphItems = useMemo<Post[]>(() => {
+    const base = singleQuest
+      ? renderableItems.filter((item) =>
+          isItemRelatedToQuest(item, singleQuest.id)
+        )
+      : renderableItems;
+    return base.filter((item): item is Post => 'type' in item);
+  }, [singleQuest, renderableItems]);
 
   const mapGraphItems = useMemo(
     () =>
-      graphItems.filter(
-        (item): item is Post => 'type' in item && (item as Post).type === 'task'
-      ),
+      graphItems.filter((item) => (item as Post).type === 'task'),
     [graphItems]
   );
 
@@ -296,18 +306,16 @@ const Board: React.FC<BoardProps> = ({
     if (typeof forcedEditable === 'boolean') return forcedEditable;
     return board?.id ? canEditBoard(board.id) : false;
   }, [readOnly, forcedEditable, board?.id, canEditBoard]);
+  const layoutItems = useMemo<Post[]>(() => {
+    if (resolvedStructure === 'map-graph') return mapGraphItems;
+    if (resolvedStructure === 'graph' || resolvedStructure === 'graph-condensed')
+      return graphItems;
+    return renderableItems.filter((it): it is Post => 'type' in it);
+  }, [resolvedStructure, mapGraphItems, graphItems, renderableItems]);
 
-
-  const Layout = {
-    grid: GridLayout,
-    list: ListLayout,
-    horizontal: GridLayout,
-    kanban: GridLayout,
-    graph: GraphLayout,
-    'graph-condensed': GraphLayout,
-    'map-graph': MapGraphLayout,
-  }[resolvedStructure] ?? GridLayout;
-  const LayoutComponent = Layout as React.ComponentType<Record<string, unknown>>;
+  const LayoutComponent = (
+    LAYOUT_COMPONENTS[resolvedStructure] ?? GridLayout
+  ) as React.ComponentType<Record<string, unknown>>;
 
   if (loading) {
     return <Spinner />;
@@ -478,26 +486,13 @@ const Board: React.FC<BoardProps> = ({
             onCancel={() => setEditMode(false)}
             onSave={() => {
               if (!board?.id) return;
-                fetchBoard(board.id, { enrich: true, userId: user?.id }).then((updatedBoard) => {
-                  setBoard(updatedBoard);
-                  setEditMode(false);
-                  fetchBoardItems(board.id, { enrich: true, userId: user?.id }).then((items) =>
-                    setItems(items as BoardItem[])
-                  );
-                });
+              refreshBoard(board.id).then(() => setEditMode(false));
             }}
           />
         </div>
       ) : hasItems ? (
         <LayoutComponent
-          items={
-            resolvedStructure === 'map-graph'
-              ? mapGraphItems
-              : resolvedStructure === 'graph' ||
-                resolvedStructure === 'graph-condensed'
-              ? (graphItems as BoardItem[])
-              : (renderableItems as BoardItem[])
-          }
+          items={layoutItems}
           compact={compact}
           user={user}
           onScrollEnd={onScrollEnd}
