@@ -27,7 +27,7 @@ import type {
 } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-type ReplyType = 'free_speech' | 'task' | 'change';
+type ReplyType = 'free_speech' | 'task' | 'file';
 
 type ReviewState = 'review' | 'pending' | 'reviewed';
 type RequestState = 'request' | 'pending' | 'complete';
@@ -247,7 +247,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </button>
 
         {/* Repost */}
-        {['free_speech', 'task', 'change'].includes(post.type) && (
+        {['free_speech', 'task', 'file'].includes(post.type) && (
           <button
             aria-label="Repost"
             className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}
@@ -258,8 +258,8 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {/* Review status for changes */}
-        {post.type === 'change' && (
+        {/* Review status for files */}
+        {post.type === 'file' && (
           <button
             className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
             onClick={cycleReview}
@@ -293,10 +293,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         )}
 
         {/* Reply / Update */}
-        {post.type === 'change' ? (
+        {post.type === 'file' ? (
           <button
             className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-            onClick={() => goToReplyPageOrToggle('change')}
+            onClick={() => goToReplyPageOrToggle('file')}
             aria-label="Update"
           >
             <FaReply /> {showReplyPanel ? 'Cancel' : 'Update'}

@@ -13,7 +13,7 @@ Q:<quest-slug>:<segment><number>
 - `<segment>` – one letter describing the post type:
   - `T` – task or quest node
   - `L` – log entry
-  - `C` – commit
+  - `F` – file
   - `I` – issue
 - `<number>` – a zero‑padded counter starting at `00` for each segment within a quest.
 

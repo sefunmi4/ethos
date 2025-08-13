@@ -17,7 +17,7 @@ const zeroPad = (num: number): string => num.toString().padStart(2, '0');
 const typeMap: Record<string, string> = {
   quest: 'T',
   task: 'T',
-  change: 'C',
+  file: 'F',
   free_speech: 'L',
 };
 

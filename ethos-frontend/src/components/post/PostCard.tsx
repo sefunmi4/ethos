@@ -162,7 +162,7 @@ const PostCard: React.FC<PostCardProps> = ({
         ...post,
         userRepostId: null,
         helpRequest: false,
-        tags: (post.tags || []).filter(t => t !== (post.type === 'change' ? 'review' : 'request')),
+        tags: (post.tags || []).filter(t => t !== (post.type === 'file' ? 'review' : 'request')),
       } as Post);
     } catch (err) {
       console.error('[PostCard] Failed to cancel help request:', err);

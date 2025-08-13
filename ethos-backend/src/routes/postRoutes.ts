@@ -144,7 +144,7 @@ router.post(
       'free_speech',
       'request',
       'task',
-      'change',
+      'file',
       'review',
     ];
     if (!allowedTypes.includes(type)) {
@@ -163,7 +163,7 @@ router.post(
         parent.authorId === userId ||
         (parent.collaborators || []).some(c => c.userId === userId);
 
-      if (['task', 'change'].includes(parent.type)) {
+      if (['task', 'file'].includes(parent.type)) {
         if (!isParticipant && type !== 'free_speech') {
           res.status(400).json({
             error: 'Only free_speech replies allowed for non-participants',
@@ -174,34 +174,34 @@ router.post(
 
       if (
         parent.type === 'task' &&
-        !['free_speech', 'task', 'change'].includes(type)
+        !['free_speech', 'task', 'file'].includes(type)
       ) {
         res.status(400).json({
-          error: 'Tasks only accept free_speech, task, or change replies',
+          error: 'Tasks only accept free_speech, task, or file replies',
         });
         return;
       }
       if (
-        parent.type === 'change' &&
-        !['free_speech', 'change'].includes(type)
+        parent.type === 'file' &&
+        !['free_speech', 'file'].includes(type)
       ) {
         res
           .status(400)
-          .json({ error: 'Changes only accept change or free_speech replies' });
+          .json({ error: 'Files only accept file or free_speech replies' });
         return;
       }
     }
 
     if (type === 'task') {
-      if (parent && parent.type === 'change') {
+      if (parent && parent.type === 'file') {
         res
           .status(400)
-          .json({ error: 'Tasks cannot reply to changes' });
+          .json({ error: 'Tasks cannot reply to files' });
         return;
       }
-    } else if (type === 'change') {
+    } else if (type === 'file') {
       const hasParent =
-        parent && ['task', 'request', 'change'].includes(parent.type);
+        parent && ['task', 'request', 'file'].includes(parent.type);
       const hasTaskLink = (linkedItems || []).some(
         (li: LinkedItem) => li.itemType === 'post'
       );
@@ -209,21 +209,21 @@ router.post(
         res
           .status(400)
           .json({
-            error: 'Changes must reply to or link a task, request, or change',
+            error: 'Files must reply to or link a task, request, or file',
           });
         return;
       }
     } else if (type === 'request') {
-      if (!subtype || !['task', 'change'].includes(subtype)) {
+      if (!subtype || !['task', 'file'].includes(subtype)) {
         res
           .status(400)
-          .json({ error: 'Request posts must specify subtype "task" or "change"' });
+          .json({ error: 'Request posts must specify subtype "task" or "file"' });
         return;
       }
-      if (subtype === 'change' && (!parent || parent.type !== 'task')) {
+      if (subtype === 'file' && (!parent || parent.type !== 'task')) {
         res
           .status(400)
-          .json({ error: 'Change requests must reply to a task' });
+          .json({ error: 'File requests must reply to a task' });
         return;
       }
     } else if (type === 'review') {
@@ -434,17 +434,17 @@ router.patch(
       if (parent) {
         if (
           parent.type === 'task' &&
-          !['free_speech', 'task', 'change'].includes(post.type)
+          !['free_speech', 'task', 'file'].includes(post.type)
         ) {
           res.status(400).json({
-            error: 'Tasks only accept free_speech, task, or change replies',
+            error: 'Tasks only accept free_speech, task, or file replies',
           });
           return;
         }
-        if (parent.type === 'change' && post.type !== 'change') {
+        if (parent.type === 'file' && post.type !== 'file') {
           res
             .status(400)
-            .json({ error: 'Changes only accept change replies' });
+            .json({ error: 'Files only accept file replies' });
           return;
         }
       }
@@ -860,13 +860,13 @@ router.post(
       return;
     }
 
-    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'change');
-    if (subtype === 'change' && original.type !== 'task') {
-      res.status(400).json({ error: 'Change requests must originate from a task' });
+    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'file');
+    if (subtype === 'file' && original.type !== 'task') {
+      res.status(400).json({ error: 'File requests must originate from a task' });
       return;
     }
 
-    const tag = subtype === 'change' ? 'review' : 'request';
+    const tag = subtype === 'file' ? 'review' : 'request';
     const users = usersStore.read();
 
     const timestamp = new Date().toISOString();
@@ -979,7 +979,7 @@ router.delete(
       return;
     }
 
-    const tag = req.body?.subtype === 'change' ? 'review' : 'request';
+    const tag = req.body?.subtype === 'file' ? 'review' : 'request';
 
     const index = posts.findIndex(
       p =>
@@ -1076,7 +1076,7 @@ router.post(
     const parent = post.replyTo ? posts.find(p => p.id === post.replyTo) : null;
 
     let created: DBPost | null = null;
-    if (parent && parent.type === 'change') {
+    if (parent && parent.type === 'file') {
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -1091,7 +1091,7 @@ router.post(
       created = {
         id: uuidv4(),
         authorId: userId,
-        type: 'change',
+        type: 'file',
         title: makeQuestNodeTitle(post.content),
         content: '',
         visibility: 'public',

@@ -7,7 +7,7 @@ const mockBoard = {
   id: 'quest-board',
   enrichedItems: [
     { id: 'p1', type: 'task', content: 'Task', tags: ['request'] },
-    { id: 'c1', type: 'change', content: 'Change', tags: ['review'] },
+    { id: 'f1', type: 'file', content: 'File', tags: ['review'] },
   ],
 };
 

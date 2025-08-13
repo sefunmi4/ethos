@@ -53,7 +53,7 @@ export function getNodeVisualType(post: Post): NodeVisualType {
     return post.needsHelp === false ? 'request-accepted' : 'request-open';
   }
   if (post.type === 'task') return 'task';
-  if (post.type === 'change' || post.type === 'free_speech') return 'subtask';
+  if (post.type === 'file' || post.type === 'free_speech') return 'subtask';
   return 'task';
 }
 

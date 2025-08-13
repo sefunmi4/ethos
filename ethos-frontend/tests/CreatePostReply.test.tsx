@@ -33,7 +33,7 @@ import CreatePost from '../src/components/post/CreatePost';
 import { addPost } from '../src/api/post';
 
 describe('CreatePost replying', () => {
-  it('offers free speech, task, and change when replying to a task as a participant', () => {
+  it('offers free speech, task, and file when replying to a task as a participant', () => {
     mockUseAuth.mockReturnValue({ user: { id: 'u1' } });
     const reply = { id: 't1', type: 'task', authorId: 'u1' } as Post;
     render(
@@ -44,7 +44,7 @@ describe('CreatePost replying', () => {
     const options = Array.from(
       screen.getByLabelText('Item Type').querySelectorAll('option')
     ).map((o) => o.textContent);
-    expect(options).toEqual(['Free Speech', 'Task', 'Change']);
+    expect(options).toEqual(['Free Speech', 'Task', 'File']);
   });
 
   it('offers only free speech when replying to a task as an outsider', () => {

@@ -59,17 +59,17 @@ const PostPage: React.FC = () => {
     };
   }, [replyBoard]);
 
-  const changeRepliesBoard = useMemo<BoardData | null>(() => {
+  const fileRepliesBoard = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
-    const changes =
+    const files =
       replyBoard.enrichedItems?.filter(
-        (item): item is Post => 'type' in item && (item as Post).type === 'change'
+        (item): item is Post => 'type' in item && (item as Post).type === 'file'
       ) || [];
-    if (!changes.length) return null;
+    if (!files.length) return null;
     return {
       ...replyBoard,
-      items: changes.map(c => c.id),
-      enrichedItems: changes,
+      items: files.map(f => f.id),
+      enrichedItems: files,
     };
   }, [replyBoard]);
 
@@ -213,16 +213,16 @@ const PostPage: React.FC = () => {
           />
         )}
 
-        {post.type === 'change' && post.questId && (
+        {post.type === 'file' && post.questId && (
           <GitFileBrowserInline questId={post.questId} />
         )}
         {post.tags?.includes('review') && parentPost && (
           <PostCard post={parentPost} />
         )}
-        {changeRepliesBoard && (
+        {fileRepliesBoard && (
           <Board
-            boardId={`change-replies-${id}`}
-            board={changeRepliesBoard}
+            boardId={`file-replies-${id}`}
+            board={fileRepliesBoard}
             layout="grid"
             editable={false}
             compact={true}
