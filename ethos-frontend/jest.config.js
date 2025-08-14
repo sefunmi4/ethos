@@ -31,6 +31,7 @@ export default {
     '<rootDir>/tests/ThemeProvider.test.js',
     '<rootDir>/tests/TimelineBoardPostTypes.test.tsx'
     ,'<rootDir>/src/components/controls/ReactionControls.permission.test.tsx'
+    ,'<rootDir>/src/components/ui/SummaryTag.theme.test.tsx'
   ],
   globals: {
     'ts-jest': {

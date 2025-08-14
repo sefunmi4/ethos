@@ -12,7 +12,7 @@ import {
   FaFile
 } from 'react-icons/fa';
 import clsx from 'clsx';
-import { TAG_BASE, TAG_TRUNCATED } from '../../constants/styles';
+import { TAG_LAYOUT } from '../../constants/styles';
 import type { SummaryTagData } from '../../utils/displayUtils';
 
 export type SummaryTagType =
@@ -77,7 +77,10 @@ const SummaryTag: React.FC<SummaryTagProps> = ({
   const Icon = icons[type] ?? FaStickyNote;
   const colorClass = colors[type] || colors.type;
 
-  const baseClass = truncate ? TAG_TRUNCATED : TAG_BASE;
+  const baseClass = clsx(
+    TAG_LAYOUT,
+    truncate && 'max-w-[150px] whitespace-nowrap overflow-hidden text-ellipsis'
+  );
 
   if (username && usernameLink && detailLink) {
     return (
