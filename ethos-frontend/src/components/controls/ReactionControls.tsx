@@ -79,7 +79,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const [reviewState, setReviewState] = useState<ReviewState>('review');
   const [requestState, setRequestState] = useState<RequestState>('request');
 
-  const [showReplyPanel, setShowReplyPanel] = useState(false);
+  const [showReplyPanel] = useState(false);
   const [, setReplyInitialType] = useState<ReplyType>('free_speech');
 
   const navigate = useNavigate();
@@ -223,28 +223,9 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         return;
       }
 
-      const shouldNavigate = post.tags?.includes('request') || isTimelineBoard || isPostBoard;
-      if (shouldNavigate) {
-        navigate(ROUTES.POST(post.id) + '?reply=1');
-        return;
-      }
-
-      setShowReplyPanel(prev => {
-        const next = !prev;
-        onReplyToggle?.(next);
-        return next;
-      });
+      navigate(ROUTES.POST(post.id) + '?reply=1');
     },
-    [
-      isPostBoard,
-      isTimelineBoard,
-      navigate,
-      onReplyToggle,
-      post.id,
-      post.tags,
-      replyOverride,
-      user?.id,
-    ]
+    [navigate, post.id, replyOverride, user?.id]
   );
 
   // ---------- Render ----------

@@ -51,7 +51,13 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const currentUserId = user?.id;
   const isParticipant = replyTo
     ? replyTo.authorId === currentUserId ||
-      (replyTo.collaborators || []).some((c) => c.userId === currentUserId)
+      (replyTo.collaborators || []).some((c) => c.userId === currentUserId) ||
+      (currentUserId
+        ? !!(
+            replyTo.reactions?.request?.[currentUserId] ||
+            replyTo.reactions?.review?.[currentUserId]
+          )
+        : false)
     : false;
 
   const [type, setType] = useState<PostType>(
