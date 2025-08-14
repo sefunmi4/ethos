@@ -89,6 +89,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const isPostHistory = ctxBoardId === 'my-posts';
   const isPostBoard = isPostHistory || ctxBoardType === 'post';
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
+  const isAuthor = user?.id === post.authorId;
 
   // ---------- Fetch reactions on mount/changes ----------
   useEffect(() => {
@@ -279,59 +280,83 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           </button>
         )}
 
-        {/* Review status for files */}
+        {/* Review status for files or reply for non-authors */}
         {post.type === 'file' && (
-          <button
-            className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
-            onClick={cycleReview}
-            disabled={loading}
-            aria-label="Review Status"
-          >
-            <FaClipboardCheck />
-            {reviewState === 'review'
-              ? 'Review'
-              : reviewState === 'pending'
-              ? 'Pending'
-              : 'Reviewed'}
-          </button>
+          isAuthor ? (
+            <button
+              className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
+              onClick={cycleReview}
+              disabled={loading}
+              aria-label="Review Status"
+            >
+              <FaClipboardCheck />
+              {reviewState === 'review'
+                ? 'Review'
+                : reviewState === 'pending'
+                ? 'Pending'
+                : 'Reviewed'}
+            </button>
+          ) : (
+            <button
+              className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
+              onClick={() => goToReplyPageOrToggle('free_speech')}
+              aria-label="Reply"
+            >
+              <FaReply />
+              {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
+            </button>
+          )
         )}
 
-        {/* Request status for tasks */}
+        {/* Request status for tasks or reply for non-authors */}
         {post.type === 'task' && (
-          <button
-            className={clsx('flex items-center gap-1', requestState !== 'request' && 'text-indigo-600')}
-            onClick={cycleRequest}
-            disabled={loading}
-            aria-label="Request Status"
-          >
-            <FaHandsHelping />
-            {requestState === 'request'
-              ? 'Request'
-              : requestState === 'pending'
-              ? 'Pending'
-              : 'Complete'}
-          </button>
+          isAuthor ? (
+            <button
+              className={clsx('flex items-center gap-1', requestState !== 'request' && 'text-indigo-600')}
+              onClick={cycleRequest}
+              disabled={loading}
+              aria-label="Request Status"
+            >
+              <FaHandsHelping />
+              {requestState === 'request'
+                ? 'Request'
+                : requestState === 'pending'
+                ? 'Pending'
+                : 'Complete'}
+            </button>
+          ) : (
+            <button
+              className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
+              onClick={() => goToReplyPageOrToggle('free_speech')}
+              aria-label="Reply"
+            >
+              <FaReply />
+              {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
+            </button>
+          )
         )}
 
         {/* Reply / Update */}
-        {post.type === 'file' ? (
+        {(post.type === 'file' && isAuthor) || (post.type === 'task' && isAuthor) || post.type === 'free_speech' ? (
           <button
             className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-            onClick={() => goToReplyPageOrToggle('file')}
-            aria-label="Update"
-          >
-            <FaReply /> {showReplyPanel ? 'Cancel' : 'Update'}
-          </button>
-        ) : (
-          <button
-            className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-            onClick={() => goToReplyPageOrToggle('free_speech')}
-            aria-label="Reply"
+            onClick={() =>
+              goToReplyPageOrToggle(
+                post.type === 'file' && isAuthor ? 'file' : 'free_speech'
+              )
+            }
+            aria-label={post.type === 'file' && isAuthor ? 'Update' : 'Reply'}
           >
             <FaReply />
-            {replyOverride ? replyOverride.label : (showReplyPanel ? 'Cancel' : 'Reply')}
+            {replyOverride
+              ? replyOverride.label
+              : showReplyPanel
+              ? 'Cancel'
+              : post.type === 'file' && isAuthor
+              ? 'Update'
+              : 'Reply'}
           </button>
-        )}
+        ) : null}
 
         {/* Timestamp */}
         {timestamp && (

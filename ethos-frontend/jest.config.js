@@ -30,6 +30,7 @@ export default {
     '<rootDir>/tests/PostTypeFilterOptions.test.tsx',
     '<rootDir>/tests/ThemeProvider.test.js',
     '<rootDir>/tests/TimelineBoardPostTypes.test.tsx'
+    ,'<rootDir>/src/components/controls/ReactionControls.permission.test.tsx'
   ],
   globals: {
     'ts-jest': {
