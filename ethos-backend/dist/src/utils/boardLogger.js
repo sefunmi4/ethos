@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logBoardAction = logBoardAction;
 const uuid_1 = require("uuid");
-const stores_1 = require("../models/stores");
+const db_1 = require("../db");
 function logBoardAction(boardId, action, userId) {
-    const logs = stores_1.boardLogsStore.read();
-    logs.push({ id: (0, uuid_1.v4)(), boardId, action, userId, timestamp: new Date().toISOString() });
-    stores_1.boardLogsStore.write(logs);
+    if (!db_1.usePg)
+        return;
+    db_1.pool
+        .query('INSERT INTO board_logs (id, boardId, action, userId, timestamp) VALUES ($1,$2,$3,$4,NOW())', [(0, uuid_1.v4)(), boardId, action, userId])
+        .catch((err) => console.error('Failed to log board action', err));
 }

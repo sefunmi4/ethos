@@ -8,7 +8,6 @@ import type {
   EnrichedCollaborator,
 } from '../types/enriched';
 
-import { usersStore, postsStore, questsStore } from '../models/stores';
 import { formatPosts } from '../logic/postFormatter';
 
 
@@ -106,8 +105,8 @@ export const enrichUser = (
 export const enrichPost = (
   post: DBPost,
   {
-    users = usersStore.read(),
-    quests = questsStore.read(),
+    users = [],
+    quests = [],
     currentUserId = null,
   }: {
     users?: DBUser[];
@@ -123,8 +122,8 @@ export const enrichPost = (
  */
 export const enrichPosts = (
   posts: DBPost[],
-  users: DBUser[] = usersStore.read(),
-  quests: DBQuest[] = questsStore.read(),
+  users: DBUser[] = [],
+  quests: DBQuest[] = [],
   currentUserId: string | null = null
 ): EnrichedPost[] => {
   // Build lookup maps once
@@ -168,16 +167,18 @@ export const enrichPosts = (
 export const enrichQuest = (
   quest: DBQuest,
   {
-    posts = postsStore.read(),
-    users = usersStore.read(),
+    posts = [],
+    users = [],
+    quests = [],
     currentUserId = null,
   }: {
     posts?: DBPost[];
     users?: DBUser[];
+    quests?: DBQuest[];
     currentUserId?: string | null;
   } = {}
 ): EnrichedQuest => {
-  const allPosts = enrichPosts(posts, users, questsStore.read(), currentUserId);
+  const allPosts = enrichPosts(posts, users, quests, currentUserId);
   const normalizedQuest = normalizeQuest(quest);
   const logs = allPosts.filter(
     (p) => p.questId === quest.id && p.type === 'free_speech' && p.replyTo
@@ -238,15 +239,17 @@ export const enrichQuest = (
 export const enrichQuests = (
   quests: DBQuest[],
   {
-    posts = postsStore.read(),
-    users = usersStore.read(),
+    posts = [],
+    users = [],
+    quests: allQuests = [],
     currentUserId = null,
   }: {
     posts?: DBPost[];
     users?: DBUser[];
+    quests?: DBQuest[];
     currentUserId?: string | null;
   } = {}
-): EnrichedQuest[] => quests.map((q) => enrichQuest(q, { posts, users, currentUserId }));
+): EnrichedQuest[] => quests.map((q) => enrichQuest(q, { posts, users, quests: allQuests, currentUserId }));
 
 /**
  * Enrich a board by resolving its items to posts or quests.
@@ -254,9 +257,9 @@ export const enrichQuests = (
 export const enrichBoard = (
   board: DBBoard,
   {
-    posts = postsStore.read(),
-    quests = questsStore.read(),
-    users = usersStore.read(),
+    posts = [],
+    quests = [],
+    users = [],
     currentUserId = null,
   }: {
     posts?: DBPost[];
@@ -306,12 +309,12 @@ export const enrichBoard = (
     .map((id) => {
       const post = posts.find((p) => p.id === id);
       if (post) {
-        return enrichPost(post, { users, currentUserId });
+        return enrichPost(post, { users, quests, currentUserId });
       }
 
       const quest = quests.find((q) => q.id === id);
       if (quest) {
-        return enrichQuest(quest, { posts, users, currentUserId });
+        return enrichQuest(quest, { posts, users, quests, currentUserId });
       }
 
       return null;

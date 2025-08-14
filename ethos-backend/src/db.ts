@@ -124,6 +124,13 @@ export async function initializeDatabase(): Promise<void> {
       createdat TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(postid, userid, type)
     );
+    CREATE TABLE IF NOT EXISTS board_logs (
+      id UUID PRIMARY KEY,
+      boardId TEXT,
+      action TEXT,
+      userId TEXT,
+      timestamp TIMESTAMPTZ DEFAULT NOW()
+    );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
