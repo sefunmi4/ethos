@@ -1,16 +1,8 @@
 import request from 'supertest';
 import express from 'express';
 
-import { setupTestDb } from './testDb';
-import { pool } from '../src/db';
-
-jest.mock('../src/models/stores', () => ({
-  usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]) },
-  questsStore: { read: jest.fn(() => []) },
-  postsStore: { read: jest.fn(() => []) },
-  reactionsStore: { read: jest.fn(() => []) },
-  notificationsStore: { read: jest.fn(() => []) },
-  boardsStore: { read: jest.fn(() => []) },
+jest.mock('../src/db', () => ({
+  pool: { query: jest.fn() },
 }));
 
 jest.mock('../src/middleware/authMiddleware', () => ({
@@ -20,20 +12,20 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-let app: express.Express;
+jest.mock('../src/models/memoryStores', () => ({
+  postsStore: { read: jest.fn(() => []), write: jest.fn() },
+  usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
+  reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
+  questsStore: { read: jest.fn(() => []), write: jest.fn() },
+  notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
+}));
 
-beforeAll(async () => {
-  await setupTestDb();
-  const postRoutes = (await import('../src/routes/postRoutes')).default;
-  app = express();
-  app.use(express.json());
-  app.use('/posts', postRoutes);
-});
+import postRoutes from '../src/routes/postRoutes';
+import { pool } from '../src/db';
 
-beforeEach(async () => {
-  await pool.query('TRUNCATE reactions');
-  await pool.query('TRUNCATE posts');
-});
+const app = express();
+app.use(express.json());
+app.use('/posts', postRoutes);
 
 describe('Postgres routes', () => {
   const postId = '11111111-1111-1111-1111-111111111111';
