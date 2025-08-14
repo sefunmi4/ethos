@@ -27,6 +27,15 @@ export function disablePg(): void {
 }
 
 /**
+ * Provide a custom pool for tests. This forces Postgres mode and replaces the
+ * global pool instance so tests can run against an in-memory database.
+ */
+export function setTestPool(testPool: Pool): void {
+  pool = testPool;
+  usePg = true;
+}
+
+/**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
