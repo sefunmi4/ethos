@@ -73,6 +73,7 @@ const Board: React.FC<BoardProps> = ({
   readOnly = false,
   compact = false,
   showCreate = true,
+  createLabel,
   hideControls = true,
   filter = EMPTY_FILTER,
   onScrollEnd,
@@ -102,6 +103,15 @@ const Board: React.FC<BoardProps> = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  const createBtnLabel = createLabel ||
+    (board?.boardType === 'quest'
+      ? 'Quest'
+      : board?.id === 'quest-board'
+      ? 'Request'
+      : ['timeline-board', 'my-posts'].includes(board?.id || '')
+      ? 'Post'
+      : 'Item');
 
   const {
     itemType = '',
@@ -433,18 +443,8 @@ const Board: React.FC<BoardProps> = ({
               onClick={() => setShowCreateForm((p) => !p)}
             >
               {showCreateForm
-                ? board?.boardType === 'quest'
-                  ? '- Cancel Quest'
-                  : board?.id === 'quest-board'
-                  ? '- Cancel Request'
-                  : '- Cancel Item'
-                : board?.boardType === 'quest'
-                ? '+ Add Quest'
-                : board?.id === 'quest-board'
-                ? '+ Add Request'
-                : ['timeline-board', 'my-posts'].includes(board?.id || '')
-                ? '+ Add Post'
-                : '+ Add Item'}
+                ? `- Cancel ${createBtnLabel}`
+                : `+ Add ${createBtnLabel}`}
             </Button>
           )}
           {editable && (

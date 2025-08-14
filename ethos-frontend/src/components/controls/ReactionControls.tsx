@@ -50,6 +50,8 @@ interface ReactionControlsProps {
   timestamp?: string;
   /** Controlled expand state */
   expanded?: boolean;
+  /** Hide the reply button */
+  hideReply?: boolean;
 }
 
 const INITIAL_COUNTS: ReactionCountMap = { like: 0, heart: 0, repost: 0 };
@@ -64,6 +66,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   onReplyToggle,
   timestamp,
   expanded: expandedProp,
+  hideReply,
 }) => {
   // ---------- UI / local state ----------
   const [reactions, setReactions] = useState<{ like: boolean; heart: boolean; repost: boolean }>({
@@ -297,14 +300,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
                 : 'Reviewed'}
             </button>
           ) : (
-            <button
-              className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-              onClick={() => goToReplyPageOrToggle('free_speech')}
-              aria-label="Reply"
-            >
-              <FaReply />
-              {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
-            </button>
+            !hideReply && (
+              <button
+                className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
+                onClick={() => goToReplyPageOrToggle('free_speech')}
+                aria-label="Reply"
+              >
+                <FaReply />
+                {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
+              </button>
+            )
           )
         )}
 
@@ -325,19 +330,21 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
                 : 'Complete'}
             </button>
           ) : (
-            <button
-              className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
-              onClick={() => goToReplyPageOrToggle('free_speech')}
-              aria-label="Reply"
-            >
-              <FaReply />
-              {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
-            </button>
+            !hideReply && (
+              <button
+                className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
+                onClick={() => goToReplyPageOrToggle('free_speech')}
+                aria-label="Reply"
+              >
+                <FaReply />
+                {replyOverride ? replyOverride.label : showReplyPanel ? 'Cancel' : 'Reply'}
+              </button>
+            )
           )
         )}
 
         {/* Reply / Update */}
-        { post.type === 'free_speech' && (
+        {post.type === 'free_speech' && !hideReply && (
           <button
             className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
             onClick={() =>
@@ -345,7 +352,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
                 post.type === 'file' && isAuthor ? 'file' : 'free_speech'
               )
             }
-            aria-label={ 'Reply'}
+            aria-label={'Reply'}
           >
             <FaReply />
             {replyOverride

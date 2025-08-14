@@ -71,6 +71,8 @@ interface PostCardProps {
   boardId?: string;
   /** Controlled expanded state */
   expanded?: boolean;
+  /** Hide reply reaction button */
+  hideReplyButton?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -89,6 +91,7 @@ const PostCard: React.FC<PostCardProps> = ({
   expanded,
   showDetails = false,
   onToggleExpand,
+  hideReplyButton,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
@@ -307,6 +310,7 @@ const PostCard: React.FC<PostCardProps> = ({
           replyOverride={replyOverride}
           boardId={ctxBoardId || undefined}
           expanded={expandedView}
+          hideReply={hideReplyButton}
         />
       </div>
     );
@@ -387,6 +391,7 @@ const PostCard: React.FC<PostCardProps> = ({
         boardId={ctxBoardId || undefined}
         timestamp={!isQuestBoardRequest ? timestamp : undefined}
         expanded={expandedView}
+        hideReply={hideReplyButton}
       />
     </div>
   );
