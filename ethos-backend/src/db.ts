@@ -32,15 +32,11 @@ function disablePg(): void {
  */
 async function initializeDatabase(): Promise<void> {
   if (!usePg) return;
-
   try {
-    // Verify the connection is usable. If it fails we gracefully fall back to
-    // the JSON store so tests or offline environments can continue working.
     await pool.query('SELECT 1');
-  } catch (_err) {
-    console.warn('PostgreSQL not available, using JSON store instead');
-    disablePg();
-    return;
+  } catch (err) {
+    console.error('Failed to connect to PostgreSQL', err);
+    throw err;
   }
 
   await pool.query(`

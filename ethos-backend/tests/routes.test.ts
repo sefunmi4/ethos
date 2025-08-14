@@ -3,7 +3,6 @@ import express from 'express';
 
 jest.mock('../src/db', () => ({
   pool: { query: jest.fn() },
-  usePg: true,
 }));
 
 jest.mock('../src/middleware/authMiddleware', () => ({
@@ -13,7 +12,7 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-jest.mock('../src/models/stores', () => ({
+jest.mock('../src/models/memoryStores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },

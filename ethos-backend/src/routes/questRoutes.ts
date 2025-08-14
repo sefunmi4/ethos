@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { boardsStore, questsStore, projectsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
-import { pool, usePg } from '../db';
+import { pool } from '../db';
+
+const usePg = true;
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';

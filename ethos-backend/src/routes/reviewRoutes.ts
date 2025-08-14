@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { reviewsStore } from '../models/stores';
+import { reviewsStore } from '../models/memoryStores';
 import { pool, usePg } from '../db';
 import type { AuthenticatedRequest } from '../types/express';
 import type { DBReview } from '../types/db';
