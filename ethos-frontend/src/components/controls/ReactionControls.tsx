@@ -15,7 +15,7 @@ import {
 import { ROUTES } from '../../constants/routes';
 import TaskCard from '../quest/TaskCard';
 
-import { updateReaction, fetchReactions } from '../../api/post';
+import { updateReaction, fetchReactions, requestHelp, removeHelpRequest } from '../../api/post';
         
 import type {
   Post,
@@ -27,8 +27,6 @@ import type { User } from '../../types/userTypes';
 
 type ReplyType = 'free_speech' | 'task' | 'file';
 
-type ReviewState = 'review' | 'pending' | 'reviewed';
-type RequestState = 'request' | 'pending' | 'complete';
 
 interface ReactionControlsProps {
   post: Post;
@@ -72,8 +70,14 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   });
   const [counts, setCounts] = useState<ReactionCountMap>(INITIAL_COUNTS);
   const [loading, setLoading] = useState(true);
-  const [reviewState, setReviewState] = useState<ReviewState>('review');
-  const [requestState, setRequestState] = useState<RequestState>('request');
+  const [helpRequested, setHelpRequested] = useState<boolean>(
+    !!post.helpRequest || post.tags?.includes('request') || false
+  );
+  const [reviewRequested, setReviewRequested] = useState<boolean>(
+    post.tags?.includes('review') || false
+  );
+  const [helpLoading, setHelpLoading] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
 
   const [showReplyPanel] = useState(false);
   const [, setReplyInitialType] = useState<ReplyType>('free_speech');
@@ -107,10 +111,10 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
           heart: userReactions.some(r => r.type === 'heart'),
           repost: userReactions.some(r => r.type === 'repost'),
         });
-        const review = userReactions.find(r => r.type === 'review');
-        const request = userReactions.find(r => r.type === 'request');
-        setReviewState((review?.state as ReviewState) || 'review');
-        setRequestState((request?.state as RequestState) || 'request');
+        const review = userReactions.some(r => r.type === 'review');
+        const request = userReactions.some(r => r.type === 'request');
+        setReviewRequested(review || post.tags?.includes('review') || false);
+        setHelpRequested(request || !!post.helpRequest || post.tags?.includes('request') || false);
       } catch (err) {
         console.error('[ReactionControls] Failed to fetch data:', err);
       } finally {
@@ -150,56 +154,59 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     [post.id, reactions, user?.id, navigate]
   );
 
-  const cycleReview = useCallback(async () => {
+  const handleRequestReview = useCallback(async () => {
     if (!user?.id) {
       navigate(ROUTES.LOGIN);
       return;
     }
-    const prev = reviewState;
-    const next: ReviewState =
-      reviewState === 'review'
-        ? 'pending'
-        : reviewState === 'pending'
-        ? 'reviewed'
-        : 'review';
-    setReviewState(next);
+    setReviewLoading(true);
     try {
-      if (next === 'review') {
-        await updateReaction(post.id, 'review', false);
+      if (reviewRequested) {
+        await removeHelpRequest(post.id, 'file');
+        onUpdate?.({
+          ...post,
+          tags: (post.tags || []).filter(t => t !== 'review' && t !== 'request'),
+          helpRequest: false,
+        } as Post);
+        setReviewRequested(false);
       } else {
-        await updateReaction(post.id, 'review', true, next);
+        const res = await requestHelp(post.id, 'file');
+        onUpdate?.(res.post);
+        setReviewRequested(true);
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to toggle review:', err);
-      setReviewState(prev);
+      console.error('[ReactionControls] Failed to toggle review request:', err);
+    } finally {
+      setReviewLoading(false);
     }
-  }, [post.id, reviewState, user?.id, navigate]);
+  }, [user?.id, navigate, reviewRequested, post.id, post, onUpdate]);
 
-  const cycleRequest = useCallback(async () => {
+  const handleRequestHelp = useCallback(async () => {
     if (!user?.id) {
       navigate(ROUTES.LOGIN);
       return;
     }
-    const prev = requestState;
-    const next: RequestState =
-      requestState === 'request'
-        ? 'pending'
-        : requestState === 'pending'
-        ? 'complete'
-        : 'request';
-    setRequestState(next);
-
+    setHelpLoading(true);
     try {
-      if (next === 'request') {
-        await updateReaction(post.id, 'request', false);
+      if (helpRequested) {
+        await removeHelpRequest(post.id, 'task');
+        onUpdate?.({
+          ...post,
+          helpRequest: false,
+          tags: (post.tags || []).filter(t => t !== 'request'),
+        } as Post);
+        setHelpRequested(false);
       } else {
-        await updateReaction(post.id, 'request', true, next);
+        const res = await requestHelp(post.id, 'task');
+        onUpdate?.(res.post);
+        setHelpRequested(true);
       }
     } catch (err) {
-      console.error('[ReactionControls] Failed to toggle request:', err);
-      setRequestState(prev);
+      console.error('[ReactionControls] Failed to toggle help request:', err);
+    } finally {
+      setHelpLoading(false);
     }
-  }, [post.id, requestState, user?.id, navigate]);
+  }, [user?.id, navigate, helpRequested, post.id, post, onUpdate]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {
@@ -258,17 +265,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         {post.type === 'file' && (
           isAuthor ? (
             <button
-              className={clsx('flex items-center gap-1', reviewState !== 'review' && 'text-indigo-600')}
-              onClick={cycleReview}
-              disabled={loading}
-              aria-label="Review Status"
+              className={clsx('flex items-center gap-1', reviewRequested && 'text-indigo-600')}
+              onClick={handleRequestReview}
+              disabled={loading || reviewLoading}
+              aria-label={reviewRequested ? 'Requested Review' : 'Request Review'}
             >
               <FaClipboardCheck />
-              {reviewState === 'review'
-                ? 'Review'
-                : reviewState === 'pending'
-                ? 'Pending'
-                : 'Reviewed'}
+              {reviewRequested ? 'Requested' : 'Request Review'}
             </button>
           ) : (
             !hideReply && (
@@ -288,17 +291,13 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         {post.type === 'task' && (
           isAuthor ? (
             <button
-              className={clsx('flex items-center gap-1', requestState !== 'request' && 'text-indigo-600')}
-              onClick={cycleRequest}
-              disabled={loading}
-              aria-label="Request Status"
+              className={clsx('flex items-center gap-1', helpRequested && 'text-indigo-600')}
+              onClick={handleRequestHelp}
+              disabled={loading || helpLoading}
+              aria-label={helpRequested ? 'Help Requested' : 'Request Help'}
             >
               <FaHandsHelping />
-              {requestState === 'request'
-                ? 'Request'
-                : requestState === 'pending'
-                ? 'Pending'
-                : 'Complete'}
+              {helpRequested ? 'Requested' : 'Request Help'}
             </button>
           ) : (
             !hideReply && (
