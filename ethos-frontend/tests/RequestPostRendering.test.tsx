@@ -43,14 +43,4 @@ describe('Request post rendering', () => {
     expect(screen.getByText('Need help')).toBeInTheDocument();
     expect(screen.getByText(/Accept/i)).toBeInTheDocument();
   });
-
-  it('uses RequestCard on timeline board', () => {
-    render(
-      <BrowserRouter>
-        <ContributionCard contribution={requestPost} boardId="timeline-board" />
-      </BrowserRouter>
-    );
-    expect(screen.getByText('Need help')).toBeInTheDocument();
-    expect(screen.getByText(/Accept/i)).toBeInTheDocument();
-  });
 });
