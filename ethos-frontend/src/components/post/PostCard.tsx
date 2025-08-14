@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -65,6 +65,8 @@ interface PostCardProps {
   initialShowReplies?: boolean;
   /** Show detailed view including reply chain */
   showDetails?: boolean;
+  /** Callback when expansion toggled */
+  onToggleExpand?: () => void;
   /** Board ID where this post is being rendered */
   boardId?: string;
   /** Controlled expanded state */
@@ -85,10 +87,14 @@ const PostCard: React.FC<PostCardProps> = ({
   className = '',
   boardId,
   expanded,
+  showDetails = false,
+  onToggleExpand,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
-  const [internalExpandedView, setInternalExpandedView] = useState(post.type === 'task');
+  const [internalExpandedView, setInternalExpandedView] = useState(
+    post.type === 'task' || showDetails
+  );
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -185,15 +191,6 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
       </div>
       <div className="flex items-center gap-2">
-        {isLong && (
-          <button
-            onClick={() => setInternalExpandedView(v => !v)}
-            aria-label={expandedView ? 'Collapse view' : 'Expand view'}
-            className="p-1 hover:text-accent"
-          >
-            {expandedView ? <FaCompress /> : <FaExpand />}
-          </button>
-        )}
         <ActionMenu
           id={post.id}
           type="post"
@@ -204,6 +201,16 @@ const PostCard: React.FC<PostCardProps> = ({
           content={post.content}
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />
+        {(onToggleExpand || headerOnly || isLong) && (
+          <button
+            onClick={() =>
+              onToggleExpand ? onToggleExpand() : setInternalExpandedView(v => !v)
+            }
+            className="text-xs hover:text-accent"
+          >
+            {expandedView ? 'Collapse View' : 'Expand View'}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -265,7 +272,7 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   }
 
-  if (headerOnly) {
+  if (headerOnly && !expandedView) {
     return (
       <div id={post.id} className={cardClasses}>
         {renderHeader()}
