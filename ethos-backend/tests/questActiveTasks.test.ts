@@ -8,12 +8,12 @@ jest.mock('../src/middleware/authOptional', () => ({
   default: (_req: any, _res: any, next: any) => next(),
 }));
 
-jest.mock('../src/models/stores', () => ({
+jest.mock('../src/models/memoryStores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-import { postsStore, questsStore } from '../src/models/stores';
+import { postsStore, questsStore } from '../src/models/memoryStores';
 
 const postsStoreMock = postsStore as jest.Mocked<any>;
 const questsStoreMock = questsStore as jest.Mocked<any>;

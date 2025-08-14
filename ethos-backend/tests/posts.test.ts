@@ -12,7 +12,7 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-jest.mock('../src/models/stores', () => ({
+jest.mock('../src/models/memoryStores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   usersStore: { read: jest.fn(() => []), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
@@ -20,7 +20,7 @@ jest.mock('../src/models/stores', () => ({
   notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-import { postsStore } from '../src/models/stores';
+import { postsStore } from '../src/models/memoryStores';
 
 const postsStoreMock = postsStore as jest.Mocked<any>;
 

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
+import { boardsStore, postsStore, questsStore, usersStore } from '../models/memoryStores';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import { pool } from '../db';
@@ -185,11 +186,117 @@ router.get(
         });
       }
 
-      res.json(boards);
-      return;
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
+        res.json(boards);
+        return;
+      } catch (err) {
+        console.error(err);
+        disablePg();
+        // fall back to JSON store below
+      }
+    }
+
+    let boards = boardsStore.read();
+    if (boards.length === 0) {
+      boards = [];
+      boardsStore.write(boards);
+    }
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    let result: (BoardData | EnrichedBoard)[] = boards.map(board => {
+      if (userId && board.id === 'my-posts') {
+        const filtered = posts
+          .filter(
+            p =>
+              p.authorId === userId &&
+              p.systemGenerated !== true
+          )
+          .sort((a, b) =>
+            toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt)
+          )
+          .map(p => p.id);
+        return { ...board, items: filtered };
+      }
+
+      if (userId && board.id === 'my-quests') {
+        const filtered = quests
+          .filter(q => q.authorId === userId)
+          .map(q => q.id);
+        return { ...board, items: filtered };
+      }
+
+      if (board.id === 'quest-board') {
+        const items = getQuestBoardRequests(posts);
+        return { ...board, items };
+      }
+
+      if (board.id === 'timeline-board') {
+        const { items } = getTimelineBoardItems(posts, quests, userId);
+        return { ...board, items };
+      }
+
+      return board;
+    });
+
+    if (enrich === 'true') {
+      result = (result as BoardData[]).map((board) => {
+        const enriched = enrichBoard(board, { posts, quests });
+        return {
+          ...enriched,
+          layout: board.layout ?? 'grid',
+          items: board.items,
+          enrichedItems: enriched.enrichedItems,
+        } as EnrichedBoard;
+      });
+    }
+
+    if (featured === 'true') {
+      result = result.filter(board => board.featured === true); 
+    }
+
+  res.json(result);
+  }
+);
+
+//
+// ✅ GET thread board for a post
+//
+router.get(
+  '/thread/:postId',
+  (
+    req: Request<{ postId: string }, any, undefined, { enrich?: string; page?: string; limit?: string }>,
+    res: Response
+  ): void => {
+    const { postId } = req.params;
+    const { enrich, page = '1', limit } = req.query;
+
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const pageNum = parseInt(page as string, 10) || 1;
+    const pageSize = parseInt(limit as string, 10) || DEFAULT_PAGE_SIZE;
+    const start = (pageNum - 1) * pageSize;
+    const end = start + pageSize;
+
+    const replies = posts
+      .filter(p => p.replyTo === postId)
+      .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
+      .slice(start, end);
+
+    const board: BoardData = {
+      id: `thread-${postId}`,
+      title: 'Thread',
+      boardType: 'post',
+      items: replies.map(r => r.id),
+      layout: 'grid',
+      createdAt: new Date().toISOString(),
+      userId: '',
+    };
+
+    if (enrich === 'true') {
+      const enriched = enrichBoard(board, { posts, quests });
+      res.json(enriched);
       return;
     }
   }
@@ -242,48 +349,95 @@ router.get(
       const end = start + pageSize;
       const pagedBoard: BoardData = { ...board, items: boardItems.slice(start, end) };
 
-      if (enrich === 'true') {
-        const [postsRes, questsRes] = await Promise.all([
-          pool.query('SELECT * FROM posts'),
-          pool.query('SELECT * FROM quests'),
-        ]);
-        const posts: DBPost[] = postsRes.rows.map((r: any) => ({
-          ...r,
-          authorId: r.authorid,
-          createdAt: r.createdat,
-          boardId: r.boardid,
-          timestamp: r.timestamp,
-        }));
-        const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
-          ...r,
-          authorId: r.authorid,
-          createdAt: r.createdat,
-        }));
-        const enriched = enrichBoard(pagedBoard, { posts, quests });
-        const resultBoard: EnrichedBoard = {
-          ...enriched,
-          layout: board.layout ?? 'grid',
-          enrichedItems: enriched.enrichedItems.map((item) => {
-            if ('id' in item && highlightMap[item.id]) {
-              (item as any).highlight = true;
-            }
-            return item;
-          }),
-        };
-        res.json(resultBoard);
-      } else {
-        res.json(pagedBoard);
+        if (enrich === 'true') {
+          const [postsRes, questsRes] = await Promise.all([
+            pool.query('SELECT * FROM posts'),
+            pool.query('SELECT * FROM quests'),
+          ]);
+          const posts: DBPost[] = postsRes.rows.map((r: any) => ({
+            ...r,
+            authorId: r.authorid,
+            createdAt: r.createdat,
+            boardId: r.boardid,
+            timestamp: r.timestamp,
+          }));
+          const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
+            ...r,
+            authorId: r.authorid,
+            createdAt: r.createdat,
+          }));
+          const enriched = enrichBoard(board, { posts, quests, currentUserId: userId || null });
+          res.json({ ...enriched, layout: board.layout ?? 'grid', items: board.items });
+        } else {
+          res.json(board);
+        }
+        return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
       }
-      return;
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
+    }
+
+    const boards = boardsStore.read();
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const board = boards.find(b => b.id === id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
       return;
     }
+    const pageNum = parseInt(page as string, 10) || 1;
+    const pageSize = parseInt(limit as string, 10) || DEFAULT_PAGE_SIZE;
+    const start = (pageNum - 1) * pageSize;
+    const end = start + pageSize;
+    let boardItems = board.items;
+    let highlightMap: Record<string, boolean> = {};
+    if (board.id === 'quest-board') {
+      boardItems = getQuestBoardRequests(posts);
+    } else if (board.id === 'timeline-board') {
+      const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
+      boardItems = items;
+      highlightMap = hm;
+      } else if (userId && board.id === 'my-posts') {
+        boardItems = posts
+          .filter(
+            p => p.authorId === userId && p.systemGenerated !== true
+          )
+          .sort((a, b) =>
+            toMs(b.timestamp || b.createdAt) -
+            toMs(a.timestamp || a.createdAt)
+          )
+          .map(p => p.id);
+    } else if (userId && board.id === 'my-quests') {
+      boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+    }
+
+    const pagedBoard: BoardData = { ...board, items: boardItems.slice(start, end) };
+
+    let result: BoardData | EnrichedBoard = pagedBoard;
+    if (enrich === 'true') {
+      const enriched = enrichBoard(pagedBoard, { posts, quests });
+      result = {
+        ...enriched,
+        layout: board.layout ?? 'grid',
+        enrichedItems: enriched.enrichedItems.map(item => {
+          if ('id' in item && highlightMap[item.id]) {
+            (item as any).highlight = true;
+          }
+          return item;
+        }),
+      } as EnrichedBoard;
+    }
+
+    res.json(result);
   }
 );
 
-// GET all items from a board (posts/quests)
+//
+// ✅ GET all items from a board (posts/quests)
+//
 router.get(
   '/:id/items',
   async (
@@ -341,17 +495,98 @@ router.get(
         createdAt: r.createdat,
       }));
 
-      if (enrich === 'true') {
-        const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
-        const items = enriched.enrichedItems.map((item) => {
-          if ('id' in item && highlightMap[item.id]) {
-            (item as any).highlight = true;
-          }
-          return item;
-        });
+        if (enrich === 'true') {
+          const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
+          const items = enriched.enrichedItems.map(item => {
+            if ('id' in item && highlightMap[item.id]) {
+              (item as any).highlight = true;
+            }
+            return item;
+          });
+          res.json(items);
+          return;
+        }
+
+        const items = boardItems
+          .map(itemId => posts.find(p => p.id === itemId) || quests.find(q => q.id === itemId))
+          .filter((i): i is DBPost | DBQuest => Boolean(i))
+          .filter(item => {
+            if ('type' in item) {
+              const p = item as DBPost;
+              if (p.tags?.includes('archived')) return false;
+              if (board.id === 'quest-board') {
+                if (p.type !== 'request') return false;
+                if (p.visibility === 'private') return false;
+                return true;
+              }
+              return true;
+            }
+            const q = item as DBQuest;
+            if (board.id === 'quest-board') return false;
+            if (q.displayOnBoard === false) return false;
+            if (q.status === 'active' && userId) {
+              const participant =
+                q.authorId === userId ||
+                (q.collaborators || []).some(
+                  (c: { userId?: string }) => c.userId === userId
+                );
+              if (!participant) return false;
+            }
+            return true;
+          });
+
         res.json(items);
         return;
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
       }
+    }
+
+    const boards = boardsStore.read();
+    const posts = postsStore.read();
+    const quests = questsStore.read();
+
+    const board = boards.find((b) => b.id === id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
+      return;
+    }
+
+    let boardItems = board.items;
+    let highlightMap: Record<string, boolean> = {};
+    if (board.id === 'quest-board') {
+      boardItems = getQuestBoardRequests(posts);
+    } else if (board.id === 'timeline-board') {
+      const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
+      boardItems = items;
+      highlightMap = hm;
+    } else if (userId && board.id === 'my-posts') {
+      boardItems = posts
+        .filter(
+          p => p.authorId === userId && p.systemGenerated !== true
+        )
+        .sort((a, b) =>
+          toMs(b.timestamp || b.createdAt) -
+          toMs(a.timestamp || a.createdAt)
+        )
+        .map(p => p.id);
+    } else if (userId && board.id === 'my-quests') {
+      boardItems = quests.filter(q => q.authorId === userId).map(q => q.id);
+    }
+
+    if (enrich === 'true') {
+      const enriched = enrichBoard({ ...board, items: boardItems }, { posts, quests, currentUserId: userId || null });
+      const items = enriched.enrichedItems.map(item => {
+        if ('id' in item && highlightMap[item.id]) {
+          (item as any).highlight = true;
+        }
+        return item;
+      });
+      res.json(items);
+      return;
+    }
 
       const items = boardItems
         .map((itemId) => posts.find((p) => p.id === itemId) || quests.find((q) => q.id === itemId))
@@ -399,14 +634,11 @@ router.get(
     const { id } = req.params;
     const { enrich, userId } = req.query;
 
-    try {
-      const boardRes = await pool.query('SELECT * FROM boards WHERE id = $1', [id]);
-      if (boardRes.rowCount === 0) {
-        res.status(404).json({ error: 'Board not found' });
-        return;
-      }
-      const board = boardRes.rows[0];
-      board.items = board.items || [];
+    const board = boards.find((b) => b.id === id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
+      return;
+    }
 
       let boardItems: string[] = board.items;
       if (board.id === 'quest-board') {
@@ -567,23 +799,16 @@ router.post(
   authMiddleware,
   async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const { itemId } = req.body;
-    try {
-      const boardRes = await pool.query('SELECT items FROM boards WHERE id = $1', [req.params.id]);
-      if (boardRes.rowCount === 0) {
-        res.status(404).json({ error: 'Board not found' });
-        return;
-      }
-      const items: string[] = (boardRes.rows[0].items || []).filter(
-        (id: string) => id !== itemId
-      );
-      await pool.query('UPDATE boards SET items = $2 WHERE id = $1', [req.params.id, JSON.stringify(items)]);
-      res.json({ success: true });
-      return;
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
+    const boards = boardsStore.read();
+    const board = boards.find(b => b.id === req.params.id);
+    if (!board) {
+      res.status(404).json({ error: 'Board not found' });
       return;
     }
+
+    board.items = board.items.filter(id => id !== itemId);
+    boardsStore.write(boards);
+    res.json({ success: true });
   }
 );
 
