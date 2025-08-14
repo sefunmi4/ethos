@@ -8,6 +8,7 @@ const uuid_1 = require("uuid");
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const authOptional_1 = __importDefault(require("../middleware/authOptional"));
 const stores_1 = require("../models/stores");
+const db_1 = require("../db");
 const enrich_1 = require("../utils/enrich");
 const nodeIdUtils_1 = require("../utils/nodeIdUtils");
 const errorTracker_1 = require("../utils/errorTracker");
@@ -572,7 +573,7 @@ router.delete('/:id', authMiddleware_1.authMiddleware, (req, res) => {
     res.json({ success: true, removedPosts: questPosts.length - postsToKeep.size });
 });
 // POST /api/quests/:id/follow - follow a quest
-router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
+router.post('/:id/follow', authMiddleware_1.authMiddleware, async (req, res) => {
     const quests = stores_1.questsStore.read();
     const users = stores_1.usersStore.read();
     const quest = quests.find(q => q.id === req.params.id);
@@ -583,7 +584,6 @@ router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
     }
     quest.followers = Array.from(new Set([...(quest.followers || []), follower.id]));
     stores_1.questsStore.write(quests);
-    const notes = stores_1.notificationsStore.read();
     const newNote = {
         id: (0, uuid_1.v4)(),
         userId: quest.authorId,
@@ -592,7 +592,14 @@ router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
         read: false,
         createdAt: new Date().toISOString(),
     };
-    stores_1.notificationsStore.write([...notes, newNote]);
+    try {
+        await db_1.pool.query('INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)', [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+    }
     res.json({ followers: quest.followers });
 });
 // POST /api/quests/:id/unfollow - unfollow a quest

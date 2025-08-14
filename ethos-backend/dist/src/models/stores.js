@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notificationsStore = exports.boardLogsStore = exports.reviewsStore = exports.reactionsStore = exports.usersStore = exports.projectsStore = exports.questsStore = exports.postsStore = exports.gitStore = exports.boardsStore = void 0;
+exports.boardLogsStore = exports.reviewsStore = exports.reactionsStore = exports.usersStore = exports.projectsStore = exports.questsStore = exports.postsStore = exports.gitStore = exports.boardsStore = void 0;
 const loaders_1 = require("../utils/loaders");
 exports.boardsStore = (0, loaders_1.createDataStore)('boards.json', []);
 exports.gitStore = (0, loaders_1.createDataStore)('git.json', []);
@@ -11,4 +11,3 @@ exports.usersStore = (0, loaders_1.createDataStore)('users.json', []);
 exports.reactionsStore = (0, loaders_1.createDataStore)('reactions.json', []);
 exports.reviewsStore = (0, loaders_1.createDataStore)('reviews.json', []);
 exports.boardLogsStore = (0, loaders_1.createDataStore)('boardLogs.json', []);
-exports.notificationsStore = (0, loaders_1.createDataStore)('notifications.json', []);

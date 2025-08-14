@@ -17,7 +17,11 @@ jest.mock('../src/models/stores', () => ({
   usersStore: { read: jest.fn(() => []), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
-  notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
+}));
+
+jest.mock('../src/db', () => ({
+  pool: { query: jest.fn() },
+  usePg: false,
 }));
 
 import { postsStore } from '../src/models/stores';

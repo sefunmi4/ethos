@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import authOptional from '../middleware/authOptional';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { usersStore, notificationsStore } from '../models/stores';
+import { usersStore } from '../models/stores';
 import { pool, usePg } from '../db';
 
 
@@ -121,7 +121,6 @@ router.post(
           followerId,
         ]);
 
-        const notes = notificationsStore.read();
         const newNote = {
           id: uuidv4(),
           userId: target.id,
@@ -130,7 +129,16 @@ router.post(
           read: false,
           createdAt: new Date().toISOString(),
         };
-        notificationsStore.write([...notes, newNote]);
+        try {
+          await pool.query(
+            'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+            [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+          );
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Database error' });
+          return;
+        }
 
         res.json({ followers: newFollowers });
         return;
@@ -156,7 +164,6 @@ router.post(
     );
     usersStore.write(users);
 
-    const notes = notificationsStore.read();
     const newNote = {
       id: uuidv4(),
       userId: target.id,
@@ -165,7 +172,16 @@ router.post(
       read: false,
       createdAt: new Date().toISOString(),
     };
-    notificationsStore.write([...notes, newNote]);
+    try {
+      await pool.query(
+        'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+        [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+      );
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
 
     res.json({ followers: target.followers });
   }
