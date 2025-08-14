@@ -24,9 +24,6 @@ import { initializeDatabase } from './db';
 
 // Load environment variables from `.env` file
 dotenv.config();
-initializeDatabase().catch((err) =>
-  console.error('[DB INIT ERROR]', err)
-);
 
 /**
  * Initialize the Express app.
@@ -167,7 +164,14 @@ io.on('connection', (socket) => {
   });
 });
 
-httpServer.listen(PORT, () => {
-  info(`🚀 Backend server running at http://localhost:${PORT}`);
-  info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
-});
+initializeDatabase()
+  .then(() => {
+    httpServer.listen(PORT, () => {
+      info(`🚀 Backend server running at http://localhost:${PORT}`);
+      info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
+    });
+  })
+  .catch((err) => {
+    console.error('[DB INIT ERROR]', err);
+    process.exit(1);
+  });

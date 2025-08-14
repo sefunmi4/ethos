@@ -3,44 +3,20 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-/**
- * Flag indicating whether the application should use PostgreSQL.
- * Initially set based on the presence of a `DATABASE_URL`, but if a connection
- * cannot be established (e.g. during tests where no DB is available) the flag
- * is flipped off and the app gracefully falls back to the JSON store.
- */
-export let usePg =
-  !!process.env.DATABASE_URL &&
-  (process.env.NODE_ENV !== 'test' || process.env.USE_PG === 'true');
-
-export let pool: Pool = usePg
-  ? new Pool({ connectionString: process.env.DATABASE_URL })
-  : ({} as Pool);
-
-/**
- * Disable PostgreSQL usage and fall back to the JSON store.
- * This helper is useful if a database error occurs after startup.
- */
-export function disablePg(): void {
-  usePg = false;
-  pool = {} as Pool;
-}
+export const pool: Pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 /**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
 export async function initializeDatabase(): Promise<void> {
-  if (!usePg) return;
-
   try {
-    // Verify the connection is usable. If it fails we gracefully fall back to
-    // the JSON store so tests or offline environments can continue working.
     await pool.query('SELECT 1');
-  } catch (_err) {
-    console.warn('PostgreSQL not available, using JSON store instead');
-    disablePg();
-    return;
+  } catch (err) {
+    console.error('Failed to connect to PostgreSQL', err);
+    throw err;
   }
 
   await pool.query(`

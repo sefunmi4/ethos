@@ -10,12 +10,12 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-jest.mock('../src/models/stores', () => ({
+jest.mock('../src/models/memoryStores', () => ({
   usersStore: { read: jest.fn(() => [{ id: 'u1', gitAccounts: [] }]), write: jest.fn() },
   gitStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
-import { usersStore } from '../src/models/stores';
+import { usersStore } from '../src/models/memoryStores';
 
 const app = express();
 app.use(express.json());

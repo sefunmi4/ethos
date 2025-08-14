@@ -297,6 +297,7 @@ export interface DBSchema {
   projects: DBProject[];
   quests: DBQuest[];
   users: DBUser[];
+  reactions: string[];
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
   notifications: DBNotification[];
