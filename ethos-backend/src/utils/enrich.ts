@@ -8,7 +8,7 @@ import type {
   EnrichedCollaborator,
 } from '../types/enriched';
 
-import { usersStore, postsStore, questsStore } from '../models/stores';
+import { usersStore, postsStore, questsStore } from '../models/memoryStores';
 import { formatPosts } from '../logic/postFormatter';
 
 

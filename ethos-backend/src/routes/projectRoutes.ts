@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { projectsStore } from '../models/stores';
+import { projectsStore } from '../models/memoryStores';
 import type { DBProject } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 import { pool, usePg } from '../db';
