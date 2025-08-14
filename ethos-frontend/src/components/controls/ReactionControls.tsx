@@ -337,7 +337,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         )}
 
         {/* Reply / Update */}
-        {(post.type === 'file' && isAuthor) || (post.type === 'task' && isAuthor) || post.type === 'free_speech' ? (
+        { post.type === 'free_speech' && (
           <button
             className={clsx('flex items-center gap-1', showReplyPanel && 'text-green-600')}
             onClick={() =>
@@ -345,18 +345,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
                 post.type === 'file' && isAuthor ? 'file' : 'free_speech'
               )
             }
-            aria-label={post.type === 'file' && isAuthor ? 'Update' : 'Reply'}
+            aria-label={ 'Reply'}
           >
             <FaReply />
             {replyOverride
               ? replyOverride.label
               : showReplyPanel
               ? 'Cancel'
-              : post.type === 'file' && isAuthor
-              ? 'Update'
               : 'Reply'}
           </button>
-        ) : null}
+        )}
 
         {/* Timestamp */}
         {timestamp && (

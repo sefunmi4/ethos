@@ -191,16 +191,6 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
       </div>
       <div className="flex items-center gap-2">
-        <ActionMenu
-          id={post.id}
-          type="post"
-          canEdit={canEdit}
-          onEdit={() => setEditMode(true)}
-          onDelete={() => onDelete?.(post.id)}
-          allowDelete={allowDelete}
-          content={post.content}
-          permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
-        />
         {(onToggleExpand || headerOnly || isLong) && (
           <button
             onClick={() =>
@@ -211,6 +201,16 @@ const PostCard: React.FC<PostCardProps> = ({
             {expandedView ? 'Collapse View' : 'Expand View'}
           </button>
         )}
+        <ActionMenu
+          id={post.id}
+          type="post"
+          canEdit={canEdit}
+          onEdit={() => setEditMode(true)}
+          onDelete={() => onDelete?.(post.id)}
+          allowDelete={allowDelete}
+          content={post.content}
+          permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+        />
       </div>
     </div>
   );
