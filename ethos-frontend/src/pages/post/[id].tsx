@@ -167,7 +167,7 @@ const PostPage: React.FC = () => {
             ♻️ Reposted from @{post.repostedFrom.username}
           </div>
         )}
-        <PostCard post={post} showDetails />
+        <PostCard post={post} user={user as User} showDetails />
         {showReplyForm && (
           <div className="mt-4">
             <CreatePost
@@ -217,7 +217,7 @@ const PostPage: React.FC = () => {
           <GitFileBrowserInline questId={post.questId} />
         )}
         {post.tags?.includes('review') && parentPost && (
-          <PostCard post={parentPost} />
+          <PostCard post={parentPost} user={user as User} />
         )}
         {fileRepliesBoard && (
           <Board
