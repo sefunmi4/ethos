@@ -129,6 +129,13 @@ export async function initializeDatabase(): Promise<void> {
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ;
     ALTER TABLE quests ADD COLUMN IF NOT EXISTS tags TEXT[];
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS linkedPosts JSONB;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS taskGraph JSONB;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS questIds TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS deliverables TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS mapEdges JSONB;
   `);
 
   const { rows } = await pool.query(
