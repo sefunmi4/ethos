@@ -16,6 +16,8 @@ import { ROUTES } from '../../constants/routes';
 import TaskCard from '../quest/TaskCard';
 
 import { updateReaction, fetchReactions, requestHelp, removeHelpRequest } from '../../api/post';
+import { useBoardContext } from '../../contexts/BoardContext';
+import type { BoardItem } from '../../contexts/BoardContextTypes';
         
 import type {
   Post,
@@ -85,6 +87,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const navigate = useNavigate();
 
   // ---------- Board context ----------
+  const { appendToBoard } = useBoardContext() || {};
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
   const isAuthor = user?.id === post.authorId;
 
@@ -172,6 +175,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       } else {
         const res = await requestHelp(post.id, 'file');
         onUpdate?.(res.post);
+        appendToBoard?.('quest-board', res.post as unknown as BoardItem);
         setReviewRequested(true);
       }
     } catch (err) {
@@ -179,7 +183,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setReviewLoading(false);
     }
-  }, [user?.id, navigate, reviewRequested, post.id, post, onUpdate]);
+  }, [user?.id, navigate, reviewRequested, post.id, post, onUpdate, appendToBoard]);
 
   const handleRequestHelp = useCallback(async () => {
     if (!user?.id) {
@@ -199,6 +203,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
       } else {
         const res = await requestHelp(post.id, 'task');
         onUpdate?.(res.post);
+        appendToBoard?.('quest-board', res.post as unknown as BoardItem);
         setHelpRequested(true);
       }
     } catch (err) {
@@ -206,7 +211,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setHelpLoading(false);
     }
-  }, [user?.id, navigate, helpRequested, post.id, post, onUpdate]);
+  }, [user?.id, navigate, helpRequested, post.id, post, onUpdate, appendToBoard]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {
