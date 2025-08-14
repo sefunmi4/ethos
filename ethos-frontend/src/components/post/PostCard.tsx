@@ -65,6 +65,8 @@ interface PostCardProps {
   initialShowReplies?: boolean;
   /** Show detailed view including reply chain */
   showDetails?: boolean;
+  /** Callback when expansion toggled */
+  onToggleExpand?: () => void;
   /** Board ID where this post is being rendered */
   boardId?: string;
   /** Controlled expanded state */
@@ -85,10 +87,14 @@ const PostCard: React.FC<PostCardProps> = ({
   className = '',
   boardId,
   expanded,
+  showDetails = false,
+  onToggleExpand,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [headPostId, setHeadPostId] = useState<string | null>(null);
-  const [internalExpandedView, setInternalExpandedView] = useState(post.type === 'task');
+  const [internalExpandedView, setInternalExpandedView] = useState(
+    post.type === 'task' || showDetails
+  );
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
@@ -185,9 +191,11 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
       </div>
       <div className="flex items-center gap-2">
-        {isLong && (
+        {(onToggleExpand || headerOnly || isLong) && (
           <button
-            onClick={() => setInternalExpandedView(v => !v)}
+            onClick={() =>
+              onToggleExpand ? onToggleExpand() : setInternalExpandedView(v => !v)
+            }
             aria-label={expandedView ? 'Collapse view' : 'Expand view'}
             className="p-1 hover:text-accent"
           >
@@ -265,7 +273,7 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   }
 
-  if (headerOnly) {
+  if (headerOnly && !expandedView) {
     return (
       <div id={post.id} className={cardClasses}>
         {renderHeader()}
