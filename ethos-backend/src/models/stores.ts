@@ -2,9 +2,9 @@
 // src/models/GitModel.ts
 import type { DBSchema } from '../types/db';
 import { createDataStore } from '../utils/loaders';
-import { DEFAULT_BOARDS } from '../data/boardContextDefaults';
-
-export const boardsStore = createDataStore<DBSchema['boards']>('boards.json', DEFAULT_BOARDS);
+// Board data is now seeded directly in the database. The JSON store
+// remains only for legacy tests and contains no default boards.
+export const boardsStore = createDataStore<DBSchema['boards']>('boards.json', []);
 export const gitStore = createDataStore<DBSchema['git']>('git.json', []);
 export const postsStore = createDataStore<DBSchema['posts']>('posts.json', []);
 export const questsStore = createDataStore<DBSchema['quests']>('quests.json', []);
