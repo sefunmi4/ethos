@@ -191,6 +191,13 @@ const Board: React.FC<BoardProps> = ({
 
   const filteredItems = useMemo(() => {
     let result = [...items];
+    const currentBoardId = board?.id || boardId || '';
+    if (['timeline-board', 'my-posts'].includes(currentBoardId)) {
+      result = result.filter(
+        (item) => !('tags' in item && (item as Post).tags?.includes('request'))
+      );
+    }
+
     const { itemType: iType, postType: pType, linkType: lType } = effectiveFilter;
 
     if (iType) {
@@ -222,7 +229,7 @@ const Board: React.FC<BoardProps> = ({
         const bVal = sortKey === 'createdAt' ? b.createdAt ?? '' : resolveTitle(b);
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
-  }, [items, effectiveFilter, filterText, sortKey, sortOrder]);
+  }, [items, effectiveFilter, filterText, sortKey, sortOrder, board?.id, boardId]);
 
   const renderableItems = useMemo(
     () => getRenderableBoardItems(filteredItems),
