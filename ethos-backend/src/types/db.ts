@@ -1,10 +1,10 @@
 // types/db.ts
-import type { 
+import type {
   PostType,
-  Visibility, 
-  PostTag, 
-  QuestTaskStatus, 
-  LinkedItem, 
+  Visibility,
+  PostTag,
+  QuestTaskStatus,
+  LinkedItem,
   GitStatus,
   GitLinkedItem,
   GitMetaData,
@@ -15,24 +15,30 @@ import type {
   ReactionCountMap,
   ReviewTargetType,
   ApprovalStatus,
-  GitAccount
+  GitAccount,
 } from './api';
 
 // types/db.ts
 export interface DBPost {
+  /** Primary key */
   id: string;
+  /** Foreign key to users.id */
   authorId: string;
+  /** Post category */
   type: PostType;
-  subtype?: string;
-  /** Short header for the post */
-  title?: string;
+  /** Optional short header */
+  title?: string | null;
+  /** Body content */
   content: string;
+  /** Creation timestamp */
+  createdAt: string;
+
+  // --- Optional fields retained for JSON store / compatibility ---
+  subtype?: string;
   /** Optional extra details for task posts */
   details?: string;
-  visibility: Visibility;
-  timestamp: string;
-  createdAt?: string;
-
+  visibility?: Visibility;
+  timestamp?: string;
   replyTo?: string | null;
   repostedFrom?: string | null;
   reactions?: ReactionSet;
@@ -80,21 +86,22 @@ export interface DBPost {
 
 // types/db.ts
 export interface DBQuest {
+  /** Primary key */
   id: string;
+  /** Foreign key to users.id */
   authorId: string;
   title: string;
-  description?: string;
+  description?: string | null;
   visibility: Visibility;
-  approvalStatus: ApprovalStatus;
-  flagCount?: number;
-  status: 'active' | 'completed' | 'archived';
+  approvalStatus?: ApprovalStatus;
+  status?: 'active' | 'completed' | 'archived';
 
   /** Optional parent project association */
-  projectId?: string;
+  projectId?: string | null;
 
-  headPostId: string;
-  linkedPosts: LinkedItem[];
-  collaborators: { userId?: string; roles?: string[]; pending?: string[] }[];
+  headPostId?: string | null;
+  linkedPosts?: LinkedItem[];
+  collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
 
   gitRepo?: {
     repoId: string;
@@ -102,7 +109,7 @@ export interface DBQuest {
     headCommitId?: string;
     defaultBranch?: string;
   };
-  createdAt?: string;
+  createdAt: string;
   tags?: string[];
   /** When true this quest appears on the Quest Board */
   displayOnBoard?: boolean;
@@ -116,10 +123,6 @@ export interface DBQuest {
   followers?: string[];
 }
 
-export interface DBProject extends DBQuest {
-  questIds: string[];
-}
-
 export interface TaskEdge {
   from: string; // Node ID
   to: string; // Node ID
@@ -131,13 +134,13 @@ export interface DBProject {
   id: string;
   authorId: string;
   title: string;
-  description?: string;
+  description?: string | null;
   visibility: Visibility;
-  status: 'active' | 'completed' | 'archived';
-  tags?: string[];
-  createdAt?: string;
-  quests?: string[];
-  deliverables?: string[];
+  status?: 'active' | 'completed' | 'archived';
+  tags: string[];
+  createdAt: string;
+  questIds: string[];
+  deliverables: string[];
   mapEdges?: TaskEdge[];
 }
 
@@ -210,13 +213,16 @@ export interface DBGitCommit {
 export interface DBUser {
   id: string;
   email: string;
-  username: string;
-  role: UserRole;
+  username?: string;
+  password: string;
+  role?: UserRole | string;
+  status?: string;
 
+  // --- optional profile fields ---
   name?: string;
-  bio: string;
+  bio?: string;
   avatarUrl?: string;
-  tags: string[];
+  tags?: string[];
   location?: string;
 
   /**
@@ -242,7 +248,6 @@ export interface DBUser {
   /** Accounts this user follows */
   following?: string[];
 
-  status?: 'active' | 'archived' | 'banned';
   createdAt?: string;
   updatedAt?: string;
 }
@@ -260,7 +265,7 @@ export interface DBReview {
   rating: number;
   visibility: 'private' | 'public';
   status: 'draft' | 'submitted' | 'accepted';
-  tags?: string[];
+  tags: string[];
   feedback?: string;
   repoUrl?: string;
   modelId?: string;
@@ -285,31 +290,3 @@ export interface DBBoardLog {
   userId: string;
   timestamp: string;
 }
-
-/**
- * Represents the in-memory or file-backed layout of your JSON data store.
- * You can expand this to include reaction data, logs, etc.
- */
-export interface DBSchema {
-  boards: DBBoard[];
-  git: DBGitRepo[];
-  posts: DBPost[];
-  projects: DBProject[];
-  quests: DBQuest[];
-  users: DBUser[];
-  reviews: DBReview[];
-  boardLogs: DBBoardLog[];
-  notifications: DBNotification[];
-}
-
-// Optional utility type for referencing a single entry type by file
-export type DBFileName = keyof DBSchema;
-
-/**
- * Generic type for file-based mock storage (can be used in utils/loaders.ts)
- */
-export type DataStore<T> = {
-  read: () => T;
-  write: (data: T) => void;
-  filepath?: string; // Optional path reference
-};

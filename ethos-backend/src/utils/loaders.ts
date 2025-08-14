@@ -1,7 +1,12 @@
 // utils/loaders.ts
 import fs from 'fs';
 import path from 'path';
-import type { DataStore } from '../types/db';
+
+export interface DataStore<T> {
+  read: () => T;
+  write: (data: T) => void;
+  filepath?: string;
+}
 
 export function createDataStore<T>(filename: string, defaultData: T): DataStore<T> {
   const filepath = path.join(__dirname, '../data', filename);
