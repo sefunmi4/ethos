@@ -2,8 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
-import { DEFAULT_BOARDS } from '../data/boardContextDefaults';
+import { boardsStore, postsStore, questsStore, usersStore } from '../models/memoryStores';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import { pool, usePg, disablePg } from '../db';
@@ -173,7 +172,7 @@ router.get(
 
     let boards = boardsStore.read();
     if (boards.length === 0) {
-      boards = DEFAULT_BOARDS;
+      boards = [];
       boardsStore.write(boards);
     }
     const posts = postsStore.read();
@@ -372,7 +371,7 @@ router.get(
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const board = boards.find(b => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
+    const board = boards.find(b => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
@@ -536,7 +535,7 @@ router.get(
     const posts = postsStore.read();
     const quests = questsStore.read();
 
-    const board = boards.find((b) => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
+    const board = boards.find((b) => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;
@@ -624,7 +623,7 @@ router.get(
     const quests = questsStore.read();
     const users = usersStore.read();
 
-    const board = boards.find((b) => b.id === id) || DEFAULT_BOARDS.find(b => b.id === id);
+    const board = boards.find((b) => b.id === id);
     if (!board) {
       res.status(404).json({ error: 'Board not found' });
       return;

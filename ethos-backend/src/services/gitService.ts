@@ -3,7 +3,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import archiver from 'archiver';
 import simpleGit from 'simple-git';
-import { gitStore } from '../models/stores';
+import { gitStore } from '../models/memoryStores';
 import type { GitRepo, GitFileNode, GitFile } from '../types/api';
 
 const reposRoot = path.join(__dirname, '../repos');
