@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { usersStore } from '../models/stores';
+import { usersStore } from '../models/memoryStores';
 import { hashPassword } from '../utils/passwordUtils';
 import { pool, usePg } from '../db';
 import {

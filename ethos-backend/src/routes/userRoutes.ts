@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import authOptional from '../middleware/authOptional';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { usersStore, notificationsStore } from '../models/stores';
+import { usersStore, notificationsStore } from '../models/memoryStores';
 import { pool, usePg } from '../db';
 
 
