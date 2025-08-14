@@ -4,7 +4,7 @@ import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { usersStore } from '../models/stores';
 import { hashPassword } from '../utils/passwordUtils';
-import { pool, usePg } from '../db';
+import { pool } from '../db';
 import {
   getQuestRepoMeta,
   connectRepo,
