@@ -204,12 +204,10 @@ const PostCard: React.FC<PostCardProps> = ({
             {expandedView ? (
               <>
                 <FaChevronUp />
-                <span>Collapse View</span>
               </>
             ) : (
               <>
                 <FaChevronDown />
-                <span>Expand View</span>
               </>
             )}
           </button>
