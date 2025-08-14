@@ -2,10 +2,8 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { boardsStore, questsStore, projectsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
-import { pool } from '../db';
-
-const usePg = true;
+import { boardsStore, questsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
+import { pool, usePg } from '../db';
 import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
@@ -408,23 +406,32 @@ router.post('/:id/flag', authMiddleware, (req: AuthRequest<{ id: string }>, res:
 router.get(
   '/:id/map',
   authOptional,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
     const { id } = req.params;
-  const quests = questsStore.read();
-  const quest = quests.find((q) => q.id === id);
-  if (!quest) {
-    logQuest404(id, req.originalUrl);
-    res.status(404).json({ error: 'Quest not found' });
-    return;
-  }
+    try {
+      const questResult = await pool.query('SELECT * FROM quests WHERE id = $1', [id]);
+      const quest = questResult.rows[0];
+      if (!quest) {
+        logQuest404(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+      }
 
-    const posts = postsStore.read();
-    const users = usersStore.read();
-    const nodes = posts
-      .filter((p) => p.questId === id)
-      .map((p) => enrichPost(p, { users, currentUserId: req.user?.id || null }));
+      const postsResult = await pool.query('SELECT * FROM posts WHERE questid = $1', [id]);
+      const usersResult = await pool.query('SELECT * FROM users');
+      const nodes = postsResult.rows.map((p) =>
+        enrichPost(p, {
+          users: usersResult.rows,
+          quests: [quest],
+          currentUserId: req.user?.id || null,
+        })
+      );
 
-    res.json({ nodes, edges: quest.taskGraph || [] });
+      res.json({ nodes, edges: quest.taskgraph || [] });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+    }
   }
 );
 
@@ -432,10 +439,10 @@ router.get(
 router.patch(
   '/:id/map',
   authMiddleware,
-  (
+  async (
     req: AuthRequest<{ id: string }, any, { edges: TaskEdge[] }>,
     res: Response,
-  ): void => {
+  ): Promise<void> => {
     const { id } = req.params;
     const { edges } = req.body;
 
@@ -444,18 +451,19 @@ router.patch(
       return;
     }
 
-    const quests = questsStore.read();
-    const quest = quests.find((q) => q.id === id);
-    if (!quest) {
-      logQuest404(id, req.originalUrl);
-      res.status(404).json({ error: 'Quest not found' });
-      return;
+    try {
+      const questResult = await pool.query('SELECT id FROM quests WHERE id = $1', [id]);
+      if (questResult.rowCount === 0) {
+        logQuest404(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+      }
+      await pool.query('UPDATE quests SET taskGraph = $2 WHERE id = $1', [id, JSON.stringify(edges)]);
+      res.json({ success: true, edges });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
     }
-
-    quest.taskGraph = edges;
-    questsStore.write(quests);
-
-    res.json({ success: true, edges: quest.taskGraph });
   },
 );
 
@@ -643,38 +651,46 @@ router.get(
 router.post(
   '/:id/promote',
   authMiddleware,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
     const { id } = req.params;
 
-    const quests = questsStore.read();
-    const questIndex = quests.findIndex((q) => q.id === id);
-    if (questIndex === -1) {
-      logQuest404(id, req.originalUrl);
-      res.status(404).json({ error: 'Quest not found' });
-      return;
+    try {
+      const questRes = await pool.query('SELECT * FROM quests WHERE id = $1', [id]);
+      const quest = questRes.rows[0];
+      if (!quest) {
+        logQuest404(id, req.originalUrl);
+        res.status(404).json({ error: 'Quest not found' });
+        return;
+      }
+
+      const childQuestIds = (quest.linkedposts || [])
+        .filter((l: any) => l.itemType === 'quest')
+        .map((l: any) => l.itemId);
+
+      await pool.query(
+        'INSERT INTO projects (id, authorid, title, description, visibility, status, tags, questIds) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [
+          quest.id,
+          quest.authorid,
+          quest.title,
+          quest.description,
+          quest.visibility,
+          quest.status,
+          JSON.stringify(quest.tags || []),
+          JSON.stringify(childQuestIds),
+        ]
+      );
+
+      await pool.query('DELETE FROM quests WHERE id = $1', [id]);
+      if (childQuestIds.length > 0) {
+        await pool.query('UPDATE quests SET projectId = $2 WHERE id = ANY($1::text[])', [childQuestIds, quest.id]);
+      }
+
+      res.json({ ...quest, questIds: childQuestIds });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
     }
-
-    const quest = quests[questIndex];
-    const childQuestIds = (quest.linkedPosts || [])
-      .filter((l) => l.itemType === 'quest')
-      .map((l) => l.itemId);
-
-    const projects = projectsStore.read();
-    const newProject: DBProject = {
-      ...quest,
-      questIds: childQuestIds,
-    };
-    projects.push(newProject);
-    projectsStore.write(projects);
-
-    quests.splice(questIndex, 1);
-    childQuestIds.forEach((cid) => {
-      const child = quests.find((q) => q.id === cid);
-      if (child) child.projectId = newProject.id;
-    });
-    questsStore.write(quests);
-
-    res.json(newProject);
   }
 );
 
