@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
 import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
@@ -18,6 +19,7 @@ interface RequestCardProps {
 
 const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const collaboratorUsers = post.enrichedCollaborators || [];
   const collaboratorCount = collaboratorUsers.filter(c => c.userId).length || 0;
   const [joining, setJoining] = useState(false);
@@ -45,6 +47,11 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
         const res = await acceptRequest(post.id);
         onUpdate?.(res.post);
         setJoined(true);
+        if (post.type === 'file') {
+          navigate(ROUTES.POST(post.id) + '?reply=1&initialType=review');
+        } else {
+          navigate(ROUTES.POST(post.id) + '?reply=1&intro=1');
+        }
       }
     } catch (err) {
       console.error('[RequestCard] Failed to join:', err);
