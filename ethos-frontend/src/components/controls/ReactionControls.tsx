@@ -174,8 +174,12 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         setReviewRequested(false);
       } else {
         const res = await requestHelp(post.id, 'file');
-        onUpdate?.(res.post);
-        appendToBoard?.('quest-board', res.post as unknown as BoardItem);
+        const updated = {
+          ...res.post,
+          tags: [...new Set([...(res.post.tags || []), 'request'])],
+        } as Post;
+        onUpdate?.(updated);
+        appendToBoard?.('quest-board', updated as unknown as BoardItem);
         setReviewRequested(true);
       }
     } catch (err) {
