@@ -861,8 +861,8 @@ router.post(
     }
 
     const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'file');
-    if (subtype === 'file' && original.type !== 'task') {
-      res.status(400).json({ error: 'File requests must originate from a task' });
+    if (subtype === 'file' && !['task', 'file'].includes(original.type)) {
+      res.status(400).json({ error: 'File requests must originate from a task or file' });
       return;
     }
 
@@ -870,6 +870,8 @@ router.post(
     const users = usersStore.read();
 
     const timestamp = new Date().toISOString();
+    const tagSet = new Set([...(original.tags || []), 'request']);
+    if (subtype === 'file') tagSet.add('review');
     let repost: DBPost = {
       id: uuidv4(),
       authorId: req.user!.id,
@@ -878,7 +880,7 @@ router.post(
       content: original.content,
       visibility: original.visibility,
       questId: original.questId || null,
-      tags: Array.from(new Set([...(original.tags || []), tag])),
+      tags: Array.from(tagSet),
       collaborators: [],
       replyTo: null,
       timestamp,
@@ -889,7 +891,8 @@ router.post(
     // Add summary tags for easier filtering
     const summaryTags = new Set([
       ...(repost.tags || []),
-      `summary:${tag}`,
+      'summary:request',
+      ...(subtype === 'file' ? ['summary:review'] : []),
       `summary:${subtype}`,
       `summary:user:${req.user?.username || req.user?.id}`,
     ]);
