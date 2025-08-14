@@ -41,7 +41,7 @@ describe('Request post rendering', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('Need help')).toBeInTheDocument();
-    expect(screen.getByText(/Accept/i)).toBeInTheDocument();
+    expect(screen.getByText(/Request Join/i)).toBeInTheDocument();
   });
 
   it('uses RequestCard on timeline board', () => {
@@ -51,6 +51,20 @@ describe('Request post rendering', () => {
       </BrowserRouter>
     );
     expect(screen.getByText('Need help')).toBeInTheDocument();
-    expect(screen.getByText(/Accept/i)).toBeInTheDocument();
+    expect(screen.getByText(/Request Join/i)).toBeInTheDocument();
+  });
+
+  it('shows Submit Review for file requests', () => {
+    const fileRequest: EnrichedPost = {
+      ...requestPost,
+      id: 'f1',
+      type: 'file',
+    };
+    render(
+      <BrowserRouter>
+        <ContributionCard contribution={fileRequest} boardId="timeline-board" />
+      </BrowserRouter>
+    );
+    expect(screen.getByText(/Submit Review/i)).toBeInTheDocument();
   });
 });
