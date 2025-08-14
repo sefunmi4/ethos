@@ -3,7 +3,6 @@ import express from 'express';
 
 jest.mock('../src/db', () => ({
   pool: { query: jest.fn() },
-  usePg: true,
 }));
 
 jest.mock('../src/middleware/authMiddleware', () => ({
