@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -196,9 +196,19 @@ const PostCard: React.FC<PostCardProps> = ({
             onClick={() =>
               onToggleExpand ? onToggleExpand() : setInternalExpandedView(v => !v)
             }
-            className="text-xs hover:text-accent"
+            className="flex items-center gap-1 text-xs text-secondary"
           >
-            {expandedView ? 'Collapse View' : 'Expand View'}
+            {expandedView ? (
+              <>
+                <FaChevronUp />
+                <span>Collapse View</span>
+              </>
+            ) : (
+              <>
+                <FaChevronDown />
+                <span>Expand View</span>
+              </>
+            )}
           </button>
         )}
         <ActionMenu
