@@ -115,7 +115,10 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           ) : joined ? (
             <><FaUserCheck className="inline mr-1" /> Joined</>
           ) : (
-            <><FaUserPlus className="inline mr-1" /> {post.questId && role ? 'Join' : 'Accept'}</>
+            <>
+              <FaUserPlus className="inline mr-1" />
+              {post.type === 'file' ? 'Submit Review' : 'Request Join'}
+            </>
           )}
         </Button>
       </div>
