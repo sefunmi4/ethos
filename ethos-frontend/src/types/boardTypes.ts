@@ -105,6 +105,8 @@ export interface BoardProps {
   initialExpanded?: boolean;
   /** Render contributions as header-only cards */
   headerOnly?: boolean;
+  /** Label used for create button */
+  createLabel?: string;
 }
 
 /** Props for the EditBoard component */

@@ -167,7 +167,7 @@ const PostPage: React.FC = () => {
             ♻️ Reposted from @{post.repostedFrom.username}
           </div>
         )}
-        <PostCard post={post} user={user as User} showDetails />
+        <PostCard post={post} user={user as User} showDetails hideReplyButton />
         {showReplyForm && (
           <div className="mt-4">
             <CreatePost
@@ -242,6 +242,7 @@ const PostPage: React.FC = () => {
             editable={false}
             compact={true}
             user={user as User}
+            createLabel="Reply"
           />
         ) : (
           <Spinner />
