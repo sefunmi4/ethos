@@ -12,7 +12,6 @@ import {
   FaClipboardCheck,
 } from 'react-icons/fa';
 
-import { useBoardContext } from '../../contexts/BoardContext';
 import { ROUTES } from '../../constants/routes';
 import TaskCard from '../quest/TaskCard';
 
@@ -61,9 +60,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   user,
   onUpdate,
   replyOverride,
-  isTimeline,
-  boardId,
-  onReplyToggle,
   timestamp,
   expanded: expandedProp,
   hideReply,
@@ -85,12 +81,6 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
   const navigate = useNavigate();
 
   // ---------- Board context ----------
-  const { selectedBoard, boards } = useBoardContext() || {};
-  const ctxBoardId = boardId || selectedBoard;
-  const ctxBoardType = ctxBoardId ? boards?.[ctxBoardId]?.boardType : undefined;
-  const isTimelineBoard = isTimeline ?? ctxBoardId === 'timeline-board';
-  const isPostHistory = ctxBoardId === 'my-posts';
-  const isPostBoard = isPostHistory || ctxBoardType === 'post';
   const expanded = expandedProp !== undefined ? expandedProp : post.type === 'task';
   const isAuthor = user?.id === post.authorId;
 
