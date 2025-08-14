@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
@@ -191,17 +191,6 @@ const PostCard: React.FC<PostCardProps> = ({
         {post.tags?.includes('review') && post.rating && renderStars(post.rating)}
       </div>
       <div className="flex items-center gap-2">
-        {(onToggleExpand || headerOnly || isLong) && (
-          <button
-            onClick={() =>
-              onToggleExpand ? onToggleExpand() : setInternalExpandedView(v => !v)
-            }
-            aria-label={expandedView ? 'Collapse view' : 'Expand view'}
-            className="p-1 hover:text-accent"
-          >
-            {expandedView ? <FaCompress /> : <FaExpand />}
-          </button>
-        )}
         <ActionMenu
           id={post.id}
           type="post"
@@ -212,6 +201,16 @@ const PostCard: React.FC<PostCardProps> = ({
           content={post.content}
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
         />
+        {(onToggleExpand || headerOnly || isLong) && (
+          <button
+            onClick={() =>
+              onToggleExpand ? onToggleExpand() : setInternalExpandedView(v => !v)
+            }
+            className="text-xs hover:text-accent"
+          >
+            {expandedView ? 'Collapse View' : 'Expand View'}
+          </button>
+        )}
       </div>
     </div>
   );
