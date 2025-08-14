@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { usersStore } from '../models/stores';
 import { hashPassword } from '../utils/passwordUtils';
 import { pool, usePg } from '../db';
 import {
@@ -43,22 +42,35 @@ router.post(
       return;
     }
     try {
-      const users = usersStore.read();
-      const user = users.find(u => u.id === req.user?.id);
-      if (!user) {
+      if (!usePg) {
+        res.status(500).json({ error: 'PostgreSQL not available' });
+        return;
+      }
+
+      // ensure user exists
+      const userRes = await pool.query('SELECT id FROM users WHERE id = $1', [
+        req.user?.id,
+      ]);
+      if (userRes.rowCount === 0) {
         res.status(404).json({ error: 'User not found' });
         return;
       }
+
       const tokenHash = await hashPassword(token);
-      const account = { provider, username, tokenHash, linkedRepoIds: [] };
-      user.gitAccounts = [
-        ...(user.gitAccounts || []).filter(
-          a => a.provider !== provider || a.username !== username
-        ),
-        account,
-      ];
-      usersStore.write(users);
-      res.json({ gitAccounts: user.gitAccounts });
+      await pool.query(
+        `INSERT INTO git_accounts (user_id, provider, username, token_hash, linked_repo_ids)
+         VALUES ($1,$2,$3,$4,$5)
+         ON CONFLICT (user_id, provider, username)
+         DO UPDATE SET token_hash = EXCLUDED.token_hash`,
+        [req.user?.id, provider, username, tokenHash, JSON.stringify([])]
+      );
+
+      const { rows } = await pool.query(
+        'SELECT provider, username, token_hash AS "tokenHash", linked_repo_ids AS "linkedRepoIds" FROM git_accounts WHERE user_id = $1',
+        [req.user?.id]
+      );
+
+      res.json({ gitAccounts: rows });
     } catch (err) {
       error('[GIT ACCOUNT ERROR]', err);
       res.status(500).json({ error: 'Failed to save git account' });
