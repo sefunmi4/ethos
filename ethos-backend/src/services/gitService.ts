@@ -23,7 +23,7 @@ async function readRepo(questId: string): Promise<GitRepo | null> {
     return rows[0]?.data ?? null;
   }
   const repos = gitStore.read();
-  const repo = repos.find((r) => (r as any).id === questId) as GitRepo | undefined;
+  const repo = repos.find((r: any) => (r as any).id === questId) as GitRepo | undefined;
   return repo ?? null;
 }
 
@@ -36,7 +36,7 @@ async function writeRepo(repo: GitRepo): Promise<void> {
     return;
   }
   const repos = gitStore.read();
-  const idx = repos.findIndex((r) => (r as any).id === repo.id);
+  const idx = repos.findIndex((r: any) => (r as any).id === repo.id);
   if (idx >= 0) repos[idx] = repo as any;
   else repos.push(repo as any);
   gitStore.write(repos);
@@ -48,7 +48,7 @@ async function deleteRepo(questId: string): Promise<void> {
     return;
   }
   const repos = gitStore.read();
-  const idx = repos.findIndex((r) => (r as any).id === questId);
+  const idx = repos.findIndex((r: any) => (r as any).id === questId);
   if (idx !== -1) {
     repos.splice(idx, 1);
     gitStore.write(repos);

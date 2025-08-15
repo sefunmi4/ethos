@@ -1046,10 +1046,10 @@ router.delete(
 // ✅ POST /api/posts/:id/accept – Accept a help request
 // Marks the post as pending for the current user and joins or creates a quest
 //
-router.post(
-  '/:id/accept',
-  authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  router.post(
+    '/:id/accept',
+    authMiddleware,
+    async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const posts = postsStore.read();
     const quests = questsStore.read();
 
@@ -1140,27 +1140,33 @@ router.post(
 
     const users = usersStore.read();
 
-    const follower = users.find(u => u.id === req.user!.id);
-    if (follower && post.authorId !== follower.id) {
-      const newNote = {
-        id: uuidv4(),
-        userId: post.authorId,
-        message: `${follower.username} requested to join your post`,
-        link: `/posts/${post.id}`,
-        read: false,
-        createdAt: new Date().toISOString(),
-      };
-      try {
-        await pool.query(
-          'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
-          [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
-        );
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database error' });
-        return;
+      const follower = users.find(u => u.id === req.user!.id);
+      if (follower && post.authorId !== follower.id) {
+        const newNote = {
+          id: uuidv4(),
+          userId: post.authorId,
+          message: `${follower.username} requested to join your post`,
+          link: `/posts/${post.id}`,
+          read: false,
+          createdAt: new Date().toISOString(),
+        };
+        if (usePg) {
+          try {
+            await pool.query(
+              'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+              [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+            );
+          } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+          }
+        } else {
+          const notes = notificationsStore.read();
+          notes.push(newNote);
+          notificationsStore.write(notes);
+        }
       }
-    }
 
     res.json({
       post: enrichPost(post, { users }),
@@ -1273,7 +1279,7 @@ router.post(
       if (quest) {
         const edges = quest.taskGraph || [];
         const parentEdge = edges.find(e => e.to === post.id);
-        const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+        const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
         const childEdges = edges.filter(e => e.from === post.id);
         quest.taskGraph = edges.filter(e => e.from !== post.id);
         childEdges.forEach(e => {
@@ -1379,7 +1385,7 @@ router.delete(
       if (quest) {
         const edges = quest.taskGraph || [];
         const parentEdge = edges.find(e => e.to === post.id);
-        const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+        const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
         const childEdges = edges.filter(e => e.from === post.id);
         quest.taskGraph = edges.filter(e => e.to !== post.id && e.from !== post.id);
         childEdges.forEach(e => {

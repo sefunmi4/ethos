@@ -31,7 +31,7 @@ export interface DBPost {
   /** Body content */
   content: string;
   /** Creation timestamp */
-  createdAt: string;
+  createdAt?: string;
 
   // --- Optional fields retained for JSON store / compatibility ---
   subtype?: string;
@@ -95,6 +95,7 @@ export interface DBQuest {
   visibility: Visibility;
   approvalStatus?: ApprovalStatus;
   status?: 'active' | 'completed' | 'archived';
+  flagCount?: number;
 
   /** Optional parent project association */
   projectId?: string | null;
