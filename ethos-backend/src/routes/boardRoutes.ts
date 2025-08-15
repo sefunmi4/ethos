@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { logBoardAction } from '../utils/boardLogger';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { boardsStore, postsStore, questsStore, usersStore } from '../models/memoryStores';
+import { boardsStore, postsStore, questsStore, usersStore } from '../models/stores';
 import { enrichBoard, enrichQuest } from '../utils/enrich';
 import { DEFAULT_PAGE_SIZE } from '../constants';
 import { pool, usePg, disablePg } from '../db';
