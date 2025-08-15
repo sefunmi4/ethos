@@ -25,7 +25,7 @@ const normalizePost = (post: DBPost): Post => {
     ...post,
     title: post.title ?? undefined,
     visibility: post.visibility ?? 'public',
-    timestamp: post.timestamp ?? post.createdAt,
+      timestamp: post.timestamp ?? post.createdAt ?? new Date().toISOString(),
     tags: post.tags ?? [],
     collaborators: post.collaborators ?? [],
     linkedItems: post.linkedItems ?? [],

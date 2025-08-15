@@ -32,14 +32,17 @@ const getQuestBoardQuests = (
 };
 
 // Gather recent request posts for the quest board. Returns up to DEFAULT_PAGE_SIZE
-// recent requests excluding archived or private ones.
+// recent requests excluding archived or private ones. Optionally excludes posts
+// authored by the requesting user.
 const getQuestBoardRequests = (
   posts: ReturnType<typeof postsStore.read>,
+  userId?: string
 ) => {
   return posts
     .filter(p => p.type === 'request')
     .filter(p => p.visibility !== 'private')
     .filter(p => !p.tags?.includes('archived'))
+    .filter(p => !userId || p.authorId !== userId)
     .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
     .slice(0, DEFAULT_PAGE_SIZE)
     .map(p => p.id);

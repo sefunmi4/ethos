@@ -94,10 +94,9 @@ export interface DBQuest {
   description?: string | null;
   visibility: Visibility;
   approvalStatus?: ApprovalStatus;
-  status?: 'active' | 'completed' | 'archived';
-  flagCount?: number;
+    status?: 'active' | 'completed' | 'archived';
 
-  /** Optional parent project association */
+    /** Optional parent project association */
   projectId?: string | null;
 
   headPostId?: string | null;
