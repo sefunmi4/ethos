@@ -118,6 +118,11 @@ async function initializeDatabase() {
       read BOOLEAN,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      token TEXT PRIMARY KEY,
+      user_id UUID REFERENCES users(id),
+      expires TIMESTAMPTZ
+    );
     CREATE TABLE IF NOT EXISTS reactions (
       id UUID PRIMARY KEY,
       postid TEXT,
@@ -125,6 +130,18 @@ async function initializeDatabase() {
       type TEXT,
       createdat TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(postid, userid, type)
+    );
+    CREATE TABLE IF NOT EXISTS git_accounts (
+      user_id TEXT,
+      provider TEXT,
+      username TEXT,
+      token_hash TEXT,
+      linked_repo_ids JSONB,
+      PRIMARY KEY (user_id, provider, username)
+    );
+    CREATE TABLE IF NOT EXISTS git_repos (
+      id TEXT PRIMARY KEY,
+      data JSONB
     );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;

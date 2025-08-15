@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const fs_1 = __importDefault(require("fs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const uuid_1 = require("uuid");
@@ -17,16 +16,10 @@ const passwordUtils_1 = require("../utils/passwordUtils");
 const asyncHandler_1 = require("../utils/asyncHandler");
 const logger_1 = require("../utils/logger");
 const usernameUtils_1 = require("../utils/usernameUtils");
+const db_1 = require("../db");
 dotenv_1.default.config();
 const router = express_1.default.Router();
 router.use((0, cookie_parser_1.default)());
-const USERS_FILE = './src/data/users.json';
-const RESET_TOKENS_FILE = './src/data/resetTokens.json';
-// ---------------------- Utility Functions ----------------------
-const loadUsers = () => JSON.parse(fs_1.default.readFileSync(USERS_FILE, 'utf8') || '[]');
-const saveUsers = (users) => fs_1.default.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-const loadResetTokens = () => JSON.parse(fs_1.default.readFileSync(RESET_TOKENS_FILE, 'utf8') || '{}');
-const saveResetTokens = (data) => fs_1.default.writeFileSync(RESET_TOKENS_FILE, JSON.stringify(data, null, 2));
 const sendResetEmail = async (email, resetUrl) => {
     const transporter = nodemailer_1.default.createTransport({
         service: 'gmail',
@@ -45,17 +38,15 @@ router.post('/forgot-password', (0, asyncHandler_1.asyncHandler)(async (req, res
     const { email } = req.body;
     if (!email)
         return res.status(400).json({ error: 'Email is required' });
-    const users = loadUsers();
-    const user = users.find(u => u.email === email);
+    const { rows } = await db_1.pool.query('SELECT id FROM users WHERE email = $1', [
+        email,
+    ]);
+    const user = rows[0];
     if (!user)
         return res.status(404).json({ error: 'User not found' });
     const token = crypto_1.default.randomBytes(32).toString('hex');
-    const tokens = loadResetTokens();
-    tokens[token] = {
-        id: user.id,
-        expires: Date.now() + 15 * 60 * 1000,
-    };
-    saveResetTokens(tokens);
+    const expires = new Date(Date.now() + 15 * 60 * 1000);
+    await db_1.pool.query('INSERT INTO password_reset_tokens (token, user_id, expires) VALUES ($1, $2, $3)', [token, user.id, expires]);
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
     try {
         await sendResetEmail(email, resetUrl);
@@ -69,19 +60,19 @@ router.post('/forgot-password', (0, asyncHandler_1.asyncHandler)(async (req, res
 router.post('/reset-password/:token', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
-    const tokens = loadResetTokens();
-    const tokenData = tokens[token];
-    if (!tokenData || tokenData.expires < Date.now()) {
+    const { rows } = await db_1.pool.query('SELECT user_id, expires FROM password_reset_tokens WHERE token = $1', [token]);
+    const data = rows[0];
+    if (!data || new Date(data.expires) < new Date()) {
         return res.status(400).json({ error: 'Invalid or expired token' });
     }
-    const users = loadUsers();
-    const user = users.find(u => u.id === tokenData.id);
-    if (!user)
-        return res.status(404).json({ error: 'User not found' });
-    user.password = await (0, passwordUtils_1.hashPassword)(password);
-    saveUsers(users);
-    delete tokens[token];
-    saveResetTokens(tokens);
+    const hashed = await (0, passwordUtils_1.hashPassword)(password);
+    await db_1.pool.query('UPDATE users SET password = $1 WHERE id = $2', [
+        hashed,
+        data.user_id,
+    ]);
+    await db_1.pool.query('DELETE FROM password_reset_tokens WHERE token = $1', [
+        token,
+    ]);
     res.json({ message: 'Password updated successfully' });
 }));
 router.post('/register', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
@@ -90,35 +81,27 @@ router.post('/register', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password required' });
         }
-        const users = loadUsers();
-        if (users.find(u => u.email === email)) {
+        const existing = await db_1.pool.query('SELECT id FROM users WHERE email = $1', [
+            email,
+        ]);
+        if (existing.rows.length > 0) {
             return res.status(409).json({ error: 'Email already registered' });
         }
         let newUsername = username || (0, usernameUtils_1.generateRandomUsername)();
-        while (users.find(u => u.username === newUsername)) {
+        // ensure unique username
+        let check = await db_1.pool.query('SELECT id FROM users WHERE username = $1', [
+            newUsername,
+        ]);
+        while (check.rows.length > 0) {
             newUsername = (0, usernameUtils_1.generateRandomUsername)();
+            check = await db_1.pool.query('SELECT id FROM users WHERE username = $1', [
+                newUsername,
+            ]);
         }
-        const newUser = {
-            id: `u_${(0, uuid_1.v4)()}`,
-            username: newUsername,
-            email,
-            password: await (0, passwordUtils_1.hashPassword)(password),
-            role: 'user',
-            tags: ['explorer'],
-            bio: '',
-            links: { github: '', linkedin: '', tiktok: '', website: '' },
-            xp: 0,
-            experienceTimeline: [
-                {
-                    datetime: new Date().toISOString(),
-                    title: 'Journey begins',
-                    tags: ['registered'],
-                },
-            ],
-        };
-        users.push(newUser);
-        saveUsers(users);
-        res.status(201).json({ message: 'User registered', userId: newUser.id });
+        const userId = (0, uuid_1.v4)();
+        const hashed = await (0, passwordUtils_1.hashPassword)(password);
+        await db_1.pool.query('INSERT INTO users (id, username, email, password, role) VALUES ($1, $2, $3, $4, $5)', [userId, newUsername, email, hashed, 'user']);
+        res.status(201).json({ message: 'User registered', userId });
     }
     catch (err) {
         (0, logger_1.error)('[REGISTER ERROR]', err);
@@ -128,13 +111,21 @@ router.post('/register', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
 router.post('/login', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     try {
         const { email, password } = req.body;
-        const users = loadUsers();
-        const user = users.find(u => u.email === email);
-        if (!user)
-            return res.status(404).json({ error: 'User not found' });
+        const result = await db_1.pool.query('SELECT * FROM users WHERE email = $1', [
+            email,
+        ]);
+        if (!result || result.rowCount === 0) {
+            return res
+                .status(401)
+                .json({ error: 'Request empty or invalid credentials' });
+        }
+        const user = result.rows[0];
         const valid = await (0, passwordUtils_1.comparePasswords)(password, user.password);
-        if (!valid)
-            return res.status(401).json({ error: 'Invalid password' });
+        if (!valid) {
+            return res
+                .status(401)
+                .json({ error: 'Request empty or invalid credentials' });
+        }
         const refreshToken = (0, jwtUtils_1.signRefreshToken)({ id: user.id, role: user.role });
         const accessToken = (0, jwtUtils_1.generateAccessToken)({ id: user.id, role: user.role });
         res.cookie('refreshToken', refreshToken, {
@@ -150,39 +141,64 @@ router.post('/login', (0, asyncHandler_1.asyncHandler)(async (req, res) => {
         res.status(500).json({ error: 'Internal error' });
     }
 }));
-router.get('/me', cookieAuth_1.cookieAuth, (req, res) => {
-    const users = loadUsers();
-    const user = users.find(u => u.id === req.user?.id);
-    if (!user) {
-        res.status(404).json({ error: 'User not found' });
-        return;
+router.get('/me', cookieAuth_1.cookieAuth, async (req, res) => {
+    try {
+        const result = await db_1.pool.query('SELECT * FROM users WHERE id = $1', [
+            req.user?.id,
+        ]);
+        const user = result.rows[0];
+        if (!user) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        const { id, email, username, role, tags, bio, links, experienceTimeline, xp, } = user;
+        res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
     }
-    const { id, email, username, role, tags, bio, links, experienceTimeline, xp } = user;
-    res.json({ id, email, username, role, tags, bio, links, experienceTimeline, xp });
+    catch (err) {
+        (0, logger_1.error)('[LOGIN ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+    }
 });
 router.patch('/me', cookieAuth_1.cookieAuth, (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    const users = loadUsers();
-    const user = users.find(u => u.id === req.user?.id);
-    if (!user)
-        return res.status(404).json({ error: 'User not found' });
-    Object.assign(user, req.body); // validate if needed
-    saveUsers(users);
-    res.json(user);
+    try {
+        const fields = Object.keys(req.body);
+        const values = Object.values(req.body);
+        if (fields.length === 0) {
+            res.status(400).json({ error: 'No fields provided' });
+            return;
+        }
+        const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+        values.push(req.user?.id);
+        const result = await db_1.pool.query(`UPDATE users SET ${sets} WHERE id = $${fields.length + 1} RETURNING *`, values);
+        res.json(result.rows[0]);
+    }
+    catch (err) {
+        (0, logger_1.error)('[UPDATE ME ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+    }
 }));
 router.post('/archive', cookieAuth_1.cookieAuth, (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    const users = loadUsers();
-    const user = users.find(u => u.id === req.user?.id);
-    if (!user)
-        return res.status(404).json({ error: 'User not found' });
-    user.status = 'archived';
-    saveUsers(users);
-    res.json({ success: true });
+    try {
+        await db_1.pool.query('UPDATE users SET status = $1 WHERE id = $2', [
+            'archived',
+            req.user?.id,
+        ]);
+        res.json({ success: true });
+    }
+    catch (err) {
+        (0, logger_1.error)('[ARCHIVE ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+    }
 }));
 router.delete('/me', cookieAuth_1.cookieAuth, (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    let users = loadUsers();
-    users = users.filter(u => u.id !== req.user?.id);
-    saveUsers(users);
-    res.json({ success: true });
+    try {
+        await db_1.pool.query('DELETE FROM users WHERE id = $1', [req.user?.id]);
+        res.json({ success: true });
+    }
+    catch (err) {
+        (0, logger_1.error)('[DELETE USER ERROR]', err);
+        res.status(500).json({ error: 'Internal error' });
+    }
 }));
 router.post('/refresh', (req, res) => {
     const token = req.cookies?.refreshToken;
@@ -206,7 +222,9 @@ router.post('/logout', (_req, res) => {
     res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        // Use the same SameSite setting as the login cookie so
+        // the browser properly removes it on logout
+        sameSite: 'lax',
     });
     res.sendStatus(204);
 });

@@ -24,6 +24,7 @@ const uuid_1 = require("uuid");
 const archiver_1 = __importDefault(require("archiver"));
 const simple_git_1 = __importDefault(require("simple-git"));
 const stores_1 = require("../models/stores");
+const db_1 = require("../db");
 const reposRoot = path_1.default.join(__dirname, '../repos');
 function ensureRepoDir(questId) {
     const dir = path_1.default.join(reposRoot, questId);
@@ -32,23 +33,55 @@ function ensureRepoDir(questId) {
     }
     return dir;
 }
+async function readRepo(questId) {
+    if (db_1.usePg) {
+        const { rows } = await db_1.pool.query('SELECT data FROM git_repos WHERE id=$1', [questId]);
+        return rows[0]?.data ?? null;
+    }
+    const repos = stores_1.gitStore.read();
+    const repo = repos.find((r) => r.id === questId);
+    return repo ?? null;
+}
+async function writeRepo(repo) {
+    if (db_1.usePg) {
+        await db_1.pool.query('INSERT INTO git_repos (id, data) VALUES ($1,$2) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data', [repo.id, repo]);
+        return;
+    }
+    const repos = stores_1.gitStore.read();
+    const idx = repos.findIndex((r) => r.id === repo.id);
+    if (idx >= 0)
+        repos[idx] = repo;
+    else
+        repos.push(repo);
+    stores_1.gitStore.write(repos);
+}
+async function deleteRepo(questId) {
+    if (db_1.usePg) {
+        await db_1.pool.query('DELETE FROM git_repos WHERE id=$1', [questId]);
+        return;
+    }
+    const repos = stores_1.gitStore.read();
+    const idx = repos.findIndex((r) => r.id === questId);
+    if (idx !== -1) {
+        repos.splice(idx, 1);
+        stores_1.gitStore.write(repos);
+    }
+}
 async function initRepo(questId, name) {
     const repoDir = ensureRepoDir(questId);
-    const repos = stores_1.gitStore.read();
-    const existing = repos.find((r) => r.id === questId);
-    const repo = existing ?? {
-        id: questId,
-        repoUrl: '',
-        defaultBranch: 'main',
-        branches: ['main'],
-        lastCommitSha: '',
-        status: {},
-        fileTree: [],
-        commits: [],
-    };
-    if (!existing) {
-        repos.push(repo);
-        stores_1.gitStore.write(repos);
+    let repo = await readRepo(questId);
+    if (!repo) {
+        repo = {
+            id: questId,
+            repoUrl: '',
+            defaultBranch: 'main',
+            branches: ['main'],
+            lastCommitSha: '',
+            status: {},
+            fileTree: [],
+            commits: [],
+        };
+        await writeRepo(repo);
     }
     return repo;
 }
@@ -69,8 +102,7 @@ async function createFolder(questId, folderPath) {
     const repoDir = ensureRepoDir(questId);
     const target = path_1.default.join(repoDir, folderPath);
     fs_1.default.mkdirSync(target, { recursive: true });
-    const repos = stores_1.gitStore.read();
-    const repo = repos.find((r) => r.id === questId);
+    const repo = await readRepo(questId);
     if (repo) {
         const parts = folderPath.split('/').filter(Boolean);
         let current = repo.fileTree;
@@ -91,7 +123,7 @@ async function createFolder(questId, folderPath) {
                 node.children = [];
             current = node.children;
         }
-        stores_1.gitStore.write(repos);
+        await writeRepo(repo);
     }
     return repo;
 }
@@ -100,8 +132,7 @@ async function createFile(questId, filePath, content = '') {
     const target = path_1.default.join(repoDir, filePath);
     fs_1.default.mkdirSync(path_1.default.dirname(target), { recursive: true });
     fs_1.default.writeFileSync(target, content);
-    const repos = stores_1.gitStore.read();
-    const repo = repos.find((r) => r.id === questId);
+    const repo = await readRepo(questId);
     if (repo) {
         const parts = filePath.split('/').filter(Boolean);
         const fileName = parts.pop();
@@ -130,7 +161,7 @@ async function createFile(questId, filePath, content = '') {
             type: 'file',
             status: 'added',
         });
-        stores_1.gitStore.write(repos);
+        await writeRepo(repo);
     }
     return repo;
 }
@@ -138,14 +169,13 @@ async function updateFile(questId, filePath, content) {
     const repoDir = ensureRepoDir(questId);
     const target = path_1.default.join(repoDir, filePath);
     fs_1.default.writeFileSync(target, content);
-    const repos = stores_1.gitStore.read();
-    const repo = repos.find((r) => r.id === questId);
+    const repo = await readRepo(questId);
     if (repo) {
         const node = findNode(repo.fileTree, filePath.split('/').filter(Boolean));
         if (node) {
             node.status = 'modified';
         }
-        stores_1.gitStore.write(repos);
+        await writeRepo(repo);
     }
     return repo;
 }
@@ -164,8 +194,7 @@ async function downloadRepo(questId, outPath) {
 }
 // Placeholder implementations for existing functions
 async function getQuestRepoMeta(questId) {
-    const repos = stores_1.gitStore.read();
-    const repo = repos.find((r) => r.id === questId);
+    const repo = await readRepo(questId);
     if (!repo)
         return null;
     const repoDir = ensureRepoDir(questId);
@@ -188,6 +217,7 @@ async function getQuestRepoMeta(questId) {
         };
         repo.branches = branchInfo.all;
         repo.lastCommitSha = log.latest?.hash || repo.lastCommitSha;
+        await writeRepo(repo);
     }
     catch {
         // ignore git errors, return stored meta
@@ -201,9 +231,7 @@ async function connectRepo(questId, repoUrl, branch) {
     const repoGit = (0, simple_git_1.default)(repoDir);
     const branches = (await repoGit.branch()).all;
     const log = await repoGit.log({ maxCount: 1 });
-    const repos = stores_1.gitStore.read();
-    let repo = repos.find((r) => r.id === questId);
-    repo = {
+    const repo = {
         id: questId,
         repoUrl,
         defaultBranch: branch,
@@ -213,12 +241,7 @@ async function connectRepo(questId, repoUrl, branch) {
         fileTree: [],
         commits: [],
     };
-    const idx = repos.findIndex((r) => r.id === questId);
-    if (idx >= 0)
-        repos[idx] = repo;
-    else
-        repos.push(repo);
-    stores_1.gitStore.write(repos);
+    await writeRepo(repo);
     return repo;
 }
 async function syncRepo(questId) {
@@ -228,15 +251,10 @@ async function syncRepo(questId) {
     return (await getQuestRepoMeta(questId));
 }
 async function removeRepo(questId) {
-    const repos = stores_1.gitStore.read();
-    const idx = repos.findIndex((r) => r.id === questId);
-    if (idx !== -1) {
-        repos.splice(idx, 1);
-        stores_1.gitStore.write(repos);
-        const dir = path_1.default.join(reposRoot, questId);
-        if (fs_1.default.existsSync(dir)) {
-            fs_1.default.rmSync(dir, { recursive: true, force: true });
-        }
+    await deleteRepo(questId);
+    const dir = path_1.default.join(reposRoot, questId);
+    if (fs_1.default.existsSync(dir)) {
+        fs_1.default.rmSync(dir, { recursive: true, force: true });
     }
     return { success: true };
 }
@@ -297,6 +315,26 @@ async function getCommits(questId) {
 async function commitRepo(questId, message, filePaths = ['.']) {
     const repoDir = ensureRepoDir(questId);
     const git = (0, simple_git_1.default)(repoDir);
+    // ensure git user config exists to allow committing
+    try {
+        const list = await git.listConfig();
+        if (!list.all['user.name']) {
+            await git.addConfig('user.name', 'Ethos Bot');
+        }
+        if (!list.all['user.email']) {
+            await git.addConfig('user.email', 'bot@example.com');
+        }
+    }
+    catch {
+        // ignore errors fetching config; attempt to set values directly
+        try {
+            await git.addConfig('user.name', 'Ethos Bot');
+            await git.addConfig('user.email', 'bot@example.com');
+        }
+        catch {
+            /* noop */
+        }
+    }
     await git.add(filePaths);
     await git.commit(message);
     return (await getQuestRepoMeta(questId));
