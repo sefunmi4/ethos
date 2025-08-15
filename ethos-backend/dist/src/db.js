@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pool = exports.usePg = void 0;
+exports.usePg = exports.pool = void 0;
+exports.setTestPool = setTestPool;
 exports.disablePg = disablePg;
 exports.initializeDatabase = initializeDatabase;
 const pg_1 = require("pg");
@@ -15,37 +16,44 @@ dotenv_1.default.config();
  * cannot be established (e.g. during tests where no DB is available) the flag
  * is flipped off and the app gracefully falls back to the JSON store.
  */
-exports.usePg = !!process.env.DATABASE_URL &&
+let usePg = !!process.env.DATABASE_URL &&
     (process.env.NODE_ENV !== 'test' || process.env.USE_PG === 'true');
-exports.pool = exports.usePg
+exports.usePg = usePg;
+let pool = usePg
     ? new pg_1.Pool({ connectionString: process.env.DATABASE_URL })
     : {};
+exports.pool = pool;
 /**
  * Disable PostgreSQL usage and fall back to the JSON store.
  * This helper is useful if a database error occurs after startup.
  */
 function disablePg() {
-    exports.usePg = false;
-    exports.pool = {};
+    exports.usePg = usePg = false;
+    exports.pool = pool = {};
+}
+/**
+ * Provide a custom pool for tests. This forces Postgres mode and replaces the
+ * global pool instance so tests can run against an in-memory database.
+ */
+function setTestPool(testPool) {
+    exports.pool = pool = testPool;
+    exports.usePg = usePg = true;
 }
 /**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
 async function initializeDatabase() {
-    if (!exports.usePg)
+    if (!usePg)
         return;
     try {
-        // Verify the connection is usable. If it fails we gracefully fall back to
-        // the JSON store so tests or offline environments can continue working.
-        await exports.pool.query('SELECT 1');
+        await pool.query('SELECT 1');
     }
-    catch (_err) {
-        console.warn('PostgreSQL not available, using JSON store instead');
-        disablePg();
-        return;
+    catch (err) {
+        console.error('Failed to connect to PostgreSQL', err);
+        throw err;
     }
-    await exports.pool.query(`
+    await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id UUID PRIMARY KEY,
       username TEXT,
@@ -147,9 +155,17 @@ async function initializeDatabase() {
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ;
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS requestid TEXT;
     ALTER TABLE quests ADD COLUMN IF NOT EXISTS tags TEXT[];
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS linkedPosts JSONB;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS taskGraph JSONB;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS questIds TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS deliverables TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS mapEdges JSONB;
   `);
-    const { rows } = await exports.pool.query("SELECT id FROM boards WHERE id IN ('quest-board','timeline-board','my-posts','my-quests')");
+    const { rows } = await pool.query("SELECT id FROM boards WHERE id IN ('quest-board','timeline-board','my-posts','my-quests')");
     const existing = rows.map((r) => r.id);
     const defaults = [
         { id: 'quest-board', title: 'Quest Board' },
@@ -159,7 +175,7 @@ async function initializeDatabase() {
     ];
     for (const board of defaults) {
         if (!existing.includes(board.id)) {
-            await exports.pool.query(`INSERT INTO boards (id,title,boardType,layout,items,createdAt,userId) VALUES ($1,$2,'post','grid','[]',NOW(),'')`, [board.id, board.title]);
+            await pool.query(`INSERT INTO boards (id,title,boardType,layout,items,createdAt,userId) VALUES ($1,$2,'post','grid','[]',NOW(),'')`, [board.id, board.title]);
         }
     }
 }
