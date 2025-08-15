@@ -1360,6 +1360,24 @@ router.delete(
           res.status(404).json({ error: 'Post not found' });
           return;
         }
+        await pool
+          .query(
+            "DELETE FROM reactions WHERE postid IN (SELECT id FROM posts WHERE repostedfrom = $1 AND type = 'request')",
+            [req.params.id]
+          )
+          .catch((err) => console.error(err));
+        await pool
+          .query(
+            "DELETE FROM posts WHERE repostedfrom = $1 AND type = 'request'",
+            [req.params.id]
+          )
+          .catch((err) => console.error(err));
+        await pool
+          .query(
+            "DELETE FROM reactions WHERE postid = $1 AND type IN ('request','review')",
+            [req.params.id]
+          )
+          .catch((err) => console.error(err));
         res.json({ success: true });
         return;
       } catch (err) {
@@ -1413,8 +1431,33 @@ router.delete(
       }
     }
 
+    const requestIds = posts
+      .filter(p => p.repostedFrom === post.id && p.type === 'request')
+      .map(p => p.id);
+    requestIds.forEach(rid => {
+      const rIndex = posts.findIndex(p => p.id === rid);
+      if (rIndex !== -1) posts.splice(rIndex, 1);
+    });
     posts.splice(index, 1);
     postsStore.write(posts);
+    const boards = boardsStore.read();
+    const questBoard = boards.find(b => b.id === 'quest-board');
+    if (questBoard) {
+      const toRemove = new Set([req.params.id, ...requestIds]);
+      questBoard.items = (questBoard.items || []).filter(
+        id => id !== null && !toRemove.has(id)
+      );
+      boardsStore.write(boards);
+    }
+    const reactions = reactionsStore.read();
+    const filtered = reactions.filter(r => {
+      const [postId] = r.split('_');
+      if (postId === req.params.id) {
+        return !(r.endsWith('_request') || r.endsWith('_review'));
+      }
+      return !requestIds.includes(postId);
+    });
+    reactionsStore.write(filtered);
     res.json({ success: true });
   }
 );
