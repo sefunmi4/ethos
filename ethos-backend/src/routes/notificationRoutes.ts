@@ -2,8 +2,7 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { pool, usePg } from '../db';
-import { notificationsStore } from '../models/stores';
+import { pool } from '../db';
 
 import type { DBNotification } from '../types/db';
 
@@ -64,33 +63,21 @@ router.post('/', authOptional, async (req: Request<any, any, { userId: string; m
 router.patch('/:id/read', authMiddleware, async (req: Request<{ id: string }>, res: Response): Promise<void> => {
   const userId = (req as any).user?.id;
   const { id } = req.params;
-    try {
-      if (usePg) {
-        const result = await pool.query(
-          'UPDATE notifications SET read = true WHERE id = $1 AND userid = $2 RETURNING *',
-          [id, userId]
-        );
-        const row = result.rows[0];
-        if (!row) {
-          res.status(404).json({ error: 'Notification not found' });
-          return;
-        }
-        res.json(row);
-      } else {
-        const notes = notificationsStore.read();
-        const note = notes.find(n => n.id === id && n.userId === userId);
-        if (!note) {
-          res.status(404).json({ error: 'Notification not found' });
-          return;
-        }
-        note.read = true;
-        notificationsStore.write(notes);
-        res.json(note);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
+  try {
+    const result = await pool.query(
+      'UPDATE notifications SET read = true WHERE id = $1 AND userid = $2 RETURNING *',
+      [id, userId]
+    );
+    const row = result.rows[0];
+    if (!row) {
+      res.status(404).json({ error: 'Notification not found' });
+      return;
     }
-  });
+    res.json(row);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
 
 export default router;

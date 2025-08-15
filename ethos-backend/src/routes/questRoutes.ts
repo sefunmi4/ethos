@@ -37,25 +37,32 @@ router.get('/featured', authOptional, (req: AuthRequest, res: Response) => {
   const popularity = (q: DBQuest) =>
     posts.filter((p) => p.questId === q.id).length + (q.linkedPosts?.length || 0);
 
-  const featured = quests
-    .filter(
-      (q) => q.visibility === 'public' && q.approvalStatus === 'approved'
-    )
-    .filter((q) => {
-      if (!userId) return true;
-      const involved =
-        q.authorId === userId ||
-        (q.collaborators || []).some((c) => c.userId === userId) ||
-        posts.some((p) => p.questId === q.id && p.authorId === userId);
-      return !involved;
-    })
-    .sort((a, b) => popularity(b) - popularity(a))
-    .slice(0, 10)
-    .map((q) => ({
-      ...q,
-      popularity: popularity(q),
-      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
-    }));
+    const featured = quests
+      .filter(
+        (q) => q.visibility === 'public' && q.approvalStatus === 'approved'
+      )
+      .filter((q) => {
+        if (!userId) return true;
+        const involved =
+          q.authorId === userId ||
+          (q.collaborators || []).some((c) => c.userId === userId) ||
+          posts.some((p) => p.questId === q.id && p.authorId === userId);
+        return !involved;
+      })
+      .sort((a, b) => popularity(b) - popularity(a))
+      .slice(0, 10)
+      .map((q) => ({
+        ...q,
+        description: q.description ?? undefined,
+        approvalStatus: q.approvalStatus ?? 'approved',
+        status: q.status ?? 'active',
+        projectId: q.projectId ?? undefined,
+        headPostId: q.headPostId ?? '',
+        linkedPosts: q.linkedPosts ?? [],
+        collaborators: q.collaborators ?? [],
+        popularity: popularity(q),
+        gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+      }));
 
   res.json(featured);
 });
@@ -69,20 +76,27 @@ router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
   const quests = questsStore.read();
   const posts = postsStore.read();
 
-  const active = quests
-    .filter((q) => q.status === 'active' && q.visibility === 'public')
-    .filter((q) => {
-      if (!userId) return true;
-      const involved =
-        q.authorId === userId ||
-        (q.collaborators || []).some((c) => c.userId === userId) ||
-        posts.some((p) => p.questId === q.id && p.authorId === userId);
-      return !involved;
-    })
-    .map((q) => ({
-      ...q,
-      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
-    }));
+    const active = quests
+      .filter((q) => q.status === 'active' && q.visibility === 'public')
+      .filter((q) => {
+        if (!userId) return true;
+        const involved =
+          q.authorId === userId ||
+          (q.collaborators || []).some((c) => c.userId === userId) ||
+          posts.some((p) => p.questId === q.id && p.authorId === userId);
+        return !involved;
+      })
+      .map((q) => ({
+        ...q,
+        description: q.description ?? undefined,
+        approvalStatus: q.approvalStatus ?? 'approved',
+        status: q.status ?? 'active',
+        projectId: q.projectId ?? undefined,
+        headPostId: q.headPostId ?? '',
+        linkedPosts: q.linkedPosts ?? [],
+        collaborators: q.collaborators ?? [],
+        gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+      }));
 
   if (includeTasks) {
     const taskPosts = posts.filter((p) => p.type === 'task');
@@ -112,10 +126,17 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       return;
     }
   }
-  const quests: Quest[] = questsStore.read().map((q) => ({
-    ...q,
-    gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
-  }));
+    const quests: Quest[] = questsStore.read().map((q) => ({
+      ...q,
+      description: q.description ?? undefined,
+      approvalStatus: q.approvalStatus ?? 'approved',
+      status: q.status ?? 'active',
+      projectId: q.projectId ?? undefined,
+      headPostId: q.headPostId ?? '',
+      linkedPosts: q.linkedPosts ?? [],
+      collaborators: q.collaborators ?? [],
+      gitRepo: q.gitRepo ? { repoUrl: q.gitRepo.repoUrl ?? '', ...q.gitRepo } : undefined,
+    }));
   res.json(quests);
 });
 
@@ -203,19 +224,20 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
 
   const posts = postsStore.read();
   const rootContent = `${title}${description ? `\n\n${description}` : ''}`.trim();
-  const headPost: DBPost = {
-    id: uuidv4(),
-    authorId,
-    type: 'task',
-    taskType,
-    content: rootContent,
-    visibility: 'public',
-    timestamp: new Date().toISOString(),
-    tags: [],
-    collaborators: [],
-    replyTo: null,
-    repostedFrom: null,
-    linkedItems: [],
+    const headPost: DBPost = {
+      id: uuidv4(),
+      authorId,
+      type: 'task',
+      taskType,
+      content: rootContent,
+      visibility: 'public',
+      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      tags: [],
+      collaborators: [],
+      replyTo: null,
+      repostedFrom: null,
+      linkedItems: [],
     questId: newQuest.id,
     nodeId: generateNodeId({ quest: newQuest, posts, postType: 'task', parentPost: null }),
     questNodeTitle: makeQuestNodeTitle(rootContent),
@@ -322,13 +344,15 @@ router.patch(
       quest.linkedPosts.push({ itemId, itemType: 'post' });
       if (post && post.type === 'task') {
         quest.taskGraph = quest.taskGraph || [];
-          const from = post.replyTo || post.linkedNodeId || quest.headPostId || '';
-        const edgeExists = quest.taskGraph.some(
-          e => e.to === itemId && e.from === from
-        );
-        if (!edgeExists) {
-          quest.taskGraph.push({ from, to: itemId });
-        }
+          const from = post.replyTo ?? post.linkedNodeId ?? quest.headPostId;
+          if (from) {
+            const edgeExists = quest.taskGraph.some(
+              e => e.to === itemId && e.from === from
+            );
+            if (!edgeExists) {
+              quest.taskGraph.push({ from, to: itemId });
+            }
+          }
       }
     }
   }
@@ -376,24 +400,25 @@ router.post('/:id/flag', authMiddleware, (req: AuthRequest<{ id: string }>, res:
     return;
   }
 
-  quest.flagCount = (quest.flagCount || 0) + 1;
+    quest.flagCount = (quest.flagCount || 0) + 1;
 
-  if (quest.flagCount >= 3 && quest.approvalStatus === 'approved') {
-    quest.approvalStatus = 'flagged';
-    const reviewPost: DBPost = {
-      id: uuidv4(),
-      authorId: req.user!.id,
-      type: 'review',
-      subtype: 'mod_review',
-      content: `Quest ${quest.id} flagged for review`,
-      visibility: 'hidden',
-      timestamp: new Date().toISOString(),
-      tags: ['mod_review'],
-      collaborators: [],
-      replyTo: null,
-      repostedFrom: null,
-      linkedItems: [{ itemId: quest.id, itemType: 'quest' }],
-    };
+    if (quest.flagCount >= 3 && quest.approvalStatus === 'approved') {
+      quest.approvalStatus = 'flagged';
+      const reviewPost: DBPost = {
+        id: uuidv4(),
+        authorId: req.user!.id,
+        type: 'review',
+        subtype: 'mod_review',
+        content: `Quest ${quest.id} flagged for review`,
+        visibility: 'hidden',
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        tags: ['mod_review'],
+        collaborators: [],
+        replyTo: null,
+        repostedFrom: null,
+        linkedItems: [{ itemId: quest.id, itemType: 'quest' }],
+      };
     posts.push(reviewPost);
     postsStore.write(posts);
   }
@@ -564,18 +589,20 @@ router.post(
   const alreadyLinked = quest.linkedPosts.some(p => p.itemId === postId);
   if (!alreadyLinked) {
     quest.linkedPosts.push({ itemId: postId, itemType: 'post', title });
-    if (post && post.type === 'task') {
-      quest.taskGraph = quest.taskGraph || [];
-        const from = parentId || quest.headPostId || '';
-      // Ensure the task only has one parent edge
-      quest.taskGraph = quest.taskGraph.filter(e => e.to !== postId);
-      const edgeExists = quest.taskGraph.some(
-        e => e.to === postId && e.from === from
-      );
-      if (!edgeExists) {
-        quest.taskGraph.push({ from, to: postId, type: edgeType, label: edgeLabel });
+      if (post && post.type === 'task') {
+        quest.taskGraph = quest.taskGraph || [];
+        const from = parentId ?? quest.headPostId;
+        // Ensure the task only has one parent edge
+        quest.taskGraph = quest.taskGraph.filter(e => e.to !== postId);
+        if (from) {
+          const edgeExists = quest.taskGraph.some(
+            e => e.to === postId && e.from === from
+          );
+          if (!edgeExists) {
+            quest.taskGraph.push({ from, to: postId, type: edgeType, label: edgeLabel });
+          }
+        }
       }
-    }
     questsStore.write(quests);
   }
 
@@ -633,10 +660,8 @@ router.get(
   const recurse = (questId: string) => {
     const q = quests.find(x => x.id === questId);
     if (q) {
-      nodes.push({ ...q, type: 'quest' });
-        (q.linkedPosts || [])
-          .filter(l => l.itemType === 'quest')
-          .forEach(l => recurse(l.itemId));
+        nodes.push({ ...q, type: 'quest' });
+        q.linkedPosts?.filter(l => l.itemType === 'quest').forEach(l => recurse(l.itemId));
     }
 
     const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');

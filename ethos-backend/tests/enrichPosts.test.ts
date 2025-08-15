@@ -10,6 +10,7 @@ describe('enrichPosts author fallback', () => {
       content: 'Hello',
       visibility: 'public',
       timestamp: '',
+      createdAt: '',
     }];
     const result = enrichPosts(posts, [], []);
     expect(result[0].author).toBeDefined();

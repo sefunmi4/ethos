@@ -4,7 +4,6 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore, boardsStore } from '../models/stores';
 import { pool, usePg } from '../db';
-
 import { enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
@@ -256,6 +255,7 @@ router.post(
       type,
       title: type === 'task' ? content : title || makeQuestNodeTitle(content),
       content,
+      createdAt: new Date().toISOString(),
       details,
       visibility,
       timestamp: new Date().toISOString(),
@@ -554,6 +554,7 @@ router.post(
       authorId: req.user!.id,
       type: original.type,
       content: original.content,
+      createdAt: new Date().toISOString(),
       visibility: original.visibility,
       questId: original.questId || null,
       tags: [...(original.tags || [])],
@@ -895,6 +896,7 @@ router.post(
       type: 'request',
       subtype,
       content: original.content,
+      createdAt: timestamp,
       visibility: original.visibility,
       questId: original.questId || null,
       tags: Array.from(tagSet),
@@ -1045,10 +1047,10 @@ router.delete(
 // ✅ POST /api/posts/:id/accept – Accept a help request
 // Marks the post as pending for the current user and joins or creates a quest
 //
-  router.post(
-    '/:id/accept',
-    authMiddleware,
-    async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+router.post(
+  '/:id/accept',
+  authMiddleware,
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const posts = postsStore.read();
     const quests = questsStore.read();
 
@@ -1097,6 +1099,7 @@ router.delete(
 
     let created: DBPost | null = null;
     if (parent && parent.type === 'file') {
+      const createdTimestamp = new Date().toISOString();
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -1104,10 +1107,12 @@ router.delete(
         title: makeQuestNodeTitle(post.content),
         content: '',
         visibility: 'public',
-        timestamp: new Date().toISOString(),
+        createdAt: createdTimestamp,
+        timestamp: createdTimestamp,
         replyTo: parent.id,
       } as DBPost;
     } else if (parent && parent.type === 'task') {
+      const createdTimestamp = new Date().toISOString();
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -1115,10 +1120,12 @@ router.delete(
         title: makeQuestNodeTitle(post.content),
         content: '',
         visibility: 'public',
-        timestamp: new Date().toISOString(),
+        createdAt: createdTimestamp,
+        timestamp: createdTimestamp,
         replyTo: parent.id,
       } as DBPost;
     } else {
+      const createdTimestamp = new Date().toISOString();
       created = {
         id: uuidv4(),
         authorId: userId,
@@ -1126,7 +1133,8 @@ router.delete(
         title: makeQuestNodeTitle(post.content),
         content: '',
         visibility: 'public',
-        timestamp: new Date().toISOString(),
+        createdAt: createdTimestamp,
+        timestamp: createdTimestamp,
         replyTo: post.id,
         status: 'To Do',
       } as DBPost;
@@ -1281,12 +1289,16 @@ router.post(
         const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
         const childEdges = edges.filter(e => e.from === post.id);
         quest.taskGraph = edges.filter(e => e.from !== post.id);
-        childEdges.forEach(e => {
-          const exists = quest.taskGraph!.some(se => se.from === parentId && se.to === e.to);
-          if (!exists) {
-            quest.taskGraph!.push({ ...e, from: parentId });
-          }
-        });
+        if (parentId) {
+          childEdges.forEach(e => {
+            const exists = quest.taskGraph!.some(
+              se => se.from === parentId && se.to === e.to
+            );
+            if (!exists) {
+              quest.taskGraph!.push({ ...e, from: parentId });
+            }
+          });
+        }
         questsStore.write(quests);
       }
     }
@@ -1387,12 +1399,16 @@ router.delete(
         const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
         const childEdges = edges.filter(e => e.from === post.id);
         quest.taskGraph = edges.filter(e => e.to !== post.id && e.from !== post.id);
-        childEdges.forEach(e => {
-          const exists = quest.taskGraph!.some(se => se.from === parentId && se.to === e.to);
-          if (!exists) {
-            quest.taskGraph!.push({ ...e, from: parentId });
-          }
-        });
+        if (parentId) {
+          childEdges.forEach(e => {
+            const exists = quest.taskGraph!.some(
+              se => se.from === parentId && se.to === e.to
+            );
+            if (!exists) {
+              quest.taskGraph!.push({ ...e, from: parentId });
+            }
+          });
+        }
         questsStore.write(quests);
       }
     }
