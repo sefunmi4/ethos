@@ -118,6 +118,11 @@ async function initializeDatabase() {
       read BOOLEAN,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      token TEXT PRIMARY KEY,
+      user_id UUID REFERENCES users(id),
+      expires TIMESTAMPTZ
+    );
     CREATE TABLE IF NOT EXISTS reactions (
       id UUID PRIMARY KEY,
       postid TEXT,

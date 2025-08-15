@@ -290,3 +290,32 @@ export interface DBBoardLog {
   userId: string;
   timestamp: string;
 }
+
+/**
+ * Represents the in-memory or file-backed layout of your JSON data store.
+ * You can expand this to include reaction data, logs, etc.
+ */
+export interface DBSchema {
+  boards: DBBoard[];
+  git: DBGitRepo[];
+  posts: DBPost[];
+  projects: DBProject[];
+  quests: DBQuest[];
+  users: DBUser[];
+  reactions: string[];
+  reviews: DBReview[];
+  boardLogs: DBBoardLog[];
+  notifications: DBNotification[];
+}
+
+// Optional utility type for referencing a single entry type by file
+export type DBFileName = keyof DBSchema;
+
+/**
+ * Generic type for file-based mock storage (can be used in utils/loaders.ts)
+ */
+export type DataStore<T> = {
+  read: () => T;
+  write: (data: T) => void;
+  filepath?: string; // Optional path reference
+};
