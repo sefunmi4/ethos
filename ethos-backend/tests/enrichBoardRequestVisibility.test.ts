@@ -21,6 +21,7 @@ describe('enrichBoard request visibility', () => {
         content: '',
         visibility: 'PUBLIC' as any,
         timestamp: '',
+        createdAt: '',
       },
     ];
 

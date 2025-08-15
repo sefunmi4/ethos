@@ -119,6 +119,9 @@ export interface DBQuest {
   /** Marks this quest as a request for help */
   helpRequest?: boolean;
 
+  /** Number of times this quest has been flagged */
+  flagCount?: number;
+
   /** Users following this quest */
   followers?: string[];
 }
