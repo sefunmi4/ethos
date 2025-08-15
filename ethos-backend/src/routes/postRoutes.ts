@@ -1360,18 +1360,25 @@ router.delete(
           res.status(404).json({ error: 'Post not found' });
           return;
         }
-        await pool
-          .query(
-            "DELETE FROM reactions WHERE postid IN (SELECT id FROM posts WHERE repostedfrom = $1 AND type = 'request')",
+        const requestIds: string[] = [];
+        if (post.requestid) requestIds.push(post.requestid);
+        try {
+          const { rows } = await pool.query(
+            "SELECT id FROM posts WHERE repostedfrom = $1 AND type = 'request'",
             [req.params.id]
-          )
-          .catch((err) => console.error(err));
-        await pool
-          .query(
-            "DELETE FROM posts WHERE repostedfrom = $1 AND type = 'request'",
-            [req.params.id]
-          )
-          .catch((err) => console.error(err));
+          );
+          requestIds.push(...rows.map((r: any) => r.id));
+        } catch (err) {
+          console.error(err);
+        }
+        if (requestIds.length) {
+          await pool
+            .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
+            .catch((err) => console.error(err));
+          await pool
+            .query('DELETE FROM posts WHERE id = ANY($1)', [requestIds])
+            .catch((err) => console.error(err));
+        }
         await pool
           .query(
             "DELETE FROM reactions WHERE postid = $1 AND type IN ('request','review')",
@@ -1432,10 +1439,13 @@ router.delete(
     }
 
     const requestIds = posts
-      .filter(p => p.repostedFrom === post.id && p.type === 'request')
-      .map(p => p.id);
-    requestIds.forEach(rid => {
-      const rIndex = posts.findIndex(p => p.id === rid);
+      .filter((p) => p.repostedFrom === post.id && p.type === 'request')
+      .map((p) => p.id);
+    if (post.requestId && !requestIds.includes(post.requestId)) {
+      requestIds.push(post.requestId);
+    }
+    requestIds.forEach((rid) => {
+      const rIndex = posts.findIndex((p) => p.id === rid);
       if (rIndex !== -1) posts.splice(rIndex, 1);
     });
     posts.splice(index, 1);
