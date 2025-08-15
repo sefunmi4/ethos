@@ -6,122 +6,176 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const uuid_1 = require("uuid");
 const authMiddleware_1 = require("../middleware/authMiddleware");
-const stores_1 = require("../models/stores");
+const db_1 = require("../db");
 const router = express_1.default.Router();
 const bannedWords = ['badword'];
 // GET /api/reviews?type=&sort=&search=
-router.get('/', (_req, res) => {
-    const { type, sort, search } = _req.query;
-    let reviews = stores_1.reviewsStore.read();
+router.get('/', async (req, res) => {
+    const { type, sort, search } = req.query;
+    const conditions = [];
+    const values = [];
+    let idx = 1;
     if (type) {
-        reviews = reviews.filter(r => r.targetType === type);
+        conditions.push(`targettype = $${idx++}`);
+        values.push(type);
     }
     if (search) {
-        const term = search.toLowerCase();
-        reviews = reviews.filter(r => r.feedback?.toLowerCase().includes(term));
+        conditions.push(`LOWER(feedback) LIKE $${idx++}`);
+        values.push(`%${search.toLowerCase()}%`);
+    }
+    let query = 'SELECT * FROM reviews';
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
     }
     if (sort === 'highest') {
-        reviews = reviews.sort((a, b) => b.rating - a.rating);
+        query += ' ORDER BY rating DESC';
     }
     else if (sort === 'recent') {
-        reviews = reviews.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        query += ' ORDER BY createdat DESC';
     }
     else if (sort === 'controversial') {
-        reviews = reviews.sort((a, b) => Math.abs(b.rating - 3) - Math.abs(a.rating - 3));
+        query += ' ORDER BY ABS(rating - 3) DESC';
     }
-    res.json(reviews);
+    try {
+        const result = await db_1.pool.query(query, values);
+        res.json(result.rows);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 // GET /api/reviews/:id
-router.get('/:id', (req, res) => {
-    const review = stores_1.reviewsStore.read().find(r => r.id === req.params.id);
-    if (!review) {
-        res.status(404).json({ error: 'Review not found' });
-        return;
+router.get('/:id', async (req, res) => {
+    try {
+        const result = await db_1.pool.query('SELECT * FROM reviews WHERE id = $1', [req.params.id]);
+        const review = result.rows[0];
+        if (!review) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+        res.json(review);
     }
-    res.json(review);
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 // GET /api/reviews/summary/:entityType/:id
-router.get('/summary/:entityType/:id', (req, res) => {
+router.get('/summary/:entityType/:id', async (req, res) => {
     const { entityType, id } = req.params;
-    const reviews = stores_1.reviewsStore.read().filter(r => {
-        if (r.targetType !== entityType)
-            return false;
-        switch (entityType) {
-            case 'quest':
-                return r.questId === id;
-            case 'ai_app':
-                return r.repoUrl === id;
-            case 'dataset':
-                return r.modelId === id;
-            case 'creator':
-                return r.modelId === id;
-            default:
-                return false;
-        }
-    });
-    if (reviews.length === 0) {
-        res.json({ averageRating: 0, count: 0, tagCounts: {} });
-        return;
+    let column;
+    switch (entityType) {
+        case 'quest':
+            column = 'questid';
+            break;
+        case 'ai_app':
+            column = 'repourl';
+            break;
+        case 'dataset':
+        case 'creator':
+            column = 'modelid';
+            break;
+        default:
+            res.status(400).json({ error: 'Invalid entity type' });
+            return;
     }
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    const tagCounts = {};
-    reviews.forEach(r => {
-        (r.tags || []).forEach(t => {
-            tagCounts[t] = (tagCounts[t] || 0) + 1;
-        });
-    });
-    const averageRating = parseFloat((total / reviews.length).toFixed(2));
-    res.json({ averageRating, count: reviews.length, tagCounts });
+    try {
+        const agg = await db_1.pool.query(`SELECT COALESCE(AVG(rating),0) AS averagerating, COUNT(*) AS count FROM reviews WHERE targettype = $1 AND ${column} = $2`, [entityType, id]);
+        const tags = await db_1.pool.query(`SELECT tag, COUNT(*) FROM reviews, UNNEST(tags) AS tag WHERE targettype = $1 AND ${column} = $2 GROUP BY tag`, [entityType, id]);
+        const tagCounts = {};
+        for (const row of tags.rows) {
+            tagCounts[row.tag] = Number(row.count);
+        }
+        const averageRating = parseFloat(Number(agg.rows[0].averagerating).toFixed(2));
+        const count = Number(agg.rows[0].count);
+        res.json({ averageRating, count, tagCounts });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 // POST /api/reviews
-router.post('/', authMiddleware_1.authMiddleware, (req, res) => {
-    const { targetType, rating, tags = [], feedback = '', repoUrl, modelId, questId, postId, visibility = 'public', status = 'submitted', } = req.body;
+router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
+    const { targetType, rating, visibility = 'public', status = 'submitted', tags = [], feedback = '', repoUrl, modelId, questId, postId, } = req.body;
     if (!targetType || !rating) {
         res.status(400).json({ error: 'Missing fields' });
         return;
     }
-    if (feedback && bannedWords.some(w => feedback.toLowerCase().includes(w))) {
+    if (feedback && bannedWords.some((w) => feedback.toLowerCase().includes(w))) {
         res.status(400).json({ error: 'Inappropriate language detected' });
         return;
     }
-    const reviews = stores_1.reviewsStore.read();
-    const newReview = {
-        id: (0, uuid_1.v4)(),
-        reviewerId: req.user.id,
-        targetType,
-        rating: Math.min(5, Math.max(1, Number(rating))),
-        visibility,
-        status,
-        tags,
-        feedback,
-        repoUrl,
-        modelId,
-        questId,
-        postId,
-        createdAt: new Date().toISOString(),
-    };
-    reviews.push(newReview);
-    stores_1.reviewsStore.write(reviews);
-    res.status(201).json(newReview);
+    const id = (0, uuid_1.v4)();
+    try {
+        await db_1.pool.query('INSERT INTO reviews (id, reviewerid, targettype, rating, visibility, status, tags, feedback, repourl, modelid, questid, postid, createdat) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)', [
+            id,
+            req.user.id,
+            targetType,
+            Math.min(5, Math.max(1, Number(rating))),
+            visibility,
+            status,
+            tags,
+            feedback,
+            repoUrl,
+            modelId,
+            questId,
+            postId,
+            new Date().toISOString(),
+        ]);
+        res.status(201).json({ id });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 // PATCH /api/reviews/:id
-router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
-    const reviews = stores_1.reviewsStore.read();
-    const review = reviews.find(r => r.id === req.params.id);
-    if (!review) {
-        res.status(404).json({ error: 'Review not found' });
-        return;
-    }
-    const { feedback } = req.body;
-    if (feedback && bannedWords.some(w => String(feedback).toLowerCase().includes(w))) {
+router.patch('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
+    const updates = { ...req.body };
+    if (updates.feedback && bannedWords.some((w) => String(updates.feedback).toLowerCase().includes(w))) {
         res.status(400).json({ error: 'Inappropriate language detected' });
         return;
     }
-    Object.assign(review, req.body);
-    if ('rating' in req.body && typeof review.rating === 'number') {
-        review.rating = Math.min(5, Math.max(1, Number(review.rating)));
+    if (updates.rating !== undefined) {
+        updates.rating = Math.min(5, Math.max(1, Number(updates.rating)));
     }
-    stores_1.reviewsStore.write(reviews);
-    res.json(review);
+    const fields = Object.keys(updates);
+    if (fields.length === 0) {
+        res.status(400).json({ error: 'No fields to update' });
+        return;
+    }
+    const values = Object.values(updates);
+    const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+    values.push(req.params.id);
+    try {
+        const result = await db_1.pool.query(`UPDATE reviews SET ${sets} WHERE id = $${fields.length + 1} RETURNING *`, values);
+        const row = result.rows[0];
+        if (!row) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+        res.json(row);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+// DELETE /api/reviews/:id
+router.delete('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
+    try {
+        const result = await db_1.pool.query('DELETE FROM reviews WHERE id = $1 RETURNING *', [req.params.id]);
+        if (result.rowCount === 0) {
+            res.status(404).json({ error: 'Review not found' });
+            return;
+        }
+        res.json({ success: true });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
 });
 exports.default = router;

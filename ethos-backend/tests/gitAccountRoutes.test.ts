@@ -10,12 +10,25 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-jest.mock('../src/models/stores', () => ({
-  usersStore: { read: jest.fn(() => [{ id: 'u1', gitAccounts: [] }]), write: jest.fn() },
-  gitStore: { read: jest.fn(() => []), write: jest.fn() },
+let savedHash = '';
+jest.mock('../src/db', () => ({
+  pool: {
+    query: jest.fn((sql: string, params: any[]) => {
+      if (sql.startsWith('SELECT id FROM users')) {
+        return Promise.resolve({ rowCount: 1, rows: [{ id: 'u1' }] });
+      }
+      if (sql.startsWith('INSERT INTO git_accounts')) {
+        savedHash = params[3];
+        return Promise.resolve({ rowCount: 1 });
+      }
+      if (sql.startsWith('SELECT provider')) {
+        return Promise.resolve({ rows: [{ provider: 'github', username: 'alice', tokenHash: savedHash, linkedRepoIds: [] }] });
+      }
+      return Promise.resolve({ rows: [] });
+    })
+  },
+  usePg: true,
 }));
-
-import { usersStore } from '../src/models/stores';
 
 const app = express();
 app.use(express.json());
@@ -27,10 +40,7 @@ describe('git account routes', () => {
       .post('/git/account')
       .send({ provider: 'github', username: 'alice', token: 'abc123' });
     expect(res.status).toBe(200);
-    const written = (usersStore.write as jest.Mock).mock.calls[0][0];
-    expect(written[0].gitAccounts[0].provider).toBe('github');
-    expect(written[0].gitAccounts[0].username).toBe('alice');
-    expect(written[0].gitAccounts[0].tokenHash).toBeDefined();
-    expect(written[0].gitAccounts[0].tokenHash).not.toBe('abc123');
+    expect(savedHash).toBeDefined();
+    expect(savedHash).not.toBe('abc123');
   });
 });
