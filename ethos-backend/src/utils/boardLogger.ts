@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { pool, usePg } from '../db';
+import type { DBBoardLog } from '../types/db';
+import { boardLogsStore } from '../models/memoryStores';
 
 export function logBoardAction(
   boardId: string,

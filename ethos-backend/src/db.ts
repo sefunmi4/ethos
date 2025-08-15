@@ -9,11 +9,11 @@ dotenv.config();
  * cannot be established (e.g. during tests where no DB is available) the flag
  * is flipped off and the app gracefully falls back to the JSON store.
  */
-export let usePg =
+let usePg =
   !!process.env.DATABASE_URL &&
   (process.env.NODE_ENV !== 'test' || process.env.USE_PG === 'true');
 
-export let pool: Pool = usePg
+let pool: Pool = usePg
   ? new Pool({ connectionString: process.env.DATABASE_URL })
   : ({} as Pool);
 
@@ -21,26 +21,31 @@ export let pool: Pool = usePg
  * Disable PostgreSQL usage and fall back to the JSON store.
  * This helper is useful if a database error occurs after startup.
  */
-export function disablePg(): void {
+function disablePg(): void {
   usePg = false;
   pool = {} as Pool;
+}
+
+/**
+ * Provide a custom pool for tests. This forces Postgres mode and replaces the
+ * global pool instance so tests can run against an in-memory database.
+ */
+export function setTestPool(testPool: Pool): void {
+  pool = testPool;
+  usePg = true;
 }
 
 /**
  * Ensure required tables and starter data exist when using PostgreSQL.
  * This allows fresh deployments to work without running separate migrations.
  */
-export async function initializeDatabase(): Promise<void> {
+async function initializeDatabase(): Promise<void> {
   if (!usePg) return;
-
   try {
-    // Verify the connection is usable. If it fails we gracefully fall back to
-    // the JSON store so tests or offline environments can continue working.
     await pool.query('SELECT 1');
-  } catch (_err) {
-    console.warn('PostgreSQL not available, using JSON store instead');
-    disablePg();
-    return;
+  } catch (err) {
+    console.error('Failed to connect to PostgreSQL', err);
+    throw err;
   }
 
   await pool.query(`
@@ -116,6 +121,11 @@ export async function initializeDatabase(): Promise<void> {
       read BOOLEAN,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      token TEXT PRIMARY KEY,
+      user_id UUID REFERENCES users(id),
+      expires TIMESTAMPTZ
+    );
     CREATE TABLE IF NOT EXISTS reactions (
       id UUID PRIMARY KEY,
       postid TEXT,
@@ -136,6 +146,13 @@ export async function initializeDatabase(): Promise<void> {
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ;
     ALTER TABLE quests ADD COLUMN IF NOT EXISTS tags TEXT[];
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS linkedPosts JSONB;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS taskGraph JSONB;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS status TEXT;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS questIds TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS deliverables TEXT[];
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS mapEdges JSONB;
   `);
 
   const { rows } = await pool.query(
@@ -157,3 +174,5 @@ export async function initializeDatabase(): Promise<void> {
     }
   }
 }
+
+export { pool, usePg, disablePg, initializeDatabase };
