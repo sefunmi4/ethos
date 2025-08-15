@@ -3,7 +3,7 @@ import path from 'path';
 import { error } from '../utils/logger';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { hashPassword } from '../utils/passwordUtils';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
 import {
   getQuestRepoMeta,
   connectRepo,
