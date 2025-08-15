@@ -1,9 +1,61 @@
 import request from 'supertest';
 import express from 'express';
 
-jest.mock('../src/db', () => ({
-  pool: { query: jest.fn() },
-}));
+jest.mock('../src/db', () => {
+  const posts: any[] = [];
+  const reactions: any[] = [];
+  return {
+    pool: {
+      query: jest.fn(async (text: string, params: any[]) => {
+        const sql = text.replace(/\s+/g, ' ').trim();
+        if (sql.startsWith('INSERT INTO posts')) {
+          const [id, authorid, type, content, title, visibility, tags, boardid, timestamp, createdat] = params;
+          posts.push({ id, authorid, type, content, title, visibility, tags, boardid, timestamp, createdat });
+          return { rows: [] };
+        }
+        if (sql.startsWith('SELECT * FROM posts WHERE id')) {
+          const [id] = params;
+          const row = posts.find(p => p.id === id);
+          return { rows: row ? [row] : [] };
+        }
+        if (sql.startsWith('INSERT INTO reactions')) {
+          const [id, postid] = params;
+          // tests use literal values for userid and type
+          const match = sql.match(/VALUES \(\$1,\$2,'([^']*)','([^']*)'\)/i);
+          const userid = match ? match[1] : params[2];
+          const type = match ? match[2] : params[3];
+          reactions.push({ id, postid, userid, type });
+          return { rows: [] };
+        }
+        if (sql.startsWith('DELETE FROM reactions')) {
+          const [postid, userid, typeLike] = params;
+          const base = typeLike.replace('%', '');
+          for (let i = reactions.length - 1; i >= 0; i--) {
+            const r = reactions[i];
+            if (r.postid === postid && r.userid === userid && r.type.startsWith(base)) {
+              reactions.splice(i, 1);
+            }
+          }
+          return { rows: [] };
+        }
+        if (sql.startsWith('SELECT * FROM reactions WHERE postid')) {
+          const [postid] = params;
+          return { rows: reactions.filter(r => r.postid === postid) };
+        }
+        if (sql.startsWith('SELECT userid AS "userId", type FROM reactions WHERE postid')) {
+          const [postid] = params;
+          return {
+            rows: reactions
+              .filter(r => r.postid === postid)
+              .map(r => ({ userId: r.userid, type: r.type })),
+          };
+        }
+        return { rows: [] };
+      }),
+    },
+    usePg: true,
+  };
+});
 
 jest.mock('../src/middleware/authMiddleware', () => ({
   authMiddleware: (_req: any, _res: any, next: any) => {
@@ -12,7 +64,7 @@ jest.mock('../src/middleware/authMiddleware', () => ({
   },
 }));
 
-jest.mock('../src/models/memoryStores', () => ({
+jest.mock('../src/models/stores', () => ({
   postsStore: { read: jest.fn(() => []), write: jest.fn() },
   usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },

@@ -8,7 +8,7 @@ import { enrichQuest, enrichPost } from '../utils/enrich';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/api';
-import type { DBQuest, DBPost, DBProject } from '../types/db';
+import type { DBQuest, DBPost, DBProject, DBUser } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
 
 
@@ -885,11 +885,11 @@ router.delete(
 
     quest.tags = (quest.tags || []).filter(t => t !== 'archived');
     const posts = postsStore.read();
-    posts.forEach(p => {
-      if (p.questId === id) {
-        p.tags = (p.tags || []).filter(t => t !== 'archived');
-      }
-    });
+      posts.forEach((p: DBPost) => {
+        if (p.questId === id) {
+          p.tags = (p.tags || []).filter((t: string) => t !== 'archived');
+        }
+      });
     questsStore.write(quests);
     postsStore.write(posts);
 
@@ -921,7 +921,7 @@ router.delete(
 
   const { id } = req.params;
   const quests = questsStore.read();
-  const index = quests.findIndex(q => q.id === id);
+    const index = quests.findIndex((q: DBQuest) => q.id === id);
 
   if (index === -1) {
     logQuest404(id, req.originalUrl);
@@ -932,15 +932,15 @@ router.delete(
   const questsStorePosts = postsStore.read();
   const reactions = reactionsStore.read();
 
-  const questPosts = questsStorePosts.filter(p => p.questId === id);
-  const postsToKeep = new Set(
-    questPosts
-      .filter(p => reactions.some(r => r.startsWith(`${p.id}_`)))
-      .map(p => p.id)
-  );
-  const remainingPosts = questsStorePosts.filter(
-    p => !(p.questId === id && !postsToKeep.has(p.id))
-  );
+    const questPosts = questsStorePosts.filter((p: DBPost) => p.questId === id);
+    const postsToKeep = new Set(
+      questPosts
+        .filter((p: DBPost) => reactions.some((r: string) => r.startsWith(`${p.id}_`)))
+        .map((p: DBPost) => p.id)
+    );
+    const remainingPosts = questsStorePosts.filter(
+      (p: DBPost) => !(p.questId === id && !postsToKeep.has(p.id))
+    );
   postsStore.write(remainingPosts);
 
   quests.splice(index, 1);
@@ -949,11 +949,11 @@ router.delete(
 });
 
 // POST /api/quests/:id/follow - follow a quest
-router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
-  const quests = questsStore.read();
-  const users = usersStore.read();
-  const quest = quests.find(q => q.id === req.params.id);
-  const follower = users.find(u => u.id === req.user!.id);
+  router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
+    const quests = questsStore.read();
+    const users = usersStore.read();
+    const quest = quests.find((q: DBQuest) => q.id === req.params.id);
+    const follower = users.find((u: DBUser) => u.id === req.user!.id);
   if (!quest || !follower) {
     res.status(404).json({ error: 'Quest not found' });
     return;
@@ -968,16 +968,22 @@ router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id
     read: false,
     createdAt: new Date().toISOString(),
   };
-  try {
-    await pool.query(
-      'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
-      [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
-    );
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-    return;
-  }
+    if (usePg) {
+      try {
+        await pool.query(
+          'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+          [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+        );
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
+    } else {
+      const notes = notificationsStore.read();
+      notes.push(newNote);
+      notificationsStore.write(notes);
+    }
   res.json({ followers: quest.followers });
 });
 
@@ -989,7 +995,7 @@ router.post('/:id/unfollow', authMiddleware, (req: AuthenticatedRequest<{ id: st
     res.status(404).json({ error: 'Quest not found' });
     return;
   }
-  quest.followers = (quest.followers || []).filter(id => id !== req.user!.id);
+    quest.followers = (quest.followers || []).filter((id: string) => id !== req.user!.id);
   questsStore.write(quests);
   res.json({ followers: quest.followers });
 });

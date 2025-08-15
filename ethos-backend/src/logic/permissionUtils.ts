@@ -48,7 +48,7 @@ export const canViewPost = (post: Post, userId: UUID | null): boolean => {
  */
 export const canEditQuest = (quest: Quest, userId: UUID | null): boolean => {
   if (!quest || !userId) return false;
-  return quest.authorId === userId || quest.collaborators?.some(c => c.userId === userId);
+  return quest.authorId === userId || quest.collaborators?.some(c => c.userId === userId) === true;
 };
 
 /**

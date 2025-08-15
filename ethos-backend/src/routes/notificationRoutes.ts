@@ -13,8 +13,13 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   const userId = (req as any).user?.id;
   try {
-    const result = await pool.query('SELECT * FROM notifications WHERE userid = $1', [userId]);
-    res.json(result.rows);
+    if (usePg) {
+      const result = await pool.query('SELECT * FROM notifications WHERE userid = $1', [userId]);
+      res.json(result.rows);
+    } else {
+      const notes = notificationsStore.read().filter((n) => n.userId === userId);
+      res.json(notes);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
@@ -37,10 +42,16 @@ router.post('/', authOptional, async (req: Request<any, any, { userId: string; m
     createdAt: new Date().toISOString(),
   };
   try {
-    await pool.query(
-      'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
-      [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
-    );
+    if (usePg) {
+      await pool.query(
+        'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+        [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+      );
+    } else {
+      const notes = notificationsStore.read();
+      notes.push(newNote);
+      notificationsStore.write(notes);
+    }
     res.status(201).json(newNote);
   } catch (err) {
     console.error(err);
