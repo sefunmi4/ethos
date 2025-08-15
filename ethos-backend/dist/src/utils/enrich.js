@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enrichBoard = exports.enrichQuests = exports.enrichQuest = exports.enrichPosts = exports.enrichPost = exports.enrichUser = void 0;
-const stores_1 = require("../models/stores");
 const postFormatter_1 = require("../logic/postFormatter");
 /**
  * Normalize DBPost into valid Post layout.
@@ -70,33 +69,28 @@ exports.enrichUser = enrichUser;
 /**
  * Enrich a single post with author info.
  */
-const enrichPost = (post, { users = stores_1.usersStore.read(), quests = stores_1.questsStore.read(), currentUserId = null, } = {}) => {
+const enrichPost = (post, { users = [], quests = [], currentUserId = null, } = {}) => {
     return (0, exports.enrichPosts)([post], users, quests, currentUserId)[0] || null;
 };
 exports.enrichPost = enrichPost;
 /**
  * Enrich multiple posts with author info and formatting.
  */
-const enrichPosts = (posts, users = stores_1.usersStore.read(), quests = stores_1.questsStore.read(), currentUserId = null) => {
+const enrichPosts = (posts, users = [], quests = [], currentUserId = null) => {
+    // Build lookup maps once
+    const userById = new Map(users.map((u) => [u.id, u]));
+    const questTitleById = new Map(quests.map((q) => [q.id, q.title]));
     const enriched = posts.map((post) => {
         const normalized = normalizePost(post);
-        const author = users.find((u) => u.id === post.authorId);
-        const enrichedAuthor = author
-            ? (0, exports.enrichUser)(author, { currentUserId })
-            : {
-                id: 'anon',
-                username: 'Anonymous',
-                bio: '',
-                tags: [],
-                links: {},
-                experienceTimeline: [],
-                email: '',
-                role: 'user',
-                profileUrl: '#',
-                rank: 'guest',
-                level: 0,
-                xp: {},
-            };
+        // Single lookup for the author
+        const u = userById.get(post.authorId);
+        // Prefer DBUser.username; fall back to the stored authorId string
+        // so that guests retain their unique identifier.
+        const username = u?.username || post.authorId;
+        // If you want the full enriched user when available:
+        const enrichedAuthor = u
+            ? (0, exports.enrichUser)(u, { currentUserId })
+            : { id: post.authorId, username };
         return {
             ...normalized,
             author: {
@@ -104,7 +98,7 @@ const enrichPosts = (posts, users = stores_1.usersStore.read(), quests = stores_
                 username: enrichedAuthor.username,
             },
             questTitle: normalized.questId
-                ? quests.find((q) => q.id === normalized.questId)?.title
+                ? questTitleById.get(normalized.questId)
                 : undefined,
             enriched: true,
         };
@@ -115,14 +109,17 @@ exports.enrichPosts = enrichPosts;
 /**
  * Enrich a quest with logs, tasks, and user references.
  */
-const enrichQuest = (quest, { posts = stores_1.postsStore.read(), users = stores_1.usersStore.read(), currentUserId = null, } = {}) => {
-    const allPosts = (0, exports.enrichPosts)(posts, users, stores_1.questsStore.read(), currentUserId);
+const enrichQuest = (quest, { posts = [], users = [], quests = [], currentUserId = null, } = {}) => {
+    const allPosts = (0, exports.enrichPosts)(posts, users, quests, currentUserId);
     const normalizedQuest = normalizeQuest(quest);
-    const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'log');
+    const logs = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech' && p.replyTo);
     const tasks = allPosts.filter((p) => p.questId === quest.id && p.type === 'task');
-    const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech');
+    const discussion = allPosts.filter((p) => p.questId === quest.id && p.type === 'free_speech' && !p.replyTo);
     const linkedPostsResolved = allPosts.filter((p) => quest.linkedPosts?.some((l) => l.itemId === p.id));
-    const enrichedCollaborators = quest.collaborators.map((c) => {
+    // Some quests may not have collaborators defined (e.g. when coming from
+    // certain Postgres tables). To avoid runtime errors, gracefully handle
+    // missing collaborator arrays.
+    const enrichedCollaborators = (quest.collaborators ?? []).map((c) => {
         if (!c.userId) {
             return { roles: c.roles, isOpenRole: true };
         }
@@ -159,12 +156,12 @@ exports.enrichQuest = enrichQuest;
 /**
  * Enrich multiple quests.
  */
-const enrichQuests = (quests, { posts = stores_1.postsStore.read(), users = stores_1.usersStore.read(), currentUserId = null, } = {}) => quests.map((q) => (0, exports.enrichQuest)(q, { posts, users, currentUserId }));
+const enrichQuests = (quests, { posts = [], users = [], quests: allQuests = [], currentUserId = null, } = {}) => quests.map((q) => (0, exports.enrichQuest)(q, { posts, users, quests: allQuests, currentUserId }));
 exports.enrichQuests = enrichQuests;
 /**
  * Enrich a board by resolving its items to posts or quests.
  */
-const enrichBoard = (board, { posts = stores_1.postsStore.read(), quests = stores_1.questsStore.read(), users = stores_1.usersStore.read(), currentUserId = null, }) => {
+const enrichBoard = (board, { posts = [], quests = [], users = [], currentUserId = null, }) => {
     const resolvedItems = board.items
         .map((id) => {
         const post = posts.find((p) => p.id === id);
@@ -181,10 +178,11 @@ const enrichBoard = (board, { posts = stores_1.postsStore.read(), quests = store
         .filter((item) => {
         if ('type' in item) {
             const p = item;
-            return p.type !== 'request' ||
-                p.visibility === 'public' ||
-                p.visibility === 'request_board' ||
-                p.needsHelp === true;
+            const visibility = (p.visibility || '').toLowerCase();
+            return (p.type !== 'request' ||
+                visibility === 'public' ||
+                visibility === 'request_board' ||
+                p.needsHelp === true);
         }
         const q = item;
         if (q.displayOnBoard === false)
@@ -201,11 +199,11 @@ const enrichBoard = (board, { posts = stores_1.postsStore.read(), quests = store
         .map((id) => {
         const post = posts.find((p) => p.id === id);
         if (post) {
-            return (0, exports.enrichPost)(post, { users, currentUserId });
+            return (0, exports.enrichPost)(post, { users, quests, currentUserId });
         }
         const quest = quests.find((q) => q.id === id);
         if (quest) {
-            return (0, exports.enrichQuest)(quest, { posts, users, currentUserId });
+            return (0, exports.enrichQuest)(quest, { posts, users, quests, currentUserId });
         }
         return null;
     })
@@ -213,10 +211,11 @@ const enrichBoard = (board, { posts = stores_1.postsStore.read(), quests = store
         .filter((item) => {
         if ('type' in item) {
             const p = item;
-            return p.type !== 'request' ||
-                p.visibility === 'public' ||
-                p.visibility === 'request_board' ||
-                p.needsHelp === true;
+            const visibility = (p.visibility || '').toLowerCase();
+            return (p.type !== 'request' ||
+                visibility === 'public' ||
+                visibility === 'request_board' ||
+                p.needsHelp === true);
         }
         const q = item;
         if (q.displayOnBoard === false)
