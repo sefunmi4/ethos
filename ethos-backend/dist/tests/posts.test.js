@@ -17,8 +17,8 @@ jest.mock('../src/models/stores', () => ({
     usersStore: { read: jest.fn(() => []), write: jest.fn() },
     reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
     questsStore: { read: jest.fn(() => []), write: jest.fn() },
-    notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
+jest.mock('../src/db', () => ({ pool: { query: jest.fn() }, usePg: false }));
 const stores_1 = require("../src/models/stores");
 const postsStoreMock = stores_1.postsStore;
 const questsStoreMock = stores_1.questsStore;

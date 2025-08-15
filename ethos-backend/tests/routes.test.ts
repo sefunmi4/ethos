@@ -17,7 +17,6 @@ jest.mock('../src/models/memoryStores', () => ({
   usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
   reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
   questsStore: { read: jest.fn(() => []), write: jest.fn() },
-  notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 
 import postRoutes from '../src/routes/postRoutes';

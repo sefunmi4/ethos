@@ -20,7 +20,6 @@ jest.mock('../src/models/stores', () => ({
     usersStore: { read: jest.fn(() => [{ id: 'u1', username: 'user1' }]), write: jest.fn() },
     reactionsStore: { read: jest.fn(() => []), write: jest.fn() },
     questsStore: { read: jest.fn(() => []), write: jest.fn() },
-    notificationsStore: { read: jest.fn(() => []), write: jest.fn() },
 }));
 const postRoutes_1 = __importDefault(require("../src/routes/postRoutes"));
 const db_1 = require("../src/db");

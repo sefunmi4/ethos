@@ -924,7 +924,7 @@ router.delete(
 });
 
 // POST /api/quests/:id/follow - follow a quest
-router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
   const quests = questsStore.read();
   const users = usersStore.read();
   const quest = quests.find(q => q.id === req.params.id);
@@ -935,7 +935,6 @@ router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: stri
   }
   quest.followers = Array.from(new Set([...(quest.followers || []), follower.id]));
   questsStore.write(quests);
-  const notes = notificationsStore.read();
   const newNote = {
     id: uuidv4(),
     userId: quest.authorId,
@@ -944,7 +943,16 @@ router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: stri
     read: false,
     createdAt: new Date().toISOString(),
   };
-  notificationsStore.write([...notes, newNote]);
+  try {
+    await pool.query(
+      'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+      [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+    return;
+  }
   res.json({ followers: quest.followers });
 });
 

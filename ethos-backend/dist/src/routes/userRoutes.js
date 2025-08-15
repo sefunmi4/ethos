@@ -8,6 +8,7 @@ const uuid_1 = require("uuid");
 const authOptional_1 = __importDefault(require("../middleware/authOptional"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const stores_1 = require("../models/stores");
+const db_1 = require("../db");
 const router = express_1.default.Router();
 // GET /api/users?search= - search by username
 router.get('/', authOptional_1.default, (req, res) => {
@@ -31,7 +32,7 @@ router.get('/:id', authOptional_1.default, (req, res) => {
     res.json({ id, username, tags, bio, links, experienceTimeline, xp });
 });
 // POST /api/users/:id/follow - follow a user
-router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
+router.post('/:id/follow', authMiddleware_1.authMiddleware, async (req, res) => {
     const users = stores_1.usersStore.read();
     const target = users.find(u => u.id === req.params.id);
     const follower = users.find(u => u.id === req.user?.id);
@@ -42,7 +43,6 @@ router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
     target.followers = Array.from(new Set([...(target.followers || []), follower.id]));
     follower.following = Array.from(new Set([...(follower.following || []), target.id]));
     stores_1.usersStore.write(users);
-    const notes = stores_1.notificationsStore.read();
     const newNote = {
         id: (0, uuid_1.v4)(),
         userId: target.id,
@@ -51,7 +51,14 @@ router.post('/:id/follow', authMiddleware_1.authMiddleware, (req, res) => {
         read: false,
         createdAt: new Date().toISOString(),
     };
-    stores_1.notificationsStore.write([...notes, newNote]);
+    try {
+        await db_1.pool.query('INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)', [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+    }
     res.json({ followers: target.followers });
 });
 // POST /api/users/:id/unfollow - unfollow a user

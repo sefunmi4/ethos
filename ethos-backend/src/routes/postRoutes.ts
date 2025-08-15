@@ -342,9 +342,8 @@ router.post(
         const users = usersStore.read();
         const author = users.find(u => u.id === req.user!.id);
         const followers = new Set([parent.authorId, ...(parent.followers || [])]);
-        followers.forEach(uid => {
-          if (uid === author?.id) return;
-          const notes = notificationsStore.read();
+        for (const uid of followers) {
+          if (uid === author?.id) continue;
           const newNote = {
             id: uuidv4(),
             userId: uid,
@@ -353,8 +352,17 @@ router.post(
             read: false,
             createdAt: new Date().toISOString(),
           };
-          notificationsStore.write([...notes, newNote]);
-        });
+          try {
+            await pool.query(
+              'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+              [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+            );
+          } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+          }
+        }
       }
     }
 
@@ -384,7 +392,7 @@ router.post(
 router.patch(
   '/:id',
   authMiddleware,
-  (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
     const posts = postsStore.read();
   const quests = questsStore.read();
   const post = posts.find((p) => p.id === req.params.id);
@@ -479,7 +487,7 @@ router.get('/:id/replies', (req: Request<{ id: string }>, res: Response) => {
 });
 
 // POST /api/posts/:id/follow - follow a post
-router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
+router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
   const posts = postsStore.read();
   const users = usersStore.read();
   const post = posts.find(p => p.id === req.params.id);
@@ -490,7 +498,6 @@ router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: stri
   }
   post.followers = Array.from(new Set([...(post.followers || []), follower.id]));
   postsStore.write(posts);
-  const notes = notificationsStore.read();
   const newNote = {
     id: uuidv4(),
     userId: post.authorId,
@@ -499,7 +506,16 @@ router.post('/:id/follow', authMiddleware, (req: AuthenticatedRequest<{ id: stri
     read: false,
     createdAt: new Date().toISOString(),
   };
-  notificationsStore.write([...notes, newNote]);
+  try {
+    await pool.query(
+      'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+      [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+    return;
+  }
   res.json({ followers: post.followers });
 });
 
@@ -1126,7 +1142,6 @@ router.post(
 
     const follower = users.find(u => u.id === req.user!.id);
     if (follower && post.authorId !== follower.id) {
-      const notes = notificationsStore.read();
       const newNote = {
         id: uuidv4(),
         userId: post.authorId,
@@ -1135,7 +1150,16 @@ router.post(
         read: false,
         createdAt: new Date().toISOString(),
       };
-      notificationsStore.write([...notes, newNote]);
+      try {
+        await pool.query(
+          'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+          [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
+        );
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+        return;
+      }
     }
 
     res.json({

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
 import { pool } from '../db';
+import { pool } from '../db';
 
 import type { DBNotification } from '../types/db';
 
@@ -13,10 +14,7 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   const userId = (req as any).user?.id;
   try {
-    const result = await pool.query(
-      'SELECT * FROM notifications WHERE userid = $1',
-      [userId]
-    );
+    const result = await pool.query('SELECT * FROM notifications WHERE userid = $1', [userId]);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -42,14 +40,7 @@ router.post('/', authOptional, async (req: Request<any, any, { userId: string; m
   try {
     await pool.query(
       'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
-      [
-        newNote.id,
-        newNote.userId,
-        newNote.message,
-        newNote.link,
-        newNote.read,
-        newNote.createdAt,
-      ]
+      [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]
     );
     res.status(201).json(newNote);
   } catch (err) {
@@ -62,6 +53,21 @@ router.post('/', authOptional, async (req: Request<any, any, { userId: string; m
 router.patch('/:id/read', authMiddleware, async (req: Request<{ id: string }>, res: Response): Promise<void> => {
   const userId = (req as any).user?.id;
   const { id } = req.params;
+  try {
+    const result = await pool.query(
+      'UPDATE notifications SET read = true WHERE id = $1 AND userid = $2 RETURNING *',
+      [id, userId]
+    );
+    const row = result.rows[0];
+    if (!row) {
+      res.status(404).json({ error: 'Notification not found' });
+      return;
+    }
+    res.json(row);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
   try {
     const result = await pool.query(
       'UPDATE notifications SET read = true WHERE id = $1 AND userid = $2 RETURNING *',
