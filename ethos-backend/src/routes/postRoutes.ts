@@ -1440,6 +1440,15 @@ router.delete(
     });
     posts.splice(index, 1);
     postsStore.write(posts);
+    const boards = boardsStore.read();
+    const questBoard = boards.find(b => b.id === 'quest-board');
+    if (questBoard) {
+      const toRemove = new Set([req.params.id, ...requestIds]);
+      questBoard.items = (questBoard.items || []).filter(
+        id => id !== null && !toRemove.has(id)
+      );
+      boardsStore.write(boards);
+    }
     const reactions = reactionsStore.read();
     const filtered = reactions.filter(r => {
       const [postId] = r.split('_');

@@ -21,7 +21,7 @@ jest.mock('../src/models/stores', () => ({
 
 jest.mock('../src/db', () => ({ pool: { query: jest.fn() }, usePg: false }));
 
-const { postsStore, reactionsStore } = require('../src/models/stores');
+const { postsStore, reactionsStore, boardsStore } = require('../src/models/stores');
 
 const app = express();
 app.use(express.json());
@@ -63,6 +63,8 @@ describe('post deletion removes linked requests', () => {
     postsStore.write.mockClear();
     reactionsStore.read.mockReturnValue(['p1_u1_request', 'p1_u1_review', 'x_u1_like']);
     reactionsStore.write.mockClear();
+    boardsStore.read.mockReturnValue([{ id: 'quest-board', items: ['r1', 'r2'] }]);
+    boardsStore.write.mockClear();
 
     const res = await request(app).delete('/posts/p1');
     expect(res.status).toBe(200);
@@ -70,5 +72,7 @@ describe('post deletion removes linked requests', () => {
     expect(writtenPosts).toHaveLength(0);
     const writtenReactions = reactionsStore.write.mock.calls[0][0];
     expect(writtenReactions).toEqual(['x_u1_like']);
+    const writtenBoards = boardsStore.write.mock.calls[0][0];
+    expect(writtenBoards[0].items).toHaveLength(0);
   });
 });
