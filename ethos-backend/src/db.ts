@@ -134,12 +134,17 @@ async function initializeDatabase(): Promise<void> {
       createdat TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(postid, userid, type)
     );
-    CREATE TABLE IF NOT EXISTS board_logs (
-      id UUID PRIMARY KEY,
-      boardId TEXT,
-      action TEXT,
-      userId TEXT,
-      timestamp TIMESTAMPTZ DEFAULT NOW()
+    CREATE TABLE IF NOT EXISTS git_accounts (
+      user_id TEXT,
+      provider TEXT,
+      username TEXT,
+      token_hash TEXT,
+      linked_repo_ids JSONB,
+      PRIMARY KEY (user_id, provider, username)
+    );
+    CREATE TABLE IF NOT EXISTS git_repos (
+      id TEXT PRIMARY KEY,
+      data JSONB
     );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
