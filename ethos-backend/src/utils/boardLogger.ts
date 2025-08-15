@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { DBBoardLog } from '../types/db';
-import { boardLogsStore } from '../models/memoryStores';
+import { pool, usePg } from '../db';
 
 export function logBoardAction(
   boardId: string,
@@ -14,6 +13,6 @@ export function logBoardAction(
       'INSERT INTO board_logs (id, boardId, action, userId, timestamp) VALUES ($1,$2,$3,$4,NOW())',
       [uuidv4(), boardId, action, userId]
     )
-    .catch((err) => console.error('Failed to log board action', err));
+    .catch((err: any) => console.error('Failed to log board action', err));
 }
 

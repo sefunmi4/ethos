@@ -97,7 +97,7 @@ export interface Post {
   type: PostType;
   subtype?: string;
   /** Short header for the post */
-  title?: string;
+  title?: string | null;
   content: string;
   /** Optional extra details for task posts */
   details?: string;
@@ -178,21 +178,21 @@ export interface RepostMeta {
 export interface Quest {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   authorId: string;
   visibility: Visibility;
-  approvalStatus: ApprovalStatus;
+  approvalStatus?: ApprovalStatus;
   flagCount?: number;
-  status: 'active' | 'completed' | 'archived';
+  status?: 'active' | 'completed' | 'archived';
 
   /** Optional parent project association */
-  projectId?: string;
+  projectId?: string | null;
 
-  headPostId: string;
+  headPostId?: string | null;
   createdAt?: string;
 
-  linkedPosts: LinkedItem[];
-  collaborators: CollaberatorRoles[];
+  linkedPosts?: LinkedItem[];
+  collaborators?: CollaberatorRoles[];
   gitRepo?: {
     repoId: string;
     repoUrl: string;

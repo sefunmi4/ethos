@@ -8,7 +8,7 @@ import type {
   EnrichedCollaborator,
 } from '../types/enriched';
 
-import { usersStore, postsStore, questsStore } from '../models/memoryStores';
+import { usersStore, postsStore, questsStore } from '../models/stores';
 import { formatPosts } from '../logic/postFormatter';
 
 
@@ -23,6 +23,8 @@ const normalizePost = (post: DBPost): Post => {
 
   return {
     ...post,
+    visibility: post.visibility ?? 'public',
+    timestamp: post.timestamp ?? post.createdAt ?? new Date().toISOString(),
     tags: post.tags ?? [],
     collaborators: post.collaborators ?? [],
     linkedItems: post.linkedItems ?? [],
@@ -85,7 +87,7 @@ export const enrichUser = (
     postCount: userPosts.length,
     questCount: userQuests.length,
 
-    isStaff: ['admin', 'moderator'].includes(user.role),
+    isStaff: ['admin', 'moderator'].includes((user.role as string) || ''),
     isNew:
       !user.createdAt ||
       Date.now() - new Date(user.createdAt).getTime() < 1000 * 60 * 60 * 24 * 7,
