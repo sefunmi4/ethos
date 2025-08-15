@@ -31,22 +31,15 @@ const getQuestBoardQuests = (
     .map(q => q.id);
 };
 
-// Gather recent request posts for the quest board. Excludes the requesting user
-// and archived requests. Returns up to DEFAULT_PAGE_SIZE recent requests.
+// Gather recent request posts for the quest board. Returns up to DEFAULT_PAGE_SIZE
+// recent requests excluding archived or private ones.
 const getQuestBoardRequests = (
   posts: ReturnType<typeof postsStore.read>,
-  userId?: string
 ) => {
   return posts
-    .filter(p => p.type === 'request' && p.boardId === 'quest-board')
+    .filter(p => p.type === 'request')
+    .filter(p => p.visibility !== 'private')
     .filter(p => !p.tags?.includes('archived'))
-    .filter(
-      p =>
-        (p.visibility === 'public' ||
-          p.visibility === 'request_board' ||
-          p.needsHelp === true)
-    )
-    .filter(p => !userId || p.authorId !== userId)
     .sort((a, b) => toMs(b.timestamp) - toMs(a.timestamp))
     .slice(0, DEFAULT_PAGE_SIZE)
     .map(p => p.id);
@@ -87,10 +80,9 @@ const getTimelineBoardItems = (
           if (p.type === 'task') highlight = true;
         } else if (
           p.linkedItems?.some(
-            li =>
-              (li.itemType === 'quest' && userQuestIds.includes(li.itemId)) ||
-              (li.itemType === 'post' && userTaskIds.includes(li.itemId))
-          )
+            li => li.itemType === 'quest' && userQuestIds.includes(li.itemId)
+          ) ||
+          (p.replyTo && userTaskIds.includes(p.replyTo))
         ) {
           weight = 1;
           highlight = true;
@@ -131,6 +123,8 @@ router.get(
           ...r,
           authorId: r.authorid,
           createdAt: r.createdat,
+          boardId: r.boardid,
+          timestamp: r.timestamp,
         }));
         const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
           ...r,
@@ -149,7 +143,7 @@ router.get(
           } else if (userId && b.id === 'my-quests') {
             b.items = quests.filter(q => q.authorId === userId).map(q => q.id);
           } else if (b.id === 'quest-board') {
-            b.items = getQuestBoardRequests(posts, userId);
+            b.items = getQuestBoardRequests(posts);
           } else if (b.id === 'timeline-board') {
             b.items = getTimelineBoardItems(posts, quests, userId).items;
           }
@@ -456,6 +450,8 @@ router.get(
           ...r,
           authorId: r.authorid,
           createdAt: r.createdat,
+          boardId: r.boardid,
+          timestamp: r.timestamp,
         }));
         const quests: DBQuest[] = questsRes.rows.map((r: any) => ({
           ...r,
@@ -467,7 +463,7 @@ router.get(
         let highlightMap: Record<string, boolean> = {};
 
         if (board.id === 'quest-board') {
-          boardItems = getQuestBoardRequests(posts, userId);
+          boardItems = getQuestBoardRequests(posts);
         } else if (board.id === 'timeline-board') {
           const { items, highlightMap: hm } = getTimelineBoardItems(posts, quests, userId);
           boardItems = items;
@@ -590,12 +586,8 @@ router.get(
           if (p.tags?.includes('archived')) return false;
           if (board.id === 'quest-board') {
             if (p.type !== 'request') return false;
-            if (p.boardId !== 'quest-board') return false;
-            return (
-              p.visibility === 'public' ||
-              p.visibility === 'request_board' ||
-              p.needsHelp === true
-            );
+            if (p.visibility === 'private') return false;
+            return true;
           }
           return true;
         }

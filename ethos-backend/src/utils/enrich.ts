@@ -23,8 +23,9 @@ const normalizePost = (post: DBPost): Post => {
 
   return {
     ...post,
+    title: post.title ?? undefined,
     visibility: post.visibility ?? 'public',
-    timestamp: post.timestamp ?? post.createdAt ?? new Date().toISOString(),
+    timestamp: post.timestamp ?? post.createdAt,
     tags: post.tags ?? [],
     collaborators: post.collaborators ?? [],
     linkedItems: post.linkedItems ?? [],
@@ -38,6 +39,7 @@ const normalizePost = (post: DBPost): Post => {
 const normalizeQuest = (quest: DBQuest): Quest => {
   return {
     ...quest,
+    description: quest.description ?? undefined,
     gitRepo: quest.gitRepo
       ? { repoUrl: quest.gitRepo.repoUrl ?? '', ...quest.gitRepo }
       : undefined,
@@ -87,10 +89,10 @@ export const enrichUser = (
     postCount: userPosts.length,
     questCount: userQuests.length,
 
-    isStaff: ['admin', 'moderator'].includes((user.role as string) || ''),
+    isStaff: ['admin', 'moderator'].includes(user.role ?? ''),
     isNew:
       !user.createdAt ||
-      Date.now() - new Date(user.createdAt).getTime() < 1000 * 60 * 60 * 24 * 7,
+      Date.now() - new Date(user.createdAt ?? '').getTime() < 1000 * 60 * 60 * 24 * 7,
     isOnline: false,
 
     displayRole:
