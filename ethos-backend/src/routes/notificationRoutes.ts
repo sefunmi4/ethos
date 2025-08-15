@@ -2,7 +2,8 @@ import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import authOptional from '../middleware/authOptional';
-import { pool } from '../db';
+import { pool, usePg } from '../db';
+import { notificationsStore } from '../models/stores';
 
 import type { DBNotification } from '../types/db';
 
@@ -17,7 +18,9 @@ router.get('/', authMiddleware, async (req: Request, res: Response): Promise<voi
       const result = await pool.query('SELECT * FROM notifications WHERE userid = $1', [userId]);
       res.json(result.rows);
     } else {
-      const notes = notificationsStore.read().filter((n) => n.userId === userId);
+      const notes = notificationsStore
+        .read()
+        .filter((n: DBNotification) => n.userId === userId);
       res.json(notes);
     }
   } catch (err) {
