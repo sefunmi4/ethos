@@ -69,7 +69,7 @@ describe('CreatePost replying', () => {
       </BrowserRouter>
     );
     fireEvent.change(screen.getByLabelText('Title'), { target: { value: 't' } });
-    fireEvent.change(screen.getByLabelText('Description'), {
+    fireEvent.change(screen.getByLabelText('Details'), {
       target: { value: 'content' },
     });
     fireEvent.click(screen.getByText('Create Post'));

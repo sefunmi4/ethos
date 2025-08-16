@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { POST_TYPES, STATUS_OPTIONS, SECONDARY_POST_TYPES } from '../../constants/options';
+import { POST_TYPES, SECONDARY_POST_TYPES } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
-import CollaberatorControls from '../controls/CollaberatorControls';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useAuth } from '../../contexts/AuthContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
-import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
+import type { Post, PostType, LinkedItem } from '../../types/postTypes';
 
 type CreatePostProps = {
   onSave?: (post: Post) => void;
@@ -68,10 +67,8 @@ const CreatePost: React.FC<CreatePostProps> = ({
       ? 'review'
       : initialType
   );
-  const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>(initialContent || '');
-  const [details, setDetails] = useState<string>('');
+  const [details, setDetails] = useState<string>(initialContent || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   
@@ -118,12 +115,10 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
     const payload: Partial<Post> = {
       type: type === 'review' ? 'file' : type,
-      title: type === 'task' ? content : title || undefined,
-      content,
-      ...(type === 'task' && details ? { details } : {}),
+      title,
+      content: details,
       visibility: 'public',
       linkedItems: autoLinkItems,
-      ...(type === 'task' ? { status } : {}),
       ...(type === 'review' ? { tags: ['review'] } : {}),
       ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
       ...(targetBoard ? { boardId: targetBoard } : {}),
@@ -186,14 +181,10 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         <Select
           id="post-type"
           value={type}
-          onChange={(e) => {
-            const val = e.target.value as PostType | 'review';
-            setType(val);
-            if (val === 'task') setStatus('To Do');
-          }}
+          onChange={(e) => setType(e.target.value as PostType | 'review')}
           options={allowedPostTypes.map((t) => {
             if (t === 'review') {
-              const opt = SECONDARY_POST_TYPES.find(o => o.value === 'review')!;
+              const opt = SECONDARY_POST_TYPES.find((o) => o.value === 'review')!;
               return { value: opt.value, label: opt.label };
             }
             const opt = POST_TYPES.find((o) => o.value === t)!;
@@ -201,13 +192,14 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           })}
         />
 
-        <Label htmlFor="content">Title</Label>
+        <Label htmlFor="title">Title</Label>
         <Input
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           required
         />
+
         <Label htmlFor="details">Details</Label>
         <MarkdownEditor
           id="details"
@@ -215,7 +207,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           onChange={setDetails}
           placeholder="Additional information (optional)"
         />
-
       </FormSection>
 
       {repostSource && (
@@ -245,6 +236,5 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     </form>
   );
 };
-
 
 export default CreatePost;
