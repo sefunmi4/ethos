@@ -19,6 +19,7 @@ import boardRoutes from './routes/boardRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import joinRequestRoutes from './routes/joinRequestRoutes';
 import healthRoutes from './routes/healthRoutes';
 import joinRequestRoutes from './routes/joinRequestRoutes';
 import { initializeDatabase } from './db';
@@ -118,6 +119,7 @@ app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
 app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
+app.use('/api/join-requests', joinRequestRoutes); // 🤝 Join requests
 app.use('/api/health', healthRoutes); // ❤️ Health check
 app.use('/api', joinRequestRoutes);
 
@@ -152,7 +154,7 @@ const PORT: number = parseInt(process.env.PORT || '4173', 10);
  * Create HTTP and Socket.IO servers and start listening.
  */
 const httpServer = createServer(app);
-const io = new SocketIOServer(httpServer, {
+export const io = new SocketIOServer(httpServer, {
   cors: {
     origin: ALLOWED_ORIGINS,
     credentials: true,

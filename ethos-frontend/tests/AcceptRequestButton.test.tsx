@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import PostCard from '../src/components/post/PostCard';
+import RequestCard from '../src/components/request/RequestCard';
+import type { EnrichedPost } from '../src/types/postTypes';
 
 jest.mock('../src/api/post', () => ({
   __esModule: true,
@@ -38,6 +39,11 @@ jest.mock('../src/contexts/BoardContext', () => ({
   }),
 }));
 
+jest.mock('../src/contexts/AuthContext', () => ({
+  __esModule: true,
+  useAuth: () => ({ user: { id: 'u1' } }),
+}));
+
 jest.mock('react-router-dom', () => {
   const actual = jest.requireActual('react-router-dom');
   return {
@@ -49,7 +55,7 @@ jest.mock('react-router-dom', () => {
 
 import { acceptRequest, unacceptRequest } from '../src/api/post';
 
-describe.skip('accept request button', () => {
+describe('request card join button', () => {
   const post = {
     id: 'p1',
     authorId: 'u2',
@@ -60,36 +66,38 @@ describe.skip('accept request button', () => {
     tags: ['request'],
     collaborators: [],
     linkedItems: [],
-  } as Post;
+  } as EnrichedPost;
 
   it('shows accept button for request posts', () => {
     render(
       <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' }} />
+        <RequestCard post={post} />
       </BrowserRouter>
     );
-    expect(screen.getByText('Accept')).toBeInTheDocument();
+    expect(screen.getByText('Request Join')).toBeInTheDocument();
   });
 
-  it('calls API when clicked', () => {
+  it('calls API when clicked', async () => {
     render(
       <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' }} />
+        <RequestCard post={post} />
       </BrowserRouter>
     );
-    fireEvent.click(screen.getByText('Accept'));
+    const btn = await screen.findByText('Request Join');
+    fireEvent.click(btn);
     expect(acceptRequest).toHaveBeenCalledWith('p1');
   });
 
-  it('toggles pending state on second click', () => {
+  it('toggles pending state on second click', async () => {
     render(
       <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' }} />
+        <RequestCard post={post} />
       </BrowserRouter>
     );
-    const btn = screen.getByText('Accept');
+    const btn = await screen.findByText('Request Join');
     fireEvent.click(btn);
-    fireEvent.click(btn);
+    const joined = await screen.findByText(/Joined/);
+    fireEvent.click(joined);
     expect(unacceptRequest).toHaveBeenCalledWith('p1');
   });
 });
