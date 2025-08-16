@@ -924,7 +924,7 @@ router.post(
     if (usePg) {
       try {
         await pool.query(
-          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp, repostedfrom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
           [
             repost.id,
             repost.authorId,
@@ -935,6 +935,7 @@ router.post(
             repost.tags,
             'quest-board',
             timestamp,
+            original.id,
           ]
         );
         await pool.query(
