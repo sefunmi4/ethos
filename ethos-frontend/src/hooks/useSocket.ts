@@ -11,6 +11,9 @@ interface SocketEvents {
   'auth:reset-page-visited': (payload: { token: string }) => void;
   'auth:password-reset-success': (payload: { userId: string }) => void;
   'navigation:404': (payload: { userId: string | null }) => void;
+  'join_request:update': (
+    payload: { postId: string; status: 'Pending' | 'Approved' | 'Declined' }
+  ) => void;
 }
 
 // ---------------------------
