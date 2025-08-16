@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
+import { POST_TYPES, SECONDARY_POST_TYPES } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
-import CollaberatorControls from '../controls/CollaberatorControls';
-import LinkControls from '../controls/LinkControls';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useAuth } from '../../contexts/AuthContext';
 import type { BoardType } from '../../types/boardTypes';
 import { updateBoard } from '../../api/board';
-import type { Post, PostType, LinkedItem, CollaberatorRoles } from '../../types/postTypes';
+import type { Post, PostType, LinkedItem } from '../../types/postTypes';
 
 type CreatePostProps = {
   onSave?: (post: Post) => void;
@@ -60,23 +58,17 @@ const CreatePost: React.FC<CreatePostProps> = ({
         : false)
     : false;
 
-  const [type, setType] = useState<PostType>(
+  const [type, setType] = useState<PostType | 'review'>(
     restrictedReply
-      ? replyToType === 'file' && isParticipant
-        ? 'file'
-        : 'free_speech'
+      ? 'free_speech'
       : initialType === 'request'
       ? 'task'
       : initialType === 'review'
-      ? 'file'
+      ? 'review'
       : initialType
   );
-  const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>(initialContent || '');
-  const [details, setDetails] = useState<string>('');
-  const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
-  const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
+  const [details, setDetails] = useState<string>(initialContent || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   
@@ -86,16 +78,16 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  const allowedPostTypes: PostType[] = restrictedReply
+  const allowedPostTypes: (PostType | 'review')[] = restrictedReply
     ? replyToType === 'task'
       ? isParticipant
         ? ['free_speech', 'task', 'file']
         : ['free_speech']
       : replyToType === 'file'
-      ? isParticipant
-        ? ['free_speech', 'file']
-        : ['free_speech']
+      ? ['free_speech', 'review']
       : ['free_speech']
+    : boardId === 'timeline-board'
+    ? ['free_speech', 'task']
     : boardId === 'quest-board'
     ? ['task', 'file']
     : boardType === 'quest'
@@ -116,43 +108,34 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       ? boardQuestMatch[1]
       : questId || replyTo?.questId || null;
 
-    const autoLinkItems = [...linkedItems];
-    if (questIdFromBoard && !autoLinkItems.some((l) => l.itemId === questIdFromBoard)) {
+    const autoLinkItems: LinkedItem[] = [];
+    if (questIdFromBoard) {
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
-    const validation = validateLinks(type, autoLinkItems, !!replyTo);
-    if (!validation.valid) {
-      alert(validation.message);
-      setIsSubmitting(false);
-      return;
-    }
-
-      const payload: Partial<Post> = {
-        type,
-        title: type === 'task' ? content : title || undefined,
-        content,
-        ...(type === 'task' && details ? { details } : {}),
-        visibility: 'public',
-        linkedItems: autoLinkItems,
-        ...(type === 'task' ? { status } : {}),
-        ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
-        ...(targetBoard ? { boardId: targetBoard } : {}),
-        ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
-        ...(repostSource
-          ? {
-              parentPostId: repostSource.id,
-              linkType: 'repost',
-              repostedFrom: {
-                originalPostId: repostSource.id,
-                username: repostSource.author?.username,
-                originalContent: repostSource.content,
-                originalTimestamp: repostSource.timestamp,
-              },
-            }
-          : {}),
-        ...(requiresQuestRoles(type) && { collaborators }),
-      };
+    const payload: Partial<Post> = {
+      type: type === 'review' ? 'file' : type,
+      title,
+      content: details,
+      visibility: 'public',
+      linkedItems: autoLinkItems,
+      ...(type === 'review' ? { tags: ['review'] } : {}),
+      ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
+      ...(targetBoard ? { boardId: targetBoard } : {}),
+      ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
+      ...(repostSource
+        ? {
+            parentPostId: repostSource.id,
+            linkType: 'repost',
+            repostedFrom: {
+              originalPostId: repostSource.id,
+              username: repostSource.author?.username,
+              originalContent: repostSource.content,
+              originalTimestamp: repostSource.timestamp,
+            },
+          }
+        : {}),
+    };
 
     try {
       const newPost = await addPost(payload);
@@ -198,97 +181,33 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         <Select
           id="post-type"
           value={type}
-          onChange={(e) => {
-            const val = e.target.value as PostType;
-            setType(val);
-            if (val === 'task') setStatus('To Do');
-          }}
+          onChange={(e) => setType(e.target.value as PostType | 'review')}
           options={allowedPostTypes.map((t) => {
+            if (t === 'review') {
+              const opt = SECONDARY_POST_TYPES.find((o) => o.value === 'review')!;
+              return { value: opt.value, label: opt.label };
+            }
             const opt = POST_TYPES.find((o) => o.value === t)!;
             return { value: opt.value, label: opt.label };
           })}
         />
 
-        {type === 'task' && (
-          <>
-            <Label htmlFor="task-status">Status</Label>
-            <Select
-              id="task-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
-            />
-          </>
-        )}
+        <Label htmlFor="title">Title</Label>
+        <Input
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
 
-        {type !== 'task' && (
-          <>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required={type !== 'free_speech'}
-            />
-          </>
-        )}
-
-        {type === 'task' ? (
-          <>
-            <Label htmlFor="content">Task Title</Label>
-            <Input
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Short task summary"
-              required
-            />
-            <Label htmlFor="details">Details</Label>
-            <MarkdownEditor
-              id="details"
-              value={details}
-              onChange={setDetails}
-              placeholder="Additional information (optional)"
-            />
-          </>
-        ) : (
-          <>
-            <Label htmlFor="content">Description</Label>
-            <MarkdownEditor
-              id="content"
-              value={content}
-              onChange={setContent}
-              placeholder={
-                replyTo
-                  ? 'Reply to this post...'
-                  : repostSource
-                  ? 'Add a comment to your repost...'
-                  : 'Share your thoughts or progress...'
-              }
-            />
-          </>
-        )}
-
+        <Label htmlFor="details">Details</Label>
+        <MarkdownEditor
+          id="details"
+          value={details}
+          onChange={setDetails}
+          placeholder="Additional information (optional)"
+        />
       </FormSection>
-
-      {showLinkControls(type) && !replyTo && (
-        <FormSection title="Linked Items">
-          <LinkControls
-            label="Item"
-            value={linkedItems}
-            onChange={setLinkedItems}
-            allowCreateNew
-            allowNodeSelection
-            itemTypes={['quest', 'post']}
-          />
-        </FormSection>
-      )}
-
-      {requiresQuestRoles(type) && !replyTo && (
-        <FormSection title="Collaborators">
-          <CollaberatorControls value={collaborators} onChange={setCollaborators} />
-        </FormSection>
-      )}
 
       {repostSource && (
         <FormSection title="Repost Info">
@@ -317,38 +236,5 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     </form>
   );
 };
-
-function requiresQuestRoles(type: PostType): boolean {
-  return type === 'task';
-}
-
-function showLinkControls(type: PostType): boolean {
-  return ['task', 'file'].includes(type);
-}
-
-function validateLinks(
-  type: PostType,
-  items: LinkedItem[],
-  hasParent: boolean = false,
-): {
-  valid: boolean;
-  message?: string;
-} {
-  switch (type) {
-    case 'free_speech':
-      return items.some(i => i.itemType === 'post')
-        ? { valid: false, message: 'Free speech posts cannot have links.' }
-        : { valid: true };
-    case 'file':
-      return hasParent || items.some(i => i.itemType === 'post')
-        ? { valid: true }
-        : {
-            valid: false,
-            message: 'Please link a task before submitting.',
-          };
-    default:
-      return { valid: true };
-  }
-}
 
 export default CreatePost;

@@ -26,12 +26,6 @@ jest.mock('../src/contexts/AuthContext', () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
-
-// Avoid LinkControls side effects
-jest.mock('../src/components/controls/LinkControls', () => ({
-  __esModule: true,
-  default: () => <div />,
-}));
 import CreatePost from '../src/components/post/CreatePost';
 import { addPost } from '../src/api/post';
 
@@ -43,7 +37,7 @@ describe('CreatePost request without task', () => {
         <CreatePost onCancel={() => {}} initialType="request" />
       </BrowserRouter>
     );
-    fireEvent.change(screen.getByLabelText('Task Title'), { target: { value: 'Need help' } });
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Need help' } });
     fireEvent.click(screen.getByText('Create Post'));
     await waitFor(() => expect(addPost).toHaveBeenCalled());
     expect(window.alert).not.toHaveBeenCalled();

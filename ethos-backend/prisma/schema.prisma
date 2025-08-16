@@ -29,6 +29,13 @@ model Post {
   type      String
   title     String?
   content   String
+  details   String?
+  visibility String?
+  tags      String[] @default([])
+  status    String?
+  boardId   String?
+  nodeId    String?
+  timestamp DateTime?
   createdAt DateTime @default(now())
 
   author User @relation(fields: [authorId], references: [id])
