@@ -1168,11 +1168,14 @@ router.post(
 
       const follower = users.find(u => u.id === req.user!.id);
       if (follower && post.authorId !== follower.id) {
+        const taskTitle = post.title || makeQuestNodeTitle(post.content);
+        const joinRequestId = created.id;
         const newNote = {
           id: uuidv4(),
           userId: post.authorId,
-          message: `${follower.username} requested to join your post`,
-          link: `/posts/${post.id}`,
+          message: `${follower.username} would like to join ${taskTitle}.`,
+          link: `/boards/thread/${post.id}?joinRequestId=${joinRequestId}`,
+          joinRequestId,
           read: false,
           createdAt: new Date().toISOString(),
         };
