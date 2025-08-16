@@ -836,8 +836,88 @@ router.post(
       }
     }
 
+  const users = usersStore.read();
+  res.status(200).json({ post: enrichPost(task, { users }) });
+  }
+);
+
+//
+// ✅ POST /api/tasks/:taskId/join-requests – Request to join a task
+//
+router.post(
+  '/tasks/:taskId/join-requests',
+  authMiddleware,
+  async (req: AuthenticatedRequest<{ taskId: string }>, res: Response): Promise<void> => {
+    const posts = postsStore.read();
+    let task = posts.find(p => p.id === req.params.taskId && p.type === 'task');
+    if (!task && usePg) {
+      try {
+        const { rows } = await pool.query('SELECT * FROM posts WHERE id = $1', [req.params.taskId]);
+        if (rows.length > 0 && rows[0].type === 'task') {
+          task = {
+            id: rows[0].id,
+            authorId: rows[0].authorid,
+            type: rows[0].type,
+            content: rows[0].content,
+            visibility: rows[0].visibility,
+            tags: rows[0].tags || [],
+            timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+          } as DBPost;
+          posts.push(task);
+          postsStore.write(posts);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+
     const users = usersStore.read();
-    res.status(200).json({ post: enrichPost(task, { users }) });
+    const requester = users.find(u => u.id === req.user!.id);
+    const username = requester?.username || req.user!.username || req.user!.id;
+
+    const requestId = uuidv4();
+    const timestamp = new Date().toISOString();
+    const joinRequest: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'free_speech',
+      content: `@${username} requested to join this task.`,
+      visibility: 'public',
+      createdAt: timestamp,
+      timestamp,
+      replyTo: task.id,
+      tags: ['status:Pending', 'system'],
+      requestId,
+    };
+
+    posts.push(joinRequest);
+    postsStore.write(posts);
+
+    if (usePg) {
+      try {
+        await pool.query(
+          'INSERT INTO posts (id, authorid, type, content, visibility, tags, timestamp, requestid) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+          [
+            joinRequest.id,
+            joinRequest.authorId,
+            joinRequest.type,
+            joinRequest.content,
+            joinRequest.visibility,
+            joinRequest.tags,
+            timestamp,
+            requestId,
+          ],
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    res.status(200).json({ post: enrichPost(joinRequest, { users }), requestId });
   }
 );
 
