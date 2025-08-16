@@ -8,7 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { updatePost, removeHelpRequest } from '../../api/post';
+import { updatePost, removeHelpRequest, createJoinRequest } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag, Button } from '../ui';
@@ -103,6 +103,15 @@ const PostCard: React.FC<PostCardProps> = ({
   const navigate = useNavigate();
   const { selectedBoard } = useBoardContext() || {};
 
+  const initialJoinState = post.collaborators?.some(c =>
+    c.pending?.includes(user?.id || '')
+  )
+    ? 'PENDING'
+    : 'NONE';
+  const [userJoinState, setUserJoinState] = useState<'NONE' | 'PENDING'>(initialJoinState);
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [joinNotice, setJoinNotice] = useState('');
+
   const dispatchTaskUpdated = (p: Post) => {
     if (p.type === 'task') {
       document.dispatchEvent(
@@ -114,10 +123,37 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const handleRequestToJoin = async () => {
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+    if (joinLoading || userJoinState === 'PENDING') {
+      setJoinNotice('Join request already sent.');
+      return;
+    }
+    try {
+      setJoinLoading(true);
+      setJoinNotice('');
+      await createJoinRequest(post.id);
+      setUserJoinState('PENDING');
+      alert('Join request sent.');
+    } catch (err) {
+      console.error('[PostCard] Failed to request join:', err);
+      alert('Failed to request join.');
+    } finally {
+      setJoinLoading(false);
+    }
+  };
+
   const ctxBoardId = boardId || selectedBoard;
 
   const isQuestBoardRequest =
     post.tags?.includes('request') && ctxBoardId === 'quest-board';
+
+  const isTaskClosed =
+    (post.status && ['done', 'closed'].includes(post.status.toLowerCase())) ||
+    post.tags?.includes('closed');
 
   const widthClass =
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
@@ -433,6 +469,38 @@ const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {renderControls()}
+      <ReactionControls
+        post={post}
+        user={user}
+        onUpdate={onUpdate}
+        replyOverride={replyOverride}
+        boardId={ctxBoardId || undefined}
+        timestamp={!isQuestBoardRequest ? timestamp : undefined}
+        expanded={expandedView}
+        hideReply={hideReplyButton}
+      />
+      {post.type === 'task' && user?.id !== post.authorId && (
+        <div className="mt-2">
+          {userJoinState === 'PENDING' ? (
+            <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+              Pending
+            </span>
+          ) : (
+            <Button
+              variant="contrast"
+              size="sm"
+              onClick={handleRequestToJoin}
+              disabled={joinLoading || isTaskClosed}
+              title={isTaskClosed ? 'Task is closed' : undefined}
+            >
+              {joinLoading ? '...' : 'Request to Join'}
+            </Button>
+          )}
+          {joinNotice && (
+            <div className="text-xs text-error mt-1">{joinNotice}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
