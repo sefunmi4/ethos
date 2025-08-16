@@ -1370,15 +1370,6 @@ router.delete(
         }
         const requestIds: string[] = [];
         if (post.requestid) requestIds.push(post.requestid);
-        try {
-          const { rows } = await pool.query(
-            "SELECT id FROM posts WHERE repostedfrom = $1 AND type = 'request'",
-            [req.params.id]
-          );
-          requestIds.push(...rows.map((r: any) => r.id));
-        } catch (err) {
-          console.error(err);
-        }
         if (requestIds.length) {
           await pool
             .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
