@@ -21,3 +21,4 @@ export const reactionsStore = createMemoryStore<DBSchema['reactions']>([]);
 export const reviewsStore = createMemoryStore<DBSchema['reviews']>([]);
 export const boardLogsStore = createMemoryStore<DBSchema['boardLogs']>([]);
 export const notificationsStore = createMemoryStore<DBSchema['notifications']>([]);
+export const joinRequestsStore = createMemoryStore<DBSchema['joinRequests']>([]);

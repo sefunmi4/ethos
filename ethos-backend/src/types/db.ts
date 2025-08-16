@@ -289,6 +289,14 @@ export interface DBNotification {
   createdAt: string;
 }
 
+export interface DBJoinRequest {
+  id: string;
+  taskId: string;
+  userId: string;
+  status: 'pending' | 'approved' | 'declined';
+  createdAt: string;
+}
+
 export interface DBBoardLog {
   id: string;
   boardId: string;
@@ -312,6 +320,7 @@ export interface DBSchema {
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
   notifications: DBNotification[];
+  joinRequests: DBJoinRequest[];
 }
 
 // Optional utility type for referencing a single entry type by file
