@@ -492,3 +492,21 @@ export interface Review {
 
   createdAt: string;
 }
+
+// --------------------------------------------
+// Join Requests
+// --------------------------------------------
+
+export type JoinRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface JoinRequest {
+  id: string;
+  taskId: string;
+  requesterId: string;
+  requestPostId?: string;
+  status: JoinRequestStatus;
+  createdAt: string;
+  decidedAt?: string;
+  decidedBy?: string;
+  meta?: Record<string, any>;
+}

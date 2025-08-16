@@ -119,7 +119,7 @@ app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
 app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
-app.use('/api/join-requests', joinRequestRoutes); // 🤝 Join requests
+app.use('/api/join-requests', joinRequestRoutes); // 🤝 Task join requests
 app.use('/api/health', healthRoutes); // ❤️ Health check
 app.use('/api', joinRequestRouter);
 

@@ -16,6 +16,7 @@ import type {
   ReviewTargetType,
   ApprovalStatus,
   GitAccount,
+  JoinRequestStatus,
 } from './api';
 
 // types/db.ts
@@ -289,12 +290,16 @@ export interface DBNotification {
   createdAt: string;
 }
 
-export interface DBJoinRequest {
+export interface DBTaskJoinRequest {
   id: string;
   taskId: string;
-  userId: string;
-  status: 'pending' | 'approved' | 'declined';
+  requesterId: string;
+  requestPostId?: string;
+  status: JoinRequestStatus;
   createdAt: string;
+  decidedAt?: string;
+  decidedBy?: string;
+  meta?: Record<string, any>;
 }
 
 export interface DBBoardLog {
@@ -320,7 +325,7 @@ export interface DBSchema {
   reviews: DBReview[];
   boardLogs: DBBoardLog[];
   notifications: DBNotification[];
-  joinRequests: DBJoinRequest[];
+  joinRequests: DBTaskJoinRequest[];
 }
 
 // Optional utility type for referencing a single entry type by file
