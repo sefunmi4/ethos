@@ -1091,12 +1091,12 @@ router.delete('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
             catch (err) {
                 console.error(err);
             }
-            for (const rid of requestIds) {
+            if (requestIds.length) {
                 await db_1.pool
-                    .query('DELETE FROM reactions WHERE postid = $1', [rid])
+                    .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
                     .catch((err) => console.error(err));
                 await db_1.pool
-                    .query('DELETE FROM posts WHERE id = $1', [rid])
+                    .query('DELETE FROM posts WHERE id = ANY($1)', [requestIds])
                     .catch((err) => console.error(err));
             }
             await db_1.pool

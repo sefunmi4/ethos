@@ -1371,12 +1371,12 @@ router.delete(
         } catch (err) {
           console.error(err);
         }
-        for (const rid of requestIds) {
+        if (requestIds.length) {
           await pool
-            .query('DELETE FROM reactions WHERE postid = $1', [rid])
+            .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
             .catch((err) => console.error(err));
           await pool
-            .query('DELETE FROM posts WHERE id = $1', [rid])
+            .query('DELETE FROM posts WHERE id = ANY($1)', [requestIds])
             .catch((err) => console.error(err));
         }
         await pool
