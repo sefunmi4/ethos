@@ -20,6 +20,7 @@ import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import healthRoutes from './routes/healthRoutes';
+import joinRequestRoutes from './routes/joinRequestRoutes';
 import { initializeDatabase } from './db';
 
 // Load environment variables from `.env` file
@@ -118,6 +119,7 @@ app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
 app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
 app.use('/api/health', healthRoutes); // ❤️ Health check
+app.use('/api', joinRequestRoutes);
 
 // Generic error handler to prevent leaking stack traces in production
 app.use(

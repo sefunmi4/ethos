@@ -152,6 +152,14 @@ async function initializeDatabase(): Promise<void> {
       id TEXT PRIMARY KEY,
       data JSONB
     );
+    CREATE TABLE IF NOT EXISTS join_requests (
+      id UUID PRIMARY KEY,
+      task_id TEXT,
+      user_id TEXT,
+      status TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(task_id, user_id)
+    );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
