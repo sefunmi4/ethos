@@ -118,6 +118,8 @@ export interface Post {
   /** Optional classification for task posts */
   taskType?: 'file' | 'folder' | 'abstract';
   collaborators: CollaberatorRoles[];
+  /** Number of collaborators with approved join requests */
+  approvedCollaboratorsCount?: number;
 
   replyTo?: string | null;
   repostedFrom?: RepostMeta | null;
