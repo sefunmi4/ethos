@@ -154,3 +154,17 @@ model Reaction {
   @@unique([postId, userId, type])
   @@map("reactions")
 }
+
+model TaskJoinRequest {
+  id            String   @id @default(uuid())
+  taskId        String
+  requesterId   String
+  requestPostId String?
+  status        String
+  createdAt     DateTime @default(now())
+  decidedAt     DateTime?
+  decidedBy     String?
+  meta          Json?
+
+  @@map("task_join_requests")
+}

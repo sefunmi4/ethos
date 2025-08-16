@@ -19,6 +19,7 @@ import boardRoutes from './routes/boardRoutes';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import joinRequestRoutes from './routes/joinRequestRoutes';
 import healthRoutes from './routes/healthRoutes';
 import { initializeDatabase } from './db';
 
@@ -117,6 +118,7 @@ app.use('/api/boards', boardRoutes);  // 🧭 Boards and view layouts
 app.use('/api/reviews', reviewRoutes); // ⭐ Reviews
 app.use('/api/users', userRoutes);    // 👥 Public user profiles
 app.use('/api/notifications', notificationRoutes); // 🔔 User notifications
+app.use('/api/join-requests', joinRequestRoutes); // 🤝 Task join requests
 app.use('/api/health', healthRoutes); // ❤️ Health check
 
 // Generic error handler to prevent leaking stack traces in production
