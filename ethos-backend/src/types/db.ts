@@ -282,6 +282,8 @@ export interface DBNotification {
   userId: string;
   message: string;
   link?: string;
+  /** Optional join request ID for later approve/decline actions */
+  joinRequestId?: string;
   read?: boolean;
   createdAt: string;
 }
