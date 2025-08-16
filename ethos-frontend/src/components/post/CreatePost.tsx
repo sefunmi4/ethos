@@ -61,9 +61,7 @@ const CreatePost: React.FC<CreatePostProps> = ({
 
   const [type, setType] = useState<PostType | 'review'>(
     restrictedReply
-      ? replyToType === 'file' && isParticipant
-        ? 'free_speech'
-        : 'free_speech'
+      ? 'free_speech'
       : initialType === 'request'
       ? 'task'
       : initialType === 'review'
