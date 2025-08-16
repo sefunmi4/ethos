@@ -322,6 +322,13 @@ export const unfollowPost = async (id: string): Promise<{ followers: string[] }>
   return res.data;
 };
 
+export const createJoinRequest = async (
+  id: string
+): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.post(`${BASE_URL}/${id}/join-request`);
+  return res.data;
+};
+
 /**
  * ✅ Approve a pending join request for a task/post
  */
