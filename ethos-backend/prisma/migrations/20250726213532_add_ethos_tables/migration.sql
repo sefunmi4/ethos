@@ -14,6 +14,13 @@ CREATE TABLE posts (
     type TEXT NOT NULL,
     title TEXT,
     content TEXT NOT NULL,
+    details TEXT,
+    visibility TEXT,
+    tags TEXT[],
+    status TEXT,
+    boardId TEXT,
+    nodeId TEXT,
+    timestamp TIMESTAMP(3),
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
