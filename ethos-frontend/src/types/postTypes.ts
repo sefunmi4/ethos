@@ -188,7 +188,9 @@ export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | str
 export type PostType =
   | 'free_speech'
   | 'task'
-  | 'file';
+  | 'file'
+  | 'request'
+  | 'review';
   
 /**
  * Supported tags for labeling and filtering posts.

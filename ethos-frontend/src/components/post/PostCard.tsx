@@ -8,10 +8,10 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { updatePost, removeHelpRequest } from '../../api/post';
+import { updatePost, removeHelpRequest, createJoinRequest } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
-import { SummaryTag } from '../ui';
+import { SummaryTag, Button } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
@@ -103,6 +103,15 @@ const PostCard: React.FC<PostCardProps> = ({
   const navigate = useNavigate();
   const { selectedBoard } = useBoardContext() || {};
 
+  const initialJoinState = post.collaborators?.some(c =>
+    c.pending?.includes(user?.id || '')
+  )
+    ? 'PENDING'
+    : 'NONE';
+  const [userJoinState, setUserJoinState] = useState<'NONE' | 'PENDING'>(initialJoinState);
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [joinNotice, setJoinNotice] = useState('');
+
   const dispatchTaskUpdated = (p: Post) => {
     if (p.type === 'task') {
       document.dispatchEvent(
@@ -114,10 +123,37 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const handleRequestToJoin = async () => {
+    if (!user?.id) {
+      navigate(ROUTES.LOGIN);
+      return;
+    }
+    if (joinLoading || userJoinState === 'PENDING') {
+      setJoinNotice('Join request already sent.');
+      return;
+    }
+    try {
+      setJoinLoading(true);
+      setJoinNotice('');
+      await createJoinRequest(post.id);
+      setUserJoinState('PENDING');
+      alert('Join request sent.');
+    } catch (err) {
+      console.error('[PostCard] Failed to request join:', err);
+      alert('Failed to request join.');
+    } finally {
+      setJoinLoading(false);
+    }
+  };
+
   const ctxBoardId = boardId || selectedBoard;
 
   const isQuestBoardRequest =
     post.tags?.includes('request') && ctxBoardId === 'quest-board';
+
+  const isTaskClosed =
+    (post.status && ['done', 'closed'].includes(post.status.toLowerCase())) ||
+    post.tags?.includes('closed');
 
   const widthClass =
     ctxBoardId === 'timeline-board' || ctxBoardId === 'my-posts'
@@ -136,14 +172,29 @@ const PostCard: React.FC<PostCardProps> = ({
   );
 
   const qid = questId || post.questId;
+  const isAuthor = user?.id === post.authorId;
+  const defaultJoinState = post.collaborators?.some(c => c.userId === user?.id)
+    ? 'MEMBER'
+    : post.collaborators?.some(c => c.pending?.includes(user?.id || ''))
+      ? 'PENDING'
+      : 'NONE';
+  const [joinState, setJoinState] = useState<'NONE' | 'PENDING' | 'MEMBER'>(defaultJoinState);
+
+  const handleRequestJoin = () => {
+    navigate(ROUTES.POST(post.id) + '?reply=1&intro=1');
+    setJoinState('PENDING');
+  };
+
+  const handleSendReview = () => {
+    navigate(ROUTES.POST(post.id) + '?reply=1&initialType=review');
+  };
 
   useEffect(() => {
     if (expandedView && qid) {
       loadGraph(qid);
     }
   }, [expandedView, qid, loadGraph]);
-
-  const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
+  const canEdit = isAuthor || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
   const timestamp = ts
     ? formatDistanceToNow(new Date(ts), { addSuffix: true })
@@ -269,6 +320,51 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   };
 
+  const renderControls = () => {
+    if (post.type === 'request' && isAuthor) {
+      return (
+        <div className="text-sm text-secondary">
+          Collaborators: {post.collaborators?.length || 0}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {post.type === 'request' && !isAuthor && (
+          <Button
+            variant="contrast"
+            className="mb-2"
+            onClick={handleRequestJoin}
+            disabled={joinState !== 'NONE'}
+            title={joinState !== 'NONE' ? 'Request pending approval' : undefined}
+          >
+            {joinState === 'PENDING' ? 'Pending' : 'Request to Join'}
+          </Button>
+        )}
+        {post.type === 'review' && !isAuthor && (
+          <Button
+            variant="contrast"
+            className="mb-2"
+            onClick={handleSendReview}
+          >
+            Send Review
+          </Button>
+        )}
+        <ReactionControls
+          post={post}
+          user={user}
+          onUpdate={onUpdate}
+          replyOverride={replyOverride}
+          boardId={ctxBoardId || undefined}
+          timestamp={!isQuestBoardRequest ? timestamp : undefined}
+          expanded={expandedView}
+          hideReply={hideReplyButton}
+        />
+      </>
+    );
+  };
+
 
   if (editMode) {
     return (
@@ -300,16 +396,7 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <ReactionControls
-          post={post}
-          user={user}
-          onUpdate={onUpdate}
-          timestamp={!isQuestBoardRequest ? timestamp : undefined}
-          replyOverride={replyOverride}
-          boardId={ctxBoardId || undefined}
-          expanded={expandedView}
-          hideReply={hideReplyButton}
-        />
+        {renderControls()}
       </div>
     );
   }
@@ -381,6 +468,7 @@ const PostCard: React.FC<PostCardProps> = ({
         )}
       </div>
 
+      {renderControls()}
       <ReactionControls
         post={post}
         user={user}
@@ -391,6 +479,28 @@ const PostCard: React.FC<PostCardProps> = ({
         expanded={expandedView}
         hideReply={hideReplyButton}
       />
+      {post.type === 'task' && user?.id !== post.authorId && (
+        <div className="mt-2">
+          {userJoinState === 'PENDING' ? (
+            <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+              Pending
+            </span>
+          ) : (
+            <Button
+              variant="contrast"
+              size="sm"
+              onClick={handleRequestToJoin}
+              disabled={joinLoading || isTaskClosed}
+              title={isTaskClosed ? 'Task is closed' : undefined}
+            >
+              {joinLoading ? '...' : 'Request to Join'}
+            </Button>
+          )}
+          {joinNotice && (
+            <div className="text-xs text-error mt-1">{joinNotice}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

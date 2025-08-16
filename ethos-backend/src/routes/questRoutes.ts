@@ -5,6 +5,7 @@ import authOptional from '../middleware/authOptional';
 import { boardsStore, questsStore, postsStore, usersStore, reactionsStore, notificationsStore } from '../models/stores';
 import { pool, usePg } from '../db';
 import { enrichQuest, enrichPost } from '../utils/enrich';
+import { addApprovedCollaboratorsCount } from '../utils/collaboratorUtils';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import { logQuest404 } from '../utils/errorTracker';
 import type { Quest, Project, LinkedItem, Visibility, TaskEdge } from '../types/api';
@@ -68,7 +69,7 @@ router.get('/featured', authOptional, (req: AuthRequest, res: Response) => {
 });
 
 // GET active quests (optionally excluding a user)
-router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
+router.get('/active', authOptional, async (req: AuthRequest, res: Response): Promise<void> => {
   const { userId, includeTasks } = req.query as {
     userId?: string;
     includeTasks?: string;
@@ -100,11 +101,12 @@ router.get('/active', authOptional, (req: AuthRequest, res: Response) => {
 
   if (includeTasks) {
     const taskPosts = posts.filter((p) => p.type === 'task');
-    const rootTasks = active.flatMap((q) =>
+    let rootTasks = active.flatMap((q) =>
       taskPosts
         .filter((p) => p.questId === q.id && p.nodeId?.endsWith('T00'))
         .filter((p) => (userId ? p.authorId !== userId : true))
     );
+    rootTasks = await addApprovedCollaboratorsCount(rootTasks);
 
     res.json({ quests: active, tasks: rootTasks });
     return;
@@ -374,14 +376,15 @@ router.patch(
 router.get(
   '/:id/posts',
   authOptional,
-  (req: AuthRequest<{ id: string }>, res: Response): void => {
+  async (req: AuthRequest<{ id: string }>, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const posts = postsStore.read();
     const users = usersStore.read();
     const filtered = posts.filter((p) => p.questId === id);
+    const withCounts = await addApprovedCollaboratorsCount(filtered);
     res.json(
-      filtered.map((p) =>
+      withCounts.map((p) =>
         enrichPost(p, { users, currentUserId: req.user?.id || null })
       )
     );
@@ -444,7 +447,8 @@ router.get(
 
       const postsResult = await pool.query('SELECT * FROM posts WHERE questid = $1', [id]);
       const usersResult = await pool.query('SELECT * FROM users');
-      const nodes = postsResult.rows.map((p) =>
+      const withCounts = await addApprovedCollaboratorsCount(postsResult.rows);
+      const nodes = withCounts.map((p) =>
         enrichPost(p, {
           users: usersResult.rows,
           quests: [quest],
@@ -643,34 +647,42 @@ router.post(
 router.get(
   '/:id/tree',
   authOptional,
-  (req: Request<{ id: string }>, res: Response): void => {
-  const { id } = req.params;
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const { id } = req.params;
 
-  const quests = questsStore.read();
-  const posts = postsStore.read();
-  const quest = quests.find(q => q.id === id);
-  if (!quest) {
-    logQuest404(id, req.originalUrl);
-    res.status(404).json({ error: 'Quest not found' });
-    return;
-  }
-
-  const nodes: any[] = [];
-
-  const recurse = (questId: string) => {
-    const q = quests.find(x => x.id === questId);
-    if (q) {
-        nodes.push({ ...q, type: 'quest' });
-        q.linkedPosts?.filter(l => l.itemType === 'quest').forEach(l => recurse(l.itemId));
+    const quests = questsStore.read();
+    const posts = postsStore.read();
+    const quest = quests.find(q => q.id === id);
+    if (!quest) {
+      logQuest404(id, req.originalUrl);
+      res.status(404).json({ error: 'Quest not found' });
+      return;
     }
 
-    const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
-    postChildren.forEach(p => nodes.push({ ...p, type: 'post' }));
-  };
+    const nodes: any[] = [];
 
-  recurse(id);
-  res.json(nodes);
-});
+    const recurse = (questId: string) => {
+      const q = quests.find(x => x.id === questId);
+      if (q) {
+        nodes.push({ ...q, type: 'quest' });
+        q.linkedPosts?.filter(l => l.itemType === 'quest').forEach(l => recurse(l.itemId));
+      }
+
+      const postChildren = posts.filter(p => p.questId === questId && p.type === 'task');
+      postChildren.forEach(p => nodes.push({ ...p, type: 'post' }));
+    };
+
+    recurse(id);
+
+    const postNodes = nodes.filter(n => n.type === 'post');
+    const withCounts = await addApprovedCollaboratorsCount(postNodes);
+    postNodes.forEach((node, idx) => {
+      node.approvedCollaboratorsCount = withCounts[idx].approvedCollaboratorsCount;
+    });
+
+    res.json(nodes);
+  }
+);
 
 // POST promote quest to project
 router.post(
