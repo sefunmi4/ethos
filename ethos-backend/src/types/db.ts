@@ -49,6 +49,7 @@ export interface DBPost {
   /** Optional classification for task posts */
   taskType?: 'file' | 'folder' | 'abstract';
   collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
+  approvedCollaboratorsCount?: number;
   linkedItems?: LinkedItem[];
 
   systemGenerated?: boolean;
@@ -283,6 +284,8 @@ export interface DBNotification {
   userId: string;
   message: string;
   link?: string;
+  /** Optional join request ID for later approve/decline actions */
+  joinRequestId?: string;
   read?: boolean;
   createdAt: string;
 }
