@@ -726,10 +726,11 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, async (req, re
     ]);
     repost.tags = Array.from(summaryTags);
     posts.push(repost);
+    original.requestId = repost.id;
     stores_1.postsStore.write(posts);
     if (db_1.usePg) {
         try {
-            await db_1.pool.query('INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [
+            await db_1.pool.query('INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp, repostedfrom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)', [
                 repost.id,
                 repost.authorId,
                 'request',
@@ -739,7 +740,9 @@ router.post('/:id/request-help', authMiddleware_1.authMiddleware, async (req, re
                 repost.tags,
                 'quest-board',
                 timestamp,
+                original.id,
             ]);
+            await db_1.pool.query('UPDATE posts SET requestid = $1 WHERE id = $2', [repost.id, req.params.id]);
             db_1.pool
                 .query(`INSERT INTO reactions (id, postid, userid, type)
              VALUES ($1, $2, $3, $4)
@@ -802,10 +805,12 @@ router.delete('/:id/request-help', authMiddleware_1.authMiddleware, async (req, 
         return;
     }
     const [removed] = posts.splice(index, 1);
+    original.requestId = undefined;
     stores_1.postsStore.write(posts);
     if (db_1.usePg) {
         try {
             await db_1.pool.query('DELETE FROM posts WHERE id = $1', [removed.id]);
+            await db_1.pool.query('UPDATE posts SET requestid = NULL WHERE id = $1', [req.params.id]);
             db_1.pool
                 .query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3', [req.params.id, req.user.id, tag])
                 .catch((err) => console.error(err));

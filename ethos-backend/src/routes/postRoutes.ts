@@ -918,12 +918,13 @@ router.post(
     repost.tags = Array.from(summaryTags);
 
     posts.push(repost);
+    original.requestId = repost.id;
     postsStore.write(posts);
 
     if (usePg) {
       try {
         await pool.query(
-          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp, repostedfrom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
           [
             repost.id,
             repost.authorId,
@@ -934,7 +935,12 @@ router.post(
             repost.tags,
             'quest-board',
             timestamp,
+            original.id,
           ]
+        );
+        await pool.query(
+          'UPDATE posts SET requestid = $1 WHERE id = $2',
+          [repost.id, req.params.id]
         );
         pool
           .query(
@@ -1015,11 +1021,13 @@ router.delete(
     }
 
     const [removed] = posts.splice(index, 1);
+    original.requestId = undefined;
     postsStore.write(posts);
 
     if (usePg) {
       try {
         await pool.query('DELETE FROM posts WHERE id = $1', [removed.id]);
+        await pool.query('UPDATE posts SET requestid = NULL WHERE id = $1', [req.params.id]);
         pool
           .query(
             'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
