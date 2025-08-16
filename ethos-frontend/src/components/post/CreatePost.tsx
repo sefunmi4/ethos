@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { POST_TYPES, STATUS_OPTIONS } from '../../constants/options';
+import { POST_TYPES, STATUS_OPTIONS, SECONDARY_POST_TYPES } from '../../constants/options';
 import { addPost } from '../../api/post';
 import { Button, Select, Label, FormSection, Input, MarkdownEditor } from '../ui';
 import CollaberatorControls from '../controls/CollaberatorControls';
-import LinkControls from '../controls/LinkControls';
 import { useBoardContext } from '../../contexts/BoardContext';
 import { useAuth } from '../../contexts/AuthContext';
 import type { BoardType } from '../../types/boardTypes';
@@ -60,22 +59,19 @@ const CreatePost: React.FC<CreatePostProps> = ({
         : false)
     : false;
 
-  const [type, setType] = useState<PostType>(
+  const [type, setType] = useState<PostType | 'review'>(
     restrictedReply
-      ? replyToType === 'file' && isParticipant
-        ? 'file'
-        : 'free_speech'
+      ? 'free_speech'
       : initialType === 'request'
       ? 'task'
       : initialType === 'review'
-      ? 'file'
+      ? 'review'
       : initialType
   );
   const [status, setStatus] = useState<string>('To Do');
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>(initialContent || '');
   const [details, setDetails] = useState<string>('');
-  const [linkedItems, setLinkedItems] = useState<LinkedItem[]>([]);
   const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -86,16 +82,16 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  const allowedPostTypes: PostType[] = restrictedReply
+  const allowedPostTypes: (PostType | 'review')[] = restrictedReply
     ? replyToType === 'task'
       ? isParticipant
         ? ['free_speech', 'task', 'file']
         : ['free_speech']
       : replyToType === 'file'
-      ? isParticipant
-        ? ['free_speech', 'file']
-        : ['free_speech']
+      ? ['free_speech', 'review']
       : ['free_speech']
+    : boardId === 'timeline-board'
+    ? ['free_speech', 'task']
     : boardId === 'quest-board'
     ? ['task', 'file']
     : boardType === 'quest'
@@ -116,43 +112,37 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       ? boardQuestMatch[1]
       : questId || replyTo?.questId || null;
 
-    const autoLinkItems = [...linkedItems];
-    if (questIdFromBoard && !autoLinkItems.some((l) => l.itemId === questIdFromBoard)) {
+    const autoLinkItems: LinkedItem[] = [];
+    if (questIdFromBoard) {
       autoLinkItems.push({ itemId: questIdFromBoard, itemType: 'quest' });
     }
 
-    const validation = validateLinks(type, autoLinkItems, !!replyTo);
-    if (!validation.valid) {
-      alert(validation.message);
-      setIsSubmitting(false);
-      return;
-    }
-
-      const payload: Partial<Post> = {
-        type,
-        title: type === 'task' ? content : title || undefined,
-        content,
-        ...(type === 'task' && details ? { details } : {}),
-        visibility: 'public',
-        linkedItems: autoLinkItems,
-        ...(type === 'task' ? { status } : {}),
-        ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
-        ...(targetBoard ? { boardId: targetBoard } : {}),
-        ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
-        ...(repostSource
-          ? {
-              parentPostId: repostSource.id,
-              linkType: 'repost',
-              repostedFrom: {
-                originalPostId: repostSource.id,
-                username: repostSource.author?.username,
-                originalContent: repostSource.content,
-                originalTimestamp: repostSource.timestamp,
-              },
-            }
-          : {}),
-        ...(requiresQuestRoles(type) && { collaborators }),
-      };
+    const payload: Partial<Post> = {
+      type: type === 'review' ? 'file' : type,
+      title: type === 'task' ? content : title || undefined,
+      content,
+      ...(type === 'task' && details ? { details } : {}),
+      visibility: 'public',
+      linkedItems: autoLinkItems,
+      ...(type === 'task' ? { status } : {}),
+      ...(type === 'review' ? { tags: ['review'] } : {}),
+      ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
+      ...(targetBoard ? { boardId: targetBoard } : {}),
+      ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
+      ...(repostSource
+        ? {
+            parentPostId: repostSource.id,
+            linkType: 'repost',
+            repostedFrom: {
+              originalPostId: repostSource.id,
+              username: repostSource.author?.username,
+              originalContent: repostSource.content,
+              originalTimestamp: repostSource.timestamp,
+            },
+          }
+        : {}),
+      ...(requiresQuestRoles(type) && { collaborators }),
+    };
 
     try {
       const newPost = await addPost(payload);
@@ -199,11 +189,15 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           id="post-type"
           value={type}
           onChange={(e) => {
-            const val = e.target.value as PostType;
+            const val = e.target.value as PostType | 'review';
             setType(val);
             if (val === 'task') setStatus('To Do');
           }}
           options={allowedPostTypes.map((t) => {
+            if (t === 'review') {
+              const opt = SECONDARY_POST_TYPES.find(o => o.value === 'review')!;
+              return { value: opt.value, label: opt.label };
+            }
             const opt = POST_TYPES.find((o) => o.value === t)!;
             return { value: opt.value, label: opt.label };
           })}
@@ -271,19 +265,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
 
       </FormSection>
 
-      {showLinkControls(type) && !replyTo && (
-        <FormSection title="Linked Items">
-          <LinkControls
-            label="Item"
-            value={linkedItems}
-            onChange={setLinkedItems}
-            allowCreateNew
-            allowNodeSelection
-            itemTypes={['quest', 'post']}
-          />
-        </FormSection>
-      )}
-
       {requiresQuestRoles(type) && !replyTo && (
         <FormSection title="Collaborators">
           <CollaberatorControls value={collaborators} onChange={setCollaborators} />
@@ -318,37 +299,8 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   );
 };
 
-function requiresQuestRoles(type: PostType): boolean {
+function requiresQuestRoles(type: PostType | 'review'): boolean {
   return type === 'task';
-}
-
-function showLinkControls(type: PostType): boolean {
-  return ['task', 'file'].includes(type);
-}
-
-function validateLinks(
-  type: PostType,
-  items: LinkedItem[],
-  hasParent: boolean = false,
-): {
-  valid: boolean;
-  message?: string;
-} {
-  switch (type) {
-    case 'free_speech':
-      return items.some(i => i.itemType === 'post')
-        ? { valid: false, message: 'Free speech posts cannot have links.' }
-        : { valid: true };
-    case 'file':
-      return hasParent || items.some(i => i.itemType === 'post')
-        ? { valid: true }
-        : {
-            valid: false,
-            message: 'Please link a task before submitting.',
-          };
-    default:
-      return { valid: true };
-  }
 }
 
 export default CreatePost;
