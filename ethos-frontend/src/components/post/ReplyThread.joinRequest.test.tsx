@@ -27,10 +27,11 @@ jest.mock('../../api/post', () => ({
   fetchRepliesByPostId: jest.fn(() => Promise.resolve(mockReplies)),
 }));
 
-const listeners: Record<string, Function> = {};
+type Listener = (...args: unknown[]) => void;
+const listeners: Record<string, Listener> = {};
 const socket = {
   emit: jest.fn(),
-  on: jest.fn((event: string, handler: Function) => {
+  on: jest.fn((event: string, handler: Listener) => {
     listeners[event] = handler;
   }),
   off: jest.fn((event: string) => {

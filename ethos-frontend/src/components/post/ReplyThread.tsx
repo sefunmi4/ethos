@@ -6,6 +6,14 @@ import type { Post } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 import { useSocket } from '../../hooks/useSocket';
 
+interface JoinRequestEvent extends Post {
+  system_event: 'join_request';
+  status?: string;
+}
+
+const isJoinRequestEvent = (post: Post): post is JoinRequestEvent =>
+  (post as { system_event?: string }).system_event === 'join_request';
+
 interface ReplyThreadProps {
   postId: string;
   user?: User;
@@ -44,9 +52,8 @@ const ReplyThread: React.FC<ReplyThreadProps> = ({ postId, user }) => {
   return (
     <div className="mt-2 space-y-2 border-l-2 border-blue-200 pl-4">
       {replies.map(r => {
-        const eventType = (r as any).system_event;
-        if (eventType === 'join_request') {
-          const status = ((r as any).status || 'Pending') as string;
+        if (isJoinRequestEvent(r)) {
+          const status = r.status ?? 'Pending';
           const username = r.author?.username || 'unknown';
           return (
             <div key={r.id} className="text-sm text-secondary italic">
