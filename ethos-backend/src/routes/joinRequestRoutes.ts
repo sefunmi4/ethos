@@ -1,7 +1,8 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { io } from '../server';
+import type { AuthenticatedRequest } from '../types/express';
 
 interface JoinRequest {
   id: string;
@@ -16,7 +17,7 @@ const joinRequests: JoinRequest[] = [];
 const router = express.Router();
 
 // Create a new join request
-router.post('/', authMiddleware, (req: Request, res: Response): void => {
+router.post('/', authMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const { taskId, ownerId } = req.body as { taskId?: string; ownerId?: string };
   const requesterId = req.user?.id;
 
@@ -45,7 +46,7 @@ router.post('/', authMiddleware, (req: Request, res: Response): void => {
 });
 
 // Approve or decline a join request
-router.patch('/:id', authMiddleware, (req: Request, res: Response): void => {
+router.patch('/:id', authMiddleware, (req: AuthenticatedRequest<{ id: string }>, res: Response): void => {
   const { id } = req.params;
   const { status } = req.body as { status?: 'approved' | 'declined' };
 
