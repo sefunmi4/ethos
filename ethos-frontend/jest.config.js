@@ -34,6 +34,9 @@ export default {
     '<rootDir>/tests/TimelineBoardPostTypes.test.tsx'
     ,'<rootDir>/src/components/controls/ReactionControls.permission.test.tsx'
     ,'<rootDir>/src/components/ui/SummaryTag.theme.test.tsx'
+    ,'<rootDir>/tests/AcceptRequestButton.test.tsx'
+    ,'<rootDir>/tests/NotificationsPage.test.tsx'
+    ,'<rootDir>/tests/PostCardCTA.test.tsx'
   ],
   globals: {
     'ts-jest': {
