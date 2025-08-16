@@ -152,6 +152,20 @@ async function initializeDatabase(): Promise<void> {
       id TEXT PRIMARY KEY,
       data JSONB
     );
+    CREATE TABLE IF NOT EXISTS task_join_requests (
+      id UUID PRIMARY KEY,
+      task_id TEXT,
+      requester_id TEXT,
+      request_post_id TEXT,
+      status TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      decided_at TIMESTAMPTZ,
+      decided_by TEXT,
+      meta JSONB
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS task_join_requests_unique_active
+      ON task_join_requests(task_id, requester_id)
+      WHERE status IN ('PENDING','APPROVED');
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
