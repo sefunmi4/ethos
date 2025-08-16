@@ -125,22 +125,27 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     setShowMenu(false);
   };
 
+  const itemClasses =
+    'block w-full text-left px-4 py-2 bg-white bg-surface dark:bg-background';
+  const itemHover =
+    'hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700';
+
   return (
     <div ref={menuRef} className={`relative ${className}`}>
       <button onClick={() => setShowMenu(!showMenu)} aria-label="More options">
         <FaEllipsisH />
       </button>
       {showMenu && (
-        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-surface dark:bg-background shadow text-sm">
+        <div className="absolute right-0 mt-1 w-48 z-10 border rounded bg-white bg-surface dark:bg-background shadow text-sm">
           {canEdit && (
             <>
-              <button onClick={onEdit} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
+              <button onClick={onEdit} className={`${itemClasses} ${itemHover}`}>
                 <FaEdit className="inline mr-2" /> Edit
               </button>
               {allowDelete && (
                 <button
                   onClick={handleDelete}
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 focus:bg-red-100 dark:focus:bg-gray-700"
+                  className={`${itemClasses} text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 focus:bg-red-100 dark:focus:bg-gray-700`}
                 >
                   <FaTrash className="inline mr-2" /> Delete
                 </button>
@@ -148,7 +153,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
               <button
                 onClick={handleArchive}
                 disabled={isArchiving}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+                className={`${itemClasses} ${itemHover}`}
               >
                 <FaArchive className="inline mr-2" /> {isArchiving ? 'Archiving…' : 'Archive'}
               </button>
@@ -158,7 +163,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
                     onEditLinks();
                     setShowMenu(false);
                   }}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+                  className={`${itemClasses} ${itemHover}`}
                 >
                   <FaLink className="inline mr-2" /> Edit Links
                 </button>
@@ -166,18 +171,12 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
             </>
           )}
           {content && (
-            <button
-              onClick={handleCopyQuote}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
-            >
+            <button onClick={handleCopyQuote} className={`${itemClasses} ${itemHover}`}>
               <FaCopy className="inline mr-2" /> Copy Quote
             </button>
           )}
           {permalink && type === 'post' && (
-            <button
-              onClick={handleLinkToPost}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
-            >
+            <button onClick={handleLinkToPost} className={`${itemClasses} ${itemHover}`}>
               <FaLink className="inline mr-2" /> Link to This Post
             </button>
           )}
@@ -187,12 +186,12 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
                 onJoin();
                 setShowMenu(false);
               }}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+              className={`${itemClasses} ${itemHover}`}
             >
               <FaUserPlus className="inline mr-2" /> {joinLabel}
             </button>
           )}
-          <button onClick={handleCopyLink} className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700">
+          <button onClick={handleCopyLink} className={`${itemClasses} ${itemHover}`}>
             <FaLink className="inline mr-2" /> Copy Link
           </button>
         </div>
