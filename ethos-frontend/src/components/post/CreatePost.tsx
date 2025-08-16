@@ -117,6 +117,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       type: type === 'review' ? 'file' : type,
       title,
       content: details,
+      ...(details ? { details } : {}),
       visibility: 'public',
       linkedItems: autoLinkItems,
       ...(type === 'review' ? { tags: ['review'] } : {}),

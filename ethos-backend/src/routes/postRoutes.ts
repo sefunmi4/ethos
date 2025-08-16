@@ -253,7 +253,7 @@ router.post(
       id: uuidv4(),
       authorId: req.user!.id,
       type,
-      title: type === 'task' ? content : title || makeQuestNodeTitle(content),
+      title: title || makeQuestNodeTitle(content),
       content,
       createdAt: new Date().toISOString(),
       details,
