@@ -48,6 +48,7 @@ export interface DBPost {
   /** Optional classification for task posts */
   taskType?: 'file' | 'folder' | 'abstract';
   collaborators?: { userId?: string; roles?: string[]; pending?: string[] }[];
+  approvedCollaboratorsCount?: number;
   linkedItems?: LinkedItem[];
 
   systemGenerated?: boolean;
