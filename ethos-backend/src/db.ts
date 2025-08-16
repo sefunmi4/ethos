@@ -63,12 +63,18 @@ async function initializeDatabase(): Promise<void> {
       type TEXT,
       content TEXT,
       title TEXT,
+      details TEXT,
       visibility TEXT,
       tags TEXT[],
+      status TEXT,
       boardid TEXT,
+      nodeid TEXT,
       timestamp TIMESTAMPTZ,
       createdat TIMESTAMPTZ DEFAULT NOW()
     );
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS details TEXT;
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS nodeid TEXT;
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS status TEXT;
     CREATE TABLE IF NOT EXISTS quests (
       id UUID PRIMARY KEY,
       authorid TEXT,

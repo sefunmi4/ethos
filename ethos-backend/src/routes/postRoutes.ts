@@ -298,16 +298,19 @@ router.post(
     if (usePg) {
       try {
         await pool.query(
-          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+          'INSERT INTO posts (id, authorid, type, content, title, details, visibility, tags, status, boardid, nodeid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
           [
             newPost.id,
             newPost.authorId,
             newPost.type,
             newPost.content,
             newPost.title,
+            newPost.details,
             newPost.visibility,
             newPost.tags,
+            newPost.status,
             effectiveBoardId,
+            newPost.nodeId,
             newPost.timestamp,
           ]
         );
