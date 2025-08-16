@@ -205,9 +205,12 @@ export const buildSummaryTags = async (
     });
   }
 
-  // Status tag for task posts
+  // Status tag for task posts (exclude generic progress summaries)
   if (post.status && post.type === 'task') {
-    tags.push({ type: 'status', label: post.status, detailLink: ROUTES.POST(post.id) });
+    const lowerStatus = post.status.toLowerCase();
+    if (!['todo', 'to do', 'blocked', 'done'].includes(lowerStatus)) {
+      tags.push({ type: 'status', label: post.status, detailLink: ROUTES.POST(post.id) });
+    }
   }
 
   // Include non-system tags
