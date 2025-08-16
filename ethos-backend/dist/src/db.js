@@ -155,6 +155,7 @@ async function initializeDatabase() {
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS visibility TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS boardid TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ;
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS repostedfrom TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS requestid TEXT;
     ALTER TABLE quests ADD COLUMN IF NOT EXISTS tags TEXT[];
     ALTER TABLE quests ADD COLUMN IF NOT EXISTS status TEXT;
