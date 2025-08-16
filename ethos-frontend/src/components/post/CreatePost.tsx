@@ -72,7 +72,6 @@ const CreatePost: React.FC<CreatePostProps> = ({
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>(initialContent || '');
   const [details, setDetails] = useState<string>('');
-  const [collaborators, setCollaborators] = useState<CollaberatorRoles[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   
@@ -141,7 +140,6 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
             },
           }
         : {}),
-      ...(requiresQuestRoles(type) && { collaborators }),
     };
 
     try {
@@ -203,73 +201,22 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
           })}
         />
 
-        {type === 'task' && (
-          <>
-            <Label htmlFor="task-status">Status</Label>
-            <Select
-              id="task-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              options={STATUS_OPTIONS.map(({ value, label }) => ({ value, label }))}
-            />
-          </>
-        )}
-
-        {type !== 'task' && (
-          <>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required={type !== 'free_speech'}
-            />
-          </>
-        )}
-
-        {type === 'task' ? (
-          <>
-            <Label htmlFor="content">Task Title</Label>
-            <Input
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Short task summary"
-              required
-            />
-            <Label htmlFor="details">Details</Label>
-            <MarkdownEditor
-              id="details"
-              value={details}
-              onChange={setDetails}
-              placeholder="Additional information (optional)"
-            />
-          </>
-        ) : (
-          <>
-            <Label htmlFor="content">Description</Label>
-            <MarkdownEditor
-              id="content"
-              value={content}
-              onChange={setContent}
-              placeholder={
-                replyTo
-                  ? 'Reply to this post...'
-                  : repostSource
-                  ? 'Add a comment to your repost...'
-                  : 'Share your thoughts or progress...'
-              }
-            />
-          </>
-        )}
+        <Label htmlFor="content">Title</Label>
+        <Input
+          id="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          required
+        />
+        <Label htmlFor="details">Details</Label>
+        <MarkdownEditor
+          id="details"
+          value={details}
+          onChange={setDetails}
+          placeholder="Additional information (optional)"
+        />
 
       </FormSection>
-
-      {requiresQuestRoles(type) && !replyTo && (
-        <FormSection title="Collaborators">
-          <CollaberatorControls value={collaborators} onChange={setCollaborators} />
-        </FormSection>
-      )}
 
       {repostSource && (
         <FormSection title="Repost Info">
@@ -299,8 +246,5 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   );
 };
 
-function requiresQuestRoles(type: PostType | 'review'): boolean {
-  return type === 'task';
-}
 
 export default CreatePost;
