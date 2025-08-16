@@ -90,7 +90,7 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
         'free_speech',
         'request',
         'task',
-        'change',
+        'file',
         'review',
     ];
     if (!allowedTypes.includes(type)) {
@@ -102,51 +102,63 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
     const quest = questId ? quests.find((q) => q.id === questId) : null;
     const parent = replyTo ? posts.find((p) => p.id === replyTo) : null;
     if (parent) {
+        const userId = req.user?.id;
+        const isParticipant = parent.authorId === userId ||
+            (parent.collaborators || []).some(c => c.userId === userId);
+        if (['task', 'file'].includes(parent.type)) {
+            if (!isParticipant && type !== 'free_speech') {
+                res.status(400).json({
+                    error: 'Only free_speech replies allowed for non-participants',
+                });
+                return;
+            }
+        }
         if (parent.type === 'task' &&
-            !['free_speech', 'task', 'change'].includes(type)) {
+            !['free_speech', 'task', 'file'].includes(type)) {
             res.status(400).json({
-                error: 'Tasks only accept free_speech, task, or change replies',
+                error: 'Tasks only accept free_speech, task, or file replies',
             });
             return;
         }
-        if (parent.type === 'change' && type !== 'change') {
+        if (parent.type === 'file' &&
+            !['free_speech', 'file'].includes(type)) {
             res
                 .status(400)
-                .json({ error: 'Changes only accept change replies' });
+                .json({ error: 'Files only accept file or free_speech replies' });
             return;
         }
     }
     if (type === 'task') {
-        if (parent && parent.type === 'change') {
+        if (parent && parent.type === 'file') {
             res
                 .status(400)
-                .json({ error: 'Tasks cannot reply to changes' });
+                .json({ error: 'Tasks cannot reply to files' });
             return;
         }
     }
-    else if (type === 'change') {
-        const hasParent = parent && ['task', 'request', 'change'].includes(parent.type);
+    else if (type === 'file') {
+        const hasParent = parent && ['task', 'request', 'file'].includes(parent.type);
         const hasTaskLink = (linkedItems || []).some((li) => li.itemType === 'post');
         if (!hasParent && !hasTaskLink) {
             res
                 .status(400)
                 .json({
-                error: 'Changes must reply to or link a task, request, or change',
+                error: 'Files must reply to or link a task, request, or file',
             });
             return;
         }
     }
     else if (type === 'request') {
-        if (!subtype || !['task', 'change'].includes(subtype)) {
+        if (!subtype || !['task', 'file'].includes(subtype)) {
             res
                 .status(400)
-                .json({ error: 'Request posts must specify subtype "task" or "change"' });
+                .json({ error: 'Request posts must specify subtype "task" or "file"' });
             return;
         }
-        if (subtype === 'change' && (!parent || parent.type !== 'task')) {
+        if (subtype === 'file' && (!parent || parent.type !== 'task')) {
             res
                 .status(400)
-                .json({ error: 'Change requests must reply to a task' });
+                .json({ error: 'File requests must reply to a task' });
             return;
         }
     }
@@ -174,6 +186,7 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
         type,
         title: type === 'task' ? content : title || makeQuestNodeTitle(content),
         content,
+        createdAt: new Date().toISOString(),
         details,
         visibility,
         timestamp: new Date().toISOString(),
@@ -251,12 +264,12 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
             const author = users.find(u => u.id === req.user.id);
             const followers = new Set([parent.authorId, ...(parent.followers || [])]);
             for (const uid of followers) {
-                if (uid === (author === null || author === void 0 ? void 0 : author.id))
+                if (uid === author?.id)
                     continue;
                 const newNote = {
                     id: (0, uuid_1.v4)(),
                     userId: uid,
-                    message: `${(author === null || author === void 0 ? void 0 : author.username) || 'Someone'} replied to a post you follow`,
+                    message: `${author?.username || 'Someone'} replied to a post you follow`,
                     link: `/posts/${parent.id}`,
                     read: false,
                     createdAt: new Date().toISOString(),
@@ -290,7 +303,7 @@ router.post('/', authMiddleware_1.authMiddleware, async (req, res) => {
 //
 // ✅ PATCH update post
 //
-router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
+router.patch('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
     const posts = stores_1.postsStore.read();
     const quests = stores_1.questsStore.read();
     const post = posts.find((p) => p.id === req.params.id);
@@ -331,16 +344,16 @@ router.patch('/:id', authMiddleware_1.authMiddleware, (req, res) => {
             : null;
         if (parent) {
             if (parent.type === 'task' &&
-                !['free_speech', 'task', 'change'].includes(post.type)) {
+                !['free_speech', 'task', 'file'].includes(post.type)) {
                 res.status(400).json({
-                    error: 'Tasks only accept free_speech, task, or change replies',
+                    error: 'Tasks only accept free_speech, task, or file replies',
                 });
                 return;
             }
-            if (parent.type === 'change' && post.type !== 'change') {
+            if (parent.type === 'file' && post.type !== 'file') {
                 res
                     .status(400)
-                    .json({ error: 'Changes only accept change replies' });
+                    .json({ error: 'Files only accept file replies' });
                 return;
             }
         }
@@ -417,7 +430,7 @@ router.post('/:id/unfollow', authMiddleware_1.authMiddleware, (req, res) => {
 //
 // ✅ POST /api/posts/:id/repost – Repost a post
 //
-router.post('/:id/repost', authMiddleware_1.authMiddleware, async (req, res) => {
+router.post('/:id/repost', authMiddleware_1.authMiddleware, (req, res) => {
     const posts = stores_1.postsStore.read();
     const original = posts.find((p) => p.id === req.params.id);
     if (!original)
@@ -430,6 +443,7 @@ router.post('/:id/repost', authMiddleware_1.authMiddleware, async (req, res) => 
         authorId: req.user.id,
         type: original.type,
         content: original.content,
+        createdAt: new Date().toISOString(),
         visibility: original.visibility,
         questId: original.questId || null,
         tags: [...(original.tags || [])],
@@ -453,6 +467,24 @@ router.post('/:id/repost', authMiddleware_1.authMiddleware, async (req, res) => 
     };
     posts.push(repost);
     stores_1.postsStore.write(posts);
+    if (db_1.usePg) {
+        try {
+            db_1.pool.query(`INSERT INTO reactions (id, postid, userid, type)
+           VALUES ($1, $2, $3, 'repost')
+           ON CONFLICT (postid, userid, type) DO NOTHING`, [(0, uuid_1.v4)(), req.params.id, req.user.id]).catch((err) => console.error(err));
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    else {
+        const reactions = stores_1.reactionsStore.read();
+        const key = `${req.params.id}_${req.user.id}_repost`;
+        if (!reactions.includes(key)) {
+            reactions.push(key);
+            stores_1.reactionsStore.write(reactions);
+        }
+    }
     res.status(201).json((0, enrich_1.enrichPost)(repost, { users }));
 });
 //
@@ -467,6 +499,25 @@ router.delete('/:id/repost', authMiddleware_1.authMiddleware, (req, res) => {
     }
     const [removed] = posts.splice(index, 1);
     stores_1.postsStore.write(posts);
+    if (db_1.usePg) {
+        try {
+            db_1.pool
+                .query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3', [req.params.id, req.user.id, 'repost'])
+                .catch((err) => console.error(err));
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    else {
+        const reactions = stores_1.reactionsStore.read();
+        const key = `${req.params.id}_${req.user.id}_repost`;
+        const idx = reactions.indexOf(key);
+        if (idx !== -1) {
+            reactions.splice(idx, 1);
+            stores_1.reactionsStore.write(reactions);
+        }
+    }
     res.json({ success: true, id: removed.id });
 });
 //
@@ -583,55 +634,206 @@ router.post('/tasks/:id/request-help', authMiddleware_1.authMiddleware, (req, re
     task.needsHelp = true;
     task.tags = Array.from(new Set([...(task.tags || []), 'request']));
     stores_1.postsStore.write(posts);
+    if (db_1.usePg) {
+        try {
+            db_1.pool
+                .query(`INSERT INTO reactions (id, postid, userid, type)
+             VALUES ($1, $2, $3, 'request')
+             ON CONFLICT (postid, userid, type) DO NOTHING`, [(0, uuid_1.v4)(), req.params.id, req.user.id])
+                .catch((err) => console.error(err));
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    else {
+        const reactions = stores_1.reactionsStore.read();
+        const key = `${req.params.id}_${req.user.id}_request`;
+        if (!reactions.includes(key)) {
+            reactions.push(key);
+            stores_1.reactionsStore.write(reactions);
+        }
+    }
     const users = stores_1.usersStore.read();
     res.status(200).json({ post: (0, enrich_1.enrichPost)(task, { users }) });
 });
 //
 // ✅ POST /api/posts/:id/request-help – Create a help request from any post
 //
-router.post('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => {
+router.post('/:id/request-help', authMiddleware_1.authMiddleware, async (req, res) => {
     const posts = stores_1.postsStore.read();
-    const post = posts.find(p => p.id === req.params.id);
-    if (!post) {
+    let original = posts.find(p => p.id === req.params.id);
+    // Fallback to PostgreSQL if the post isn't in the JSON store
+    if (!original && db_1.usePg) {
+        try {
+            const { rows } = await db_1.pool.query('SELECT * FROM posts WHERE id = $1', [req.params.id]);
+            if (rows.length > 0) {
+                original = {
+                    id: rows[0].id,
+                    authorId: rows[0].authorid,
+                    type: rows[0].type,
+                    content: rows[0].content,
+                    visibility: rows[0].visibility,
+                    tags: rows[0].tags || [],
+                    timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+                };
+                posts.push(original);
+                stores_1.postsStore.write(posts);
+            }
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    if (!original) {
         res.status(404).json({ error: 'Post not found' });
         return;
     }
-    const subtype = req.body?.subtype || (post.type === 'task' ? 'task' : 'change');
-    if (subtype === 'change' && post.type !== 'task') {
-        res.status(400).json({ error: 'Change requests must originate from a task' });
+    const subtype = req.body?.subtype || (original.type === 'task' ? 'task' : 'file');
+    if (subtype === 'file' && !['task', 'file'].includes(original.type)) {
+        res.status(400).json({ error: 'File requests must originate from a task or file' });
         return;
     }
-    const tag = subtype === 'change' ? 'review' : 'request';
-    post.helpRequest = true;
-    post.needsHelp = true;
-    post.tags = Array.from(new Set([...(post.tags || []), tag]));
-    stores_1.postsStore.write(posts);
+    const tag = subtype === 'file' ? 'review' : 'request';
     const users = stores_1.usersStore.read();
-    res.status(200).json({ post: (0, enrich_1.enrichPost)(post, { users }) });
+    const timestamp = new Date().toISOString();
+    const tagSet = new Set([...(original.tags || []), 'request']);
+    if (subtype === 'file')
+        tagSet.add('review');
+    let repost = {
+        id: (0, uuid_1.v4)(),
+        authorId: req.user.id,
+        type: 'request',
+        subtype,
+        content: original.content,
+        createdAt: timestamp,
+        visibility: original.visibility,
+        questId: original.questId || null,
+        tags: Array.from(tagSet),
+        collaborators: [],
+        replyTo: null,
+        timestamp,
+        repostedFrom: original.id,
+        linkedItems: (original.linkedItems || []).filter(li => li.itemType !== 'post'),
+    };
+    // Add summary tags for easier filtering
+    const summaryTags = new Set([
+        ...(repost.tags || []),
+        'summary:request',
+        ...(subtype === 'file' ? ['summary:review'] : []),
+        `summary:${subtype}`,
+        `summary:user:${req.user?.username || req.user?.id}`,
+    ]);
+    repost.tags = Array.from(summaryTags);
+    posts.push(repost);
+    original.requestId = repost.id;
+    stores_1.postsStore.write(posts);
+    if (db_1.usePg) {
+        try {
+            await db_1.pool.query('INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [
+                repost.id,
+                repost.authorId,
+                'request',
+                repost.content,
+                original.title || '',
+                repost.visibility,
+                repost.tags,
+                'quest-board',
+                timestamp,
+            ]);
+            await db_1.pool.query('UPDATE posts SET requestid = $1 WHERE id = $2', [repost.id, req.params.id]);
+            db_1.pool
+                .query(`INSERT INTO reactions (id, postid, userid, type)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (postid, userid, type) DO NOTHING`, [(0, uuid_1.v4)(), req.params.id, req.user.id, tag])
+                .catch((err) => console.error(err));
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Database error' });
+            return;
+        }
+    }
+    else {
+        const reactions = stores_1.reactionsStore.read();
+        const key = `${req.params.id}_${req.user.id}_${tag}`;
+        if (!reactions.includes(key)) {
+            reactions.push(key);
+            stores_1.reactionsStore.write(reactions);
+        }
+    }
+    res.status(201).json({ post: (0, enrich_1.enrichPost)(repost, { users }) });
 });
 //
 // ❌ DELETE /api/posts/:id/request-help – Cancel help request and remove linked request posts
 //
-router.delete('/:id/request-help', authMiddleware_1.authMiddleware, (req, res) => {
+router.delete('/:id/request-help', authMiddleware_1.authMiddleware, async (req, res) => {
     const posts = stores_1.postsStore.read();
-    const post = posts.find(p => p.id === req.params.id);
-    if (!post) {
+    let original = posts.find(p => p.id === req.params.id);
+    if (!original && db_1.usePg) {
+        try {
+            const { rows } = await db_1.pool.query('SELECT * FROM posts WHERE id = $1', [req.params.id]);
+            if (rows.length > 0) {
+                original = {
+                    id: rows[0].id,
+                    authorId: rows[0].authorid,
+                    type: rows[0].type,
+                    content: rows[0].content,
+                    visibility: rows[0].visibility,
+                    tags: rows[0].tags || [],
+                    timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+                };
+                posts.push(original);
+                stores_1.postsStore.write(posts);
+            }
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    if (!original) {
         res.status(404).json({ error: 'Post not found' });
         return;
     }
-    const tag = post.type === 'change' ? 'review' : 'request';
-    post.helpRequest = false;
-    post.needsHelp = false;
-    post.tags = (post.tags || []).filter(t => t !== tag);
+    const tag = req.body?.subtype === 'file' ? 'review' : 'request';
+    const index = posts.findIndex(p => p.repostedFrom === req.params.id &&
+        p.authorId === req.user.id &&
+        (p.tags || []).includes(tag));
+    if (index === -1) {
+        res.status(404).json({ error: 'Request repost not found' });
+        return;
+    }
+    const [removed] = posts.splice(index, 1);
+    original.requestId = undefined;
     stores_1.postsStore.write(posts);
-    const users = stores_1.usersStore.read();
-    res.json({ post: (0, enrich_1.enrichPost)(post, { users }) });
+    if (db_1.usePg) {
+        try {
+            await db_1.pool.query('DELETE FROM posts WHERE id = $1', [removed.id]);
+            await db_1.pool.query('UPDATE posts SET requestid = NULL WHERE id = $1', [req.params.id]);
+            db_1.pool
+                .query('DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3', [req.params.id, req.user.id, tag])
+                .catch((err) => console.error(err));
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    else {
+        const reactions = stores_1.reactionsStore.read();
+        const key = `${req.params.id}_${req.user.id}_${tag}`;
+        const idx = reactions.indexOf(key);
+        if (idx !== -1) {
+            reactions.splice(idx, 1);
+            stores_1.reactionsStore.write(reactions);
+        }
+    }
+    res.json({ success: true, id: removed.id });
 });
 //
 // ✅ POST /api/posts/:id/accept – Accept a help request
 // Marks the post as pending for the current user and joins or creates a quest
 //
-router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
+router.post('/:id/accept', authMiddleware_1.authMiddleware, async (req, res) => {
     const posts = stores_1.postsStore.read();
     const quests = stores_1.questsStore.read();
     const post = posts.find(p => p.id === req.params.id);
@@ -674,7 +876,8 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
     }
     const parent = post.replyTo ? posts.find(p => p.id === post.replyTo) : null;
     let created = null;
-    if (parent && parent.type === 'change') {
+    if (parent && parent.type === 'file') {
+        const createdTimestamp = new Date().toISOString();
         created = {
             id: (0, uuid_1.v4)(),
             authorId: userId,
@@ -682,23 +885,27 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
             title: makeQuestNodeTitle(post.content),
             content: '',
             visibility: 'public',
-            timestamp: new Date().toISOString(),
+            createdAt: createdTimestamp,
+            timestamp: createdTimestamp,
             replyTo: parent.id,
         };
     }
     else if (parent && parent.type === 'task') {
+        const createdTimestamp = new Date().toISOString();
         created = {
             id: (0, uuid_1.v4)(),
             authorId: userId,
-            type: 'change',
+            type: 'file',
             title: makeQuestNodeTitle(post.content),
             content: '',
             visibility: 'public',
-            timestamp: new Date().toISOString(),
+            createdAt: createdTimestamp,
+            timestamp: createdTimestamp,
             replyTo: parent.id,
         };
     }
     else {
+        const createdTimestamp = new Date().toISOString();
         created = {
             id: (0, uuid_1.v4)(),
             authorId: userId,
@@ -706,7 +913,8 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
             title: makeQuestNodeTitle(post.content),
             content: '',
             visibility: 'public',
-            timestamp: new Date().toISOString(),
+            createdAt: createdTimestamp,
+            timestamp: createdTimestamp,
             replyTo: post.id,
             status: 'To Do',
         };
@@ -725,13 +933,20 @@ router.post('/:id/accept', authMiddleware_1.authMiddleware, (req, res) => {
             read: false,
             createdAt: new Date().toISOString(),
         };
-        try {
-            await db_1.pool.query('INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)', [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]);
+        if (db_1.usePg) {
+            try {
+                await db_1.pool.query('INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)', [newNote.id, newNote.userId, newNote.message, newNote.link, newNote.read, newNote.createdAt]);
+            }
+            catch (err) {
+                console.error(err);
+                res.status(500).json({ error: 'Database error' });
+                return;
+            }
         }
-        catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Database error' });
-            return;
+        else {
+            const notes = stores_1.notificationsStore.read();
+            notes.push(newNote);
+            stores_1.notificationsStore.write(notes);
         }
     }
     res.json({
@@ -815,15 +1030,17 @@ router.post('/:id/archive', authMiddleware_1.authMiddleware, async (req, res) =>
         if (quest) {
             const edges = quest.taskGraph || [];
             const parentEdge = edges.find(e => e.to === post.id);
-            const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+            const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
             const childEdges = edges.filter(e => e.from === post.id);
             quest.taskGraph = edges.filter(e => e.from !== post.id);
-            childEdges.forEach(e => {
-                const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
-                if (!exists) {
-                    quest.taskGraph.push({ ...e, from: parentId });
-                }
-            });
+            if (parentId) {
+                childEdges.forEach(e => {
+                    const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
+                    if (!exists) {
+                        quest.taskGraph.push({ ...e, from: parentId });
+                    }
+                });
+            }
             stores_1.questsStore.write(quests);
         }
     }
@@ -868,6 +1085,20 @@ router.delete('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
                 res.status(404).json({ error: 'Post not found' });
                 return;
             }
+            const requestIds = [];
+            if (post.requestid)
+                requestIds.push(post.requestid);
+            if (requestIds.length) {
+                await db_1.pool
+                    .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
+                    .catch((err) => console.error(err));
+                await db_1.pool
+                    .query('DELETE FROM posts WHERE id = ANY($1)', [requestIds])
+                    .catch((err) => console.error(err));
+            }
+            await db_1.pool
+                .query("DELETE FROM reactions WHERE postid = $1 AND type IN ('request','review')", [req.params.id])
+                .catch((err) => console.error(err));
             res.json({ success: true });
             return;
         }
@@ -900,20 +1131,49 @@ router.delete('/:id', authMiddleware_1.authMiddleware, async (req, res) => {
         if (quest) {
             const edges = quest.taskGraph || [];
             const parentEdge = edges.find(e => e.to === post.id);
-            const parentId = parentEdge ? parentEdge.from : quest.headPostId;
+            const parentId = parentEdge ? parentEdge.from : quest.headPostId || '';
             const childEdges = edges.filter(e => e.from === post.id);
             quest.taskGraph = edges.filter(e => e.to !== post.id && e.from !== post.id);
-            childEdges.forEach(e => {
-                const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
-                if (!exists) {
-                    quest.taskGraph.push({ ...e, from: parentId });
-                }
-            });
+            if (parentId) {
+                childEdges.forEach(e => {
+                    const exists = quest.taskGraph.some(se => se.from === parentId && se.to === e.to);
+                    if (!exists) {
+                        quest.taskGraph.push({ ...e, from: parentId });
+                    }
+                });
+            }
             stores_1.questsStore.write(quests);
         }
     }
+    const requestIds = posts
+        .filter((p) => p.repostedFrom === post.id && p.type === 'request')
+        .map((p) => p.id);
+    if (post.requestId && !requestIds.includes(post.requestId)) {
+        requestIds.push(post.requestId);
+    }
+    requestIds.forEach((rid) => {
+        const rIndex = posts.findIndex((p) => p.id === rid);
+        if (rIndex !== -1)
+            posts.splice(rIndex, 1);
+    });
     posts.splice(index, 1);
     stores_1.postsStore.write(posts);
+    const boards = stores_1.boardsStore.read();
+    const questBoard = boards.find(b => b.id === 'quest-board');
+    if (questBoard) {
+        const toRemove = new Set([req.params.id, ...requestIds]);
+        questBoard.items = (questBoard.items || []).filter(id => id !== null && !toRemove.has(id));
+        stores_1.boardsStore.write(boards);
+    }
+    const reactions = stores_1.reactionsStore.read();
+    const filtered = reactions.filter(r => {
+        const [postId] = r.split('_');
+        if (postId === req.params.id) {
+            return !(r.endsWith('_request') || r.endsWith('_review'));
+        }
+        return !requestIds.includes(postId);
+    });
+    stores_1.reactionsStore.write(filtered);
     res.json({ success: true });
 });
 //
