@@ -172,14 +172,29 @@ const PostCard: React.FC<PostCardProps> = ({
   );
 
   const qid = questId || post.questId;
+  const isAuthor = user?.id === post.authorId;
+  const defaultJoinState = post.collaborators?.some(c => c.userId === user?.id)
+    ? 'MEMBER'
+    : post.collaborators?.some(c => c.pending?.includes(user?.id || ''))
+      ? 'PENDING'
+      : 'NONE';
+  const [joinState, setJoinState] = useState<'NONE' | 'PENDING' | 'MEMBER'>(defaultJoinState);
+
+  const handleRequestJoin = () => {
+    navigate(ROUTES.POST(post.id) + '?reply=1&intro=1');
+    setJoinState('PENDING');
+  };
+
+  const handleSendReview = () => {
+    navigate(ROUTES.POST(post.id) + '?reply=1&initialType=review');
+  };
 
   useEffect(() => {
     if (expandedView && qid) {
       loadGraph(qid);
     }
   }, [expandedView, qid, loadGraph]);
-
-  const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
+  const canEdit = isAuthor || post.collaborators?.some(c => c.userId === user?.id);
   const ts = post.timestamp || post.createdAt;
   const timestamp = ts
     ? formatDistanceToNow(new Date(ts), { addSuffix: true })
@@ -305,6 +320,51 @@ const PostCard: React.FC<PostCardProps> = ({
     );
   };
 
+  const renderControls = () => {
+    if (post.type === 'request' && isAuthor) {
+      return (
+        <div className="text-sm text-secondary">
+          Collaborators: {post.collaborators?.length || 0}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {post.type === 'request' && !isAuthor && (
+          <Button
+            variant="contrast"
+            className="mb-2"
+            onClick={handleRequestJoin}
+            disabled={joinState !== 'NONE'}
+            title={joinState !== 'NONE' ? 'Request pending approval' : undefined}
+          >
+            {joinState === 'PENDING' ? 'Pending' : 'Request to Join'}
+          </Button>
+        )}
+        {post.type === 'review' && !isAuthor && (
+          <Button
+            variant="contrast"
+            className="mb-2"
+            onClick={handleSendReview}
+          >
+            Send Review
+          </Button>
+        )}
+        <ReactionControls
+          post={post}
+          user={user}
+          onUpdate={onUpdate}
+          replyOverride={replyOverride}
+          boardId={ctxBoardId || undefined}
+          timestamp={!isQuestBoardRequest ? timestamp : undefined}
+          expanded={expandedView}
+          hideReply={hideReplyButton}
+        />
+      </>
+    );
+  };
+
 
   if (editMode) {
     return (
@@ -336,16 +396,7 @@ const PostCard: React.FC<PostCardProps> = ({
             {titleText}
           </h3>
         )}
-        <ReactionControls
-          post={post}
-          user={user}
-          onUpdate={onUpdate}
-          timestamp={!isQuestBoardRequest ? timestamp : undefined}
-          replyOverride={replyOverride}
-          boardId={ctxBoardId || undefined}
-          expanded={expandedView}
-          hideReply={hideReplyButton}
-        />
+        {renderControls()}
       </div>
     );
   }
@@ -417,6 +468,7 @@ const PostCard: React.FC<PostCardProps> = ({
         )}
       </div>
 
+      {renderControls()}
       <ReactionControls
         post={post}
         user={user}
