@@ -321,3 +321,29 @@ export const unfollowPost = async (id: string): Promise<{ followers: string[] }>
   const res = await axiosWithAuth.post(`${BASE_URL}/${id}/unfollow`);
   return res.data;
 };
+
+/**
+ * ✅ Approve a pending join request for a task/post
+ */
+export const approveJoinRequest = async (
+  taskId: string,
+  joinRequestId: string,
+): Promise<{ collaborators: string[] }> => {
+  const res = await axiosWithAuth.post(
+    `${BASE_URL}/${taskId}/join-requests/${joinRequestId}/approve`,
+  );
+  return res.data;
+};
+
+/**
+ * ❌ Decline a pending join request for a task/post
+ */
+export const declineJoinRequest = async (
+  taskId: string,
+  joinRequestId: string,
+): Promise<{ success: boolean }> => {
+  const res = await axiosWithAuth.post(
+    `${BASE_URL}/${taskId}/join-requests/${joinRequestId}/decline`,
+  );
+  return res.data;
+};
