@@ -28,6 +28,7 @@ const normalizePost = (post: DBPost): Post => {
       timestamp: post.timestamp ?? post.createdAt ?? new Date().toISOString(),
     tags: post.tags ?? [],
     collaborators: post.collaborators ?? [],
+    approvedCollaboratorsCount: post.approvedCollaboratorsCount ?? 0,
     linkedItems: post.linkedItems ?? [],
     repostedFrom: repostMeta,
   };

@@ -5,6 +5,7 @@ import authOptional from '../middleware/authOptional';
 import { postsStore, usersStore, reactionsStore, questsStore, notificationsStore, boardsStore } from '../models/stores';
 import { pool, usePg } from '../db';
 import { enrichPost } from '../utils/enrich';
+import { addApprovedCollaboratorsCount } from '../utils/collaboratorUtils';
 import { generateNodeId } from '../utils/nodeIdUtils';
 import type { DBPost, DBQuest } from '../types/db';
 import type { AuthenticatedRequest } from '../types/express';
@@ -26,7 +27,8 @@ router.get('/', authOptional, async (_req: Request, res: Response): Promise<void
   if (usePg) {
     try {
       const result = await pool.query('SELECT * FROM posts');
-      res.json(result.rows);
+      const postsWithCounts = await addApprovedCollaboratorsCount(result.rows);
+      res.json(postsWithCounts);
       return;
     } catch (err) {
       console.error(err);
@@ -35,17 +37,18 @@ router.get('/', authOptional, async (_req: Request, res: Response): Promise<void
     }
   }
   const posts = postsStore.read();
-  res.json(posts);
+  const postsWithCounts = await addApprovedCollaboratorsCount(posts);
+  res.json(postsWithCounts);
 });
 
 // GET recent posts. If userId is provided, return posts related to that user.
 router.get(
   '/recent',
   authOptional,
-  (
+  async (
     req: Request<{}, any, any, { userId?: string; hops?: string }>,
     res: Response
-  ): void => {
+  ): Promise<void> => {
     const { userId } = req.query;
     const posts = postsStore.read();
     const quests = questsStore.read();
@@ -98,7 +101,8 @@ router.get(
       );
     }
 
-    const recent = filtered
+    const withCounts = await addApprovedCollaboratorsCount(filtered);
+    const recent = withCounts
       .filter(p => p.systemGenerated !== true)
       .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''))
       .slice(0, 20)
@@ -481,12 +485,16 @@ router.patch(
 //
 // ✅ GET /api/posts/:id/replies – Fetch direct replies to a post
 //
-router.get('/:id/replies', (req: Request<{ id: string }>, res: Response) => {
-  const posts = postsStore.read();
-  const replies = posts.filter((p) => p.replyTo === req.params.id);
-  const users = usersStore.read();
-  res.json({ replies: replies.map((p) => enrichPost(p, { users })) });
-});
+router.get(
+  '/:id/replies',
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const posts = postsStore.read();
+    const replies = posts.filter((p) => p.replyTo === req.params.id);
+    const withCounts = await addApprovedCollaboratorsCount(replies);
+    const users = usersStore.read();
+    res.json({ replies: withCounts.map((p) => enrichPost(p, { users })) });
+  }
+);
 
 // POST /api/posts/:id/follow - follow a post
 router.post('/:id/follow', authMiddleware, async (req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> => {
@@ -836,8 +844,88 @@ router.post(
       }
     }
 
+  const users = usersStore.read();
+  res.status(200).json({ post: enrichPost(task, { users }) });
+  }
+);
+
+//
+// ✅ POST /api/tasks/:taskId/join-requests – Request to join a task
+//
+router.post(
+  '/tasks/:taskId/join-requests',
+  authMiddleware,
+  async (req: AuthenticatedRequest<{ taskId: string }>, res: Response): Promise<void> => {
+    const posts = postsStore.read();
+    let task = posts.find(p => p.id === req.params.taskId && p.type === 'task');
+    if (!task && usePg) {
+      try {
+        const { rows } = await pool.query('SELECT * FROM posts WHERE id = $1', [req.params.taskId]);
+        if (rows.length > 0 && rows[0].type === 'task') {
+          task = {
+            id: rows[0].id,
+            authorId: rows[0].authorid,
+            type: rows[0].type,
+            content: rows[0].content,
+            visibility: rows[0].visibility,
+            tags: rows[0].tags || [],
+            timestamp: rows[0].timestamp?.toISOString?.() || rows[0].timestamp,
+          } as DBPost;
+          posts.push(task);
+          postsStore.write(posts);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+
     const users = usersStore.read();
-    res.status(200).json({ post: enrichPost(task, { users }) });
+    const requester = users.find(u => u.id === req.user!.id);
+    const username = requester?.username || req.user!.username || req.user!.id;
+
+    const requestId = uuidv4();
+    const timestamp = new Date().toISOString();
+    const joinRequest: DBPost = {
+      id: uuidv4(),
+      authorId: req.user!.id,
+      type: 'free_speech',
+      content: `@${username} requested to join this task.`,
+      visibility: 'public',
+      createdAt: timestamp,
+      timestamp,
+      replyTo: task.id,
+      tags: ['status:Pending', 'system'],
+      requestId,
+    };
+
+    posts.push(joinRequest);
+    postsStore.write(posts);
+
+    if (usePg) {
+      try {
+        await pool.query(
+          'INSERT INTO posts (id, authorid, type, content, visibility, tags, timestamp, requestid) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+          [
+            joinRequest.id,
+            joinRequest.authorId,
+            joinRequest.type,
+            joinRequest.content,
+            joinRequest.visibility,
+            joinRequest.tags,
+            timestamp,
+            requestId,
+          ],
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    res.status(200).json({ post: enrichPost(joinRequest, { users }), requestId });
   }
 );
 
@@ -1160,11 +1248,14 @@ router.post(
 
       const follower = users.find(u => u.id === req.user!.id);
       if (follower && post.authorId !== follower.id) {
+        const taskTitle = post.title || makeQuestNodeTitle(post.content);
+        const joinRequestId = created.id;
         const newNote = {
           id: uuidv4(),
           userId: post.authorId,
-          message: `${follower.username} requested to join your post`,
-          link: `/posts/${post.id}`,
+          message: `${follower.username} would like to join ${taskTitle}.`,
+          link: `/boards/thread/${post.id}?joinRequestId=${joinRequestId}`,
+          joinRequestId,
           read: false,
           createdAt: new Date().toISOString(),
         };
@@ -1477,12 +1568,16 @@ router.delete(
 //
 // ✅ GET /api/posts/:id/linked – Get all posts linked to a post
 //
-router.get('/:id/linked', (req: Request<{ id: string }>, res: Response) => {
-  const posts = postsStore.read();
-  const linked = posts.filter((p) => p.replyTo === req.params.id);
-  const users = usersStore.read();
-  res.json({ posts: linked.map((p) => enrichPost(p, { users })) });
-});
+router.get(
+  '/:id/linked',
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const posts = postsStore.read();
+    const linked = posts.filter((p) => p.replyTo === req.params.id);
+    const withCounts = await addApprovedCollaboratorsCount(linked);
+    const users = usersStore.read();
+    res.json({ posts: withCounts.map((p) => enrichPost(p, { users })) });
+  }
+);
 
 //
 // ✅ GET /api/posts/:id/propagation-status – Simulate cascade status
@@ -1531,9 +1626,10 @@ router.get('/:id', authOptional, async (req: Request<{ id: string }>, res: Respo
             ? row.createdat.toISOString()
             : row.createdat,
       };
+      const [withCount] = await addApprovedCollaboratorsCount([post]);
       const users = usersStore.read();
       res.json(
-        enrichPost(post, {
+        enrichPost(withCount, {
           users,
           currentUserId: ((req as any).user?.id as string) || null,
         })
@@ -1555,8 +1651,11 @@ router.get('/:id', authOptional, async (req: Request<{ id: string }>, res: Respo
     res.status(403).json({ error: 'Access denied' });
     return;
   }
+  const [withCount] = await addApprovedCollaboratorsCount([post]);
   const users = usersStore.read();
-  res.json(enrichPost(post, { users, currentUserId: (req as any).user?.id || null }));
+  res.json(
+    enrichPost(withCount, { users, currentUserId: (req as any).user?.id || null })
+  );
 });
 
 export default router;
