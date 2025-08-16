@@ -918,12 +918,13 @@ router.post(
     repost.tags = Array.from(summaryTags);
 
     posts.push(repost);
+    original.requestId = repost.id;
     postsStore.write(posts);
 
     if (usePg) {
       try {
         await pool.query(
-          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          'INSERT INTO posts (id, authorid, type, content, title, visibility, tags, boardid, timestamp, repostedfrom) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
           [
             repost.id,
             repost.authorId,
@@ -934,7 +935,12 @@ router.post(
             repost.tags,
             'quest-board',
             timestamp,
+            original.id,
           ]
+        );
+        await pool.query(
+          'UPDATE posts SET requestid = $1 WHERE id = $2',
+          [repost.id, req.params.id]
         );
         pool
           .query(
@@ -1015,11 +1021,13 @@ router.delete(
     }
 
     const [removed] = posts.splice(index, 1);
+    original.requestId = undefined;
     postsStore.write(posts);
 
     if (usePg) {
       try {
         await pool.query('DELETE FROM posts WHERE id = $1', [removed.id]);
+        await pool.query('UPDATE posts SET requestid = NULL WHERE id = $1', [req.params.id]);
         pool
           .query(
             'DELETE FROM reactions WHERE postid = $1 AND userid = $2 AND type = $3',
@@ -1360,18 +1368,16 @@ router.delete(
           res.status(404).json({ error: 'Post not found' });
           return;
         }
-        await pool
-          .query(
-            "DELETE FROM reactions WHERE postid IN (SELECT id FROM posts WHERE repostedfrom = $1 AND type = 'request')",
-            [req.params.id]
-          )
-          .catch((err) => console.error(err));
-        await pool
-          .query(
-            "DELETE FROM posts WHERE repostedfrom = $1 AND type = 'request'",
-            [req.params.id]
-          )
-          .catch((err) => console.error(err));
+        const requestIds: string[] = [];
+        if (post.requestid) requestIds.push(post.requestid);
+        if (requestIds.length) {
+          await pool
+            .query('DELETE FROM reactions WHERE postid = ANY($1)', [requestIds])
+            .catch((err) => console.error(err));
+          await pool
+            .query('DELETE FROM posts WHERE id = ANY($1)', [requestIds])
+            .catch((err) => console.error(err));
+        }
         await pool
           .query(
             "DELETE FROM reactions WHERE postid = $1 AND type IN ('request','review')",
@@ -1432,10 +1438,13 @@ router.delete(
     }
 
     const requestIds = posts
-      .filter(p => p.repostedFrom === post.id && p.type === 'request')
-      .map(p => p.id);
-    requestIds.forEach(rid => {
-      const rIndex = posts.findIndex(p => p.id === rid);
+      .filter((p) => p.repostedFrom === post.id && p.type === 'request')
+      .map((p) => p.id);
+    if (post.requestId && !requestIds.includes(post.requestId)) {
+      requestIds.push(post.requestId);
+    }
+    requestIds.forEach((rid) => {
+      const rIndex = posts.findIndex((p) => p.id === rid);
       if (rIndex !== -1) posts.splice(rIndex, 1);
     });
     posts.splice(index, 1);
