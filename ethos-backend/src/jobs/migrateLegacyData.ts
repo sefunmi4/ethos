@@ -42,12 +42,12 @@ export async function migrateLegacyData(): Promise<void> {
   }
 }
 
-export function scheduleLegacyDataMigration(): void {
+export async function scheduleLegacyDataMigration(): Promise<void> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
-    const cron = require('node-cron') as any;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
-    const { Counter, Pushgateway, Registry } = require('prom-client') as any;
+    const [{ default: cron }, { Counter, Pushgateway, Registry }] = await Promise.all([
+      import('node-cron'),
+      import('prom-client'),
+    ]);
 
     const registry = new Registry();
     const migrationSuccess = new Counter({
