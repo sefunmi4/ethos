@@ -214,6 +214,20 @@ The backend logger supports a `LOG_LEVEL` environment variable. Set it to
 `error`, `warn`, `info` (default), or `debug` to control the verbosity of
 console output. Each log line includes a timestamp for easier tracing.
 
+### Rolling Back a Migration
+
+If a database migration causes issues, you can restore the previous schema by
+running:
+
+```bash
+npm --prefix ethos-backend run rollback
+```
+
+The script marks the latest Prisma migration as rolled back, redeploys the
+remaining migrations, and pushes success/failure metrics to the configured
+Prometheus Pushgateway (`PUSHGATEWAY_URL`). Configure your monitoring system to
+alert on spikes in `migration_rollback_failure_total`.
+
 ### API Routes
 
 - `POST /quests/:id/complete` – mark a quest as completed. Cascades the `solved` tag to linked posts when `cascadeSolution` is set and logs notifications for links with `notifyOnChange`.
