@@ -100,4 +100,30 @@ describe('request card join button', () => {
     fireEvent.click(joined);
     expect(unacceptRequest).toHaveBeenCalledWith('p1');
   });
+
+  it('hides join button for existing collaborators', () => {
+    const collabPost = {
+      ...post,
+      enrichedCollaborators: [{ userId: 'u1' }],
+    } as EnrichedPost;
+    render(
+      <BrowserRouter>
+        <RequestCard post={collabPost} />
+      </BrowserRouter>
+    );
+    expect(screen.queryByText('Request Join')).not.toBeInTheDocument();
+  });
+
+  it('hides join button for the task creator', () => {
+    const authorPost = {
+      ...post,
+      authorId: 'u1',
+    } as EnrichedPost;
+    render(
+      <BrowserRouter>
+        <RequestCard post={authorPost} />
+      </BrowserRouter>
+    );
+    expect(screen.queryByText('Request Join')).not.toBeInTheDocument();
+  });
 });
