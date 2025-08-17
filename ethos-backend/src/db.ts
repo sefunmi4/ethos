@@ -55,7 +55,8 @@ async function initializeDatabase(): Promise<void> {
       email TEXT UNIQUE,
       password TEXT,
       role TEXT,
-      status TEXT
+      status TEXT,
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS posts (
       id UUID PRIMARY KEY,
@@ -70,7 +71,8 @@ async function initializeDatabase(): Promise<void> {
       boardid TEXT,
       nodeid TEXT,
       timestamp TIMESTAMPTZ,
-      createdat TIMESTAMPTZ DEFAULT NOW()
+      createdat TIMESTAMPTZ DEFAULT NOW(),
+      version INT DEFAULT 1
     );
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS details TEXT;
     ALTER TABLE posts ADD COLUMN IF NOT EXISTS nodeid TEXT;
@@ -80,7 +82,8 @@ async function initializeDatabase(): Promise<void> {
       authorid TEXT,
       title TEXT,
       description TEXT,
-      visibility TEXT
+      visibility TEXT,
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS boards (
       id TEXT PRIMARY KEY,
@@ -94,7 +97,8 @@ async function initializeDatabase(): Promise<void> {
       defaultFor TEXT,
       createdAt TIMESTAMPTZ DEFAULT NOW(),
       userId TEXT,
-      questId TEXT
+      questId TEXT,
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS projects (
       id UUID PRIMARY KEY,
@@ -102,7 +106,8 @@ async function initializeDatabase(): Promise<void> {
       title TEXT,
       description TEXT,
       visibility TEXT,
-      tags TEXT[]
+      tags TEXT[],
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS reviews (
       id UUID PRIMARY KEY,
@@ -117,7 +122,8 @@ async function initializeDatabase(): Promise<void> {
       modelid TEXT,
       questid TEXT,
       postid TEXT,
-      createdat TIMESTAMPTZ DEFAULT NOW()
+      createdat TIMESTAMPTZ DEFAULT NOW(),
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS notifications (
       id UUID PRIMARY KEY,
@@ -125,7 +131,8 @@ async function initializeDatabase(): Promise<void> {
       message TEXT,
       link TEXT,
       read BOOLEAN,
-      createdat TIMESTAMPTZ DEFAULT NOW()
+      createdat TIMESTAMPTZ DEFAULT NOW(),
+      version INT DEFAULT 1
     );
     CREATE TABLE IF NOT EXISTS password_reset_tokens (
       token TEXT PRIMARY KEY,
@@ -161,7 +168,8 @@ async function initializeDatabase(): Promise<void> {
       created_at TIMESTAMPTZ DEFAULT NOW(),
       decided_at TIMESTAMPTZ,
       decided_by TEXT,
-      meta JSONB
+      meta JSONB,
+      version INT DEFAULT 1
     );
     CREATE UNIQUE INDEX IF NOT EXISTS task_join_requests_unique_active
       ON task_join_requests(task_id, requester_id)
@@ -180,6 +188,14 @@ async function initializeDatabase(): Promise<void> {
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS questIds TEXT[];
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS deliverables TEXT[];
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS mapEdges JSONB;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE posts ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE quests ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE boards ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE reviews ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE notifications ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
+    ALTER TABLE task_join_requests ADD COLUMN IF NOT EXISTS version INT DEFAULT 1;
   `);
 
   const { rows } = await pool.query(
