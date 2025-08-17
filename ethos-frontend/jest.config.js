@@ -37,6 +37,7 @@ export default {
     ,'<rootDir>/tests/AcceptRequestButton.test.tsx'
     ,'<rootDir>/tests/NotificationsPage.test.tsx'
     ,'<rootDir>/tests/PostCardCTA.test.tsx'
+    ,'<rootDir>/tests/QuestBoardRequestPostTypes.test.tsx'
   ],
   globals: {
     'ts-jest': {
