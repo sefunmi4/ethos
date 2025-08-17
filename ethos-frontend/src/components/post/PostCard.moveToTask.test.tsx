@@ -2,14 +2,19 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import PostCard from './PostCard';
 import type { Post } from '../../types/postTypes';
+import type { User } from '../../types/userTypes';
 
-const updatePostMock = jest.fn((id, data) => Promise.resolve({ id, ...data }));
+const updatePostMock = jest.fn(
+  (id: string, data: Partial<Post>) => Promise.resolve({ id, ...data })
+);
 const updateBoardItemMock = jest.fn();
 
 jest.mock('../../api/post', () => ({
   __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
-  updatePost: (...args: any[]) => updatePostMock(...args),
+  updatePost: (
+    ...args: Parameters<typeof updatePostMock>
+  ) => updatePostMock(...args),
   removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
   createJoinRequest: jest.fn(() => Promise.resolve({})),
   updateReaction: jest.fn(() => Promise.resolve()),
@@ -66,9 +71,21 @@ describe('PostCard Move to Task', () => {
       linkedItems: [],
     } as unknown as Post;
 
+    const user: User = {
+      id: 'u1',
+      email: 'test@example.com',
+      username: 'alice',
+      password: '',
+      role: 'user',
+      bio: '',
+      tags: [],
+      links: {},
+      experienceTimeline: [],
+    };
+
     render(
       <BrowserRouter>
-        <PostCard post={post} user={{ id: 'u1' } as any} />
+        <PostCard post={post} user={user} />
       </BrowserRouter>
     );
 
