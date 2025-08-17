@@ -259,7 +259,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </button>
 
         {/* Repost */}
-        {['free_speech', 'task', 'file'].includes(post.type) && (
+        {['free_speech', 'task', 'file', 'project'].includes(post.type) && (
           <button
             aria-label="Repost"
             className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}

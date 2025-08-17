@@ -85,9 +85,13 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         : ['free_speech']
       : replyToType === 'file'
       ? ['free_speech', 'review']
+      : replyToType === 'project'
+      ? isParticipant
+        ? ['free_speech', 'task', 'file']
+        : ['free_speech']
       : ['free_speech']
     : boardId === 'timeline-board'
-    ? ['free_speech', 'file', 'task']
+    ? ['free_speech', 'file', 'task', 'project']
     : boardId === 'quest-board'
     ? initialType === 'request'
       ? ['request']
@@ -95,7 +99,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     : boardType === 'quest'
     ? ['task', 'free_speech']
     : boardType === 'post'
-    ? ['free_speech', 'task', 'file']
+    ? ['free_speech', 'task', 'file', 'project']
     : POST_TYPES.map((p) => p.value as PostType);
 
 

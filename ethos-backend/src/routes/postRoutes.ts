@@ -154,6 +154,7 @@ router.post(
       'task',
       'file',
       'review',
+      'project',
     ];
     if (!allowedTypes.includes(type)) {
       res.status(400).json({ error: 'Invalid post type' });
@@ -171,7 +172,7 @@ router.post(
         parent.authorId === userId ||
         (parent.collaborators || []).some(c => c.userId === userId);
 
-      if (['task', 'file'].includes(parent.type)) {
+      if (['task', 'file', 'project'].includes(parent.type)) {
         if (!isParticipant && type !== 'free_speech') {
           res.status(400).json({
             error: 'Only free_speech replies allowed for non-participants',
@@ -198,6 +199,15 @@ router.post(
           .json({ error: 'Files only accept file or free_speech replies' });
         return;
       }
+      if (
+        parent.type === 'project' &&
+        !['free_speech', 'task', 'file'].includes(type)
+      ) {
+        res
+          .status(400)
+          .json({ error: 'Projects only accept free_speech, task, or file replies' });
+        return;
+      }
     }
 
     if (type === 'task') {
@@ -210,11 +220,11 @@ router.post(
     } else if (type === 'file') {
       if (
         replyTo &&
-        (!parent || !['task', 'request', 'file'].includes(parent.type))
+        (!parent || !['task', 'request', 'file', 'project'].includes(parent.type))
       ) {
         res
           .status(400)
-          .json({ error: 'Files can only reply to tasks, requests, or files' });
+          .json({ error: 'Files can only reply to tasks, requests, projects, or files' });
         return;
       }
     } else if (type === 'request') {
@@ -235,6 +245,11 @@ router.post(
         res
           .status(400)
           .json({ error: 'Reviews must reply to a request' });
+        return;
+      }
+    } else if (type === 'project') {
+      if (replyTo) {
+        res.status(400).json({ error: 'Projects cannot reply to other posts' });
         return;
       }
     }
@@ -457,10 +472,22 @@ router.patch(
           });
           return;
         }
-        if (parent.type === 'file' && post.type !== 'file') {
+        if (
+          parent.type === 'file' &&
+          !['file', 'free_speech'].includes(post.type)
+        ) {
           res
             .status(400)
-            .json({ error: 'Files only accept file replies' });
+            .json({ error: 'Files only accept file or free_speech replies' });
+          return;
+        }
+        if (
+          parent.type === 'project' &&
+          !['free_speech', 'task', 'file'].includes(post.type)
+        ) {
+          res
+            .status(400)
+            .json({ error: 'Projects only accept free_speech, task, or file replies' });
           return;
         }
       }

@@ -53,6 +53,7 @@ export type PostTag =
   | 'release'
   | 'repost'
   | 'quest'
+  | 'project'
   | 'task'
   | 'issue'
   | 'review'
@@ -68,7 +69,8 @@ export type PostType =
   | 'request'
   | 'task'
   | 'file'
-  | 'review';
+  | 'review'
+  | 'project';
 
 export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 

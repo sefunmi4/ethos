@@ -7,6 +7,6 @@ describe('PostTypeFilter options', () => {
     render(<PostTypeFilter value="" onChange={() => {}} />);
     const select = screen.getByRole('combobox');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['All Posts', 'Requests', 'Reviews']);
+    expect(options).toEqual(['All Posts', 'Projects', 'Requests', 'Reviews']);
   });
 });

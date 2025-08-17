@@ -28,6 +28,7 @@ export const POST_TYPE_LABELS: Record<PostType | 'request' | 'review', string> =
   file: "File",
   request: "Request",
   review: "Review",
+  project: "Project",
 };
 
 /**

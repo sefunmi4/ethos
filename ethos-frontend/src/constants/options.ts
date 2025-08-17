@@ -28,6 +28,7 @@ export const POST_TYPES: { value: PostType; label: string }[] = [
   { value: 'free_speech', label: 'Free Speech' },
   { value: 'task', label: 'Task' },
   { value: 'file', label: 'File' },
+  { value: 'project', label: 'Project' },
 ];
 
 export const SECONDARY_POST_TYPES = [
