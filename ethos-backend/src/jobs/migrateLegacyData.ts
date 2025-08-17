@@ -1,29 +1,11 @@
-import cron from 'node-cron';
 import fs from 'fs/promises';
 import path from 'path';
-import { Counter, Pushgateway, Registry } from 'prom-client';
 import prisma from '../services/prismaClient';
 import { info, error } from '../utils/logger';
 
 const LOG_FILE = path.join(process.cwd(), 'migration.log');
 const BATCH_SIZE = 100;
 
-const registry = new Registry();
-const migrationSuccess = new Counter({
-  name: 'legacy_data_migration_success_total',
-  help: 'Number of successful legacy data migrations',
-  registers: [registry],
-});
-const migrationFailure = new Counter({
-  name: 'legacy_data_migration_failure_total',
-  help: 'Number of failed legacy data migrations',
-  registers: [registry],
-});
-const gateway = new Pushgateway(
-  process.env.PUSHGATEWAY_URL ?? 'http://localhost:9091',
-  [],
-  registry
-);
 
 async function logToFile(message: string): Promise<void> {
   const timestamp = new Date().toISOString();
@@ -61,19 +43,45 @@ export async function migrateLegacyData(): Promise<void> {
   }
 }
 
-export function scheduleLegacyDataMigration(): void {
-  // Run at the top of every hour
-  cron.schedule('0 * * * *', async () => {
-    info('Starting legacy data migration');
-    try {
-      await migrateLegacyData();
-      migrationSuccess.inc();
-      await gateway.pushAdd({ jobName: 'legacy_data_migration' });
-      info('Legacy data migration completed');
-    } catch (err) {
-      migrationFailure.inc();
-      await gateway.pushAdd({ jobName: 'legacy_data_migration' });
-      error('Legacy data migration failed', err);
-    }
-  });
+export async function scheduleLegacyDataMigration(): Promise<void> {
+  try {
+    const [{ default: cron }, { Counter, Pushgateway, Registry }] = await Promise.all([
+      import('node-cron'),
+      import('prom-client'),
+    ]);
+
+    const registry = new Registry();
+    const migrationSuccess = new Counter({
+      name: 'legacy_data_migration_success_total',
+      help: 'Number of successful legacy data migrations',
+      registers: [registry],
+    });
+    const migrationFailure = new Counter({
+      name: 'legacy_data_migration_failure_total',
+      help: 'Number of failed legacy data migrations',
+      registers: [registry],
+    });
+    const gateway = new Pushgateway(
+      process.env.PUSHGATEWAY_URL ?? 'http://localhost:9091',
+      [],
+      registry,
+    );
+
+    // Run at the top of every hour
+    cron.schedule('0 * * * *', async () => {
+      info('Starting legacy data migration');
+      try {
+        await migrateLegacyData();
+        migrationSuccess.inc();
+        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        info('Legacy data migration completed');
+      } catch (err) {
+        migrationFailure.inc();
+        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        error('Legacy data migration failed', err);
+      }
+    });
+  } catch (err) {
+    info('Legacy data migration scheduler not initialized', err);
+  }
 }

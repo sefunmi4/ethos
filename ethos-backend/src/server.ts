@@ -174,7 +174,7 @@ io.on('connection', (socket) => {
 initializeDatabase()
   .then(() => runVersioning(prisma))
   .then(() => {
-    scheduleLegacyDataMigration();
+    void scheduleLegacyDataMigration();
     httpServer.listen(PORT, () => {
       info(`🚀 Backend server running at http://localhost:${PORT}`);
       info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
