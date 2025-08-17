@@ -41,5 +41,22 @@ describe('CreatePost request without task', () => {
     fireEvent.click(screen.getByText('Create Post'));
     await waitFor(() => expect(addPost).toHaveBeenCalled());
     expect(window.alert).not.toHaveBeenCalled();
+    const call = (addPost as jest.Mock).mock.calls[0][0];
+    expect('linkedItems' in call).toBe(false);
+  });
+
+  it('includes linkedItems when questId is provided', async () => {
+    (addPost as jest.Mock).mockClear();
+    window.alert = jest.fn();
+    render(
+      <BrowserRouter>
+        <CreatePost onCancel={() => {}} initialType="request" questId="q1" />
+      </BrowserRouter>
+    );
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Need help' } });
+    fireEvent.click(screen.getByText('Create Post'));
+    await waitFor(() => expect(addPost).toHaveBeenCalled());
+    const call = (addPost as jest.Mock).mock.calls[0][0];
+    expect(call.linkedItems).toEqual([{ itemId: 'q1', itemType: 'quest' }]);
   });
 });

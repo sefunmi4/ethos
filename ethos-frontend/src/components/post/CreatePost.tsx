@@ -121,7 +121,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       content: details,
       ...(details ? { details } : {}),
       visibility: 'public',
-      linkedItems: autoLinkItems,
+      ...(autoLinkItems.length > 0 ? { linkedItems: autoLinkItems } : {}),
       ...(type === 'review' ? { tags: ['review'] } : {}),
       ...(type === 'request' ? { tags: ['request'] } : {}),
       ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),

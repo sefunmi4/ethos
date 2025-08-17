@@ -61,7 +61,7 @@ describe('CreatePost replying', () => {
     expect(options).toEqual(['Free Speech']);
   });
 
-  it('includes reply questId in payload', async () => {
+  it('includes reply questId and linkedItems in payload', async () => {
     const reply = { id: 'r1', type: 'task', questId: 'q123' } as Post;
     render(
       <BrowserRouter>
@@ -75,7 +75,10 @@ describe('CreatePost replying', () => {
     fireEvent.click(screen.getByText('Create Post'));
     await waitFor(() => expect(addPost).toHaveBeenCalled());
     expect(addPost).toHaveBeenCalledWith(
-      expect.objectContaining({ questId: 'q123' })
+      expect.objectContaining({
+        questId: 'q123',
+        linkedItems: [{ itemId: 'q123', itemType: 'quest' }],
+      })
     );
   });
 });
