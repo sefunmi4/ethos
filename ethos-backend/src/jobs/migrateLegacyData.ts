@@ -1,4 +1,3 @@
-import cron from 'node-cron';
 import fs from 'fs/promises';
 import path from 'path';
 import { Counter, Pushgateway, Registry } from 'prom-client';
@@ -61,19 +60,24 @@ export async function migrateLegacyData(): Promise<void> {
   }
 }
 
-export function scheduleLegacyDataMigration(): void {
-  // Run at the top of every hour
-  cron.schedule('0 * * * *', async () => {
-    info('Starting legacy data migration');
-    try {
-      await migrateLegacyData();
-      migrationSuccess.inc();
-      await gateway.pushAdd({ jobName: 'legacy_data_migration' });
-      info('Legacy data migration completed');
-    } catch (err) {
-      migrationFailure.inc();
-      await gateway.pushAdd({ jobName: 'legacy_data_migration' });
-      error('Legacy data migration failed', err);
-    }
-  });
+export async function scheduleLegacyDataMigration(): Promise<void> {
+  try {
+    const { default: cron } = await import('node-cron');
+    // Run at the top of every hour
+    cron.schedule('0 * * * *', async () => {
+      info('Starting legacy data migration');
+      try {
+        await migrateLegacyData();
+        migrationSuccess.inc();
+        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        info('Legacy data migration completed');
+      } catch (err) {
+        migrationFailure.inc();
+        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        error('Legacy data migration failed', err);
+      }
+    });
+  } catch (err) {
+    info('Legacy data migration scheduler not initialized', err);
+  }
 }
