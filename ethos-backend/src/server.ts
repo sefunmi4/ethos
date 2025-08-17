@@ -25,6 +25,7 @@ import joinRequestRouter from './routes/joinRequestRoutes';
 import { initializeDatabase } from './db';
 import { runVersioning } from './lib/versioning';
 import prisma from './services/prismaClient';
+import { scheduleLegacyDataMigration } from './jobs/migrateLegacyData';
 
 // Load environment variables from `.env` file
 dotenv.config();
@@ -173,6 +174,7 @@ io.on('connection', (socket) => {
 initializeDatabase()
   .then(() => runVersioning(prisma))
   .then(() => {
+    scheduleLegacyDataMigration();
     httpServer.listen(PORT, () => {
       info(`🚀 Backend server running at http://localhost:${PORT}`);
       info(`🌐 Accepting requests from: ${ALLOWED_ORIGINS.join(', ')}`);
