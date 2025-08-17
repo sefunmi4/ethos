@@ -122,12 +122,13 @@ const formatNodeId = (nodeId: string): string => {
     path = path.split(':').slice(2).join(':');
   }
   const segments = path.split(':');
-  const typeSeg = [...segments].reverse().find((s) => s.startsWith('T') || s.startsWith('F') || s.startsWith('L')) || '';
-  let typeLabel = '';
-  if (typeSeg.startsWith('T')) typeLabel = 'Task';
-  else if (typeSeg.startsWith('F')) typeLabel = 'File';
-  else if (typeSeg.startsWith('L')) typeLabel = 'Log';
-  return typeLabel ? `Q::${typeLabel}:${segments.join(':')}` : `Q:${segments.join(':')}`;
+  const typeSeg = [...segments]
+    .reverse()
+    .find((s) => s.startsWith('T') || s.startsWith('F') || s.startsWith('L')) || '';
+  if (typeSeg.startsWith('T')) return 'Task';
+  if (typeSeg.startsWith('F')) return 'File';
+  if (typeSeg.startsWith('L')) return 'Log';
+  return path;
 };
 
 export const buildSummaryTags = async (

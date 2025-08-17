@@ -49,11 +49,11 @@ describe('PostCard summary tags', () => {
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(await screen.findByText('Q::Task:T1')).toBeInTheDocument();
+    expect(await screen.findByText('Task')).toBeInTheDocument();
     expect(await screen.findByText('In Progress')).toBeInTheDocument();
     const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
-    const nodeLink = await screen.findByRole('link', { name: 'Q::Task:T1' });
+    const nodeLink = await screen.findByRole('link', { name: 'Task' });
     expect(nodeLink).toHaveAttribute('href', '/post/p1');
   });
 
@@ -76,10 +76,10 @@ describe('PostCard summary tags', () => {
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(await screen.findByText('Q::File:T01:F00')).toBeInTheDocument();
+    expect(await screen.findByText('File')).toBeInTheDocument();
     const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
-    const nodeLink = await screen.findByRole('link', { name: 'Q::File:T01:F00' });
+    const nodeLink = await screen.findByRole('link', { name: 'File' });
     expect(nodeLink).toHaveAttribute('href', '/post/p2');
   });
 
@@ -104,10 +104,10 @@ describe('PostCard summary tags', () => {
       </BrowserRouter>
     );
     expect(await screen.findByText('File')).toBeInTheDocument();
-    expect(await screen.findByText('Q::Task:T01')).toBeInTheDocument();
+    expect(await screen.findByText('Task')).toBeInTheDocument();
     const userLink = await screen.findByRole('link', { name: '@alice' });
     expect(userLink).toHaveAttribute('href', '/user/u1');
-    const taskLink = await screen.findByRole('link', { name: 'Q::Task:T01' });
+    const taskLink = await screen.findByRole('link', { name: 'Task' });
     expect(taskLink).toHaveAttribute('href', '/post/t1');
     const fileLink = await screen.findByRole('link', { name: 'File' });
     expect(fileLink).toHaveAttribute('href', '/post/f1');

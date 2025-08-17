@@ -59,6 +59,6 @@ describe('PostListItem', () => {
         <PostListItem post={taskPost} />
       </BrowserRouter>
     );
-    expect((await screen.findAllByText('Q::Task:T00')).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Task')).length).toBeGreaterThan(0);
   });
 });
