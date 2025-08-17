@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import RequestCard from '../src/components/request/RequestCard';
 import type { EnrichedPost } from '../src/types/postTypes';
@@ -84,7 +84,9 @@ describe('request card join button', () => {
       </BrowserRouter>
     );
     const btn = await screen.findByText('Request Join');
-    fireEvent.click(btn);
+    await act(async () => {
+      fireEvent.click(btn);
+    });
     expect(acceptRequest).toHaveBeenCalledWith('p1');
   });
 
@@ -95,9 +97,13 @@ describe('request card join button', () => {
       </BrowserRouter>
     );
     const btn = await screen.findByText('Request Join');
-    fireEvent.click(btn);
+    await act(async () => {
+      fireEvent.click(btn);
+    });
     const joined = await screen.findByText(/Joined/);
-    fireEvent.click(joined);
+    await act(async () => {
+      fireEvent.click(joined);
+    });
     expect(unacceptRequest).toHaveBeenCalledWith('p1');
   });
 

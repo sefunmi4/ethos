@@ -10,6 +10,12 @@ jest.mock('../src/api/post', () => ({
   __esModule: true,
   fetchRepliesByPostId: jest.fn(() => Promise.resolve([])),
   removeHelpRequest: jest.fn(() => Promise.resolve({ success: true })),
+  fetchReactions: jest.fn(() => Promise.resolve([])),
+  fetchRepostCount: jest.fn(() => Promise.resolve({ count: 0 })),
+  fetchUserRepost: jest.fn(() => Promise.resolve(null)),
+  updateReaction: jest.fn(() => Promise.resolve()),
+  addRepost: jest.fn(() => Promise.resolve({ id: 'r1' })),
+  removeRepost: jest.fn(() => Promise.resolve()),
 }));
 
 jest.mock('../src/api/auth', () => ({

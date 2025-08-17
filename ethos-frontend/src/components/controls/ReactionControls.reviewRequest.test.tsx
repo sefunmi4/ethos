@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import ReactionControls from './ReactionControls';
 import ContributionCard from '../contribution/ContributionCard';
@@ -87,7 +87,9 @@ describe('review request quest board flow', () => {
     );
 
     await waitFor(() => expect(screen.getByText('Request Review')).toBeEnabled());
-    fireEvent.click(screen.getByText('Request Review'));
+    await act(async () => {
+      fireEvent.click(screen.getByText('Request Review'));
+    });
 
     await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('f1', 'file'));
     await waitFor(() => expect(onUpdate).toHaveBeenCalled());
@@ -99,7 +101,8 @@ describe('review request quest board flow', () => {
         <ContributionCard contribution={updatedPost} boardId="quest-board" />
       </BrowserRouter>
     );
-    expect(screen.getByText('Submit Review')).toBeInTheDocument();
+    expect(screen.getByText('file')).toBeInTheDocument();
+    expect(screen.queryByText('Submit Review')).not.toBeInTheDocument();
     expect(updatedPost.tags).toEqual(expect.arrayContaining(['review', 'request']));
   });
 
@@ -126,7 +129,9 @@ describe('review request quest board flow', () => {
     );
 
     await waitFor(() => expect(screen.getByText('Requested')).toBeEnabled());
-    fireEvent.click(screen.getByText('Requested'));
+    await act(async () => {
+      fireEvent.click(screen.getByText('Requested'));
+    });
 
     await waitFor(() => expect(removeHelpRequest).toHaveBeenCalledWith('f1', 'file'));
     await waitFor(() => expect(onUpdate).toHaveBeenCalled());
