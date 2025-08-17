@@ -132,7 +132,7 @@ router.post(
       tags = [],
       questId = null,
       replyTo = null,
-      linkedItems = [],
+      linkedItems: linkedItemsInput = [],
       linkedNodeId,
       collaborators = [],
       status,
@@ -143,6 +143,10 @@ router.post(
       rating,
       subtype,
     } = req.body;
+
+    const linkedItems: LinkedItem[] = Array.isArray(linkedItemsInput)
+      ? linkedItemsInput
+      : [];
 
     const allowedTypes: PostType[] = [
       'free_speech',
@@ -204,17 +208,13 @@ router.post(
         return;
       }
     } else if (type === 'file') {
-      const hasParent =
-        parent && ['task', 'request', 'file'].includes(parent.type);
-      const hasTaskLink = (linkedItems || []).some(
-        (li: LinkedItem) => li.itemType === 'post'
-      );
-      if (!hasParent && !hasTaskLink) {
+      if (
+        replyTo &&
+        (!parent || !['task', 'request', 'file'].includes(parent.type))
+      ) {
         res
           .status(400)
-          .json({
-            error: 'Files must reply to or link a task, request, or file',
-          });
+          .json({ error: 'Files can only reply to tasks, requests, or files' });
         return;
       }
     } else if (type === 'request') {
