@@ -19,6 +19,9 @@ export const ROUTES = {
 
     /** Terms of service page */
     TERMS: '/terms',
+
+    /** Release notes and data update guidance */
+    RELEASE_NOTES: '/release-notes',
   
     /** Logged-in user’s private profile page */
     PROFILE: '/profile',

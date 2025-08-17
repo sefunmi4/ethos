@@ -1,5 +1,6 @@
 import { FaBell } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useNotifications } from '../../contexts/NotificationContext';
@@ -66,6 +67,12 @@ const NavBar: React.FC = () => {
           >
             {theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'}
           </button>
+          <Link
+            to={ROUTES.RELEASE_NOTES}
+            className="hover:text-accent transition"
+          >
+            Release Notes
+          </Link>
         </div>
       </div>
     </nav>

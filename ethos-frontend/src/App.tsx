@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Spinner } from './components/ui';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './contexts/AuthContext';
@@ -24,6 +24,7 @@ const Login = lazy(() => import('./pages/Login'));
 const About = lazy(() => import('./pages/About'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
+const ReleaseNotes = lazy(() => import('./pages/ReleaseNotes'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Quest = lazy(() => import('./pages/quest/[id]'));
 const Project = lazy(() => import('./pages/project/[id]'));
@@ -60,7 +61,12 @@ const App: React.FC = () => {
             <div className="min-h-screen flex flex-col bg-background dark:bg-surface text-primary">
               {/* Top-level navigation */}
               <NavBar />
-
+              <div className="bg-yellow-100 text-center text-sm p-2">
+                We've updated our data format.{' '}
+                <Link to={ROUTES.RELEASE_NOTES} className="underline">
+                  Learn how to migrate your data
+                </Link>
+              </div>
               <main className="flex-1 w-full">
                 {/* Suspense fallback while lazy routes are loading */}
                 <Suspense fallback={<Spinner />}>
@@ -71,6 +77,10 @@ const App: React.FC = () => {
                   <Route path={ROUTES.ABOUT} element={<About />} />
                   <Route path={ROUTES.PRIVACY} element={<Privacy />} />
                   <Route path={ROUTES.TERMS} element={<Terms />} />
+                  <Route
+                    path={ROUTES.RELEASE_NOTES}
+                    element={<ReleaseNotes />}
+                  />
                   <Route path={ROUTES.PUBLIC_PROFILE()} element={<PublicProfile />} />
                   <Route path={ROUTES.RESET_PASSWORD()} element={<ResetPassword />} />
                   <Route path={ROUTES.REVIEW_SUMMARY()} element={<ReviewSummary />} />
