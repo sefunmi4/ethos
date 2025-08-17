@@ -25,7 +25,7 @@ Node IDs are generated in [`nodeIdUtils.ts`](../ethos-backend/src/utils/nodeIdUt
 
 Every quest has a hidden root node. When a quest is created without a `headPostId`, the map starts from this automatic root. If a `headPostId` is set, edges originate from that post instead. New tasks link from the root (or head post) so that the map always has a starting point.
 
-The first task created in a quest uses the node ID `T00`. Root logs or files should nest under this task, for example `Q:demo:T00:L00`.
+The first task created in a quest uses the node ID `T00`. Root logs or files often nest under this task (for example `Q:demo:T00:L00`), but they can also be created independently and linked later when organizing the quest.
 
 ## Posts and edges in the quest map
 

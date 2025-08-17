@@ -30,6 +30,7 @@ It’s a new operating system for solving problems together.
 * **Quick Sharing** – Use the action menu to copy post quotes or grab a direct link.
 * **Visual Quest Maps** – Tree, grid, or list views of how solutions evolve.
 * **Interactive Task Lists** – Check off markdown tasks directly within posts.
+* **Independent File Posts** – Create files without linking them to tasks and organize them later by attaching them to tasks.
 * **Freelancer-Oriented** – Designed to support real client work, solo projects, and peer-based micro-teams.
 * **Web3-Ready (Future)** – Enable decentralized contracts and token-based achievements.
 * **VS Code Git Graph Extension** – Visualize repository history directly inside Visual Studio Code.
