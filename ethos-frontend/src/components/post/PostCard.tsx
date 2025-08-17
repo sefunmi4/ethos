@@ -469,16 +469,7 @@ const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {renderControls()}
-      <ReactionControls
-        post={post}
-        user={user}
-        onUpdate={onUpdate}
-        replyOverride={replyOverride}
-        boardId={ctxBoardId || undefined}
-        timestamp={!isQuestBoardRequest ? timestamp : undefined}
-        expanded={expandedView}
-        hideReply={hideReplyButton}
-      />
+
       {post.type === 'task' && user?.id !== post.authorId && (
         <div className="mt-2">
           {userJoinState === 'PENDING' ? (
