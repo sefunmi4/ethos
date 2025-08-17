@@ -58,13 +58,13 @@ const CreatePost: React.FC<CreatePostProps> = ({
         : false)
     : false;
 
-  const [type, setType] = useState<PostType | 'review'>(
+  const [type, setType] = useState<PostType | 'review' | 'request'>(
     restrictedReply
       ? 'free_speech'
-      : initialType === 'request'
-      ? 'task'
       : initialType === 'review'
       ? 'review'
+      : initialType === 'request'
+      ? 'request'
       : initialType
   );
   const [title, setTitle] = useState<string>('');
@@ -78,7 +78,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
   const boardType: BoardType | undefined =
     boardId ? boards?.[boardId]?.boardType : boards?.[selectedBoard || '']?.boardType;
 
-  const allowedPostTypes: (PostType | 'review')[] = restrictedReply
+  const allowedPostTypes: (PostType | 'review' | 'request')[] = restrictedReply
     ? replyToType === 'task'
       ? isParticipant
         ? ['free_speech', 'task', 'file']
@@ -89,7 +89,9 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     : boardId === 'timeline-board'
     ? ['free_speech', 'task']
     : boardId === 'quest-board'
-    ? ['task', 'file']
+    ? initialType === 'request'
+      ? ['request']
+      : ['task', 'file']
     : boardType === 'quest'
     ? ['task', 'free_speech']
     : boardType === 'post'
@@ -114,13 +116,14 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
     }
 
     const payload: Partial<Post> = {
-      type: type === 'review' ? 'file' : type,
+      type: type === 'review' ? 'file' : type === 'request' ? 'task' : type,
       title,
       content: details,
       ...(details ? { details } : {}),
       visibility: 'public',
       linkedItems: autoLinkItems,
       ...(type === 'review' ? { tags: ['review'] } : {}),
+      ...(type === 'request' ? { tags: ['request'] } : {}),
       ...(questIdFromBoard ? { questId: questIdFromBoard } : {}),
       ...(targetBoard ? { boardId: targetBoard } : {}),
       ...(replyTo ? { replyTo: replyTo.id, parentPostId: replyTo.id, linkType: 'reply' } : {}),
@@ -182,11 +185,18 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
         <Select
           id="post-type"
           value={type}
-          onChange={(e) => setType(e.target.value as PostType | 'review')}
+          onChange={(e) =>
+            setType(e.target.value as PostType | 'review' | 'request')
+          }
           options={allowedPostTypes.map((t) => {
             if (t === 'review') {
-              const opt = SECONDARY_POST_TYPES.find((o) => o.value === 'review')!;
+              const opt = SECONDARY_POST_TYPES.find(
+                (o) => o.value === 'review'
+              )!;
               return { value: opt.value, label: opt.label };
+            }
+            if (t === 'request') {
+              return { value: 'request', label: 'Task Request' };
             }
             const opt = POST_TYPES.find((o) => o.value === t)!;
             return { value: opt.value, label: opt.label };
