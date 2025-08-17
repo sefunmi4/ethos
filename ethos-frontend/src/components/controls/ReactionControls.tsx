@@ -129,7 +129,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [post.id, user?.id]);
+  }, [post.id, user?.id, post.tags, post.helpRequest]);
 
   // ---------- Helpers ----------
   const safeBump = (n: number, delta: number) => Math.max(0, n + delta);
@@ -187,7 +187,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setReviewLoading(false);
     }
-  }, [user?.id, navigate, reviewRequested, post.id, post, onUpdate, appendToBoard]);
+  }, [user?.id, navigate, reviewRequested, post, onUpdate, appendToBoard]);
 
   const handleRequestHelp = useCallback(async () => {
     if (!user?.id) {
@@ -215,7 +215,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setHelpLoading(false);
     }
-  }, [user?.id, navigate, helpRequested, post.id, post, onUpdate, appendToBoard]);
+  }, [user?.id, navigate, helpRequested, post, onUpdate, appendToBoard]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {
@@ -259,7 +259,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         </button>
 
         {/* Repost */}
-        {['free_speech', 'task', 'file'].includes(post.type) && (
+        {['free_speech', 'task', 'file', 'project'].includes(post.type) && (
           <button
             aria-label="Repost"
             className={clsx('flex items-center gap-1', reactions.repost && 'text-indigo-600')}

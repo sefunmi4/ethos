@@ -190,7 +190,8 @@ export type PostType =
   | 'task'
   | 'file'
   | 'request'
-  | 'review';
+  | 'review'
+  | 'project';
   
 /**
  * Supported tags for labeling and filtering posts.
@@ -206,6 +207,7 @@ export type PostTag =
   | 'release'
   | 'repost'
   | 'quest'
+  | 'project'
   | 'task'
   | 'issue'
   | 'request'

@@ -230,7 +230,7 @@ const LinkControls: React.FC<LinkControlsProps> = ({
         <> 
           {itemTypes.includes('post') && (
             <div className="flex gap-1 mb-1 flex-wrap">
-              {['all', 'free_speech', 'task', 'file', 'request', 'review'].map((t) => (
+              {['all', 'free_speech', 'task', 'file', 'project', 'request', 'review'].map((t) => (
                 <button
                   key={t}
                   type="button"

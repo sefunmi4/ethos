@@ -33,6 +33,7 @@ jest.mock('../src/components/board/PostTypeFilter', () => ({
   default: ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
     <select data-testid="post-type-filter" value={value} onChange={e => onChange(e.target.value)}>
       <option value="">All Posts</option>
+      <option value="project">Projects</option>
       <option value="request">Requests</option>
       <option value="review">Reviews</option>
     </select>
