@@ -6,7 +6,6 @@ import { info, error } from '../utils/logger';
 const LOG_FILE = path.join(process.cwd(), 'migration.log');
 const BATCH_SIZE = 100;
 
-
 async function logToFile(message: string): Promise<void> {
   const timestamp = new Date().toISOString();
   await fs.appendFile(LOG_FILE, `[${timestamp}] ${message}\n`);

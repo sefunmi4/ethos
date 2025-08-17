@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 /**
  * Function signature for upgrading a record from a given version to the next.
@@ -31,13 +32,23 @@ export async function runVersioning(prisma: PrismaClient): Promise<void> {
     const delegate = (prisma as any)[model];
     if (!delegate) continue;
 
-    const latest = Object.keys(upgradeMap).length
-      ? Math.max(...Object.keys(upgradeMap).map(Number)) + 1
-      : 1;
+    // Skip models with no registered upgrades to avoid unnecessary queries and
+    // potential validation errors when the `version` field is missing.
+    if (!Object.keys(upgradeMap).length) continue;
 
-    const records = await delegate.findMany({
-      where: { version: { lt: latest } },
-    });
+    const latest = Math.max(...Object.keys(upgradeMap).map(Number)) + 1;
+
+    let records: any[] = [];
+    try {
+      records = await delegate.findMany({
+        where: { version: { lt: latest } },
+      });
+    } catch (err) {
+      // If the model lacks a `version` field, Prisma will throw a validation
+      // error. In that case we skip processing for that model.
+      if (err instanceof PrismaClientValidationError) continue;
+      throw err;
+    }
 
     for (const record of records) {
       let current = record.version ?? 1;
