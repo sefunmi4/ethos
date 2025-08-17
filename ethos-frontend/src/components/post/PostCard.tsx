@@ -13,8 +13,6 @@ import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag, Button } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
-import TaskLinkDropdown from '../ui/TaskLinkDropdown';
-import type { BoardItem } from '../../contexts/BoardContextTypes';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import EditPost from './EditPost';
@@ -103,7 +101,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const { loadGraph } = useGraph();
 
   const navigate = useNavigate();
-  const { selectedBoard, updateBoardItem } = useBoardContext() || {};
+  const { selectedBoard } = useBoardContext() || {};
 
   const initialJoinState = post.collaborators?.some(c =>
     c.pending?.includes(user?.id || '')
@@ -113,7 +111,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const [userJoinState, setUserJoinState] = useState<'NONE' | 'PENDING'>(initialJoinState);
   const [joinLoading, setJoinLoading] = useState(false);
   const [joinNotice, setJoinNotice] = useState('');
-  const [showTaskPicker, setShowTaskPicker] = useState(false);
 
   const dispatchTaskUpdated = (p: Post) => {
     if (p.type === 'task') {
@@ -150,32 +147,6 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   const ctxBoardId = boardId || selectedBoard;
-
-  const handleSelectTask = async (taskId: string) => {
-    try {
-      const existing = post.linkedItems || [];
-      const already = existing.some(
-        (l) => l.itemId === taskId && l.itemType === 'post'
-      );
-      if (already) {
-        setShowTaskPicker(false);
-        return;
-      }
-      const updated = await updatePost(post.id, {
-        linkedItems: [
-          ...existing,
-          { itemId: taskId, itemType: 'post', linkType: 'task_edge', nodeId: '' },
-        ],
-      });
-      onUpdate?.(updated);
-      if (ctxBoardId) updateBoardItem?.(ctxBoardId, updated as BoardItem);
-    } catch (err) {
-      console.error('[PostCard] Failed to move post to task:', err);
-      alert('Failed to move to task.');
-    } finally {
-      setShowTaskPicker(false);
-    }
-  };
 
   const isQuestBoardRequest =
     post.tags?.includes('request') && ctxBoardId === 'quest-board';
@@ -380,22 +351,6 @@ const PostCard: React.FC<PostCardProps> = ({
           >
             Send Review
           </Button>
-        )}
-        {post.type === 'file' && (
-          <div className="relative mb-2">
-            <Button
-              variant="contrast"
-              onClick={() => setShowTaskPicker((p) => !p)}
-            >
-              Move to Task
-            </Button>
-            {showTaskPicker && (
-              <TaskLinkDropdown
-                onSelect={handleSelectTask}
-                onClose={() => setShowTaskPicker(false)}
-              />
-            )}
-          </div>
         )}
         <ReactionControls
           post={post}

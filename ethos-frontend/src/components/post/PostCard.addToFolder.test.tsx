@@ -57,8 +57,8 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-describe('PostCard Move to Task', () => {
-  it('updates linkedItems when moving file post to task', async () => {
+describe('PostCard Add to Folder', () => {
+  it('updates linkedItems when using Add to Folder option', async () => {
     const post: Post = {
       id: 'f1',
       authorId: 'u1',
@@ -89,7 +89,10 @@ describe('PostCard Move to Task', () => {
       </BrowserRouter>
     );
 
-    fireEvent.click(screen.getByText(/Move to Task/i));
+    expect(screen.queryByText(/Move to Task/i)).toBeNull();
+
+    fireEvent.click(screen.getByLabelText(/More options/i));
+    fireEvent.click(screen.getByText(/Add to Folder/i));
     fireEvent.click(screen.getByText('Task1'));
 
     await waitFor(() =>
