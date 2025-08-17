@@ -41,6 +41,6 @@ describe('Timeline board post types', () => {
     );
     const select = screen.getByLabelText('Item Type');
     const options = Array.from(select.querySelectorAll('option')).map(o => o.textContent);
-    expect(options).toEqual(['Free Speech', 'Task']);
+    expect(options).toEqual(['Free Speech', 'File', 'Task']);
   });
 });

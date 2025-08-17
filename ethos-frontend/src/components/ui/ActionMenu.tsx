@@ -8,9 +8,11 @@ import {
   FaCopy,
   FaUserPlus,
 } from 'react-icons/fa';
-import { removePost, archivePost } from '../../api/post';
+import { removePost, archivePost, updatePost } from '../../api/post';
 import { removeQuestById, archiveQuestById } from '../../api/quest';
 import { removeItemFromBoard } from '../../api/board';
+import type { PostType } from '../../types/postTypes';
+import TaskLinkDropdown from './TaskLinkDropdown';
 
 interface ActionMenuProps {
   type: 'post' | 'quest';
@@ -28,6 +30,7 @@ interface ActionMenuProps {
   joinLabel?: string;
   /** Hide the delete option */
   allowDelete?: boolean;
+  postType?: PostType;
 }
 
 /**
@@ -50,10 +53,12 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   onJoin,
   joinLabel = 'Request to Join',
   allowDelete = true,
+  postType,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [showTaskPicker, setShowTaskPicker] = useState(false);
 
   // Outside click closes menu
   useEffect(() => {
@@ -125,6 +130,19 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
     setShowMenu(false);
   };
 
+  const handleSelectTask = async (taskId: string) => {
+    try {
+      await updatePost(id, { parentPostId: taskId, replyTo: taskId, linkType: 'reply' });
+      alert('Post linked!');
+    } catch (err) {
+      console.error('[ActionMenu] Failed to link post:', err);
+      alert('Failed to link post.');
+    } finally {
+      setShowTaskPicker(false);
+      setShowMenu(false);
+    }
+  };
+
   const itemClasses =
     'block w-full text-left px-4 py-2 bg-white bg-surface dark:bg-background';
   const itemHover =
@@ -175,10 +193,29 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
               <FaCopy className="inline mr-2" /> Copy Quote
             </button>
           )}
-          {permalink && type === 'post' && (
-            <button onClick={handleLinkToPost} className={`${itemClasses} ${itemHover}`}>
-              <FaLink className="inline mr-2" /> Link to This Post
-            </button>
+          {type === 'post' && (
+            postType === 'file' || postType === 'task' ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowTaskPicker((p) => !p)}
+                  className={`${itemClasses} ${itemHover}`}
+                >
+                  <FaLink className="inline mr-2" /> Link Post
+                </button>
+                {showTaskPicker && (
+                  <TaskLinkDropdown
+                    onSelect={handleSelectTask}
+                    onClose={() => setShowTaskPicker(false)}
+                  />
+                )}
+              </div>
+            ) : (
+              permalink && (
+                <button onClick={handleLinkToPost} className={`${itemClasses} ${itemHover}`}>
+                  <FaLink className="inline mr-2" /> Link to This Post
+                </button>
+              )
+            )
           )}
           {onJoin && (
             <button

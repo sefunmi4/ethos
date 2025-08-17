@@ -87,7 +87,7 @@ const { selectedBoard, appendToBoard, boards } = useBoardContext() || {};
       ? ['free_speech', 'review']
       : ['free_speech']
     : boardId === 'timeline-board'
-    ? ['free_speech', 'task']
+    ? ['free_speech', 'file', 'task']
     : boardId === 'quest-board'
     ? initialType === 'request'
       ? ['request']
