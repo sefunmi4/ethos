@@ -4,6 +4,7 @@ import {
   FaEdit,
   FaTrash,
   FaArchive,
+  FaTasks,
   FaLink,
   FaCopy,
   FaUserPlus,
@@ -135,8 +136,8 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
       await updatePost(id, { parentPostId: taskId, replyTo: taskId, linkType: 'reply' });
       alert('Post linked!');
     } catch (err) {
-      console.error('[ActionMenu] Failed to link post:', err);
-      alert('Failed to link post.');
+      console.error('[ActionMenu] Failed to link post to task:', err);
+      alert('Failed to link post to task.');
     } finally {
       setShowTaskPicker(false);
       setShowMenu(false);
@@ -200,7 +201,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
                   onClick={() => setShowTaskPicker((p) => !p)}
                   className={`${itemClasses} ${itemHover}`}
                 >
-                  <FaLink className="inline mr-2" /> Link Post
+                  <FaTasks className="inline mr-2" /> Add to Task Folder
                 </button>
                 {showTaskPicker && (
                   <TaskLinkDropdown
