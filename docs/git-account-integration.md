@@ -13,7 +13,7 @@ This guide outlines how Ethos connects a user's GitHub or GitLab account and map
 
 * After linking an account, connect a quest or project to a repository using `POST /api/git/connect`.
 * The top task `T00` corresponds to the repository root directory.
-* File posts appear as `F00`, `F01`, etc., representing files stored under the original task.
+* File posts appear as `F00`, `F01`, etc. They can be created without an initial task link and organized later by attaching them to specific tasks.
 * Each file post shows additions and insertions similar to a commit diff.
 
 ## Task Posts and Subtasks
