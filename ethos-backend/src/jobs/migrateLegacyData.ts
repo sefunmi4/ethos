@@ -1,28 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Counter, Pushgateway, Registry } from 'prom-client';
 import prisma from '../services/prismaClient';
 import { info, error } from '../utils/logger';
 
 const LOG_FILE = path.join(process.cwd(), 'migration.log');
 const BATCH_SIZE = 100;
-
-const registry = new Registry();
-const migrationSuccess = new Counter({
-  name: 'legacy_data_migration_success_total',
-  help: 'Number of successful legacy data migrations',
-  registers: [registry],
-});
-const migrationFailure = new Counter({
-  name: 'legacy_data_migration_failure_total',
-  help: 'Number of failed legacy data migrations',
-  registers: [registry],
-});
-const gateway = new Pushgateway(
-  process.env.PUSHGATEWAY_URL ?? 'http://localhost:9091',
-  [],
-  registry
-);
 
 async function logToFile(message: string): Promise<void> {
   const timestamp = new Date().toISOString();
