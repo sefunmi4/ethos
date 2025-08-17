@@ -22,6 +22,8 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   const navigate = useNavigate();
   const collaboratorUsers = post.enrichedCollaborators || [];
   const collaboratorCount = collaboratorUsers.filter(c => c.userId).length || 0;
+  const isCollaborator = collaboratorUsers.some(c => c.userId === user?.id);
+  const isAuthor = user?.id === post.authorId;
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(
     !!user && post.tags?.includes(`pending:${user.id}`)
@@ -108,20 +110,24 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           )}
         </div>
       )}
-      <div className="flex gap-2">
-        <Button variant="primary" size="sm" onClick={handleJoin} disabled={joining}>
-          {joining ? (
-            '...'
-          ) : joined ? (
-            <><FaUserCheck className="inline mr-1" /> Joined</>
-          ) : (
-            <>
-              <FaUserPlus className="inline mr-1" />
-              {post.type === 'file' ? 'Submit Review' : 'Request Join'}
-            </>
-          )}
-        </Button>
-      </div>
+      {!isAuthor && !isCollaborator && (
+        <div className="flex gap-2">
+          <Button variant="primary" size="sm" onClick={handleJoin} disabled={joining}>
+            {joining ? (
+              '...'
+            ) : joined ? (
+              <>
+                <FaUserCheck className="inline mr-1" /> Joined
+              </>
+            ) : (
+              <>
+                <FaUserPlus className="inline mr-1" />
+                {post.type === 'file' ? 'Submit Review' : 'Request Join'}
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

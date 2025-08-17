@@ -331,7 +331,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
     return (
       <>
-        {post.type === 'request' && !isAuthor && (
+        {post.type === 'request' && !isAuthor && joinState !== 'MEMBER' && (
           <Button
             variant="contrast"
             className="mb-2"
