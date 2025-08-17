@@ -23,6 +23,8 @@ import joinRequestRoutes from './routes/joinRequestRoutes';
 import healthRoutes from './routes/healthRoutes';
 import joinRequestRouter from './routes/joinRequestRoutes';
 import { initializeDatabase } from './db';
+import { runVersioning } from './lib/versioning';
+import prisma from './services/prismaClient';
 
 // Load environment variables from `.env` file
 dotenv.config();
@@ -169,6 +171,7 @@ io.on('connection', (socket) => {
 });
 
 initializeDatabase()
+  .then(() => runVersioning(prisma))
   .then(() => {
     httpServer.listen(PORT, () => {
       info(`🚀 Backend server running at http://localhost:${PORT}`);

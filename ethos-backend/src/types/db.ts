@@ -84,6 +84,8 @@ export interface DBPost {
 
   /** Users following this post */
   followers?: string[];
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 // types/db.ts
@@ -126,6 +128,8 @@ export interface DBQuest {
 
   /** Users following this quest */
   followers?: string[];
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 export interface TaskEdge {
@@ -147,6 +151,8 @@ export interface DBProject {
   questIds: string[];
   deliverables: string[];
   mapEdges?: TaskEdge[];
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 // types/db.ts
@@ -165,6 +171,8 @@ export interface DBBoard {
   userId: string;
   /** Optional quest association */
   questId?: string;
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 // Efficient DB model for quick lookups and storage
@@ -255,6 +263,8 @@ export interface DBUser {
 
   createdAt?: string;
   updatedAt?: string;
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 export interface DBUserExperienceEvent {
@@ -277,6 +287,8 @@ export interface DBReview {
   questId?: string;
   postId?: string;
   createdAt: string;
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 export interface DBNotification {
@@ -288,6 +300,8 @@ export interface DBNotification {
   joinRequestId?: string;
   read?: boolean;
   createdAt: string;
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 export interface DBTaskJoinRequest {
@@ -300,6 +314,8 @@ export interface DBTaskJoinRequest {
   decidedAt?: string;
   decidedBy?: string;
   meta?: Record<string, any>;
+  /** Record version for upgrade tracking */
+  version?: number;
 }
 
 export interface DBBoardLog {
