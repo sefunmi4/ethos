@@ -272,6 +272,7 @@ const PostCard: React.FC<PostCardProps> = ({
           allowDelete={allowDelete}
           content={post.content}
           permalink={`${window.location.origin}${ROUTES.POST(post.id)}`}
+          postType={post.type}
         />
       </div>
     </div>
