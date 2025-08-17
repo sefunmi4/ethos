@@ -63,12 +63,41 @@ router.put(
   authMiddleware,
   async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
+      const existing = await pool.query(
+        'SELECT username, bio FROM users WHERE id = $1',
+        [req.params.id]
+      );
+      const prev = existing.rows[0];
+      if (!prev) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
       const { username, bio } = normalizeUserPayload(req.body);
       await pool.query('UPDATE users SET username = $1, bio = $2 WHERE id = $3', [
         username,
         bio,
         req.params.id,
       ]);
+      const changes: string[] = [];
+      if (prev.username !== username) {
+        changes.push(`username changed from ${prev.username || '""'} to ${username || '""'}`);
+      }
+      if (prev.bio !== bio) {
+        changes.push('bio updated');
+      }
+      if (changes.length > 0) {
+        await pool.query(
+          'INSERT INTO notifications (id, userid, message, link, read, createdat) VALUES ($1,$2,$3,$4,$5,$6)',
+          [
+            uuidv4(),
+            req.params.id,
+            `Profile updated: ${changes.join(', ')}`,
+            `/profile/${req.params.id}`,
+            false,
+            new Date().toISOString(),
+          ]
+        );
+      }
       res.json({ id: req.params.id, username, bio });
     } catch (err) {
       console.error(err);
