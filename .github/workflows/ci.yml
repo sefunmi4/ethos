@@ -39,7 +39,7 @@ jobs:
         run: |
           cd ethos-frontend
           tsc -p tsconfig.json
-      - name: Run backend tests
+      - name: Run backend and migration tests
         run: |
           cd ethos-backend
           npm test -- -w=1
