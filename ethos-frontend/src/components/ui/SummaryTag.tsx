@@ -9,7 +9,8 @@ import {
   FaUser,
   FaHandsHelping,
   FaCheckCircle,
-  FaFile
+  FaFile,
+  FaProjectDiagram
 } from 'react-icons/fa';
 import clsx from 'clsx';
 import { TAG_LAYOUT } from '../../constants/styles';
@@ -30,7 +31,8 @@ export type SummaryTagType =
   | 'party_request'
   | 'quest_task'
   | 'meta_system'
-  | 'meta_announcement';
+  | 'meta_announcement'
+  | 'project';
 
 export type SummaryTagProps = SummaryTagData & { className?: string; onClick?: () => void };
 
@@ -43,6 +45,7 @@ const icons: Partial<Record<SummaryTagType, React.ComponentType<{className?: str
   request: FaHandsHelping,
   file: FaFile,
   solved: FaCheckCircle,
+  project: FaProjectDiagram,
 };
 
 const colors: Record<SummaryTagType, string> = {
@@ -61,6 +64,7 @@ const colors: Record<SummaryTagType, string> = {
   meta_system: 'bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-200',
   meta_announcement: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200',
   solved: 'bg-lime-100 text-lime-800 dark:bg-lime-800 dark:text-lime-200',
+  project: 'bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-200',
 };
 
 const SummaryTag: React.FC<SummaryTagProps> = ({

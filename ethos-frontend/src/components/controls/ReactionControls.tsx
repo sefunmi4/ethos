@@ -129,7 +129,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [post.id, user?.id]);
+  }, [post.id, user?.id, post.tags, post.helpRequest]);
 
   // ---------- Helpers ----------
   const safeBump = (n: number, delta: number) => Math.max(0, n + delta);
@@ -187,7 +187,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setReviewLoading(false);
     }
-  }, [user?.id, navigate, reviewRequested, post.id, post, onUpdate, appendToBoard]);
+  }, [user?.id, navigate, reviewRequested, post, onUpdate, appendToBoard]);
 
   const handleRequestHelp = useCallback(async () => {
     if (!user?.id) {
@@ -215,7 +215,7 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
     } finally {
       setHelpLoading(false);
     }
-  }, [user?.id, navigate, helpRequested, post.id, post, onUpdate, appendToBoard]);
+  }, [user?.id, navigate, helpRequested, post, onUpdate, appendToBoard]);
 
   const goToReplyPageOrToggle = useCallback(
     (nextType: ReplyType) => {

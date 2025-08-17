@@ -47,6 +47,14 @@ jest.mock('../../contexts/BoardContext', () => ({
 }));
 
 describe('review request quest board flow', () => {
+  beforeAll(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    (console.error as jest.Mock).mockRestore();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -67,24 +75,27 @@ describe('review request quest board flow', () => {
       },
     });
 
-    render(
-      <BrowserRouter>
-        <ReactionControls
-          post={{
-            id: 'f1',
-            authorId: 'u1',
-            type: 'file',
-            content: 'file',
-            visibility: 'public',
-            tags: [],
-            collaborators: [],
-            linkedItems: [],
-          }}
-          user={{ id: 'u1' }}
-          onUpdate={onUpdate}
-        />
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <ReactionControls
+            post={{
+              id: 'f1',
+              authorId: 'u1',
+              type: 'file',
+              content: 'file',
+              visibility: 'public',
+              tags: [],
+              collaborators: [],
+              linkedItems: [],
+            }}
+            user={{ id: 'u1' }}
+            onUpdate={onUpdate}
+          />
+        </BrowserRouter>
+      );
+    });
+    await act(async () => {});
 
     await waitFor(() => expect(screen.getByText('Request Review')).toBeEnabled());
     await act(async () => {
@@ -122,11 +133,14 @@ describe('review request quest board flow', () => {
       linkedItems: [],
     };
 
-    render(
-      <BrowserRouter>
-        <ReactionControls post={postWithRequest} user={{ id: 'u1' }} onUpdate={onUpdate} />
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <ReactionControls post={postWithRequest} user={{ id: 'u1' }} onUpdate={onUpdate} />
+        </BrowserRouter>
+      );
+    });
+    await act(async () => {});
 
     await waitFor(() => expect(screen.getByText('Requested')).toBeEnabled());
     await act(async () => {
