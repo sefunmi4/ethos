@@ -195,13 +195,13 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
             </button>
           )}
           {type === 'post' && (
-            postType === 'file' || postType === 'task' ? (
+            postType === 'file' || postType === 'task' || postType === 'free_speech' ? (
               <div className="relative">
                 <button
                   onClick={() => setShowTaskPicker((p) => !p)}
                   className={`${itemClasses} ${itemHover}`}
                 >
-                  <FaTasks className="inline mr-2" /> Add to Task Folder
+                  <FaTasks className="inline mr-2" /> Add to Folder
                 </button>
                 {showTaskPicker && (
                   <TaskLinkDropdown
