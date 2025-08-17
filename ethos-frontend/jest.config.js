@@ -24,6 +24,7 @@ export default {
     '<rootDir>/src/components/controls/ReactionControls.reviewRequest.test.tsx',
     '<rootDir>/src/components/post/PostCard.requestHelp.test.tsx',
     '<rootDir>/src/components/post/PostListItem.test.tsx',
+    '<rootDir>/src/components/post/PostCard.moveToTask.test.tsx',
     '<rootDir>/src/api/post.requestHelp.test.ts',
     '<rootDir>/tests/CreatePostReplyTypeRestrictions.test.tsx',
     '<rootDir>/tests/CreatePostReply.test.tsx',
