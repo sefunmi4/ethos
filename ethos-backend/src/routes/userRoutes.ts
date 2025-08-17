@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import authOptional from '../middleware/authOptional';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { pool } from '../db';
+import { normalizeUserPayload } from '../utils/payloadTransforms';
 
 
 const router = express.Router();
@@ -49,6 +50,26 @@ router.get(
       }
       const { id, username, tags, bio, links, experienceTimeline, xp } = row;
       res.json({ id, username, tags, bio, links, experienceTimeline, xp });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+    }
+  }
+);
+
+// PUT /api/users/:id - update profile accepting legacy and new payloads
+router.put(
+  '/:id',
+  authMiddleware,
+  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    try {
+      const { username, bio } = normalizeUserPayload(req.body);
+      await pool.query('UPDATE users SET username = $1, bio = $2 WHERE id = $3', [
+        username,
+        bio,
+        req.params.id,
+      ]);
+      res.json({ id: req.params.id, username, bio });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Database error' });
