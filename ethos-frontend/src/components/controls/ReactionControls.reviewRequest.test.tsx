@@ -63,7 +63,7 @@ describe('review request quest board flow', () => {
     const onUpdate = jest.fn();
     requestHelp.mockResolvedValue({
       post: {
-        id: 'f1',
+        id: 'req1',
         authorId: 'u1',
         type: 'file',
         content: 'file',
@@ -83,6 +83,7 @@ describe('review request quest board flow', () => {
               id: 'f1',
               authorId: 'u1',
               type: 'file',
+              title: 'file',
               content: 'file',
               visibility: 'public',
               tags: [],
@@ -104,7 +105,10 @@ describe('review request quest board flow', () => {
 
     await waitFor(() => expect(requestHelp).toHaveBeenCalledWith('f1', 'file'));
     await waitFor(() => expect(onUpdate).toHaveBeenCalled());
-    expect(appendToBoard).toHaveBeenCalledWith('quest-board', expect.objectContaining({ id: 'f1' }));
+    expect(appendToBoard).toHaveBeenCalledWith(
+      'quest-board',
+      expect.objectContaining({ id: 'req1', title: 'file' })
+    );
 
     const updatedPost = onUpdate.mock.calls[0][0];
     render(
