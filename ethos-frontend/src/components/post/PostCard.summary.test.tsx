@@ -115,4 +115,28 @@ describe('PostCard summary tags', () => {
     expect(tags).toHaveLength(3);
     expect(tags[0].textContent).toContain('File');
   });
+
+  it('renders review tag for review request posts', async () => {
+    const reviewReq: Post = {
+      id: 'p3',
+      authorId: 'u1',
+      type: 'request' as unknown as Post['type'],
+      nodeId: 'Q:slug:T01:F00',
+      content: 'Review request',
+      visibility: 'public',
+      timestamp: '',
+      tags: ['review', 'request'],
+      collaborators: [],
+      linkedItems: [],
+    } as unknown as Post;
+    const enriched = { ...reviewReq, author: { id: 'u1', username: 'alice' } } as Post;
+    render(
+      <BrowserRouter>
+        <PostCard post={enriched} questTitle="Quest A" />
+      </BrowserRouter>
+    );
+    expect(await screen.findByText('Review')).toBeInTheDocument();
+    const tags = await screen.findAllByTestId('summary-tag');
+    expect(tags[1].textContent).toContain('Review');
+  });
 });
