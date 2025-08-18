@@ -90,6 +90,10 @@ export const getDisplayTitle = (
   }
 
   const post = item as Post;
+  if (post.title) {
+    return post.title;
+  }
+
   if (post.nodeId || post.questId) {
     return getQuestLinkLabel(post, questName, includeQuestName);
   }
@@ -179,6 +183,14 @@ export const buildSummaryTags = async (
     fallbackLabel = post.replyTo ? 'Log' : 'Free Speech';
   }
 
+  if (
+    post.type === 'request' &&
+    (post.subtype === 'file' || post.tags?.includes('review'))
+  ) {
+    primaryType = 'review';
+    fallbackLabel = 'Review';
+  }
+
   const nodeLabels: string[] = [];
   if (post.linkedItems && post.linkedItems.length > 0) {
     post.linkedItems.forEach((li) => {
@@ -188,7 +200,12 @@ export const buildSummaryTags = async (
     nodeLabels.push(formatNodeId(post.nodeId));
   }
 
-  const detailLabel = nodeLabels.length > 0 ? nodeLabels.join(', ') : fallbackLabel;
+  const detailLabel =
+    primaryType === 'review'
+      ? 'Review'
+      : nodeLabels.length > 0
+        ? nodeLabels.join(', ')
+        : fallbackLabel;
 
   const primaryTag: SummaryTagData = {
     type: primaryType as SummaryTagType,
@@ -219,6 +236,12 @@ export const buildSummaryTags = async (
   if (post.tags && post.tags.length > 0) {
     const blockedPrefixes = ['summary:', 'pending:'];
     const blockedTags = ['system'];
+    if (
+      post.type === 'request' &&
+      (post.subtype === 'file' || post.tags?.includes('review'))
+    ) {
+      blockedTags.push('review', 'request');
+    }
     post.tags.forEach((rawTag) => {
       const lower = rawTag.toLowerCase();
       if (
