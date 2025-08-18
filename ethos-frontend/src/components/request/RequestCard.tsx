@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import { Button, AvatarStack, SummaryTag } from '../ui';
@@ -6,7 +6,8 @@ import { POST_TYPE_LABELS, toTitleCase } from '../../utils/displayUtils';
 import { getRank } from '../../utils/rankUtils';
 import { FaUserPlus, FaUserCheck } from 'react-icons/fa';
 import { useAuth } from '../../contexts/AuthContext';
-import { acceptRequest, unacceptRequest } from '../../api/post';
+import { acceptRequest, unacceptRequest, fetchPostById } from '../../api/post';
+import { fetchQuestById } from '../../api/quest';
 import { ROUTES } from '../../constants/routes';
 
 const RANK_ORDER: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5 };
@@ -36,6 +37,34 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   const role = roleTag ? roleTag.split(':')[1] : undefined;
   const difficulty = difficultyTag ? difficultyTag.split(':')[1] : undefined;
   const userRank = getRank(user?.xp ?? 0);
+
+  const [linkedTitle, setLinkedTitle] = useState<string | undefined>(() =>
+    post.linkedItems?.find(li => li.title)?.title
+  );
+  useEffect(() => {
+    if (linkedTitle) return;
+    const linked = post.linkedItems?.[0];
+    if (!linked) return;
+    let active = true;
+    const load = async () => {
+      try {
+        if (linked.itemType === 'quest') {
+          const quest = await fetchQuestById(linked.itemId);
+          if (active) setLinkedTitle(quest.title);
+        } else {
+          const lp = await fetchPostById(linked.itemId);
+          if (active) setLinkedTitle(lp.title || undefined);
+        }
+      } catch (err) {
+        console.error('[RequestCard] Failed to load linked title:', err);
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [post.linkedItems, linkedTitle]);
+  const displayTitle = linkedTitle || post.title;
 
   const handleJoin = async () => {
     if (!user) return;
@@ -94,8 +123,10 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           />
         )}
       </div>
-      {post.title && (
-        <h3 className="font-semibold text-lg truncate">{toTitleCase(post.title)}</h3>
+      {displayTitle && (
+        <h3 className="font-semibold text-lg truncate">
+          {toTitleCase(displayTitle)}
+        </h3>
       )}
       {post.content && <p className="text-sm text-primary">{post.content}</p>}
       <div className="flex items-center gap-2 text-xs text-secondary">

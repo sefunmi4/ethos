@@ -8,7 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import type { User } from '../../types/userTypes';
 
-import { updatePost, removeHelpRequest, createJoinRequest } from '../../api/post';
+import { updatePost, removeHelpRequest, createJoinRequest, fetchPostById } from '../../api/post';
 import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag, Button } from '../ui';
@@ -201,7 +201,39 @@ const PostCard: React.FC<PostCardProps> = ({
     : 'Unknown time';
 
   const content = post.renderedContent || post.content;
-  const titleText = post.title || makeHeader(post.content);
+  const [linkedTitle, setLinkedTitle] = useState<string | undefined>(() =>
+    ctxBoardId === 'quest-board' && (post.tags?.includes('review') || post.type === 'review')
+      ? post.linkedItems?.find(li => li.title)?.title
+      : undefined
+  );
+  useEffect(() => {
+    if (!(ctxBoardId === 'quest-board' && (post.tags?.includes('review') || post.type === 'review'))) {
+      setLinkedTitle(undefined);
+      return;
+    }
+    if (linkedTitle) return;
+    const linked = post.linkedItems?.[0];
+    if (!linked) return;
+    let active = true;
+    const load = async () => {
+      try {
+        if (linked.itemType === 'quest') {
+          const q = await fetchQuestById(linked.itemId);
+          if (active) setLinkedTitle(q.title);
+        } else {
+          const lp = await fetchPostById(linked.itemId);
+          if (active) setLinkedTitle(lp.title || makeHeader(lp.content));
+        }
+      } catch (err) {
+        console.error('[PostCard] Failed to load linked title:', err);
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [ctxBoardId, post, linkedTitle]);
+  const titleText = linkedTitle || post.title || makeHeader(post.content);
   const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
   useEffect(() => {
     let active = true;
