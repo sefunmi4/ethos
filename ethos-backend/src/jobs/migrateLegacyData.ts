@@ -66,17 +66,26 @@ export async function scheduleLegacyDataMigration(): Promise<void> {
       registry,
     );
 
+    async function pushMetrics(): Promise<void> {
+      try {
+        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        error(`Failed to push legacy data migration metrics: ${msg}`);
+      }
+    }
+
     // Run at the top of every hour
     cron.schedule('0 * * * *', async () => {
       info('Starting legacy data migration');
       try {
         await migrateLegacyData();
         migrationSuccess.inc();
-        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        await pushMetrics();
         info('Legacy data migration completed');
       } catch (err) {
         migrationFailure.inc();
-        await gateway.pushAdd({ jobName: 'legacy_data_migration' });
+        await pushMetrics();
         error('Legacy data migration failed', err);
       }
     });
