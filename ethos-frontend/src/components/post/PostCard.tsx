@@ -201,7 +201,12 @@ const PostCard: React.FC<PostCardProps> = ({
     : 'Unknown time';
 
   const content = post.renderedContent || post.content;
-  const titleText = post.title || makeHeader(post.content);
+  const linkedTitle =
+    ctxBoardId === 'quest-board' &&
+    (post.tags?.includes('review') || post.type === 'review')
+      ? post.linkedItems?.find(li => li.title)?.title
+      : undefined;
+  const titleText = linkedTitle || post.title || makeHeader(post.content);
   const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
   useEffect(() => {
     let active = true;

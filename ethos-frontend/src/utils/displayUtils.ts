@@ -94,6 +94,14 @@ export const getDisplayTitle = (
     return post.title;
   }
 
+  const linked = post.linkedItems?.find((li) => li.title)?.title;
+  if (
+    linked &&
+    (post.tags?.includes('request') || post.tags?.includes('review') || post.type === 'review')
+  ) {
+    return linked;
+  }
+
   if (post.nodeId || post.questId) {
     return getQuestLinkLabel(post, questName, includeQuestName);
   }
