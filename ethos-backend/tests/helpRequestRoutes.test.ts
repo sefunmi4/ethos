@@ -47,6 +47,28 @@ describe('help request routes', () => {
     expect(reactions).toContain('p1_u1_request');
   });
 
+  it('preserves title when requesting help', async () => {
+    const original: DBPost = {
+      id: 'f1',
+      authorId: 'u2',
+      type: 'file',
+      title: 'My File',
+      content: 'file content',
+      visibility: 'public',
+      createdAt: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+    } as DBPost;
+    postsStore.write([original]);
+
+    const res = await request(app).post('/posts/f1/request-help');
+    expect(res.status).toBe(201);
+    expect(res.body.post.title).toBe('My File');
+
+    const posts = postsStore.read();
+    const requestPost = posts.find(p => p.id === res.body.post.id);
+    expect(requestPost?.title).toBe('My File');
+  });
+
   it('accepts and declines a help request', async () => {
     const reqPost: DBPost = {
       id: 'r1',
