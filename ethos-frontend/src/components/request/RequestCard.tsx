@@ -37,6 +37,9 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
   const difficulty = difficultyTag ? difficultyTag.split(':')[1] : undefined;
   const userRank = getRank(user?.xp ?? 0);
 
+  const linkedTitle = post.linkedItems?.find(li => li.title)?.title;
+  const displayTitle = linkedTitle || post.title;
+
   const handleJoin = async () => {
     if (!user) return;
     try {
@@ -94,8 +97,10 @@ const RequestCard: React.FC<RequestCardProps> = ({ post, onUpdate, className }) 
           />
         )}
       </div>
-      {post.title && (
-        <h3 className="font-semibold text-lg truncate">{toTitleCase(post.title)}</h3>
+      {displayTitle && (
+        <h3 className="font-semibold text-lg truncate">
+          {toTitleCase(displayTitle)}
+        </h3>
       )}
       {post.content && <p className="text-sm text-primary">{post.content}</p>}
       <div className="flex items-center gap-2 text-xs text-secondary">
