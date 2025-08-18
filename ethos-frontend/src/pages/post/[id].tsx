@@ -1,32 +1,24 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import PostCard from '../../components/post/PostCard';
-import CreatePost from '../../components/post/CreatePost';
 import { useSocket } from '../../hooks/useSocket';
 import { Spinner } from '../../components/ui';
 import type { User } from '../../types/userTypes';
 import { useAuth } from '../../contexts/AuthContext';
 
-import { ROUTES } from '../../constants/routes';
 
 import { fetchPostById, fetchReplyBoard } from '../../api/post';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 
-import type { Post, PostType } from '../../types/postTypes';
+import type { Post } from '../../types/postTypes';
 import type { BoardData } from '../../types/boardTypes';
-import QuestNodeInspector from '../../components/quest/QuestNodeInspector';
-import GitFileBrowserInline from '../../components/git/GitFileBrowserInline';
-import TeamPanel from '../../components/quest/TeamPanel';
 
 const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialTypeParam = searchParams.get('initialType') as PostType | null;
-  const introParam = searchParams.get('intro') === '1';
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
@@ -34,8 +26,6 @@ const PostPage: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const [showReplyForm, setShowReplyForm] = useState(false);
-  const [parentPost, setParentPost] = useState<Post | null>(null);
 
   const threadBoard = useMemo<BoardData | null>(() => {
     if (!replyBoard) return null;
@@ -45,49 +35,7 @@ const PostPage: React.FC = () => {
     };
   }, [replyBoard]);
 
-  const taskRepliesBoard = useMemo<BoardData | null>(() => {
-    if (!replyBoard) return null;
-    const tasks =
-      replyBoard.enrichedItems?.filter(
-        (item): item is Post => 'type' in item && (item as Post).type === 'task'
-      ) || [];
-    if (!tasks.length) return null;
-    return {
-      ...replyBoard,
-      items: tasks.map(t => t.id),
-      enrichedItems: tasks,
-    };
-  }, [replyBoard]);
 
-  const fileRepliesBoard = useMemo<BoardData | null>(() => {
-    if (!replyBoard) return null;
-    const files =
-      replyBoard.enrichedItems?.filter(
-        (item): item is Post => 'type' in item && (item as Post).type === 'file'
-      ) || [];
-    if (!files.length) return null;
-    return {
-      ...replyBoard,
-      items: files.map(f => f.id),
-      enrichedItems: files,
-    };
-  }, [replyBoard]);
-
-  useEffect(() => {
-    if (searchParams.get('reply') === '1') {
-      setShowReplyForm(true);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (post?.tags?.includes('review') && post.replyTo) {
-      fetchPostById(post.replyTo)
-        .then(setParentPost)
-        .catch(() => setParentPost(null));
-    } else {
-      setParentPost(null);
-    }
-  }, [post]);
 
   const fetchPostData = useCallback(async () => {
     if (!id) return;
@@ -168,67 +116,6 @@ const PostPage: React.FC = () => {
           </div>
         )}
         <PostCard post={post} user={user as User} showDetails hideReplyButton />
-        {showReplyForm && (
-          <div className="mt-4">
-            <CreatePost
-              replyTo={post}
-              initialType={initialTypeParam || undefined}
-              initialContent={
-                introParam && user
-                  ? `Hi @${post.author?.username}, I'm @${user.username} and would like to join.`
-                  : undefined
-              }
-              onSave={() => {
-                setShowReplyForm(false);
-                navigate(ROUTES.POST(post.id), { replace: true });
-                fetchPostData();
-              }}
-              onCancel={() => {
-                setShowReplyForm(false);
-                navigate(ROUTES.POST(post.id), { replace: true });
-              }}
-            />
-          </div>
-        )}
-      </section>
-
-      <section>
-        {post.type === 'task' && post.questId && (
-          <div className="grid md:grid-cols-2 gap-4">
-            <QuestNodeInspector questId={post.questId} node={post} user={user as User} showPost={false} />
-            <div className="space-y-4">
-              <GitFileBrowserInline questId={post.questId} />
-              <TeamPanel questId={post.questId} node={post} canEdit={!!user} />
-            </div>
-          </div>
-        )}
-        {taskRepliesBoard && (
-          <Board
-            boardId={`task-replies-${id}`}
-            board={taskRepliesBoard}
-            layout="grid"
-            editable={false}
-            compact={true}
-            user={user as User}
-          />
-        )}
-
-        {post.type === 'file' && post.questId && (
-          <GitFileBrowserInline questId={post.questId} />
-        )}
-        {post.tags?.includes('review') && parentPost && (
-          <PostCard post={parentPost} user={user as User} />
-        )}
-        {fileRepliesBoard && (
-          <Board
-            boardId={`file-replies-${id}`}
-            board={fileRepliesBoard}
-            layout="grid"
-            editable={false}
-            compact={true}
-            user={user as User}
-          />
-        )}
       </section>
 
       <section>
