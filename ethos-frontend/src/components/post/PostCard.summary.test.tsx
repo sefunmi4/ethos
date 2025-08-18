@@ -135,8 +135,8 @@ describe('PostCard summary tags', () => {
         <PostCard post={enriched} questTitle="Quest A" />
       </BrowserRouter>
     );
-    expect(await screen.findByText('Review')).toBeInTheDocument();
     const tags = await screen.findAllByTestId('summary-tag');
-    expect(tags[1].textContent).toContain('Review');
+    expect(tags[0].textContent).toContain('Review');
+    expect(tags.some(t => t.textContent?.includes('Request'))).toBe(false);
   });
 });
