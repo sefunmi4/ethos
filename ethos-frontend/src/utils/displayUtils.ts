@@ -198,6 +198,13 @@ export const buildSummaryTags = async (
 
   tags.push(primaryTag);
 
+  if (
+    post.type === 'request' &&
+    (post.subtype === 'file' || post.tags?.includes('review'))
+  ) {
+    tags.push({ type: 'review', label: 'Review', detailLink: ROUTES.POST(post.id) });
+  }
+
   if (post.authorId) {
     const username = await getUsernameFromId(post.authorId);
     tags.push({
@@ -219,6 +226,12 @@ export const buildSummaryTags = async (
   if (post.tags && post.tags.length > 0) {
     const blockedPrefixes = ['summary:', 'pending:'];
     const blockedTags = ['system'];
+    if (
+      post.type === 'request' &&
+      (post.subtype === 'file' || post.tags?.includes('review'))
+    ) {
+      blockedTags.push('review');
+    }
     post.tags.forEach((rawTag) => {
       const lower = rawTag.toLowerCase();
       if (
