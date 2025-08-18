@@ -215,6 +215,13 @@ export const buildSummaryTags = async (
 
   tags.push(primaryTag);
 
+  if (
+    post.type === 'request' &&
+    (post.subtype === 'file' || post.tags?.includes('review'))
+  ) {
+    tags.push({ type: 'review', label: 'Review', detailLink: ROUTES.POST(post.id) });
+  }
+
   if (post.authorId) {
     const username = await getUsernameFromId(post.authorId);
     tags.push({
