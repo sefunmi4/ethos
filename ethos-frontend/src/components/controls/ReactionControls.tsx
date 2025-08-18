@@ -174,12 +174,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         setReviewRequested(false);
       } else {
         const res = await requestHelp(post.id, 'file');
-        const updated = {
-          ...res.post,
-          tags: [...new Set([...(res.post.tags || []), 'request'])],
+        const updatedOriginal = {
+          ...post,
+          tags: [...new Set([...(post.tags || []), 'review', 'request'])],
+          helpRequest: true,
         } as Post;
-        onUpdate?.(updated);
-        appendToBoard?.('quest-board', updated as unknown as BoardItem);
+        onUpdate?.(updatedOriginal);
+        appendToBoard?.(
+          'quest-board',
+          { ...res.post, title: res.post.title || post.title } as unknown as BoardItem
+        );
         setReviewRequested(true);
       }
     } catch (err) {
@@ -206,8 +210,16 @@ const ReactionControls: React.FC<ReactionControlsProps> = ({
         setHelpRequested(false);
       } else {
         const res = await requestHelp(post.id, 'task');
-        onUpdate?.(res.post);
-        appendToBoard?.('quest-board', res.post as unknown as BoardItem);
+        const updatedOriginal = {
+          ...post,
+          tags: [...new Set([...(post.tags || []), 'request'])],
+          helpRequest: true,
+        } as Post;
+        onUpdate?.(updatedOriginal);
+        appendToBoard?.(
+          'quest-board',
+          { ...res.post, title: res.post.title || post.title } as unknown as BoardItem
+        );
         setHelpRequested(true);
       }
     } catch (err) {
