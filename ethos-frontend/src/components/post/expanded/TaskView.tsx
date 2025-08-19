@@ -5,9 +5,10 @@ import TaskKanbanBoard from '../../quest/TaskKanbanBoard';
 import SubtaskChecklist from '../../quest/SubtaskChecklist';
 import TeamPanel from '../../quest/TeamPanel';
 import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS, type option } from '../../../constants/options';
+import { VISIBILITY_OPTIONS } from '../../../constants/options';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
+import type { Visibility } from '../../../types/common';
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -28,7 +29,9 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const [selected, setSelected] = useState<Post>(post);
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({ [post.id]: true });
   const [activeTab, setActiveTab] = useState<'planner' | 'options'>('planner');
-  const [visibility, setVisibility] = useState(post.visibility || 'public');
+  const [visibility, setVisibility] = useState<Visibility>(
+    post.visibility || 'public'
+  );
 
   useEffect(() => {
     if (post.questId) {
@@ -100,8 +103,8 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
     );
   };
 
-  const handleVisibilityChange = async (val: string) => {
-    setVisibility(val as 'public' | 'private');
+  const handleVisibilityChange = async (val: Visibility) => {
+    setVisibility(val);
     try {
       await updatePost(selected.id, { visibility: val });
     } catch (err) {
@@ -140,11 +143,11 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
             <TeamPanel questId={post.questId || ''} node={selected} />
             <div>
               <label className="block mb-1 text-xs font-semibold">Visibility</label>
-              <Select
-                value={visibility}
-                onChange={e => handleVisibilityChange(e.target.value)}
-                options={VISIBILITY_OPTIONS as option[]}
-              />
+                <Select
+                  value={visibility}
+                  onChange={e => handleVisibilityChange(e.target.value as Visibility)}
+                  options={VISIBILITY_OPTIONS}
+                />
             </div>
           </div>
         )}
