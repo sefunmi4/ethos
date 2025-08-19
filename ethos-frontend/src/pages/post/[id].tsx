@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Board from '../../components/board/Board';
 import PostCard from '../../components/post/PostCard';
 import { useSocket } from '../../hooks/useSocket';
@@ -18,7 +18,6 @@ const PostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const [searchParams] = useSearchParams();
 
   const [post, setPost] = useState<Post | null>(null);
   const [replyBoard, setReplyBoard] = useState<BoardData | null>(null);
