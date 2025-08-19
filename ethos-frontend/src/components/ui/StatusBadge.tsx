@@ -11,6 +11,8 @@ const statusStyles: Record<string, string> = {
   'To Do': 'bg-soft text-secondary',
   'In Progress': 'bg-warning text-warning',
   Blocked: 'bg-error text-error',
+  Requested: 'bg-soft text-secondary',
+  'In Review': 'bg-soft text-secondary',
   Done: 'bg-success text-success',
 };
 

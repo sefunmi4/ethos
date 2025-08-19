@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import GridLayout from '../layout/GridLayout';
 import { fetchPostsByQuestId } from '../../api/post';
 import QuickTaskForm from '../post/QuickTaskForm';
@@ -26,7 +26,7 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
       });
   }, [questId, linkedNodeId]);
 
-  const refresh = () => {
+  const refresh = useCallback(() => {
     fetchPostsByQuestId(questId)
       .then((posts) => {
         setTasks(posts.filter((p) => p.type === 'task' && p.replyTo === linkedNodeId));
@@ -34,7 +34,13 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
       .catch((err) => {
         console.error('[TaskKanbanBoard] failed to load tasks', err);
       });
-  };
+  }, [questId, linkedNodeId]);
+
+  useEffect(() => {
+    const handler = () => refresh();
+    window.addEventListener('taskUpdated', handler);
+    return () => window.removeEventListener('taskUpdated', handler);
+  }, [refresh]);
 
   return (
     <div className="space-y-2">

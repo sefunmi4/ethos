@@ -180,7 +180,14 @@ export type LinkStatus = 'active' | 'solved' | 'private' | 'pending';
 /**
  * Optional task progress label for posts in quest boards.
  */
-export type QuestTaskStatus = 'To Do' | 'In Progress' | 'Blocked' | 'Done' | string;
+export type QuestTaskStatus =
+  | 'To Do'
+  | 'In Progress'
+  | 'Requested'
+  | 'In Review'
+  | 'Blocked'
+  | 'Done'
+  | string;
 
 /**
  * Supported types of posts used throughout the system.

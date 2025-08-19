@@ -39,7 +39,7 @@ type GridLayoutProps = {
   onExpand?: (id: string | null) => void;
 };
 
-const defaultKanbanColumns = ['To Do', 'Blocked', 'Done'];
+const defaultKanbanColumns = ['To Do', 'In Progress', 'Requested', 'In Review', 'Done'];
 
 const DraggableCard: React.FC<{
   item: Post;
