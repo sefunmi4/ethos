@@ -13,13 +13,11 @@ import { fetchQuestById } from '../../api/quest';
 import ReactionControls from '../controls/ReactionControls';
 import { SummaryTag, Button } from '../ui';
 import { useBoardContext } from '../../contexts/BoardContext';
-import MarkdownRenderer from '../ui/MarkdownRenderer';
-import MediaPreview from '../ui/MediaPreview';
 import EditPost from './EditPost';
 import ActionMenu from '../ui/ActionMenu';
 import { buildSummaryTags, type SummaryTagData } from '../../utils/displayUtils';
-import { TAG_BASE } from '../../constants/styles';
 import { useGraph } from '../../hooks/useGraph';
+import ExpandedCard from './ExpandedCard';
 
 const PREVIEW_LIMIT = 240;
 const makeHeader = (content: string): string => {
@@ -340,6 +338,16 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const handleTaskTitleClick = () => {
+    if (questId) {
+      window.dispatchEvent(
+        new CustomEvent('questTaskOpen', { detail: { taskId: post.id } })
+      );
+    } else {
+      navigate(ROUTES.POST(post.id));
+    }
+  };
+
   const renderRepostInfo = () => {
     const quote = post.repostedFrom;
     if (!quote?.originalContent) return null;
@@ -449,57 +457,14 @@ const PostCard: React.FC<PostCardProps> = ({
         <h3 className="font-semibold text-lg mt-1 truncate">{titleText}</h3>
       )}
 
-      <div className="text-sm text-primary">
-        {post.type === 'task' ? (
-          <>
-            <div
-              className="font-semibold cursor-pointer"
-              onClick={() => {
-                if (questId) {
-                  window.dispatchEvent(
-                    new CustomEvent('questTaskOpen', { detail: { taskId: post.id } })
-                  );
-                } else {
-                  navigate(ROUTES.POST(post.id));
-                }
-              }}
-            >
-              {post.content}
-            </div>
-            {post.details && (
-              <div className={compact ? 'clamp-3' : ''}>
-                <MarkdownRenderer
-                  content={
-                    isLong && !expandedView
-                      ? post.details.slice(0, PREVIEW_LIMIT) + '…'
-                      : post.details
-                  }
-                  onToggleTask={handleToggleTask}
-                />
-              </div>
-            )}
-          </>
-        ) : isLong && !expandedView ? (
-          <div className={compact ? 'clamp-3' : ''}>
-            <MarkdownRenderer
-              content={content.slice(0, PREVIEW_LIMIT) + '…'}
-              onToggleTask={handleToggleTask}
-            />
-          </div>
-        ) : (
-          <div className={compact ? 'clamp-3' : ''}>
-            <MarkdownRenderer content={content} onToggleTask={handleToggleTask} />
-          </div>
-        )}
-        <MediaPreview media={post.mediaPreviews} />
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1">
-            {Array.from(new Set(post.tags)).map((tag) => (
-              <span key={tag} className={TAG_BASE}>#{tag}</span>
-            ))}
-          </div>
-        )}
-      </div>
+      <ExpandedCard
+        post={post}
+        expanded={expandedView}
+        compact={compact}
+        questId={qid}
+        onToggleTask={handleToggleTask}
+        onTaskClick={handleTaskTitleClick}
+      />
 
       {renderControls()}
 
