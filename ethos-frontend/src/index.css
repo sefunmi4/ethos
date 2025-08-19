@@ -12,6 +12,13 @@
   overflow: hidden;
 }
 
+.clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 
 :root {
   --color-primary: #111827;

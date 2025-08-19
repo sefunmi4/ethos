@@ -5,6 +5,7 @@ import MarkdownRenderer from '../ui/MarkdownRenderer';
 import MediaPreview from '../ui/MediaPreview';
 import { TAG_BASE } from '../../constants/styles';
 import type { Post, EnrichedPost } from '../../types/postTypes';
+import FreeSpeechView from './expanded/FreeSpeechView';
 
 const PREVIEW_LIMIT = 240;
 
@@ -18,35 +19,6 @@ interface ViewProps {
   onTaskClick?: () => void;
   questId?: string | null;
 }
-
-export const FreeSpeechView: React.FC<ViewProps> = ({ post, expanded, compact, onToggleTask }) => {
-  const content = post.renderedContent || post.content;
-  const isLong = content.length > PREVIEW_LIMIT;
-  return (
-    <div className="text-sm text-primary">
-      {isLong && !expanded ? (
-        <div className={compact ? 'clamp-3' : ''}>
-          <MarkdownRenderer content={content.slice(0, PREVIEW_LIMIT) + '…'} onToggleTask={onToggleTask} />
-        </div>
-      ) : (
-        <div className={compact ? 'clamp-3' : ''}>
-          <MarkdownRenderer content={content} onToggleTask={onToggleTask} />
-        </div>
-      )}
-      <MediaPreview media={post.mediaPreviews} />
-      {post.tags && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-1">
-          {Array.from(new Set(post.tags)).map(tag => (
-            <span key={tag} className={TAG_BASE}>#{tag}</span>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export const FileView: React.FC<ViewProps> = (props) => <FreeSpeechView {...props} />;
-export const ProjectView: React.FC<ViewProps> = (props) => <FreeSpeechView {...props} />;
 
 export const TaskView: React.FC<ViewProps> = ({ post, expanded, compact, onToggleTask, onTaskClick, questId }) => {
   const isLong = (post.details || '').length > PREVIEW_LIMIT;
@@ -87,9 +59,9 @@ const ExpandedCard: React.FC<ViewProps> = (props) => {
     case 'task':
       return <TaskView {...props} />;
     case 'file':
-      return <FileView {...props} />;
     case 'project':
-      return <ProjectView {...props} />;
+    case 'free_speech':
+      return <FreeSpeechView {...props} />;
     default:
       return <FreeSpeechView {...props} />;
   }
