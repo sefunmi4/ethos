@@ -5,9 +5,11 @@ interface FileEditorPanelProps {
   questId: string;
   filePath: string;
   content: string;
+  /** Render a static, non-editable view */
+  readOnly?: boolean;
 }
 
-const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, content }) => {
+const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, content, readOnly }) => {
   const [expandedLine, setExpandedLine] = useState<number | null>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(content + '\n');
@@ -21,7 +23,7 @@ const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, co
     }
   };
 
-  if (editing) {
+  if (!readOnly && editing) {
     return (
       <div className="space-y-2">
         <textarea
@@ -58,22 +60,26 @@ const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, co
               {idx + 1}
             </span>
             {line}
-            <button
-              className="ml-2 text-accent underline text-xs"
-              onClick={() => setExpandedLine(expandedLine === idx + 1 ? null : idx + 1)}
-            >
-              {expandedLine === idx + 1 ? 'Hide' : 'History'}
-            </button>
-            <button
-              className="ml-1 text-accent underline text-xs"
-              onClick={() => {
-                setEditing(true);
-                setDraft(lines.join('\n') + '\n');
-              }}
-            >
-              Edit
-            </button>
-            {expandedLine === idx + 1 && (
+            {!readOnly && (
+              <>
+                <button
+                  className="ml-2 text-accent underline text-xs"
+                  onClick={() => setExpandedLine(expandedLine === idx + 1 ? null : idx + 1)}
+                >
+                  {expandedLine === idx + 1 ? 'Hide' : 'History'}
+                </button>
+                <button
+                  className="ml-1 text-accent underline text-xs"
+                  onClick={() => {
+                    setEditing(true);
+                    setDraft(lines.join('\n') + '\n');
+                  }}
+                >
+                  Edit
+                </button>
+              </>
+            )}
+            {!readOnly && expandedLine === idx + 1 && (
               <div className="mt-1">
                 <LineVersionThread
                   questId={questId}
@@ -86,15 +92,17 @@ const FileEditorPanel: React.FC<FileEditorPanelProps> = ({ questId, filePath, co
           </div>
         ))}
       </pre>
-      <button
-        onClick={() => {
-          setEditing(true);
-          setDraft(content + '\n');
-        }}
-        className="mt-2 text-accent underline text-sm"
-      >
-        Edit File
-      </button>
+      {!readOnly && (
+        <button
+          onClick={() => {
+            setEditing(true);
+            setDraft(content + '\n');
+          }}
+          className="mt-2 text-accent underline text-sm"
+        >
+          Edit File
+        </button>
+      )}
     </div>
   );
 };
