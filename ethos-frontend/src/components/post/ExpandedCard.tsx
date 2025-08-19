@@ -3,6 +3,7 @@ import type { Post, EnrichedPost } from '../../types/postTypes';
 import FreeSpeechView from './expanded/FreeSpeechView';
 import FileView from './expanded/FileView';
 import TaskView from './expanded/TaskView';
+import ProjectView from './expanded/ProjectView';
 
 type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -23,6 +24,7 @@ const ExpandedCard: React.FC<ViewProps> = (props) => {
     case 'file':
       return <FileView {...props} />;
     case 'project':
+      return <ProjectView {...props} />;
     case 'free_speech':
       return <FreeSpeechView {...props} />;
     default:
