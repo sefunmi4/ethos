@@ -6,6 +6,7 @@ import MediaPreview from '../ui/MediaPreview';
 import { TAG_BASE } from '../../constants/styles';
 import type { Post, EnrichedPost } from '../../types/postTypes';
 import FreeSpeechView from './expanded/FreeSpeechView';
+import FileView from './expanded/FileView';
 
 const PREVIEW_LIMIT = 240;
 
@@ -59,6 +60,7 @@ const ExpandedCard: React.FC<ViewProps> = (props) => {
     case 'task':
       return <TaskView {...props} />;
     case 'file':
+      return <FileView {...props} />;
     case 'project':
     case 'free_speech':
       return <FreeSpeechView {...props} />;
