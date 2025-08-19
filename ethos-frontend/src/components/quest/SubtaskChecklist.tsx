@@ -10,7 +10,10 @@ interface SubtaskChecklistProps {
 }
 
 const SubtaskChecklist: React.FC<SubtaskChecklistProps> = ({ questId, nodeId, indent = 0 }) => {
-  const { nodes, edges, loadGraph } = useGraph();
+  const graph = useGraph();
+  const nodes = graph.nodes || [];
+  const edges = graph.edges || [];
+  const loadGraph = graph.loadGraph;
 
   useEffect(() => {
     if (questId) loadGraph(questId);

@@ -36,6 +36,12 @@ const TaskKanbanBoard: React.FC<TaskKanbanBoardProps> = ({ questId, linkedNodeId
       });
   };
 
+  useEffect(() => {
+    const handler = () => refresh();
+    window.addEventListener('taskUpdated', handler);
+    return () => window.removeEventListener('taskUpdated', handler);
+  }, [questId, linkedNodeId]);
+
   return (
     <div className="space-y-2">
       {showForm && (

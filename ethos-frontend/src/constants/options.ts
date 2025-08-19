@@ -46,7 +46,9 @@ export const LINK_TYPES = ['solution', 'duplicate', 'citation'];
 
 export const STATUS_OPTIONS = [
   { value: 'To Do', label: 'To Do' },
-  { value: 'Blocked', label: 'Blocked' },
+  { value: 'In Progress', label: 'In Progress' },
+  { value: 'Requested', label: 'Requested' },
+  { value: 'In Review', label: 'In Review' },
   { value: 'Done', label: 'Done' },
 ] as const;
 
