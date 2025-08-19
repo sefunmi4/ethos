@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { useGraph } from '../../../hooks/useGraph';
 import TaskKanbanBoard from '../../quest/TaskKanbanBoard';
 import SubtaskChecklist from '../../quest/SubtaskChecklist';
 import TeamPanel from '../../quest/TeamPanel';
 import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS } from '../../../constants/options';
+import { VISIBILITY_OPTIONS, type option } from '../../../constants/options';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 
@@ -24,8 +24,6 @@ type TreeNode = {
 
 const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const graph = useGraph();
-  const nodes = graph.nodes || [];
-  const edges = graph.edges || [];
   const loadGraph = graph.loadGraph;
   const [selected, setSelected] = useState<Post>(post);
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({ [post.id]: true });
@@ -50,17 +48,22 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
     setVisibility(selected.visibility || 'public');
   }, [selected.visibility]);
 
-  const buildTree = (id: string): TreeNode[] => {
-    return edges
-      .filter(e => e.from === id)
-      .map(e => {
-        const child = nodes.find(n => n.id === e.to);
-        return child ? { post: child, children: buildTree(child.id) } : null;
-      })
-      .filter((n): n is TreeNode => !!n);
-  };
+  const buildTree = useCallback(
+    (id: string): TreeNode[] => {
+      const edges = graph.edges || [];
+      const nodes = graph.nodes || [];
+      return edges
+        .filter(e => e.from === id)
+        .map(e => {
+          const child = nodes.find(n => n.id === e.to);
+          return child ? { post: child, children: buildTree(child.id) } : null;
+        })
+        .filter((n): n is TreeNode => !!n);
+    },
+    [graph.edges, graph.nodes]
+  );
 
-  const tree: TreeNode = useMemo(() => ({ post, children: buildTree(post.id) }), [post, nodes, edges]);
+  const tree: TreeNode = useMemo(() => ({ post, children: buildTree(post.id) }), [post, buildTree]);
 
   const toggle = (id: string) => {
     setExpandedNodes(prev => ({ ...prev, [id]: !prev[id] }));
@@ -140,7 +143,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
               <Select
                 value={visibility}
                 onChange={e => handleVisibilityChange(e.target.value)}
-                options={VISIBILITY_OPTIONS as any}
+                options={VISIBILITY_OPTIONS as option[]}
               />
             </div>
           </div>
