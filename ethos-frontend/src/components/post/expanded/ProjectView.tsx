@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGraph } from '../../../hooks/useGraph';
 import GraphLayout from '../../layout/GraphLayout';
 import GitFileBrowserInline from '../../git/GitFileBrowserInline';
-import TeamPanel from '../../quest/TeamPanel';
-import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS } from '../../../constants/options';
+import InviteForm from '../../quest/InviteForm';
 import { ROUTES } from '../../../constants/routes';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
@@ -146,14 +144,29 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
           hidden={activeTab !== 'options'}
           className="space-y-4"
         >
-          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Members</label>
+            <ul className="ml-4 list-disc text-sm">
+              {(selected.collaborators || []).map((c, i) => (
+                <li key={i}>
+                  {c.username ? `@${c.username}` : 'Unknown'}
+                  {c.roles && c.roles.length ? ` - ${c.roles.join(', ')}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {selected.type === 'task' && <InviteForm taskId={selected.id} />}
           <div>
             <label className="block mb-1 text-xs font-semibold">Visibility</label>
-            <Select
-              value={visibility}
-              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-              options={VISIBILITY_OPTIONS}
-            />
+            <label className="inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={visibility === 'private'}
+                onChange={e => handleVisibilityChange(e.target.checked ? 'private' : 'public')}
+              />
+              Private
+            </label>
             <label className="mt-1 inline-flex items-center text-xs">
               <input
                 type="checkbox"
