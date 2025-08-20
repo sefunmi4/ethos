@@ -15,7 +15,8 @@ export default {
     'remark-gfm': '<rootDir>/tests/__mocks__/remark-gfm.ts',
     '.*/hooks/usePermissions$': '<rootDir>/tests/__mocks__/usePermissions.ts',
     '.*/hooks/useGit$': '<rootDir>/tests/__mocks__/useGit.ts',
-    'react-force-graph-2d': '<rootDir>/tests/__mocks__/react-force-graph-2d.tsx'
+    'react-force-graph-2d': '<rootDir>/tests/__mocks__/react-force-graph-2d.tsx',
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy'
   },
   testMatch: [
     '<rootDir>/src/api/quest.test.ts',

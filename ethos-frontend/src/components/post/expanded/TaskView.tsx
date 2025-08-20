@@ -9,6 +9,7 @@ import { VISIBILITY_OPTIONS } from '../../../constants/options';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
+import styles from './expandedCard.module.css';
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -78,14 +79,23 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
     return (
       <li key={node.post.id} className="pl-2">
         <div
+          role="treeitem"
+          aria-expanded={hasChildren ? isExpanded : undefined}
+          tabIndex={0}
           className="flex items-center cursor-pointer"
           onClick={() => setSelected(node.post)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') setSelected(node.post);
+            if (e.key === 'ArrowRight' && hasChildren && !isExpanded) toggle(node.post.id);
+            if (e.key === 'ArrowLeft' && hasChildren && isExpanded) toggle(node.post.id);
+          }}
         >
           {hasChildren && (
             <button
               type="button"
               onClick={e => { e.stopPropagation(); toggle(node.post.id); }}
               className="mr-1"
+              aria-expanded={isExpanded}
             >
               {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
             </button>
@@ -95,7 +105,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
           </span>
         </div>
         {hasChildren && isExpanded && (
-          <ul className="ml-4">
+          <ul className="ml-4" role="group">
             {node.children.map(child => renderNode(child))}
           </ul>
         )}
@@ -113,48 +123,67 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex gap-2 text-sm text-primary" data-testid="task-view">
-      <div className="w-64 border border-secondary rounded p-2 overflow-auto">
-        <ul>{renderNode(tree)}</ul>
+    <div className={styles.split} data-testid="task-view">
+      <div className={`${styles.panel} ${styles.sidebar}`}>
+        <ul role="tree">{renderNode(tree)}</ul>
       </div>
-      <div className="flex-1 border border-secondary rounded p-2">
-        <div className="flex border-b border-secondary mb-2 text-xs">
+      <div className={`${styles.panel} ${styles.main}`}>
+        <div className={styles.tabList} role="tablist">
           <button
-            className={`px-2 py-1 ${activeTab === 'planner' ? 'font-semibold' : ''}`}
+            id="planner-tab"
+            role="tab"
+            aria-selected={activeTab === 'planner'}
+            aria-controls="planner-panel"
+            tabIndex={activeTab === 'planner' ? 0 : -1}
+            className={`${styles.tab} ${activeTab === 'planner' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('planner')}
           >
             Planner
           </button>
           <button
-            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
+            id="options-tab"
+            role="tab"
+            aria-selected={activeTab === 'options'}
+            aria-controls="options-panel"
+            tabIndex={activeTab === 'options' ? 0 : -1}
+            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options
           </button>
         </div>
-        {activeTab === 'planner' ? (
-          selected.taskType === 'folder' ? (
+        <div
+          id="planner-panel"
+          role="tabpanel"
+          aria-labelledby="planner-tab"
+          hidden={activeTab !== 'planner'}
+        >
+          {selected.taskType === 'folder' ? (
             <TaskKanbanBoard questId={post.questId || ''} linkedNodeId={selected.id} />
           ) : (
             <SubtaskChecklist questId={post.questId || ''} nodeId={selected.id} />
-          )
-        ) : (
-          <div className="space-y-4">
-            <TeamPanel questId={post.questId || ''} node={selected} />
-            <div>
-              <label className="block mb-1 text-xs font-semibold">Visibility</label>
-                <Select
-                  value={visibility}
-                  onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-                  options={VISIBILITY_OPTIONS}
-                />
-            </div>
+          )}
+        </div>
+        <div
+          id="options-panel"
+          role="tabpanel"
+          aria-labelledby="options-tab"
+          hidden={activeTab !== 'options'}
+          className="space-y-4"
+        >
+          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Visibility</label>
+            <Select
+              value={visibility}
+              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
+              options={VISIBILITY_OPTIONS}
+            />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default TaskView;
-

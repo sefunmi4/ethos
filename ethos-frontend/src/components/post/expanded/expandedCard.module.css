@@ -1,0 +1,35 @@
+.base {
+  @apply text-sm text-primary;
+}
+
+.split {
+  @apply flex gap-2 text-sm text-primary;
+}
+
+.panel {
+  @apply border border-secondary rounded p-2;
+}
+
+.sidebar {
+  @apply w-64 overflow-auto;
+}
+
+.sidebarWide {
+  @apply w-72 overflow-auto;
+}
+
+.main {
+  @apply flex-1;
+}
+
+.tabList {
+  @apply flex border-b border-secondary mb-2 text-xs;
+}
+
+.tab {
+  @apply px-2 py-1;
+}
+
+.activeTab {
+  @apply font-semibold;
+}
