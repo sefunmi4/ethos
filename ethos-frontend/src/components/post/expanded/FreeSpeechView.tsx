@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MarkdownRenderer from '../../ui/MarkdownRenderer';
 import MediaPreview from '../../ui/MediaPreview';
 import { TAG_BASE } from '../../../constants/styles';
@@ -32,16 +32,20 @@ const FreeSpeechView: React.FC<ViewProps> = ({ post, expanded, compact, onToggle
 
   return (
     <div className={styles.base}>
-      <Link
-        to={ROUTES.POST(post.id)}
+      <a
+        href={ROUTES.POST(post.id)}
         className="block focus:outline-none"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(ROUTES.POST(post.id));
+        }}
         onKeyDown={handleKeyDown}
       >
         {post.title && <div className="font-semibold">{post.title}</div>}
         <div className={clampClass}>
           <MarkdownRenderer content={displayContent} onToggleTask={onToggleTask} />
         </div>
-      </Link>
+      </a>
       <MediaPreview media={post.mediaPreviews} />
       {post.tags && post.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">

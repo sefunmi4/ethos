@@ -7,6 +7,8 @@ import TeamPanel from '../../quest/TeamPanel';
 import { Select } from '../../ui';
 import { VISIBILITY_OPTIONS } from '../../../constants/options';
 import { updatePost } from '../../../api/post';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
 import styles from './expandedCard.module.css';
@@ -26,6 +28,7 @@ type TreeNode = {
 
 const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const graph = useGraph();
+  const navigate = useNavigate();
   const loadGraph = graph.loadGraph;
   const [selected, setSelected] = useState<Post>(post);
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({ [post.id]: true });
@@ -78,18 +81,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
     const hasChildren = node.children.length > 0;
     return (
       <li key={node.post.id} className="pl-2">
-        <div
-          role="treeitem"
-          aria-expanded={hasChildren ? isExpanded : undefined}
-          tabIndex={0}
-          className="flex items-center cursor-pointer"
-          onClick={() => setSelected(node.post)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') setSelected(node.post);
-            if (e.key === 'ArrowRight' && hasChildren && !isExpanded) toggle(node.post.id);
-            if (e.key === 'ArrowLeft' && hasChildren && isExpanded) toggle(node.post.id);
-          }}
-        >
+        <div className="flex items-center">
           {hasChildren && (
             <button
               type="button"
@@ -100,9 +92,28 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
               {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
             </button>
           )}
-          <span className={selected.id === node.post.id ? 'font-semibold truncate' : 'truncate'}>
+          <a
+            role="treeitem"
+            aria-expanded={hasChildren ? isExpanded : undefined}
+            href={ROUTES.TASK(node.post.id)}
+            className={selected.id === node.post.id ? 'font-semibold truncate cursor-pointer' : 'truncate cursor-pointer'}
+            onClick={(e) => {
+              e.preventDefault();
+              setSelected(node.post);
+              navigate(ROUTES.TASK(node.post.id));
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                setSelected(node.post);
+                navigate(ROUTES.TASK(node.post.id));
+              }
+              if (e.key === 'ArrowRight' && hasChildren && !isExpanded) toggle(node.post.id);
+              if (e.key === 'ArrowLeft' && hasChildren && isExpanded) toggle(node.post.id);
+            }}
+          >
             {node.post.content}
-          </span>
+          </a>
         </div>
         {hasChildren && isExpanded && (
           <ul className="ml-4" role="group">

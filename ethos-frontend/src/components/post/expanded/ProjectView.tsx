@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGraph } from '../../../hooks/useGraph';
 import GraphLayout from '../../layout/GraphLayout';
 import GitFileBrowserInline from '../../git/GitFileBrowserInline';
@@ -117,12 +117,22 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
         >
           {selected.type === 'task' ? (
             <>
-              <Link
-                to={ROUTES.POST(selected.id)}
+              <a
+                href={ROUTES.TASK(selected.id)}
                 className="text-sm text-accent underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(ROUTES.TASK(selected.id));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    navigate(ROUTES.TASK(selected.id));
+                  }
+                }}
               >
                 {selected.content}
-              </Link>
+              </a>
               <GitFileBrowserInline questId={selected.questId || ''} />
             </>
           ) : (

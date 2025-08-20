@@ -55,7 +55,14 @@ export const ROUTES = {
      * @param id - Project ID
      */
     PROJECT: (id = ':id') => `/project/${id}`,
-  
+
+    /**
+     * Task page by ID
+     * @param id - Task ID
+     * @returns A route string like `/task/abc123`
+     */
+    TASK: (id = ':id') => `/task/${id}`,
+
     /**
      * Post page by ID (private)
      * @param id - Post ID
