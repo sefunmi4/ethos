@@ -11,6 +11,7 @@ import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
 import type { TaskEdge } from '../../../types/questTypes';
+import styles from './expandedCard.module.css';
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -70,8 +71,8 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex gap-2 text-sm text-primary" data-testid="project-view">
-      <div className="w-72 border border-secondary rounded p-2 overflow-auto">
+    <div className={styles.split} data-testid="project-view">
+      <div className={`${styles.panel} ${styles.sidebarWide}`}>
         <GraphLayout
           items={allNodes}
           edges={allEdges}
@@ -82,24 +83,40 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
           showInspector={false}
         />
       </div>
-      <div className="flex-1 border border-secondary rounded p-2">
-        <div className="flex border-b border-secondary mb-2 text-xs">
+      <div className={`${styles.panel} ${styles.main}`}>
+        <div className={styles.tabList} role="tablist">
           <button
-            className={`px-2 py-1 ${activeTab === 'folders' ? 'font-semibold' : ''}`}
+            id="folders-tab"
+            role="tab"
+            aria-selected={activeTab === 'folders'}
+            aria-controls="folders-panel"
+            tabIndex={activeTab === 'folders' ? 0 : -1}
+            className={`${styles.tab} ${activeTab === 'folders' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('folders')}
           >
             Folders
           </button>
           <button
-            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
+            id="options-tab"
+            role="tab"
+            aria-selected={activeTab === 'options'}
+            aria-controls="options-panel"
+            tabIndex={activeTab === 'options' ? 0 : -1}
+            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options
           </button>
         </div>
-        {activeTab === 'folders' ? (
-          selected.type === 'task' ? (
-            <div className="space-y-2">
+        <div
+          id="folders-panel"
+          role="tabpanel"
+          aria-labelledby="folders-tab"
+          hidden={activeTab !== 'folders'}
+          className="space-y-2"
+        >
+          {selected.type === 'task' ? (
+            <>
               <Link
                 to={ROUTES.POST(selected.id)}
                 className="text-sm text-accent underline"
@@ -107,32 +124,37 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
                 {selected.content}
               </Link>
               <GitFileBrowserInline questId={selected.questId || ''} />
-            </div>
+            </>
           ) : (
             <div>Select a task to view its folders.</div>
-          )
-        ) : (
-          <div className="space-y-4">
-            <TeamPanel questId={post.questId || ''} node={selected} />
-            <div>
-              <label className="block mb-1 text-xs font-semibold">Visibility</label>
-              <Select
-                value={visibility}
-                onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-                options={VISIBILITY_OPTIONS}
+          )}
+        </div>
+        <div
+          id="options-panel"
+          role="tabpanel"
+          aria-labelledby="options-tab"
+          hidden={activeTab !== 'options'}
+          className="space-y-4"
+        >
+          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Visibility</label>
+            <Select
+              value={visibility}
+              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
+              options={VISIBILITY_OPTIONS}
+            />
+            <label className="mt-1 inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-1"
+                checked={cascade}
+                onChange={e => setCascade(e.target.checked)}
               />
-              <label className="mt-1 inline-flex items-center text-xs">
-                <input
-                  type="checkbox"
-                  className="mr-1"
-                  checked={cascade}
-                  onChange={e => setCascade(e.target.checked)}
-                />
-                Cascade to subtasks
-              </label>
-            </div>
+              Cascade to subtasks
+            </label>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import FileEditorPanel from '../../quest/FileEditorPanel';
 import { useAuth } from '../../../contexts/AuthContext';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
+import styles from './expandedCard.module.css';
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -67,7 +68,7 @@ const FileView: React.FC<ViewProps> = ({ post, expanded }) => {
   };
 
   return (
-    <div className="text-sm text-primary">
+    <div className={styles.base}>
       {post.title && <div className="font-semibold mb-2">{post.title}</div>}
       <div ref={containerRef} style={panelStyle}>
         {editing ? (

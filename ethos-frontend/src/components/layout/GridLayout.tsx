@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
+  KeyboardSensor,
   closestCenter,
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -115,7 +116,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   const [index, setIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
   );
   const scrollToIndex = useCallback((i: number) => {
     const el = containerRef.current;
@@ -140,6 +142,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
       return next;
     });
   }, [items.length, scrollToIndex]);
+
+  const handleContainerKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    },
+    [handlePrev, handleNext]
+  );
 
 
   /** Context for board updates is needed in several layouts. Call it here so
@@ -346,6 +356,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
         <div
           ref={containerRef}
           className="flex overflow-x-auto gap-4 snap-x snap-mandatory px-2 pb-4 scroll-smooth"
+          tabIndex={0}
+          onKeyDown={handleContainerKeyDown}
         >
           {items.map((item, idx) => (
             <div
