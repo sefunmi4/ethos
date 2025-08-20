@@ -92,6 +92,7 @@ const App: React.FC = () => {
                   <Route path={ROUTES.QUEST()} element={<Quest />} />
                   <Route path={ROUTES.PROJECT()} element={<Project />} />
                     <Route path={ROUTES.POST()} element={<Post />} />
+                    <Route path={ROUTES.TASK()} element={<Post />} />
                     <Route path="/board/quests" element={<Navigate to={ROUTES.BOARD('quest-board')} replace />} />
                     <Route path={ROUTES.BOARD()} element={<Board />} />
                     <Route path={ROUTES.TEAM_BOARD()} element={<TeamBoard />} />

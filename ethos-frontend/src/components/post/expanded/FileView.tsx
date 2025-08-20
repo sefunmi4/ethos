@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import FileEditorPanel from '../../quest/FileEditorPanel';
 import { useAuth } from '../../../contexts/AuthContext';
 import { updatePost } from '../../../api/post';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import styles from './expandedCard.module.css';
 
@@ -15,6 +17,12 @@ interface ViewProps {
 
 const FileView: React.FC<ViewProps> = ({ post, expanded }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>) => {
+    if (e.key === 'Enter') {
+      navigate(ROUTES.POST(post.id));
+    }
+  };
   const canEdit = user?.id === post.authorId || post.collaborators?.some(c => c.userId === user?.id);
   const [content, setContent] = useState(post.content);
   const [draft, setDraft] = useState(post.content);
@@ -69,7 +77,19 @@ const FileView: React.FC<ViewProps> = ({ post, expanded }) => {
 
   return (
     <div className={styles.base}>
-      {post.title && <div className="font-semibold mb-2">{post.title}</div>}
+      {post.title && (
+        <a
+          href={ROUTES.POST(post.id)}
+          className="font-semibold mb-2 block"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(ROUTES.POST(post.id));
+          }}
+          onKeyDown={handleTitleKeyDown}
+        >
+          {post.title}
+        </a>
+      )}
       <div ref={containerRef} style={panelStyle}>
         {editing ? (
           <textarea
