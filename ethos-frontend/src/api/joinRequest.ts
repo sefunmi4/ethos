@@ -5,9 +5,11 @@ const BASE_URL = '/join-requests';
 
 export const createJoinRequest = async (
   taskId: string,
+  requesterId: string,
   requestPostId?: string,
+  meta?: Record<string, unknown>,
 ): Promise<JoinRequest> => {
-  const res = await axiosWithAuth.post(BASE_URL, { taskId, requestPostId });
+  const res = await axiosWithAuth.post(BASE_URL, { taskId, requesterId, requestPostId, meta });
   return res.data;
 };
 
@@ -20,4 +22,3 @@ export const declineJoinRequest = async (id: string): Promise<JoinRequest> => {
   const res = await axiosWithAuth.patch(`${BASE_URL}/${id}/decline`);
   return res.data;
 };
-

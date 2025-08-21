@@ -3,9 +3,7 @@ import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { useGraph } from '../../../hooks/useGraph';
 import TaskKanbanBoard from '../../quest/TaskKanbanBoard';
 import SubtaskChecklist from '../../quest/SubtaskChecklist';
-import TeamPanel from '../../quest/TeamPanel';
-import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS } from '../../../constants/options';
+import InviteForm from '../../quest/InviteForm';
 import { updatePost } from '../../../api/post';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
@@ -36,6 +34,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const [visibility, setVisibility] = useState<Visibility>(
     post.visibility || 'public'
   );
+  const [cascade, setCascade] = useState(false);
 
   useEffect(() => {
     if (post.questId) {
@@ -127,7 +126,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const handleVisibilityChange = async (val: Visibility) => {
     setVisibility(val);
     try {
-      await updatePost(selected.id, { visibility: val });
+      await updatePost(selected.id, { visibility: val, cascade });
     } catch (err) {
       console.error('[TaskView] failed to update visibility', err);
     }
@@ -182,14 +181,38 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
           hidden={activeTab !== 'options'}
           className="space-y-4"
         >
-          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Members</label>
+            <ul className="ml-4 list-disc text-sm">
+              {(selected.collaborators || []).map((c, i) => (
+                <li key={i}>
+                  {c.username ? `@${c.username}` : 'Unknown'}
+                  {c.roles && c.roles.length ? ` - ${c.roles.join(', ')}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <InviteForm taskId={selected.id} />
           <div>
             <label className="block mb-1 text-xs font-semibold">Visibility</label>
-            <Select
-              value={visibility}
-              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-              options={VISIBILITY_OPTIONS}
-            />
+            <label className="inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={visibility === 'private'}
+                onChange={e => handleVisibilityChange(e.target.checked ? 'private' : 'public')}
+              />
+              Private
+            </label>
+            <label className="mt-1 inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-1"
+                checked={cascade}
+                onChange={e => setCascade(e.target.checked)}
+              />
+              Cascade to subtasks
+            </label>
           </div>
         </div>
       </div>
