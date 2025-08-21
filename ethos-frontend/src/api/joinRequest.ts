@@ -7,7 +7,7 @@ export const createJoinRequest = async (
   taskId: string,
   requesterId: string,
   requestPostId?: string,
-  meta?: Record<string, any>,
+  meta?: Record<string, unknown>,
 ): Promise<JoinRequest> => {
   const res = await axiosWithAuth.post(BASE_URL, { taskId, requesterId, requestPostId, meta });
   return res.data;
