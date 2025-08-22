@@ -113,7 +113,7 @@ test('renders free speech post with clamped text and navigates on click', () => 
       <PostCard post={freeSpeech} />
     </BrowserRouter>
   );
-  expect(container.querySelector('.clamp-4')).toBeInTheDocument();
+  expect(container.querySelector('.line-clamp-4')).toBeInTheDocument();
   const link = screen.getByRole('link');
   fireEvent.keyDown(link, { key: 'Enter' });
   expect(navMock).toHaveBeenCalledWith(ROUTES.POST('fs1'));

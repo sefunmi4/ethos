@@ -22,7 +22,7 @@ const FreeSpeechView: React.FC<ViewProps> = ({ post, expanded, compact, onToggle
   const content = post.renderedContent || post.content;
   const isLong = content.length > PREVIEW_LIMIT;
   const displayContent = isLong && !expanded ? content.slice(0, PREVIEW_LIMIT) + '…' : content;
-  const clampClass = expanded ? '' : compact ? 'clamp-3' : 'clamp-4';
+  const clampClass = expanded ? '' : compact ? 'line-clamp-3' : 'line-clamp-4';
   const navigate = useNavigate();
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>) => {
     if (e.key === 'Enter') {
