@@ -3,15 +3,13 @@ import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { useGraph } from '../../../hooks/useGraph';
 import TaskKanbanBoard from '../../quest/TaskKanbanBoard';
 import SubtaskChecklist from '../../quest/SubtaskChecklist';
-import TeamPanel from '../../quest/TeamPanel';
-import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS } from '../../../constants/options';
+import InviteForm from '../../quest/InviteForm';
 import { updatePost } from '../../../api/post';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -36,6 +34,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const [visibility, setVisibility] = useState<Visibility>(
     post.visibility || 'public'
   );
+  const [cascade, setCascade] = useState(false);
 
   useEffect(() => {
     if (post.questId) {
@@ -127,26 +126,26 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   const handleVisibilityChange = async (val: Visibility) => {
     setVisibility(val);
     try {
-      await updatePost(selected.id, { visibility: val });
+      await updatePost(selected.id, { visibility: val, cascade });
     } catch (err) {
       console.error('[TaskView] failed to update visibility', err);
     }
   };
 
   return (
-    <div className={styles.split} data-testid="task-view">
-      <div className={`${styles.panel} ${styles.sidebar}`}>
+    <div className="flex gap-2 text-sm text-primary" data-testid="task-view">
+      <div className="border border-secondary rounded p-2 w-64 overflow-auto">
         <ul role="tree">{renderNode(tree)}</ul>
       </div>
-      <div className={`${styles.panel} ${styles.main}`}>
-        <div className={styles.tabList} role="tablist">
+      <div className="border border-secondary rounded p-2 flex-1">
+        <div className="flex border-b border-secondary mb-2 text-xs" role="tablist">
           <button
             id="planner-tab"
             role="tab"
             aria-selected={activeTab === 'planner'}
             aria-controls="planner-panel"
             tabIndex={activeTab === 'planner' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'planner' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'planner' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('planner')}
           >
             Planner
@@ -157,7 +156,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
             aria-selected={activeTab === 'options'}
             aria-controls="options-panel"
             tabIndex={activeTab === 'options' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options
@@ -182,14 +181,38 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
           hidden={activeTab !== 'options'}
           className="space-y-4"
         >
-          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Members</label>
+            <ul className="ml-4 list-disc text-sm">
+              {(selected.collaborators || []).map((c, i) => (
+                <li key={i}>
+                  {c.username ? `@${c.username}` : 'Unknown'}
+                  {c.roles && c.roles.length ? ` - ${c.roles.join(', ')}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <InviteForm taskId={selected.id} />
           <div>
             <label className="block mb-1 text-xs font-semibold">Visibility</label>
-            <Select
-              value={visibility}
-              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-              options={VISIBILITY_OPTIONS}
-            />
+            <label className="inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={visibility === 'private'}
+                onChange={e => handleVisibilityChange(e.target.checked ? 'private' : 'public')}
+              />
+              Private
+            </label>
+            <label className="mt-1 inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-1"
+                checked={cascade}
+                onChange={e => setCascade(e.target.checked)}
+              />
+              Cascade to subtasks
+            </label>
           </div>
         </div>
       </div>

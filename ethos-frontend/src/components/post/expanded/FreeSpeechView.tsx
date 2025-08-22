@@ -5,7 +5,7 @@ import MediaPreview from '../../ui/MediaPreview';
 import { TAG_BASE } from '../../../constants/styles';
 import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 const PREVIEW_LIMIT = 240;
 
@@ -31,7 +31,7 @@ const FreeSpeechView: React.FC<ViewProps> = ({ post, expanded, compact, onToggle
   };
 
   return (
-    <div className={styles.base}>
+    <div className="text-sm text-primary">
       <a
         href={ROUTES.POST(post.id)}
         className="block focus:outline-none"

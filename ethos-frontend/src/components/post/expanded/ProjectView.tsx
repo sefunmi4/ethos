@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useGraph } from '../../../hooks/useGraph';
 import GraphLayout from '../../layout/GraphLayout';
 import GitFileBrowserInline from '../../git/GitFileBrowserInline';
-import TeamPanel from '../../quest/TeamPanel';
-import { Select } from '../../ui';
-import { VISIBILITY_OPTIONS } from '../../../constants/options';
+import InviteForm from '../../quest/InviteForm';
 import { ROUTES } from '../../../constants/routes';
 import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
 import type { TaskEdge } from '../../../types/questTypes';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -71,8 +69,8 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
   };
 
   return (
-    <div className={styles.split} data-testid="project-view">
-      <div className={`${styles.panel} ${styles.sidebarWide}`}>
+    <div className="flex gap-2 text-sm text-primary" data-testid="project-view">
+      <div className="border border-secondary rounded p-2 w-72 overflow-auto">
         <GraphLayout
           items={allNodes}
           edges={allEdges}
@@ -83,15 +81,15 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
           showInspector={false}
         />
       </div>
-      <div className={`${styles.panel} ${styles.main}`}>
-        <div className={styles.tabList} role="tablist">
+      <div className="border border-secondary rounded p-2 flex-1">
+        <div className="flex border-b border-secondary mb-2 text-xs" role="tablist">
           <button
             id="folders-tab"
             role="tab"
             aria-selected={activeTab === 'folders'}
             aria-controls="folders-panel"
             tabIndex={activeTab === 'folders' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'folders' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'folders' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('folders')}
           >
             Folders
@@ -102,7 +100,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
             aria-selected={activeTab === 'options'}
             aria-controls="options-panel"
             tabIndex={activeTab === 'options' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options
@@ -146,14 +144,29 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
           hidden={activeTab !== 'options'}
           className="space-y-4"
         >
-          <TeamPanel questId={post.questId || ''} node={selected} />
+          <div>
+            <label className="block mb-1 text-xs font-semibold">Members</label>
+            <ul className="ml-4 list-disc text-sm">
+              {(selected.collaborators || []).map((c, i) => (
+                <li key={i}>
+                  {c.username ? `@${c.username}` : 'Unknown'}
+                  {c.roles && c.roles.length ? ` - ${c.roles.join(', ')}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {selected.type === 'task' && <InviteForm taskId={selected.id} />}
           <div>
             <label className="block mb-1 text-xs font-semibold">Visibility</label>
-            <Select
-              value={visibility}
-              onChange={e => handleVisibilityChange(e.target.value as Visibility)}
-              options={VISIBILITY_OPTIONS}
-            />
+            <label className="inline-flex items-center text-xs">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={visibility === 'private'}
+                onChange={e => handleVisibilityChange(e.target.checked ? 'private' : 'public')}
+              />
+              Private
+            </label>
             <label className="mt-1 inline-flex items-center text-xs">
               <input
                 type="checkbox"
