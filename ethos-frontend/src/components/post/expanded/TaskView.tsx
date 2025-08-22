@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -133,19 +133,19 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   };
 
   return (
-    <div className={styles.split} data-testid="task-view">
-      <div className={`${styles.panel} ${styles.sidebar}`}>
+    <div className="flex gap-2 text-sm text-primary" data-testid="task-view">
+      <div className="border border-secondary rounded p-2 w-64 overflow-auto">
         <ul role="tree">{renderNode(tree)}</ul>
       </div>
-      <div className={`${styles.panel} ${styles.main}`}>
-        <div className={styles.tabList} role="tablist">
+      <div className="border border-secondary rounded p-2 flex-1">
+        <div className="flex border-b border-secondary mb-2 text-xs" role="tablist">
           <button
             id="planner-tab"
             role="tab"
             aria-selected={activeTab === 'planner'}
             aria-controls="planner-panel"
             tabIndex={activeTab === 'planner' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'planner' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'planner' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('planner')}
           >
             Planner
@@ -156,7 +156,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
             aria-selected={activeTab === 'options'}
             aria-controls="options-panel"
             tabIndex={activeTab === 'options' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options

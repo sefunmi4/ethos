@@ -9,7 +9,7 @@ import { updatePost } from '../../../api/post';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
 import type { Visibility } from '../../../types/common';
 import type { TaskEdge } from '../../../types/questTypes';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -69,8 +69,8 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
   };
 
   return (
-    <div className={styles.split} data-testid="project-view">
-      <div className={`${styles.panel} ${styles.sidebarWide}`}>
+    <div className="flex gap-2 text-sm text-primary" data-testid="project-view">
+      <div className="border border-secondary rounded p-2 w-72 overflow-auto">
         <GraphLayout
           items={allNodes}
           edges={allEdges}
@@ -81,15 +81,15 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
           showInspector={false}
         />
       </div>
-      <div className={`${styles.panel} ${styles.main}`}>
-        <div className={styles.tabList} role="tablist">
+      <div className="border border-secondary rounded p-2 flex-1">
+        <div className="flex border-b border-secondary mb-2 text-xs" role="tablist">
           <button
             id="folders-tab"
             role="tab"
             aria-selected={activeTab === 'folders'}
             aria-controls="folders-panel"
             tabIndex={activeTab === 'folders' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'folders' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'folders' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('folders')}
           >
             Folders
@@ -100,7 +100,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
             aria-selected={activeTab === 'options'}
             aria-controls="options-panel"
             tabIndex={activeTab === 'options' ? 0 : -1}
-            className={`${styles.tab} ${activeTab === 'options' ? styles.activeTab : ''}`}
+            className={`px-2 py-1 ${activeTab === 'options' ? 'font-semibold' : ''}`}
             onClick={() => setActiveTab('options')}
           >
             Options

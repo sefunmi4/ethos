@@ -5,7 +5,7 @@ import { updatePost } from '../../../api/post';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import type { Post, EnrichedPost } from '../../../types/postTypes';
-import styles from './expandedCard.module.css';
+// Tailwind utility classes used directly
 
 export type PostWithExtras = Post & Partial<EnrichedPost>;
 
@@ -76,7 +76,7 @@ const FileView: React.FC<ViewProps> = ({ post, expanded }) => {
   };
 
   return (
-    <div className={styles.base}>
+    <div className="text-sm text-primary">
       {post.title && (
         <a
           href={ROUTES.POST(post.id)}
