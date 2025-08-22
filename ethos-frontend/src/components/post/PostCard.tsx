@@ -232,7 +232,9 @@ const PostCard: React.FC<PostCardProps> = ({
     };
   }, [ctxBoardId, post, linkedTitle]);
   const titleText = linkedTitle || post.title || makeHeader(post.content);
-  const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>([]);
+  const [summaryTags, setSummaryTags] = useState<SummaryTagData[]>(() =>
+    post.tags?.includes('request') ? [{ type: 'request', label: 'Request' }] : []
+  );
   useEffect(() => {
     let active = true;
     buildSummaryTags(post, questTitle, questId).then(tags => {

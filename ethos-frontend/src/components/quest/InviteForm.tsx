@@ -72,7 +72,7 @@ const InviteForm: React.FC<InviteFormProps> = ({ taskId }) => {
           className="flex-1 border px-2 py-1 rounded"
         />
         <button type="submit" className="text-xs px-2 py-1 bg-blue-600 text-white rounded" disabled={loading}>
-          Request
+          Send
         </button>
       </form>
     </div>
