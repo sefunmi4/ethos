@@ -69,7 +69,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex gap-2 text-sm text-primary" data-testid="project-view">
+    <div className="flex flex-col md:flex-row gap-2 text-sm text-primary" data-testid="project-view">
       <div className="border border-secondary rounded p-2 w-72 overflow-auto">
         <GraphLayout
           items={allNodes}

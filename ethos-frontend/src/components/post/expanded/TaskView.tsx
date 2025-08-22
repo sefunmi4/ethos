@@ -133,7 +133,7 @@ const TaskView: React.FC<TaskViewProps> = ({ post }) => {
   };
 
   return (
-    <div className="flex gap-2 text-sm text-primary" data-testid="task-view">
+    <div className="flex flex-col md:flex-row gap-2 text-sm text-primary" data-testid="task-view">
       <div className="border border-secondary rounded p-2 w-64 overflow-auto">
         <ul role="tree">{renderNode(tree)}</ul>
       </div>
