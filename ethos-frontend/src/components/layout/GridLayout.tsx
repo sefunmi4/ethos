@@ -82,7 +82,7 @@ const DraggableCard: React.FC<{
     if (!e.ctrlKey) return;
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     e.preventDefault();
-    const idx = defaultKanbanColumns.indexOf((item as any).status || '');
+    const idx = defaultKanbanColumns.indexOf(item.status ?? '');
     if (idx === -1) return;
     const dest = defaultKanbanColumns[idx + (e.key === 'ArrowLeft' ? -1 : 1)];
     if (dest) onMove(item, dest);
@@ -304,21 +304,17 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     );
     return Array.from({ length: limit }, (_, i) => start + i);
   }, [pageIndex, pageCount]);
-  if (!items || items.length === 0) {
-    return (
-      <div className="text-center text-secondary py-12 text-sm">
-        No contributions found.
-      </div>
-    );
-  }
+  const isEmpty = !items || items.length === 0;
 
   /** Grouping logic for Kanban */
-  const grouped = defaultKanbanColumns.reduce((acc, col) => {
-    acc[col] = items.filter(
-      (item) => 'status' in item && item.status === col
-    );
-    return acc;
-  }, {} as Record<string, Post[]>);
+  const grouped = useMemo(() => {
+    return defaultKanbanColumns.reduce((acc, col) => {
+      acc[col] = items.filter(
+        (item) => 'status' in item && item.status === col
+      );
+      return acc;
+    }, {} as Record<string, Post[]>);
+  }, [items]);
 
   /** 📌 Kanban Layout */
 
@@ -355,6 +351,14 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     const dragged: Post | undefined = active.data.current?.item;
     void moveItem(dragged, dest);
   };
+
+  if (isEmpty) {
+    return (
+      <div className="text-center text-secondary py-12 text-sm">
+        No contributions found.
+      </div>
+    );
+  }
 
   if (layout === 'kanban') {
     return (
