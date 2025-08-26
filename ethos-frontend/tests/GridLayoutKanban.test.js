@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
+import { render, act, fireEvent } from '@testing-library/react';
 
 // Mock ESM-only deps used deep in GridLayout to avoid Jest ESM parsing issues
 jest.mock('react-markdown', () => () => null, { virtual: true });
@@ -105,5 +105,23 @@ describe.skip('GridLayout kanban drag', () => {
     expect(updatePost).toHaveBeenCalledWith('t1', { status: 'Done' });
     expect(archivePost).toHaveBeenCalledWith('t1');
     expect(removeItemFromBoard).toHaveBeenCalledWith('b1', 't1');
+  });
+});
+
+describe('GridLayout kanban keyboard', () => {
+  it('moves card with Ctrl+ArrowRight', async () => {
+    const { getByText } = render(
+      React.createElement(GridLayout, {
+        items: [basePost],
+        questId: 'q1',
+        layout: 'kanban',
+      })
+    );
+    const card = getByText('Task 1').closest('div');
+    await act(async () => {
+      fireEvent.keyDown(card, { key: 'ArrowRight', ctrlKey: true });
+      await Promise.resolve();
+    });
+    expect(updatePost).toHaveBeenCalledWith('t1', { status: 'In Progress' });
   });
 });
