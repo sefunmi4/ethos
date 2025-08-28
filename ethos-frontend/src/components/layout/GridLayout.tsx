@@ -52,7 +52,25 @@ const DraggableCard: React.FC<{
   expandedId?: string | null;
   onExpand?: (id: string | null) => void;
   boardId?: string;
-}> = ({ item, user, compact, onEdit, onDelete, initialExpanded, expandedId, onExpand, boardId }) => {
+  focused: boolean;
+  onFocus: () => void;
+  onBlur: () => void;
+  onMove: (item: Post, dest: string) => void;
+}> = ({
+  item,
+  user,
+  compact,
+  onEdit,
+  onDelete,
+  initialExpanded,
+  expandedId,
+  onExpand,
+  boardId,
+  focused,
+  onFocus,
+  onBlur,
+  onMove,
+}) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -60,11 +78,28 @@ const DraggableCard: React.FC<{
 
   const style = transform ? { transform: CSS.Translate.toString(transform) } : undefined;
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!e.ctrlKey) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const idx = defaultKanbanColumns.indexOf(item.status ?? '');
+    if (idx === -1) return;
+    const dest = defaultKanbanColumns[idx + (e.key === 'ArrowLeft' ? -1 : 1)];
+    if (dest) onMove(item, dest);
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={isDragging ? 'dragging' : ''}
+      className={
+        (isDragging ? 'dragging ' : '') +
+        (focused ? 'ring-2 ring-accent ' : '')
+      }
+      tabIndex={0}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={handleKeyDown}
       {...attributes}
       {...listeners}
     >
@@ -115,6 +150,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({
   const indexRef = useRef(0);
   const [index, setIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [ariaMessage, setAriaMessage] = useState('');
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor)
@@ -267,45 +304,61 @@ const GridLayout: React.FC<GridLayoutProps> = ({
     );
     return Array.from({ length: limit }, (_, i) => start + i);
   }, [pageIndex, pageCount]);
-  if (!items || items.length === 0) {
+  const isEmpty = !items || items.length === 0;
+
+  /** Grouping logic for Kanban */
+  const grouped = useMemo(() => {
+    return defaultKanbanColumns.reduce((acc, col) => {
+      acc[col] = items.filter(
+        (item) => 'status' in item && item.status === col
+      );
+      return acc;
+    }, {} as Record<string, Post[]>);
+  }, [items]);
+
+  /** 📌 Kanban Layout */
+
+  const moveItem = useCallback(
+    async (dragged: Post | undefined, dest: string) => {
+      if (!dragged || dragged.status === dest) return;
+
+      const optimistic = { ...dragged, status: dest };
+      if (selectedBoard) {
+        updateBoardItem(selectedBoard, optimistic as unknown as BoardItem);
+      }
+
+      try {
+        const updated = await updatePost(dragged.id, { status: dest });
+        if (selectedBoard) {
+          updateBoardItem(selectedBoard, updated as unknown as BoardItem);
+        }
+        if (dest === 'Done') {
+          await archivePost(dragged.id);
+          if (selectedBoard) removeItemFromBoard(selectedBoard, dragged.id);
+        }
+        setAriaMessage(`Moved to ${dest}`);
+      } catch (err) {
+        console.error('[GridLayout] Failed to update post status:', err);
+      }
+    },
+    [selectedBoard, updateBoardItem, removeItemFromBoard]
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const dest = over.id as string;
+    const dragged: Post | undefined = active.data.current?.item;
+    void moveItem(dragged, dest);
+  };
+
+  if (isEmpty) {
     return (
       <div className="text-center text-secondary py-12 text-sm">
         No contributions found.
       </div>
     );
   }
-
-  /** Grouping logic for Kanban */
-  const grouped = defaultKanbanColumns.reduce((acc, col) => {
-    acc[col] = items.filter(
-      (item) => 'status' in item && item.status === col
-    );
-    return acc;
-  }, {} as Record<string, Post[]>);
-
-  /** 📌 Kanban Layout */
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-    const dest = over.id as string;
-    const dragged: Post | undefined = active.data.current?.item;
-    if (!dragged || dragged.status === dest) return;
-
-    const optimistic = { ...dragged, status: dest };
-    if (selectedBoard) updateBoardItem(selectedBoard, optimistic as unknown as BoardItem);
-
-    try {
-      const updated = await updatePost(dragged.id, { status: dest });
-      if (selectedBoard) updateBoardItem(selectedBoard, updated as unknown as BoardItem);
-      if (dest === 'Done') {
-        await archivePost(dragged.id);
-        if (selectedBoard) removeItemFromBoard(selectedBoard, dragged.id);
-      }
-    } catch (err) {
-      console.error('[GridLayout] Failed to update post status:', err);
-    }
-  };
 
   if (layout === 'kanban') {
     return (
@@ -314,6 +367,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({
         sensors={sensors}
         collisionDetection={closestCenter}
       >
+        <div aria-live="assertive" className="sr-only">{ariaMessage}</div>
         <div className="flex overflow-auto space-x-4 pb-4 px-2">
           {defaultKanbanColumns.map((col) => (
             <div
@@ -333,6 +387,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({
                       onEdit={onEdit}
                       onDelete={onDelete}
                       boardId={boardId}
+                      focused={focusedId === item.id}
+                      onFocus={() => setFocusedId(item.id)}
+                      onBlur={() => setFocusedId(null)}
+                      onMove={moveItem}
                     />
                   </ErrorBoundary>
                 ))}
